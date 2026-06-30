@@ -18,6 +18,12 @@ const badgeVariants = cva(
           "border-border-default text-ink [a&]:hover:bg-surface-2 [a&]:hover:text-dim",
         ghost: "[a&]:hover:bg-surface-2 [a&]:hover:text-dim",
         link: "text-accent underline-offset-4 [a&]:hover:underline",
+        // semantic status variants — maps to our agent-ops palette
+        ok:     "border-ok/25 bg-ok/15 text-ok",
+        warn:   "border-warn/25 bg-warn/15 text-warn",
+        review: "border-review/25 bg-review/15 text-review",
+        info:   "border-info/25 bg-info/15 text-info",
+        block:  "border-block/25 bg-block/15 text-block",
       },
     },
     defaultVariants: {
