@@ -45,3 +45,45 @@ export const Empty: S = {
     </TraceLog.Root>
   ),
 };
+
+export const AllTones: S = {
+  render: () => (
+    <TraceLog.Root>
+      <TraceLog.Header title="All status tones" hint="info → ok → review → warn → block" />
+      <TraceLog.Body>
+        <TraceLog.Row tone="info" agent="PARSER" step="paso 1">
+          Leyendo archivo de entrada.
+        </TraceLog.Row>
+        <TraceLog.Row tone="ok" agent="ARCGIS" step="paso 2">
+          GeoJSON recibido correctamente.
+        </TraceLog.Row>
+        <TraceLog.Row tone="review" agent="HUMAN" step="paso 3">
+          Requiere revisión manual.
+        </TraceLog.Row>
+        <TraceLog.Row tone="warn" agent="COLOR" step="paso 4">
+          3 predios sin geometría.
+        </TraceLog.Row>
+        <TraceLog.Row tone="block" agent="VALIDATE" step="error">
+          Predio inexistente — ejecución detenida.
+        </TraceLog.Row>
+      </TraceLog.Body>
+    </TraceLog.Root>
+  ),
+};
+
+export const Truncated: S = {
+  render: () => (
+    <TraceLog.Root>
+      <TraceLog.Header title="Pipeline truncado" hint="mostrando 2 de 47" />
+      <TraceLog.Body>
+        <TraceLog.Row tone="info" agent="PARSER" step="paso 1">
+          Lee líneas <TraceLog.Code>predio</TraceLog.Code>
+        </TraceLog.Row>
+        <TraceLog.Row tone="ok" agent="ARCGIS" timestamp="12:04:01">
+          Responde GeoJSON.
+        </TraceLog.Row>
+        <TraceLog.Truncated onShowAll={() => {}}>ver todas (45)</TraceLog.Truncated>
+      </TraceLog.Body>
+    </TraceLog.Root>
+  ),
+};
