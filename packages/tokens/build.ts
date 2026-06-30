@@ -11,6 +11,7 @@ const split = (v: string) => v.split("|"); // [hex, oklch]
 // 1. theme-*.css (set completo, hex fallback + oklch, color-scheme)
 for (const [name, vars] of Object.entries(themes)) {
   const lines = SEMANTIC_KEYS.map((k) => {
+    if (!vars[k]) throw new Error(`theme ${name}: missing token ${k}`);
     const [hex, ok] = split(vars[k]);
     return `  --${k}: ${hex};\n  --${k}: ${ok};`;
   });
