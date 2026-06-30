@@ -36,9 +36,48 @@ describe("TraceLog.Row", () => {
     const row = screen.getByText(/no existe/).closest("[data-tone]")!;
     expect(row.getAttribute("data-tone")).toBe("block");
     expect(row.className).toContain("border-block");
-    // label textual del tone presente para lectores de pantalla
-    expect(screen.getByText(toneLabel.block, { selector: ".sr-only,*" })).toBeDefined();
+    // label textual del tone presente para lectores de pantalla, scoped to .sr-only
+    expect(screen.getByText(/bloqueo/, { selector: ".sr-only" })).toBeDefined();
     expect(screen.getByText("VALIDATE")).toBeDefined();
     expect(screen.getByText("142099").tagName).toBe("CODE");
+  });
+
+  it.each(["info", "ok", "review", "warn", "block"] as const)(
+    "tone=%s: label sr-only y borde correcto",
+    (tone) => {
+      render(
+        <TraceLog.Root>
+          <TraceLog.Body>
+            <TraceLog.Row tone={tone} agent="X" />
+          </TraceLog.Body>
+        </TraceLog.Root>,
+      );
+      // (a) toneLabel text present inside .sr-only
+      expect(
+        screen.getByText(new RegExp(toneLabel[tone]), { selector: ".sr-only" }),
+      ).toBeDefined();
+      // (b) row element has border-{tone} class
+      const row = document.querySelector("[data-tone]")!;
+      expect(row.className).toContain(`border-${tone}`);
+    },
+  );
+
+  it("usa íconos distintos por tone (WCAG 1.4.1 — no solo color)", () => {
+    const { container } = render(
+      <TraceLog.Root>
+        <TraceLog.Body>
+          {(["info", "ok", "review", "warn", "block"] as const).map((tone) => (
+            <TraceLog.Row key={tone} tone={tone} agent="X" />
+          ))}
+        </TraceLog.Body>
+      </TraceLog.Root>,
+    );
+    const svgs = container.querySelectorAll("svg");
+    expect(svgs).toHaveLength(5);
+    // Lucide emits a per-icon class like lucide-info, lucide-eye, lucide-octagon-x, etc.
+    const iconClasses = Array.from(svgs).map(
+      (svg) => Array.from(svg.classList).find((c) => c.startsWith("lucide-")),
+    );
+    expect(new Set(iconClasses).size).toBe(5);
   });
 });

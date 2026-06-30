@@ -103,7 +103,7 @@ const Row = ({ tone = "info", agent, step, timestamp, className, children, ...re
       <div className="flex items-center justify-between gap-2 font-mono text-[8.5px] uppercase tracking-wide text-faint">
         <span className={cn("flex items-center gap-1.5 font-bold", toneText[tone])}>
           <Icon className="size-3" aria-hidden />
-          <span className="sr-only">{toneLabel[tone]}</span>
+          <span className="sr-only">{toneLabel[tone]}: </span>
           <span>{agent}</span>
         </span>
         {meta ? <span>{meta}</span> : null}
