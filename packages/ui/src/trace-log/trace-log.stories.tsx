@@ -52,7 +52,10 @@ export const AllTones: S = {
       <TraceLog.Header title="All status tones" hint="info → ok → review → warn → block" />
       <TraceLog.Body>
         <TraceLog.Row tone="info" agent="PARSER" step="paso 1">
-          Leyendo archivo de entrada.
+          Procesando lote de validación desde{" "}
+          <TraceLog.Code>predio_validacion_2024_Q4_completo.csv</TraceLog.Code> — 138 IDs
+          únicos detectados tras deduplicación.
+          <TraceLog.Detail>138 IDs únicos tras dedupe; 12 duplicados omitidos</TraceLog.Detail>
         </TraceLog.Row>
         <TraceLog.Row tone="ok" agent="ARCGIS" step="paso 2">
           GeoJSON recibido correctamente.

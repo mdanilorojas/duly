@@ -42,9 +42,9 @@ interface HeaderProps {
 }
 
 const Header = ({ title, hint }: HeaderProps) => (
-  <div className="flex items-center justify-between gap-2 border-b border-border-subtle bg-surface-header px-3.5 py-2.5">
+  <div className="flex flex-col gap-1 border-b border-border-subtle bg-surface-header px-3.5 py-2.5 sm:flex-row sm:items-center sm:justify-between">
     <span className="text-[11px] font-extrabold uppercase tracking-wide text-dim">{title}</span>
-    {hint ? <span className="font-mono text-[11px] text-faint">{hint}</span> : null}
+    {hint ? <span className="min-w-0 truncate font-mono text-[11px] text-faint">{hint}</span> : null}
   </div>
 );
 Header.displayName = "TraceLog.Header";
@@ -130,16 +130,16 @@ const Row = React.forwardRef<HTMLDivElement, RowProps>(
     const Icon = toneIcon[t];
     const meta = timestamp ?? step ?? "";
     return (
-      <div ref={ref} data-tone={t} className={cn(rowVariants({ tone: t }), className)} {...rest}>
-        <div className="flex items-center justify-between gap-2 font-mono text-[8.5px] uppercase tracking-wide text-faint">
-          <span className={cn("flex items-center gap-1.5 font-bold", toneText[t])}>
-            <Icon className="size-3" aria-hidden />
+      <div ref={ref} data-tone={t} className={cn(rowVariants({ tone: t }), "min-w-0", className)} {...rest}>
+        <div className="flex flex-wrap items-center justify-between gap-x-2 font-mono text-[8.5px] uppercase tracking-wide text-faint">
+          <span className={cn("flex min-w-0 items-center gap-1.5 font-bold", toneText[t])}>
+            <Icon className="size-3 shrink-0" aria-hidden />
             <span className="sr-only">{toneLabel[t]}: </span>
-            <span>{agent}</span>
+            <span className="break-words">{agent}</span>
           </span>
-          {meta ? <span>{meta}</span> : null}
+          {meta ? <span className="shrink-0">{meta}</span> : null}
         </div>
-        <div className="mt-1 text-xs leading-relaxed text-ink">{children}</div>
+        <div className="mt-1 min-w-0 break-words text-xs leading-relaxed text-ink">{children}</div>
       </div>
     );
   },
@@ -166,7 +166,7 @@ const Detail = ({ children, label }: DetailProps) => (
   <Collapsible.Root className="mt-1">
     <Collapsible.Trigger
       aria-label={label ?? "detalle"}
-      className="inline-flex items-center gap-1 font-mono text-[10px] text-faint hover:text-dim focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded"
+      className="inline-flex items-center gap-1 rounded font-mono text-[10px] text-faint hover:text-dim focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:ring-2 focus-visible:ring-ring -my-3 py-3 sm:my-0 sm:py-0"
     >
       <ChevronDown className="size-3" aria-hidden /> detalle
     </Collapsible.Trigger>
@@ -186,7 +186,7 @@ const Truncated = ({ children, onShowAll }: { children: React.ReactNode; onShowA
   <button
     type="button"
     onClick={onShowAll}
-    className="mt-1 w-full rounded-md border border-border-subtle py-1.5 text-[11px] text-dim hover:border-border-strong hover:text-ink focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+    className="mt-1 min-h-[2.5rem] w-full rounded-md border border-border-subtle py-1.5 text-[11px] text-dim hover:border-border-strong hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:ring-2 focus-visible:ring-ring sm:min-h-0"
   >
     {children}
   </button>
