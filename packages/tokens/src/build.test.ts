@@ -26,7 +26,7 @@ describe("token contracts", () => {
   }
 
   it("status (LOCKED) idéntico entre temas (hue no rota)", () => {
-    const keys = ["ok", "review", "warn", "block", "info", "ring"];
+    const keys = [...LOCKED];
     for (const k of keys) {
       const values = Object.values(themes).map((t) => hex(t, k));
       expect(new Set(values).size).toBe(1);

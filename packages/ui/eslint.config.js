@@ -13,6 +13,10 @@ export default [
           selector: `Literal[value=/${NO_RAW_COLOR.source}/]`,
           message: "Color crudo prohibido en ui — usá un token semantic.",
         },
+        {
+          selector: `TemplateElement[value.raw=/${NO_RAW_COLOR.source}/]`,
+          message: "Color crudo prohibido en ui (template literal) — usá un token semantic.",
+        },
       ],
     },
   },
