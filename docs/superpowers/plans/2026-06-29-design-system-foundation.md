@@ -175,7 +175,11 @@ storybook-static
 }
 ```
 
-- [ ] **Step 8: Shared eslint-config (con regla no-hex)**
+- [ ] **Step 8: Shared eslint-config (flat, ESLint 9 — base TS; el no-hex va en `ui`)**
+
+> ESLint 10 eliminó el formato legacy `.eslintrc`; usamos **flat config + ESLint 9**. La base es solo
+> TypeScript recomendado. La regla **no-hex vive únicamente en `packages/ui`** (Task 4) — `tokens` usa
+> hex legítimamente como fuente de verdad, así que NO debe heredar esa regla.
 
 `packages/eslint-config/package.json`:
 ```json
@@ -183,33 +187,25 @@ storybook-static
   "name": "@studio/eslint-config",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "main": "index.js",
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.8.0",
-    "@typescript-eslint/parser": "^8.8.0"
+    "eslint": "^9.13.0",
+    "typescript-eslint": "^8.8.0"
   }
 }
 ```
 
 `packages/eslint-config/index.js`:
 ```js
-// Bloquea hex/rgba crudo en código de componentes (deben ser tokens).
-const NO_RAW_COLOR = /#[0-9a-fA-F]{3,8}\b|rgba?\(/;
-module.exports = {
-  root: true,
-  parser: "@typescript-eslint/parser",
-  plugins: ["@typescript-eslint"],
-  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
-  rules: {
-    "no-restricted-syntax": [
-      "error",
-      {
-        selector: `Literal[value=/${NO_RAW_COLOR.source}/]`,
-        message: "Color crudo prohibido en ui — usá un token semantic.",
-      },
-    ],
-  },
-};
+// Flat config compartido (ESLint 9). Base: TypeScript recomendado.
+// El no-hex NO está aquí — vive en packages/ui (tokens usa hex como fuente).
+import tseslint from "typescript-eslint";
+
+export default tseslint.config(
+  { ignores: ["dist/**"] },
+  ...tseslint.configs.recommended,
+);
 ```
 
 - [ ] **Step 9: Install + verify**
@@ -264,6 +260,7 @@ git commit -m "chore: monorepo skeleton (pnpm + turborepo + changesets + shared 
   "devDependencies": {
     "@studio/tsconfig": "workspace:*",
     "@studio/eslint-config": "workspace:*",
+    "eslint": "^9.13.0",
     "tsx": "^4.19.0",
     "vitest": "^2.1.0",
     "culori": "^4.0.1",
@@ -275,6 +272,11 @@ git commit -m "chore: monorepo skeleton (pnpm + turborepo + changesets + shared 
 `packages/tokens/tsconfig.json`:
 ```json
 { "extends": "@studio/tsconfig/base.json", "include": ["src", "build.ts"] }
+```
+
+`packages/tokens/eslint.config.js` (flat config; solo la base — `tokens` usa hex legítimamente):
+```js
+export { default } from "@studio/eslint-config";
 ```
 
 - [ ] **Step 2: `src/primitives.ts` (rampas OKLCH, constantes)**
@@ -556,6 +558,7 @@ git commit -m "test(tokens): CI gate de contraste + contrato themeable/exhaustiv
     "@studio/tokens": "workspace:*",
     "@studio/tsconfig": "workspace:*",
     "@studio/eslint-config": "workspace:*",
+    "eslint": "^9.13.0",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.0",
     "jest-axe": "^9.0.0",
@@ -598,6 +601,29 @@ import "@testing-library/react";
 import { expect } from "vitest";
 import { toHaveNoViolations } from "jest-axe";
 expect.extend(toHaveNoViolations);
+```
+
+`packages/ui/eslint.config.js` (base + regla no-hex — SOLO `ui` prohíbe color crudo):
+```js
+import base from "@studio/eslint-config";
+
+const NO_RAW_COLOR = /#[0-9a-fA-F]{3,8}\b|rgba?\(/;
+
+export default [
+  ...base,
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: `Literal[value=/${NO_RAW_COLOR.source}/]`,
+          message: "Color crudo prohibido en ui — usá un token semantic.",
+        },
+      ],
+    },
+  },
+];
 ```
 
 - [ ] **Step 3: `src/styles.css`**
