@@ -1,0 +1,7 @@
+/*
+ * @studio/ui — optional global reset (Tailwind v4 preflight).
+ * Consumers who WANT the opinionated element reset can import "@studio/ui/reset.css".
+ * It is intentionally kept out of "@studio/ui/styles.css" so the component styles
+ * never reset a host application's elements without opt-in.
+ */
+@import "tailwindcss/preflight.css" layer(base);
