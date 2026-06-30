@@ -1,7 +1,9 @@
 import * as React from "react";
+import { Info, CheckCircle2, Eye, AlertTriangle, OctagonX } from "lucide-react";
 import { cn } from "../lib/cn.js";
 import { DensityContext } from "./trace-log.context.js";
-import { bodyVariants, type Density } from "./trace-log.variants.js";
+import { bodyVariants, rowVariants, toneText, type Density, type Tone } from "./trace-log.variants.js";
+import { toneLabel } from "./copy.js";
 
 // Public API shape includes streaming (consumed by RootWithStreaming, not forwarded to DOM).
 export interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -46,9 +48,8 @@ const Header = ({ title, hint }: HeaderProps) => (
 );
 Header.displayName = "TraceLog.Header";
 
-interface BodyProps extends React.HTMLAttributes<HTMLDivElement> {
-  streaming?: boolean;
-}
+// streaming is a Root-only concern — removed from BodyProps to prevent DOM leakage.
+type BodyProps = React.HTMLAttributes<HTMLDivElement>;
 
 const Body = ({ className, children, ...rest }: BodyProps) => {
   const density = React.useContext(DensityContext);
@@ -79,4 +80,43 @@ const RootWithStreaming = React.forwardRef<HTMLDivElement, RootProps>((props, re
 });
 RootWithStreaming.displayName = "TraceLog.Root";
 
-export const TraceLog = { Root: RootWithStreaming, Header, Body };
+const toneIcon: Record<Tone, React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>> = {
+  info: Info,
+  ok: CheckCircle2,
+  review: Eye,
+  warn: AlertTriangle,
+  block: OctagonX,
+};
+
+interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
+  tone?: Tone;
+  agent: string;
+  step?: string;
+  timestamp?: string;
+}
+
+const Row = ({ tone = "info", agent, step, timestamp, className, children, ...rest }: RowProps) => {
+  const Icon = toneIcon[tone];
+  const meta = timestamp ?? step ?? "";
+  return (
+    <div data-tone={tone} className={cn(rowVariants({ tone }), className)} {...rest}>
+      <div className="flex items-center justify-between gap-2 font-mono text-[8.5px] uppercase tracking-wide text-faint">
+        <span className={cn("flex items-center gap-1.5 font-bold", toneText[tone])}>
+          <Icon className="size-3" aria-hidden />
+          <span className="sr-only">{toneLabel[tone]}</span>
+          <span>{agent}</span>
+        </span>
+        {meta ? <span>{meta}</span> : null}
+      </div>
+      <div className="mt-1 text-xs leading-relaxed text-ink">{children}</div>
+    </div>
+  );
+};
+Row.displayName = "TraceLog.Row";
+
+const Code = ({ children }: { children: React.ReactNode }) => (
+  <code className="rounded bg-accent-surface px-1.5 py-px font-mono text-[11px] text-review">{children}</code>
+);
+Code.displayName = "TraceLog.Code";
+
+export const TraceLog = { Root: RootWithStreaming, Header, Body, Row, Code };
