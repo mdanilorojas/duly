@@ -20,7 +20,7 @@ export const themes: Record<string, Record<string, string>> = {
     "review": "#6cb8ff|oklch(0.76 0.13 256)", "on-review": "#04122b|oklch(0.20 0.05 256)",
     "warn": "#E8961A|oklch(0.74 0.15 70)", "on-warn": "#2a1600|oklch(0.22 0.05 70)",
     "block": "#ff6b78|oklch(0.72 0.18 19)", "on-block": "#2b0407|oklch(0.22 0.06 19)",
-    "info": "#6b7384|oklch(0.55 0.02 270)",
+    "info": "#7e8390|oklch(0.61 0.02 270)",
     "glow-seed": "#5fe3e6|oklch(0.88 0.12 192)",
   },
   // Segundo tema: rota brand hue + sube superficies un punto. Status (LOCKED) intactos.
@@ -40,7 +40,7 @@ export const themes: Record<string, Record<string, string>> = {
     "review": "#6cb8ff|oklch(0.76 0.13 256)", "on-review": "#04122b|oklch(0.20 0.05 256)",
     "warn": "#E8961A|oklch(0.74 0.15 70)", "on-warn": "#2a1600|oklch(0.22 0.05 70)",
     "block": "#ff6b78|oklch(0.72 0.18 19)", "on-block": "#2b0407|oklch(0.22 0.06 19)",
-    "info": "#6b7384|oklch(0.55 0.02 270)",
+    "info": "#7e8390|oklch(0.61 0.02 270)",
     "glow-seed": "#c9a8ff|oklch(0.84 0.12 300)",
   },
 };

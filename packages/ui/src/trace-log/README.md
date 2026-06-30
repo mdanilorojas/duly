@@ -20,3 +20,18 @@ Timeline de eventos/log para vistas de agent-ops. Compound component sobre Radix
 
 - ✅ Usar `tone` para severidad; ✅ `streaming` solo mientras hay proceso vivo.
 - ❌ No poner texto de color hardcodeado; ❌ no usar `Detail` para contenido crítico siempre-visible.
+
+## Tailwind consumers
+
+`@studio/ui` does NOT pre-compile utilities. Consumers using Tailwind v4 must add an
+`@source` directive pointing at the ui package source (or built JS) so Tailwind generates
+the utility classes used by TraceLog:
+
+```css
+/* in your Tailwind entry CSS */
+@source "node_modules/@studio/ui/src/**/*.{ts,tsx}";
+/* or, if consuming from dist: */
+@source "node_modules/@studio/ui/dist/**/*.js";
+```
+
+Pre-compiled stylesheet support is a planned future enhancement.

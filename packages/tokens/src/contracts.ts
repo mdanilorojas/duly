@@ -25,4 +25,5 @@ export const CONTRAST_PAIRS: [string, string, number][] = [
   ["ok", "surface-2", 4.5], ["review", "surface-2", 4.5],
   ["warn", "surface-2", 4.5], ["block", "surface-2", 4.5],
   ["border-strong", "surface-2", 3.0], ["ring", "surface-2", 3.0],
+  ["info", "surface-2", 4.5],
 ];
