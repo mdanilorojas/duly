@@ -6,7 +6,6 @@ type Theme = "cockpit" | "test";
 
 export default function App() {
   const [theme, setTheme] = useState<Theme>("cockpit");
-
   const accentColor = tokens[theme]["accent"];
 
   return (
@@ -36,28 +35,47 @@ export default function App() {
           Switch to {theme === "cockpit" ? "test" : "cockpit"}
         </button>
         <span style={{ fontSize: "0.75rem", color: "var(--dim)" }}>
-          Accent token: <code style={{ color: accentColor }}>{accentColor}</code>
+          Accent token:{" "}
+          <code style={{ color: accentColor }}>{accentColor}</code>
+          <span
+            aria-hidden
+            style={{
+              display: "inline-block",
+              width: "0.75rem",
+              height: "0.75rem",
+              marginLeft: "0.375rem",
+              borderRadius: "0.25rem",
+              verticalAlign: "middle",
+              background: accentColor,
+            }}
+          />
         </span>
       </header>
 
-      <TraceLog.Root>
-        <TraceLog.Header label="Pipeline Run #42" runId="run-42" timestamp="2026-06-30T10:00:00Z" />
+      <TraceLog.Root streaming>
+        <TraceLog.Header title="Pipeline Run #42" hint="cockpit ↔ test theme" />
         <TraceLog.Body>
-          <TraceLog.Row tone="info" step="init" message="Initializing pipeline context" />
-          <TraceLog.Row tone="ok" step="fetch" message="Data fetched successfully (1.2 s)" />
-          <TraceLog.Row tone="review" step="validate" message="Schema validation requires manual sign-off" />
-          <TraceLog.Row tone="warn" step="transform" message="Deprecated field detected — will be removed in v3" />
-          <TraceLog.Row
-            tone="block"
-            step="publish"
-            message="Publish blocked: missing required approval"
-          >
+          <TraceLog.Row tone="info" agent="PARSER" step="paso 1">
+            Initializing pipeline context — reading <TraceLog.Code>config.yaml</TraceLog.Code>
+          </TraceLog.Row>
+          <TraceLog.Row tone="ok" agent="FETCH" timestamp="10:00:01">
+            Data fetched successfully (1.2 s).
+          </TraceLog.Row>
+          <TraceLog.Row tone="review" agent="HUMAN" step="paso 3">
+            Schema validation requires manual sign-off.
+          </TraceLog.Row>
+          <TraceLog.Row tone="warn" agent="TRANSFORM" step="paso 4">
+            Deprecated field detected — will be removed in v3.
+          </TraceLog.Row>
+          <TraceLog.Row tone="block" agent="PUBLISH" step="error">
+            Publish blocked: missing required approval.
             <TraceLog.Detail>
-              <p style={{ margin: 0 }}>Approval gate requires sign-off from @release-team. Open ticket #1234.</p>
+              Approval gate requires sign-off from @release-team. Open ticket #1234.
             </TraceLog.Detail>
           </TraceLog.Row>
-          <TraceLog.Row tone="ok" step="stream" message="Streaming output…" streaming />
-          <TraceLog.Truncated onShowAll={() => alert("Show all rows clicked")} />
+          <TraceLog.Truncated onShowAll={() => alert("Show all rows")}>
+            ver todas (47)
+          </TraceLog.Truncated>
         </TraceLog.Body>
       </TraceLog.Root>
     </div>
