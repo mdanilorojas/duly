@@ -272,7 +272,7 @@ ul.li li b{color:var(--ink)}
         </div>
       </div>
       <div class="card indigotop"><h4>Gobernanza themeable</h4><div class="tag">$extensions</div><p>Flag <code style="font-family:var(--mono)">studio.themeable</code> genera <code style="font-family:var(--mono)">[data-theme]</code> + tipos TS + <code style="font-family:var(--mono)">@theme</code>. Allowlist vs locked (hue de status = solo L).</p></div>
-      <div class="card indigotop"><h4>CI de contraste</h4><div class="tag">vitest + culori</div><p>Por tema: fg×surface ≥4.5 · border ≥3.0 · separación CVD ≥1.5. Un swap de marca <b>no puede</b> regresar a11y.</p></div>
+      <div class="card indigotop"><h4>CI de contraste</h4><div class="tag">vitest + culori</div><p>Por tema: fg×surface ≥4.5 (incl. <code style="font-family:var(--mono)">info</code>) · border ≥3.0. Separación CVD ≥1.5 reasignada a <code style="font-family:var(--mono)">--viz-cat-*</code> (sub-proyecto #3); status se conforma por icono+label. Un swap de marca <b>no puede</b> regresar a11y.</p></div>
     </div>
 
     <div class="callout"><b>🔴 Crítico — <code style="font-family:var(--mono)">@theme inline</code>:</b> con <code style="font-family:var(--mono)">@theme</code> normal Tailwind v4 resuelve el hex en build → pisar <code style="font-family:var(--mono)">--accent</code> en <code style="font-family:var(--mono)">[data-theme]</code> <b>no hace nada</b> (theming muerto, criterio #8 falla en silencio). <code style="font-family:var(--mono)">@theme inline</code> emite <code style="font-family:var(--mono)">var(--token)</code>. Temas exhaustivos (set completo, no diffs) + <code style="font-family:var(--mono)">color-scheme</code> por tema + <code style="font-family:var(--mono)">data-theme</code> en SSR (sin flash).</div>

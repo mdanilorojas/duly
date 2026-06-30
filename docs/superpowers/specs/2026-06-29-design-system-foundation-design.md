@@ -153,7 +153,9 @@ Style Dictionary →
 
 **Gates de CI sobre los tokens** (vitest + culori):
 - contraste por tema: cada par `fg × surface ≥ 4.5`, `status-as-text ≥ 4.5`, `border-funcional/focus ≥ 3.0`,
-- separación de luminancia entre pares de status `≥ 1.5` en simulación deuteranopía,
+- separación de luminancia CVD (deuteranopía `≥ 1.5`): **reasignada a la paleta categórica `--viz-cat-*`**
+  (sub-proyecto #3, donde el color es el único diferenciador) — el status se conforma vía **icono+label**
+  (WCAG 1.4.1), no por separación de color, así que NO se aplica sobre los tokens de status,
 - completitud de temas + override solo dentro del allowlist,
 - diff de `tokens.lock.json`: remove/rename sin bump major → falla.
 
@@ -253,7 +255,8 @@ Cada componente exportado trae un **contrato**:
 **Enforcement automático**
 - Lint: regla "no hex crudo" en `packages/ui` (incl. `rgba()` de glow/tint → deben ser tokens).
 - Gate de test: `axe` debe pasar.
-- **Gate de tokens (CI):** contraste por tema (fg×surface ≥4.5, border/focus ≥3.0), separación CVD ≥1.5,
+- **Gate de tokens (CI):** contraste por tema (fg×surface ≥4.5 — incl. `info`, border/focus ≥3.0); la
+  separación CVD ≥1.5 está reasignada a `--viz-cat-*` (sub-proyecto #3), no a status,
   temas exhaustivos, override solo dentro del allowlist themeable.
 - Storybook = spec viviente (cada estado tiene su story), bajo ≥2 temas.
 - **Versionado de tokens (Changesets):** `major` = remove/rename/cambio de formato (hex→oklch parseado)
