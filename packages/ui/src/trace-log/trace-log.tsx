@@ -3,35 +3,34 @@ import { Info, CheckCircle2, Eye, AlertTriangle, OctagonX, ChevronDown } from "l
 import * as Collapsible from "@radix-ui/react-collapsible";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { cn } from "../lib/cn.js";
-import { DensityContext } from "./trace-log.context.js";
+import { DensityContext, StreamingContext } from "./trace-log.context.js";
 import { bodyVariants, rowVariants, toneText, type Density, type Tone } from "./trace-log.variants.js";
 import { toneLabel } from "./copy.js";
 
-// Public API shape includes streaming (consumed by RootWithStreaming, not forwarded to DOM).
+// Public API — streaming is a Root-level concern; Body reads it via StreamingContext.
 export interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
   density?: Density;
   streaming?: boolean;
 }
 
-// Internal base — no streaming prop, no DOM bleed.
-interface BaseRootProps extends React.HTMLAttributes<HTMLDivElement> {
-  density?: Density;
-}
-
-const Root = React.forwardRef<HTMLDivElement, BaseRootProps>(
-  ({ density = "comfortable", className, children, ...rest }, ref) => (
+// Root provides both DensityContext and StreamingContext so any descendant Body
+// (not just a direct child) receives the correct aria-live value.
+const Root = React.forwardRef<HTMLDivElement, RootProps>(
+  ({ density = "comfortable", streaming = false, className, children, ...rest }, ref) => (
     <DensityContext.Provider value={density}>
-      <section
-        ref={ref}
-        data-density={density}
-        className={cn(
-          "overflow-hidden rounded-xl border border-border-subtle bg-surface-2",
-          className,
-        )}
-        {...rest}
-      >
-        {children}
-      </section>
+      <StreamingContext.Provider value={streaming}>
+        <section
+          ref={ref}
+          data-density={density}
+          className={cn(
+            "overflow-hidden rounded-xl border border-border-subtle bg-surface-2",
+            className,
+          )}
+          {...rest}
+        >
+          {children}
+        </section>
+      </StreamingContext.Provider>
     </DensityContext.Provider>
   ),
 );
@@ -50,48 +49,63 @@ const Header = ({ title, hint }: HeaderProps) => (
 );
 Header.displayName = "TraceLog.Header";
 
-// streaming is a Root-only concern — removed from BodyProps to prevent DOM leakage.
 interface BodyProps extends React.HTMLAttributes<HTMLDivElement> {
   maxHeight?: number;
 }
 
-const Body = ({ className, children, maxHeight, ...rest }: BodyProps) => {
-  const density = React.useContext(DensityContext);
-  const inner = (
-    <div role="log" className={cn(bodyVariants({ density }), className)} {...rest}>
-      {children}
-    </div>
-  );
-  if (!maxHeight) return inner;
-  return (
-    <ScrollArea.Root style={{ height: maxHeight }} className="overflow-hidden">
-      <ScrollArea.Viewport className="size-full">{inner}</ScrollArea.Viewport>
-      <ScrollArea.Scrollbar orientation="vertical" className="flex w-2 touch-none select-none">
-        <ScrollArea.Thumb className="flex-1 rounded-full bg-border-divider" />
-      </ScrollArea.Scrollbar>
-    </ScrollArea.Root>
-  );
-};
-Body.displayName = "TraceLog.Body";
+// Body reads StreamingContext and sets aria-live on itself:
+//   • "polite"  — streaming=true (announce new rows to AT as they arrive)
+//   • "off"     — streaming=false (suppress the implicit polite of role="log"
+//                  so a static/finished log does not re-announce on re-render)
+//
+// When maxHeight is provided the ref forwards to the ScrollArea.Viewport (the
+// scrollable element) so consumers can auto-scroll to bottom via ref.current.scrollTop.
+const Body = React.forwardRef<HTMLDivElement, BodyProps>(
+  ({ className, children, maxHeight, ...rest }, ref) => {
+    const density = React.useContext(DensityContext);
+    const streaming = React.useContext(StreamingContext);
 
-// RootWithStreaming strips `streaming` from props and injects aria-live into the Body child.
-const RootWithStreaming = React.forwardRef<HTMLDivElement, RootProps>((props, ref) => {
-  const { streaming, children, ...rest } = props;
-  const mapped = React.Children.map(children, (child) =>
-    React.isValidElement(child) &&
-    (child.type as { displayName?: string })?.displayName === "TraceLog.Body"
-      ? React.cloneElement(child as React.ReactElement<BodyProps>, {
-          "aria-live": streaming ? "polite" : undefined,
-        } as Partial<BodyProps> & { "aria-live"?: "polite" })
-      : child,
-  );
-  return (
-    <Root ref={ref} {...rest}>
-      {mapped}
-    </Root>
-  );
-});
-RootWithStreaming.displayName = "TraceLog.Root";
+    if (!maxHeight) {
+      return (
+        <div
+          ref={ref}
+          role="log"
+          aria-live={streaming ? "polite" : "off"}
+          className={cn(bodyVariants({ density }), className)}
+          {...rest}
+        >
+          {children}
+        </div>
+      );
+    }
+
+    // maxHeight caps, not fixes: ScrollArea.Root has no explicit height so it
+    // shrinks to content; Viewport carries the cap so scrolling triggers only
+    // when content exceeds maxHeight.
+    return (
+      <ScrollArea.Root className="overflow-hidden">
+        <ScrollArea.Viewport
+          ref={ref as React.Ref<HTMLDivElement>}
+          style={{ maxHeight }}
+          className="w-full"
+        >
+          <div
+            role="log"
+            aria-live={streaming ? "polite" : "off"}
+            className={cn(bodyVariants({ density }), className)}
+            {...rest}
+          >
+            {children}
+          </div>
+        </ScrollArea.Viewport>
+        <ScrollArea.Scrollbar orientation="vertical" className="flex w-2 touch-none select-none">
+          <ScrollArea.Thumb className="flex-1 rounded-full bg-border-divider" />
+        </ScrollArea.Scrollbar>
+      </ScrollArea.Root>
+    );
+  },
+);
+Body.displayName = "TraceLog.Body";
 
 const toneIcon: Record<Tone, React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>> = {
   info: Info,
@@ -108,23 +122,28 @@ interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
   timestamp?: string;
 }
 
-const Row = ({ tone = "info", agent, step, timestamp, className, children, ...rest }: RowProps) => {
-  const Icon = toneIcon[tone];
-  const meta = timestamp ?? step ?? "";
-  return (
-    <div data-tone={tone} className={cn(rowVariants({ tone }), className)} {...rest}>
-      <div className="flex items-center justify-between gap-2 font-mono text-[8.5px] uppercase tracking-wide text-faint">
-        <span className={cn("flex items-center gap-1.5 font-bold", toneText[tone])}>
-          <Icon className="size-3" aria-hidden />
-          <span className="sr-only">{toneLabel[tone]}: </span>
-          <span>{agent}</span>
-        </span>
-        {meta ? <span>{meta}</span> : null}
+// Defensive tone normalization: a JS consumer (no TS) could pass any string.
+// Unknown tones degrade to "info" so Icon is never undefined (avoids React crash).
+const Row = React.forwardRef<HTMLDivElement, RowProps>(
+  ({ tone = "info", agent, step, timestamp, className, children, ...rest }, ref) => {
+    const t: Tone = (tone in toneIcon) ? tone : "info";
+    const Icon = toneIcon[t];
+    const meta = timestamp ?? step ?? "";
+    return (
+      <div ref={ref} data-tone={t} className={cn(rowVariants({ tone: t }), className)} {...rest}>
+        <div className="flex items-center justify-between gap-2 font-mono text-[8.5px] uppercase tracking-wide text-faint">
+          <span className={cn("flex items-center gap-1.5 font-bold", toneText[t])}>
+            <Icon className="size-3" aria-hidden />
+            <span className="sr-only">{toneLabel[t]}: </span>
+            <span>{agent}</span>
+          </span>
+          {meta ? <span>{meta}</span> : null}
+        </div>
+        <div className="mt-1 text-xs leading-relaxed text-ink">{children}</div>
       </div>
-      <div className="mt-1 text-xs leading-relaxed text-ink">{children}</div>
-    </div>
-  );
-};
+    );
+  },
+);
 Row.displayName = "TraceLog.Row";
 
 const Code = ({ children }: { children: React.ReactNode }) => (
@@ -132,9 +151,23 @@ const Code = ({ children }: { children: React.ReactNode }) => (
 );
 Code.displayName = "TraceLog.Code";
 
-const Detail = ({ children }: { children: React.ReactNode }) => (
+interface DetailProps {
+  children: React.ReactNode;
+  /** Optional accessible label for the trigger. Use when multiple Detail
+   *  triggers appear in one log so screen-reader users can distinguish them.
+   *  Defaults to "detalle". */
+  label?: string;
+}
+
+// Focus ring: keeps focus-visible:ring-2 for pointer-based UAs AND adds
+// focus-visible:outline-2/offset-2/outline-ring as a guaranteed fallback
+// so focus is always visible even when ring utilities are absent (WCAG 2.4.7).
+const Detail = ({ children, label }: DetailProps) => (
   <Collapsible.Root className="mt-1">
-    <Collapsible.Trigger className="inline-flex items-center gap-1 font-mono text-[10px] text-faint hover:text-dim focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">
+    <Collapsible.Trigger
+      aria-label={label ?? "detalle"}
+      className="inline-flex items-center gap-1 font-mono text-[10px] text-faint hover:text-dim focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded"
+    >
       <ChevronDown className="size-3" aria-hidden /> detalle
     </Collapsible.Trigger>
     <Collapsible.Content className="mt-2 rounded-lg border border-border-subtle bg-bg-elevated px-3 py-2 text-[11.5px] leading-relaxed text-dim">
@@ -153,11 +186,11 @@ const Truncated = ({ children, onShowAll }: { children: React.ReactNode; onShowA
   <button
     type="button"
     onClick={onShowAll}
-    className="mt-1 w-full rounded-md border border-border-subtle py-1.5 text-[11px] text-dim hover:border-border-strong hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    className="mt-1 w-full rounded-md border border-border-subtle py-1.5 text-[11px] text-dim hover:border-border-strong hover:text-ink focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
   >
     {children}
   </button>
 );
 Truncated.displayName = "TraceLog.Truncated";
 
-export const TraceLog = { Root: RootWithStreaming, Header, Body, Row, Code, Detail, Empty, Truncated };
+export const TraceLog = { Root, Header, Body, Row, Code, Detail, Empty, Truncated };

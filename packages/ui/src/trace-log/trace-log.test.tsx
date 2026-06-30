@@ -22,6 +22,22 @@ describe("TraceLog Root/Header/Body", () => {
     render(<TraceLog.Root streaming><TraceLog.Body /></TraceLog.Root>);
     expect(screen.getByRole("log").getAttribute("aria-live")).toBe("polite");
   });
+
+  it("streaming aplica aria-live=polite aunque Body no sea hijo directo de Root", () => {
+    render(
+      <TraceLog.Root streaming>
+        <div>
+          <TraceLog.Body />
+        </div>
+      </TraceLog.Root>,
+    );
+    expect(screen.getByRole("log").getAttribute("aria-live")).toBe("polite");
+  });
+
+  it("sin streaming Body tiene aria-live=off para silenciar el role=log implícito", () => {
+    render(<TraceLog.Root><TraceLog.Body /></TraceLog.Root>);
+    expect(screen.getByRole("log").getAttribute("aria-live")).toBe("off");
+  });
 });
 
 describe("TraceLog.Row", () => {
@@ -82,10 +98,25 @@ describe("TraceLog.Row", () => {
     );
     expect(new Set(iconClasses).size).toBe(5);
   });
+
+  it("tone inválido (JS consumer sin TS) degrada a 'info' sin crashear", () => {
+    render(
+      <TraceLog.Root>
+        <TraceLog.Body>
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          <TraceLog.Row tone={"danger" as any} agent="X">contenido</TraceLog.Row>
+        </TraceLog.Body>
+      </TraceLog.Root>,
+    );
+    const row = document.querySelector("[data-tone]")!;
+    expect(row.getAttribute("data-tone")).toBe("info");
+    expect(row.className).toContain("border-info");
+    expect(screen.getByText("contenido")).toBeDefined();
+  });
 });
 
 describe("TraceLog.Detail + estados", () => {
-  it("expande/colapsa el detalle con teclado", async () => {
+  it("expande/colapsa el detalle con teclado (Enter y Space)", async () => {
     const user = userEvent.setup();
     render(
       <TraceLog.Root>
@@ -99,9 +130,36 @@ describe("TraceLog.Detail + estados", () => {
     );
     const trigger = screen.getByRole("button", { name: /detalle/i });
     expect(screen.queryByText(/138 IDs/)).toBeNull();
+
+    // Expand with Enter
     trigger.focus();
     await user.keyboard("{Enter}");
     expect(screen.getByText(/138 IDs/)).toBeDefined();
+
+    // Collapse with Enter
+    await user.keyboard("{Enter}");
+    expect(screen.queryByText(/138 IDs/)).toBeNull();
+
+    // Re-expand with Space
+    await user.keyboard(" ");
+    expect(screen.getByText(/138 IDs/)).toBeDefined();
+  });
+
+  it("Detail acepta label para aria-label personalizado (distingue múltiples triggers)", () => {
+    render(
+      <TraceLog.Root>
+        <TraceLog.Body>
+          <TraceLog.Row agent="PARSER">
+            <TraceLog.Detail label="Ver trazas del parser">Detalles del parser</TraceLog.Detail>
+          </TraceLog.Row>
+          <TraceLog.Row agent="VALIDATOR">
+            <TraceLog.Detail label="Ver errores del validador">Detalles del validador</TraceLog.Detail>
+          </TraceLog.Row>
+        </TraceLog.Body>
+      </TraceLog.Root>,
+    );
+    expect(screen.getByRole("button", { name: /ver trazas del parser/i })).toBeDefined();
+    expect(screen.getByRole("button", { name: /ver errores del validador/i })).toBeDefined();
   });
 
   it("Empty muestra mensaje", () => {
