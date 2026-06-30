@@ -1,0 +1,5 @@
+{
+  "buildCommand": "pnpm --filter @studio/tokens build && pnpm --filter @studio/ui build && pnpm --filter @studio/docs build",
+  "outputDirectory": "apps/docs/storybook-static",
+  "installCommand": "pnpm install"
+}

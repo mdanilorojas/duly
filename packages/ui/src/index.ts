@@ -1,5 +1,26 @@
 export { cn } from "./lib/cn.js";
-export { Button, buttonVariants } from "./button/button.js";
-export type { ButtonProps } from "./button/button.js";
 export { TraceLog } from "./trace-log/trace-log.js";
 export type { Tone, Density } from "./trace-log/trace-log.variants.js";
+
+// shadcn primitives — copy-owned, token-mapped
+export * from "./components/ui/button.js";
+export * from "./components/ui/badge.js";
+export * from "./components/ui/card.js";
+export * from "./components/ui/input.js";
+export * from "./components/ui/alert.js";
+export * from "./components/ui/avatar.js";
+export * from "./components/ui/tooltip.js";
+export * from "./components/ui/separator.js";
+export * from "./components/ui/select.js";
+export * from "./components/ui/textarea.js";
+export * from "./components/ui/label.js";
+export * from "./components/ui/switch.js";
+export * from "./components/ui/checkbox.js";
+export * from "./components/ui/radio-group.js";
+export * from "./components/ui/dialog.js";
+export * from "./components/ui/sheet.js";
+export * from "./components/ui/dropdown-menu.js";
+export * from "./components/ui/tabs.js";
+export * from "./components/ui/accordion.js";
+export * from "./components/ui/progress.js";
+export * from "./components/ui/skeleton.js";

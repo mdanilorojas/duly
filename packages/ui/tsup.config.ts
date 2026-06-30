@@ -1,4 +1,5 @@
 import { defineConfig } from "tsup";
+import { resolve } from "path";
 
 export default defineConfig({
   entry: ["src/index.ts"],
@@ -10,11 +11,15 @@ export default defineConfig({
     "react",
     "react-dom",
     /^@radix-ui\//,
+    "radix-ui",
     "lucide-react",
     "class-variance-authority",
     "clsx",
     "tailwind-merge",
   ],
+  esbuildOptions(options) {
+    options.alias = { "@": resolve("src") };
+  },
   onSuccess:
     "tailwindcss -i src/styles.css -o dist/styles.css --minify && tailwindcss -i src/reset.css -o dist/reset.css --minify",
 });
