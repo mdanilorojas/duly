@@ -1,5 +1,7 @@
 import * as React from "react";
-import { Info, CheckCircle2, Eye, AlertTriangle, OctagonX } from "lucide-react";
+import { Info, CheckCircle2, Eye, AlertTriangle, OctagonX, ChevronDown } from "lucide-react";
+import * as Collapsible from "@radix-ui/react-collapsible";
+import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { cn } from "../lib/cn.js";
 import { DensityContext } from "./trace-log.context.js";
 import { bodyVariants, rowVariants, toneText, type Density, type Tone } from "./trace-log.variants.js";
@@ -49,14 +51,25 @@ const Header = ({ title, hint }: HeaderProps) => (
 Header.displayName = "TraceLog.Header";
 
 // streaming is a Root-only concern — removed from BodyProps to prevent DOM leakage.
-type BodyProps = React.HTMLAttributes<HTMLDivElement>;
+interface BodyProps extends React.HTMLAttributes<HTMLDivElement> {
+  maxHeight?: number;
+}
 
-const Body = ({ className, children, ...rest }: BodyProps) => {
+const Body = ({ className, children, maxHeight, ...rest }: BodyProps) => {
   const density = React.useContext(DensityContext);
-  return (
+  const inner = (
     <div role="log" className={cn(bodyVariants({ density }), className)} {...rest}>
       {children}
     </div>
+  );
+  if (!maxHeight) return inner;
+  return (
+    <ScrollArea.Root style={{ height: maxHeight }} className="overflow-hidden">
+      <ScrollArea.Viewport className="size-full">{inner}</ScrollArea.Viewport>
+      <ScrollArea.Scrollbar orientation="vertical" className="flex w-2 touch-none select-none">
+        <ScrollArea.Thumb className="flex-1 rounded-full bg-border-divider" />
+      </ScrollArea.Scrollbar>
+    </ScrollArea.Root>
   );
 };
 Body.displayName = "TraceLog.Body";
@@ -119,4 +132,32 @@ const Code = ({ children }: { children: React.ReactNode }) => (
 );
 Code.displayName = "TraceLog.Code";
 
-export const TraceLog = { Root: RootWithStreaming, Header, Body, Row, Code };
+const Detail = ({ children }: { children: React.ReactNode }) => (
+  <Collapsible.Root className="mt-1">
+    <Collapsible.Trigger className="inline-flex items-center gap-1 font-mono text-[10px] text-faint hover:text-dim focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">
+      <ChevronDown className="size-3" aria-hidden /> detalle
+    </Collapsible.Trigger>
+    <Collapsible.Content className="mt-2 rounded-lg border border-border-subtle bg-bg-elevated px-3 py-2 text-[11.5px] leading-relaxed text-dim">
+      {children}
+    </Collapsible.Content>
+  </Collapsible.Root>
+);
+Detail.displayName = "TraceLog.Detail";
+
+const Empty = ({ children }: { children: React.ReactNode }) => (
+  <div className="px-1 py-6 text-center text-xs text-faint">{children}</div>
+);
+Empty.displayName = "TraceLog.Empty";
+
+const Truncated = ({ children, onShowAll }: { children: React.ReactNode; onShowAll?: () => void }) => (
+  <button
+    type="button"
+    onClick={onShowAll}
+    className="mt-1 w-full rounded-md border border-border-subtle py-1.5 text-[11px] text-dim hover:border-border-strong hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+  >
+    {children}
+  </button>
+);
+Truncated.displayName = "TraceLog.Truncated";
+
+export const TraceLog = { Root: RootWithStreaming, Header, Body, Row, Code, Detail, Empty, Truncated };

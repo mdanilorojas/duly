@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { TraceLog } from "./trace-log.js";
 import { toneLabel } from "./copy.js";
 
@@ -79,5 +80,31 @@ describe("TraceLog.Row", () => {
       (svg) => Array.from(svg.classList).find((c) => c.startsWith("lucide-")),
     );
     expect(new Set(iconClasses).size).toBe(5);
+  });
+});
+
+describe("TraceLog.Detail + estados", () => {
+  it("expande/colapsa el detalle con teclado", async () => {
+    const user = userEvent.setup();
+    render(
+      <TraceLog.Root>
+        <TraceLog.Body>
+          <TraceLog.Row tone="info" agent="PARSER">
+            Lee líneas
+            <TraceLog.Detail>138 IDs únicos tras dedupe</TraceLog.Detail>
+          </TraceLog.Row>
+        </TraceLog.Body>
+      </TraceLog.Root>,
+    );
+    const trigger = screen.getByRole("button", { name: /detalle/i });
+    expect(screen.queryByText(/138 IDs/)).toBeNull();
+    trigger.focus();
+    await user.keyboard("{Enter}");
+    expect(screen.getByText(/138 IDs/)).toBeDefined();
+  });
+
+  it("Empty muestra mensaje", () => {
+    render(<TraceLog.Root><TraceLog.Body><TraceLog.Empty>Sin eventos</TraceLog.Empty></TraceLog.Body></TraceLog.Root>);
+    expect(screen.getByText("Sin eventos")).toBeDefined();
   });
 });
