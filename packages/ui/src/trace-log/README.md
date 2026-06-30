@@ -65,17 +65,29 @@ bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: "smooth
 - ✅ Usar `tone` para severidad; ✅ `streaming` solo mientras hay proceso vivo.
 - ❌ No poner texto de color hardcodeado; ❌ no usar `Detail` para contenido crítico siempre-visible.
 
-## Tailwind consumers
+## Styling
 
-`@studio/ui` does NOT pre-compile utilities. Consumers using Tailwind v4 must add an
-`@source` directive pointing at the ui package source (or built JS) so Tailwind generates
-the utility classes used by TraceLog:
+### Simple path (recommended) — zero Tailwind config required
 
-```css
-/* in your Tailwind entry CSS */
-@source "node_modules/@studio/ui/src/**/*.{ts,tsx}";
-/* or, if consuming from dist: */
-@source "node_modules/@studio/ui/dist/**/*.js";
+`@studio/ui` ships a **precompiled, self-contained `dist/styles.css`** that includes all utility classes and theme variable mappings. Import it once in your app entry and you are done:
+
+```ts
+import "@studio/ui/styles.css";
 ```
 
-Pre-compiled stylesheet support is a planned future enhancement.
+No PostCSS, no Tailwind config, no `@source` directive needed.
+
+### Tailwind v4 consumers
+
+If your app already runs Tailwind v4, skip `dist/styles.css` and instead add the token layers + an `@source` directive to your CSS entry so Tailwind generates the utility classes used by TraceLog:
+
+```css
+/* your app's main CSS entry */
+@import "tailwindcss";
+@import "@studio/tokens/theme.css";          /* mapping layer: --color-<token> utilities */
+@import "@studio/tokens/theme-cockpit.css";  /* value layer: cockpit theme at :root (default) */
+@import "@studio/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
+@source "../node_modules/@studio/ui/dist/**/*.js";
+```
+
+> Always import both the mapping layer (`theme.css`) **and** a value layer (`theme-cockpit.css` / `theme-test.css`). The mapping layer alone does not define the actual `--surface-2`, `--ink`, etc. values — without a value layer, components render colorless.

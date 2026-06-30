@@ -20,13 +20,25 @@ Three CSS entry points cover different use cases:
 
 Includes the full Tailwind v4 engine (`@import "tailwindcss"`) plus all theme variable layers. Use this only in apps or tools that **do not** already import Tailwind themselves (e.g. in the design system's own Storybook build). Do not combine with your own `@import "tailwindcss"` or you will get duplicate preflight and utility classes.
 
-### `@studio/tokens/theme.css` — engine-free variable layer
+### `@studio/tokens/theme.css` — engine-free mapping layer
 
 ```css
 @import "@studio/tokens/theme.css";
 ```
 
-Emits only `@theme inline { … }` — maps `--color-<token>` Tailwind color utilities to the CSS custom properties without pulling in the Tailwind engine or preflight. Use this in apps that **already** run their own Tailwind v4 build. Combine with `@source "@studio/ui/dist"` to scan component utilities.
+Emits only `@theme inline { … }` — maps `--color-<token>` Tailwind color utilities to CSS custom property names without pulling in the Tailwind engine or preflight. This file does **not** define the actual token values (`--surface-2`, `--ink`, etc.); it only wires utility names to variable names.
+
+**Always pair with a value layer** when using Tailwind v4. A complete Tailwind consumer CSS entry looks like:
+
+```css
+@import "tailwindcss";
+@import "@studio/tokens/theme.css";          /* mapping layer: --color-<token> utilities */
+@import "@studio/tokens/theme-cockpit.css";  /* value layer: cockpit theme at :root (default) */
+@import "@studio/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
+@source "../node_modules/@studio/ui/dist/**/*.js";  /* scan compiled output for utility classes */
+```
+
+Without the value layer, color utilities resolve to undefined CSS variables and components render colorless.
 
 ### `@studio/tokens/theme-cockpit.css` / `@studio/tokens/theme-test.css` — per-theme variable sets
 
@@ -54,7 +66,7 @@ Apply a theme by setting `data-theme` on a container element:
 import { tokens } from "@studio/tokens";
 
 // tokens.<theme>["<token>"] → hex string
-const surface = tokens.cockpit["surface-2"];   // "#171c24"
+const surface = tokens.cockpit["surface-2"];   // "#131418"
 const accent  = tokens.test["accent"];         // "#b07cff"
 ```
 

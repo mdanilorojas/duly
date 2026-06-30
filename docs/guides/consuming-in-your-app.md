@@ -112,12 +112,18 @@ pnpm add @studio/ui @studio/tokens
 /* src/app.css (or wherever you import tailwindcss) */
 @import "tailwindcss";
 
-/* Engine-free token layer: maps --color-<token> utilities without re-importing Tailwind */
+/* Mapping layer: wires --color-<token> Tailwind utilities to CSS custom properties */
 @import "@studio/tokens/theme.css";
 
-/* Scan the compiled UI package output so Tailwind includes component utility classes */
-@source "@studio/ui/dist";
+/* Value layers: define the actual --surface-2, --ink, etc. custom property values */
+@import "@studio/tokens/theme-cockpit.css";  /* cockpit theme at :root (default) */
+@import "@studio/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
+
+/* Scan the compiled UI package so Tailwind generates component utility classes */
+@source "../node_modules/@studio/ui/dist/**/*.js";
 ```
+
+> **`theme.css` alone is not enough** — it only maps utility names to CSS variables; it does not define the variable values. You must also import a value layer (`theme-cockpit.css` and/or `theme-test.css`), otherwise color utilities resolve to undefined variables and components render colorless.
 
 > **Do not** also import `@studio/ui/styles.css` — that would pull in a second copy of the Tailwind engine.
 
