@@ -2,10 +2,26 @@
   "name": "@studio/tokens",
   "version": "0.0.0",
   "type": "module",
-  "exports": {
-    "./css": "./dist/index.css",
-    ".": "./dist/tokens.ts"
+  "description": "Design tokens for the Studio design system — themeable CSS variables (hex + oklch) and typed JS token maps.",
+  "keywords": ["design-tokens", "design-system", "css-variables", "tailwindcss", "theme", "oklch"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/studio/design-system",
+    "directory": "packages/tokens"
   },
+  "module": "./dist/tokens.js",
+  "types": "./dist/tokens.d.ts",
+  "sideEffects": ["**/*.css"],
+  "files": ["dist"],
+  "exports": {
+    ".": { "types": "./dist/tokens.d.ts", "import": "./dist/tokens.js" },
+    "./css": "./dist/index.css",
+    "./theme.css": "./dist/theme.css",
+    "./theme-cockpit.css": "./dist/theme-cockpit.css",
+    "./theme-test.css": "./dist/theme-test.css"
+  },
+  "publishConfig": { "access": "public" },
   "scripts": {
     "tokens": "tsx build.ts",
     "build": "tsx build.ts",
