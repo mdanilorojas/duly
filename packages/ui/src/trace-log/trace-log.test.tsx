@@ -1,6 +1,7 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { axe } from "jest-axe";
 import { TraceLog } from "./trace-log.js";
 import { toneLabel } from "./copy.js";
 
@@ -107,4 +108,41 @@ describe("TraceLog.Detail + estados", () => {
     render(<TraceLog.Root><TraceLog.Body><TraceLog.Empty>Sin eventos</TraceLog.Empty></TraceLog.Body></TraceLog.Root>);
     expect(screen.getByText("Sin eventos")).toBeDefined();
   });
+});
+
+describe("TraceLog.Truncated", () => {
+  it("renders as a button and calls onShowAll on click", async () => {
+    const user = userEvent.setup();
+    const onShowAll = vi.fn();
+    render(
+      <TraceLog.Root>
+        <TraceLog.Body>
+          <TraceLog.Truncated onShowAll={onShowAll}>Mostrar 42 más</TraceLog.Truncated>
+        </TraceLog.Body>
+      </TraceLog.Root>,
+    );
+    const btn = screen.getByRole("button", { name: /mostrar 42 más/i });
+    expect(btn).toBeDefined();
+    await user.click(btn);
+    expect(onShowAll).toHaveBeenCalledOnce();
+  });
+});
+
+it("no tiene violaciones axe con todos los tones + detail + streaming", async () => {
+  const { container } = render(
+    <TraceLog.Root streaming density="comfortable">
+      <TraceLog.Header title="Pipeline" hint="tu lista → mapa" />
+      <TraceLog.Body maxHeight={300}>
+        <TraceLog.Row tone="info" agent="PARSER" step="paso 1">
+          Lee líneas <TraceLog.Code>predio</TraceLog.Code>
+          <TraceLog.Detail>138 IDs únicos</TraceLog.Detail>
+        </TraceLog.Row>
+        <TraceLog.Row tone="ok" agent="ARCGIS" timestamp="12:04:01">Responde GeoJSON.</TraceLog.Row>
+        <TraceLog.Row tone="review" agent="HUMAN" step="paso 3">Requiere revisión.</TraceLog.Row>
+        <TraceLog.Row tone="warn" agent="COLOR" step="paso 4">3 sin geometría.</TraceLog.Row>
+        <TraceLog.Row tone="block" agent="VALIDATE" step="error">Predio inexistente.</TraceLog.Row>
+      </TraceLog.Body>
+    </TraceLog.Root>,
+  );
+  expect(await axe(container)).toHaveNoViolations();
 });
