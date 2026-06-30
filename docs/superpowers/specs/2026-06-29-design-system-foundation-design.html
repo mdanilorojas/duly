@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design System de estudio · Fundación + Trace/Log — Spec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070a; --bg2:#0c0d11; --surface:#131418; --raised:#191a1f;
+  --border:#2e2e32; --border-soft:#1d2127; --border-strong:#666670;
+  --teal:#23d2d7; --indigo:#8f9bff; --glow-seed:#5fe3e6;
+  --ink:#f0f0f2; --dim:#b4b4be; --faint:#7b8799; --track:#23303a;
+  --ok:#39E0A0; --review:#6cb8ff; --warn:#E8961A; --block:#ff6b78; --info:#6b7384;
+  --font:'Manrope',ui-sans-serif,system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--font); font-size:14px; line-height:1.5;
+  background-image:
+    radial-gradient(circle, #16181d 1.3px, transparent 1.3px) 0 0 / 30px 30px,
+    radial-gradient(900px 520px at 82% -10%, rgba(35,210,215,.10), transparent 60%),
+    radial-gradient(760px 520px at -5% 110%, rgba(124,140,255,.08), transparent 60%);
+  padding-bottom:80px;
+}
+.mono{font-family:var(--mono)}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#23303a;border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* header */
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;height:56px;padding:0 24px;
+  border-bottom:1px solid var(--border);background:rgba(7,7,10,.92);backdrop-filter:blur(10px)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px}
+.orb{width:22px;height:22px;border-radius:50%;flex:none;
+  background:radial-gradient(circle at 50% 38%, color-mix(in srgb,var(--teal) 92%,#fff), var(--teal) 48%, transparent 73%);
+  box-shadow:0 0 12px -2px var(--teal)}
+.brand .sep{color:var(--faint);font-weight:600}
+.top .sub{color:var(--faint);font-size:12px}
+.badge-demo{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:.6px;color:var(--teal);
+  background:rgba(35,210,215,.1);border:1px solid rgba(35,210,215,.32);padding:4px 9px;border-radius:6px}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 26px}
+.lead{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.lead .accent{color:var(--teal)}
+.sublead{color:var(--dim);margin-top:10px;max-width:78ch;line-height:1.65}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{font-family:var(--mono);font-size:10.5px;color:var(--dim);background:var(--surface);
+  border:1px solid var(--border-soft);border-radius:7px;padding:5px 10px}
+.chip b{color:var(--ink)}
+.chip.ok{color:var(--ok);border-color:rgba(57,224,160,.3)}
+
+/* section */
+.sec{margin-top:40px}
+.sec-h{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:800;letter-spacing:.9px;
+  text-transform:uppercase;color:var(--dim);margin-bottom:16px}
+.sec-h .n{font-family:var(--mono);color:var(--teal);font-size:11px}
+.sec-h::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+.p{color:var(--dim);line-height:1.65;max-width:80ch}
+.p b{color:var(--ink)}
+.p code,.li code{font-family:var(--mono);font-size:11.5px;color:var(--review);
+  background:rgba(90,209,255,.08);padding:1px 5px;border-radius:4px}
+
+/* cards grid */
+.cards{display:grid;gap:12px}
+.cards.c2{grid-template-columns:repeat(2,1fr)}
+.cards.c3{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--surface);border:1px solid var(--border-soft);border-radius:12px;padding:16px}
+.card.tealtop{border-top:2px solid var(--teal)}
+.card.indigotop{border-top:2px solid var(--indigo)}
+.card h4{font-size:13.5px;font-weight:800;display:flex;align-items:center;gap:8px}
+.card .tag{font-family:var(--mono);font-size:8px;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--teal);margin-top:3px}
+.card p{font-size:12px;color:var(--dim);margin-top:9px;line-height:1.55}
+
+/* tree / code */
+pre.code{background:#0a0b10;border:1px solid var(--border);border-radius:12px;padding:16px 18px;
+  font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--dim);overflow-x:auto}
+pre.code .c{color:var(--faint)}
+pre.code .k{color:var(--teal)}
+pre.code .s{color:var(--review)}
+pre.code .t{color:var(--ink)}
+
+/* token layers */
+.layer{background:var(--surface);border:1px solid var(--border-soft);border-radius:12px;
+  padding:14px 16px;margin-bottom:10px;display:flex;gap:16px;align-items:flex-start}
+.layer .lh{flex:none;width:128px}
+.layer .lname{font-weight:800;font-size:13px}
+.layer .lname .mono{font-size:9px;color:var(--teal);display:block;margin-top:2px;letter-spacing:.5px}
+.layer .lbody{flex:1;color:var(--dim);font-size:12px;line-height:1.55}
+.sw-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.sw{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;color:var(--dim);
+  background:var(--bg2);border:1px solid var(--border-soft);border-radius:6px;padding:4px 8px}
+.sw i{width:12px;height:12px;border-radius:3px;flex:none}
+
+/* component anatomy folder */
+.folder{border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:10px;overflow:hidden}
+.folder .frow{display:flex;gap:12px;padding:9px 14px;border-bottom:1px solid var(--border-soft);font-size:12px}
+.folder .frow:last-child{border-bottom:0}
+.folder .fname{font-family:var(--mono);font-size:11.5px;color:var(--ink);flex:none;width:210px}
+.folder .fwhat{color:var(--dim)}
+
+/* === LIVE Trace/Log mockup (reusa .ox-log) === */
+.demo-frame{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px;
+  background-image:radial-gradient(circle,#15171c 1px,transparent 1px);background-size:22px 22px}
+.demo-label{font-family:var(--mono);font-size:9px;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--faint);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.demo-label::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--teal);
+  box-shadow:0 0 8px var(--teal)}
+.ox-sec-card{background:var(--surface);border:1px solid var(--border-soft);border-radius:12px;overflow:hidden}
+.ox-sec-card-h{display:flex;align-items:center;justify-content:space-between;gap:7px;padding:11px 14px;
+  background:#0e0f12;border-bottom:1px solid var(--border-soft);font-size:10px;font-weight:800;
+  letter-spacing:.5px;text-transform:uppercase;color:var(--dim)}
+.ox-sec-card-h .hint{font-family:var(--mono);color:var(--faint);font-weight:600;letter-spacing:0;text-transform:none}
+.ox-log{padding:12px 14px;display:flex;flex-direction:column;gap:12px}
+.ox-log-row{border-left:2px solid var(--c,var(--border));padding-left:12px}
+.is-info{--c:var(--track)} .is-ok{--c:var(--ok)} .is-warn{--c:var(--warn)}
+.is-review{--c:var(--review)} .is-block{--c:var(--block)}
+.ox-log-meta{display:flex;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:8.5px;
+  letter-spacing:.5px;color:var(--faint);text-transform:uppercase}
+.ox-log-agent{color:var(--teal);font-weight:700;display:flex;align-items:center;gap:6px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--c,var(--teal))}
+.ox-log-text{font-size:12px;color:var(--ink);margin-top:4px;line-height:1.5}
+.ox-log-text code{font-family:var(--mono);font-size:11px;color:var(--review);
+  background:rgba(90,209,255,.08);padding:1px 5px;border-radius:4px}
+.chev{margin-left:6px;color:var(--faint);font-size:10px;cursor:pointer;user-select:none}
+.detail{margin-top:8px;font-size:11.5px;color:var(--dim);background:var(--bg2);
+  border:1px solid var(--border-soft);border-radius:8px;padding:9px 11px;line-height:1.5}
+.stream-tag{font-family:var(--mono);font-size:8px;color:var(--ok);border:1px solid rgba(57,224,160,.4);
+  background:rgba(57,224,160,.08);border-radius:4px;padding:2px 6px;letter-spacing:.5px}
+
+/* tone legend */
+.tones{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tone{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;color:var(--dim);
+  background:var(--surface);border:1px solid var(--border-soft);border-radius:7px;padding:6px 10px}
+.tone i{width:14px;height:14px;border-radius:4px;flex:none}
+
+/* flow svg */
+.flow-wrap{background:var(--surface);border:1px solid var(--border-soft);border-radius:14px;padding:16px;overflow-x:auto}
+.flow-svg{width:100%;min-width:880px;height:auto;display:block}
+.flow-svg .fnode{fill:#131419;stroke:var(--c,var(--teal));stroke-width:1.4}
+.flow-svg .fdec{fill:#1a1408;stroke:var(--warn);stroke-width:1.4}
+.flow-svg .ftxt{fill:var(--ink);font:700 13px var(--font)}
+.flow-svg .fsub{fill:var(--dim);font:600 10.5px var(--mono)}
+.flow-svg .fedge{fill:none;stroke:var(--track);stroke-width:1.6;marker-end:url(#arw)}
+.flow-leg{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px}
+.flow-leg span{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)}
+.flow-leg i{width:11px;height:11px;border-radius:3px}
+
+/* callout + checklist */
+.callout{margin-top:14px;font-size:12.5px;color:var(--dim);line-height:1.6;background:rgba(124,140,255,.06);
+  border:1px solid rgba(124,140,255,.22);border-left:3px solid var(--indigo);border-radius:10px;padding:13px 15px}
+.callout.teal{background:rgba(35,210,215,.06);border-color:rgba(35,210,215,.26);border-left-color:var(--teal)}
+.callout b{color:var(--ink)}
+ul.li{list-style:none;display:flex;flex-direction:column;gap:9px;margin-top:4px}
+ul.li li{display:flex;gap:11px;color:var(--dim);font-size:12.5px;line-height:1.5}
+ul.li li .ck{flex:none;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;
+  color:var(--ok);background:rgba(57,224,160,.12);border:1px solid rgba(57,224,160,.3);font-size:11px;font-weight:800}
+ul.li li b{color:var(--ink)}
+
+.roadmap{display:flex;flex-direction:column;gap:8px}
+.rm{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border-soft);
+  border-radius:10px;padding:11px 14px}
+.rm .rn{flex:none;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-family:var(--mono);
+  font-weight:800;font-size:12px;color:var(--teal);background:rgba(35,210,215,.1);border:1px solid rgba(35,210,215,.3)}
+.rm.cur{border-color:var(--teal);box-shadow:0 0 22px -10px var(--teal)}
+.rm .rname{font-weight:700;font-size:13px}
+.rm .rwhat{color:var(--dim);font-size:11.5px;margin-top:1px}
+.rm .now{margin-left:auto;font-family:var(--mono);font-size:8.5px;color:var(--teal);
+  border:1px solid rgba(35,210,215,.4);border-radius:5px;padding:3px 7px;letter-spacing:.5px}
+
+@media(max-width:860px){.cards.c2,.cards.c3{grid-template-columns:1fr}.layer{flex-direction:column;gap:8px}.layer .lh{width:auto}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><span class="orb"></span> Studio DS <span class="sep">/</span></div>
+  <span class="sub">Fundación + Vertical Slice · Trace/Log</span>
+  <span class="badge-demo">SPEC · 2026-06-29</span>
+</header>
+
+<div class="wrap">
+
+  <div class="lead">Un DS de estudio <span class="accent">agent-ops</span>, multi-marca, sobre React + Radix</div>
+  <p class="sublead">Formaliza la base <code style="font-family:var(--mono);color:var(--review)">.ox</code> en una arquitectura de tokens en capas, reconstruye los patrones como componentes Radix-based gobernados, y preserva la estética WebGL como capa creativa opt-in. Misma calidad para tus productos internos de agentes IA y para tus clientes.</p>
+  <div class="meta-row">
+    <span class="chip">Enfoque · <b>B — monorepo día 1</b></span>
+    <span class="chip">Stack · <b>React · TS · Tailwind v4 · Radix · shadcn</b></span>
+    <span class="chip">Primer slice · <b>Trace/Log timeline</b></span>
+    <span class="chip ok">Estado · Aprobado (diseño)</span>
+  </div>
+
+  <!-- 1 distribución -->
+  <section class="sec">
+    <div class="sec-h"><span class="n">01</span> Modelo de distribución</div>
+    <div class="cards c3">
+      <div class="card tealtop"><h4>Un dueño, una arquitectura</h4><div class="tag">studio ds</div><p>Tú mantienes una sola capa de componentes. Sin comité — gobernanza = tus convenciones, enforced por lint + tests.</p></div>
+      <div class="card tealtop"><h4>Temas intercambiables</h4><div class="tag">white-label</div><p>Marca propia "cockpit" + un tema por cliente/producto. Cambiar de marca = cambiar <code style="font-family:var(--mono)">data-theme</code>, cero cambios en componentes.</p></div>
+      <div class="card tealtop"><h4>Mismo DS, dos mundos</h4><div class="tag">interno + cliente</div><p>Tus herramientas de agentes IA y tus entregables de cliente comparten la misma calidad y los mismos componentes.</p></div>
+    </div>
+  </section>
+
+  <!-- 2 monorepo -->
+  <section class="sec">
+    <div class="sec-h"><span class="n">02</span> Arquitectura monorepo</div>
+<pre class="code"><span class="t">design-system/</span>
+├─ <span class="k">packages/</span>
+│  ├─ <span class="k">tokens/</span>         <span class="c"># fuente → Style Dictionary → CSS vars/tema + TS types + preset Tailwind</span>
+│  ├─ <span class="k">ui/</span>             <span class="c"># React + Radix, variantes cva → </span><span class="s">@studio/ui</span><span class="c"> (publicado)</span>
+│  ├─ <span class="k">webgl/</span>          <span class="c"># avatares shader (NeuralCore), lazy → </span><span class="s">@studio/webgl</span>
+│  ├─ <span class="k">tsconfig/</span>       <span class="c"># config TS compartida</span>
+│  └─ <span class="k">eslint-config/</span>  <span class="c"># lint compartido (regla "no hex crudo")</span>
+├─ <span class="k">apps/</span>
+│  └─ <span class="k">docs/</span>           <span class="c"># Storybook (dev + addon a11y); showcase custom luego</span>
+├─ pnpm-workspace.yaml
+└─ turbo.json</pre>
+    <div class="callout teal"><b>Tooling:</b> pnpm workspaces · Turborepo (pipeline cacheado) · tsup (build) · Changesets (semver + publish) · Vitest + Testing Library + axe · Style Dictionary (tokens).</div>
+  </section>
+
+  <!-- 3 tokens -->
+  <section class="sec">
+    <div class="sec-h"><span class="n">03</span> Arquitectura de tokens — endurecida por panel multi-lente</div>
+    <div class="callout teal" style="margin-top:0;margin-bottom:16px"><b>Panel de 5 críticos (a11y · ciencia del color · arquitectura · estética · escala).</b> La paleta se autora en <b>OKLCH</b> (+ fallback hex), neutros anclados a un solo hue, status con paridad de luminancia, glow tokenizado, y contraste garantizado por CI. Mismo look cockpit — ahora con sistema.</div>
+
+    <div class="layer">
+      <div class="lh"><div class="lname">primitive<span class="mono">OKLCH · constante</span></div></div>
+      <div class="lbody"><b style="color:var(--ink)">Rampas de rol</b> (L/C fijos por uso, hue variable): emphasis L.80/C.15 · solid L.70/C.17 · deep L.55/C.14 · tint L.25/C.045. Neutros a un solo hue (285), ΔL≈0.04 uniforme. + spacing, radii, fuentes, motion, z, glow-seeds.
+        <div class="sw-row">
+          <span class="sw"><i style="background:#23d2d7"></i>teal H198</span>
+          <span class="sw"><i style="background:#8f9bff"></i>indigo H275</span>
+          <span class="sw"><i style="background:#5fe3e6"></i>glow-seed L.88</span>
+          <span class="sw"><i style="background:#191a1f"></i>neutral H285</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="layer" style="border-left:3px solid var(--teal)">
+      <div class="lh"><div class="lname">semantic<span class="mono">por tema · cuádruplas</span></div></div>
+      <div class="lbody"><b style="color:var(--ink)">La capa que cambia por marca.</b> Cada acento/status = cuádrupla <code style="font-family:var(--mono);color:var(--review)">solid / on / surface / border</code> (color-mix), no un hex suelto.
+        <div class="sw-row">
+          <span class="sw"><i style="background:#23d2d7"></i>--accent</span>
+          <span class="sw"><i style="background:#8f9bff"></i>--accent-secondary</span>
+          <span class="sw"><i style="background:#39E0A0"></i>--ok</span>
+          <span class="sw"><i style="background:#6cb8ff"></i>--review ✓</span>
+          <span class="sw"><i style="background:#E8961A"></i>--warn ✓</span>
+          <span class="sw"><i style="background:#ff6b78"></i>--block ✓</span>
+          <span class="sw"><i style="background:#6b7384"></i>--info</span>
+          <span class="sw"><i style="background:#7b8799"></i>--faint ✓ AA</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="layer">
+      <div class="lh"><div class="lname">component<span class="mono">scoped · opcional</span></div></div>
+      <div class="lbody">Solo cuando semantic no cubre un hook de override. Ej. <code style="font-family:var(--mono);color:var(--review)">--log-row-border</code>.</div>
+    </div>
+
+    <!-- nuevos grupos -->
+    <div class="cards c3" style="margin-top:12px">
+      <div class="card tealtop"><h4>Glow · 2 ejes</h4><div class="tag">el alma, tokenizada</div><p><code style="font-family:var(--mono)">--elevation-0..4</code> (negro, oclusión) ⊥ <code style="font-family:var(--mono)">--glow-*</code> (color, actividad). Seed más claro que el accent o el halo sale turbio.</p>
+        <div style="margin-top:10px;height:34px;border-radius:8px;background:var(--surface);box-shadow:0 0 0 1px color-mix(in oklab,var(--teal) 38%,transparent),0 0 14px -2px color-mix(in oklab,var(--glow-seed) 60%,transparent),0 0 34px -6px color-mix(in oklab,var(--glow-seed) 42%,transparent)"></div>
+      </div>
+      <div class="card tealtop"><h4>Estados</h4><div class="tag">faltaban</div><p><code style="font-family:var(--mono)">--ring</code> (=accent) · hover/active (color-mix) · <code style="font-family:var(--mono)">--surface-hover</code> · <code style="font-family:var(--mono)">--disabled-*</code>. Sin esto <code style="font-family:var(--mono)">:focus-visible</code> + axe rompen día 1.</p></div>
+      <div class="card tealtop"><h4>Surfaces 0–3</h4><div class="tag">mata hex huérfanos</div><p><code style="font-family:var(--mono)">--surface-0..3</code> + header/sunken, cada uno con su par borde+elevación. Adiós a <code style="font-family:var(--mono)">#0e0f12</code>, <code style="font-family:var(--mono)">#0a0b10</code>…</p></div>
+      <div class="card indigotop"><h4>Categórica viz</h4><div class="tag">charts ≠ status</div><p><code style="font-family:var(--mono)">--viz-1..8</code> de los 10 cores, L-igualada, <b>excluyendo bandas de status</b> → una serie nunca se lee como un estado.</p>
+        <div class="sw-row" style="margin-top:10px">
+          <span class="sw" style="padding:4px"><i style="background:#2ad6db"></i></span><span class="sw" style="padding:4px"><i style="background:#9d72ff"></i></span><span class="sw" style="padding:4px"><i style="background:#ff6a3d"></i></span><span class="sw" style="padding:4px"><i style="background:#4d9bff"></i></span><span class="sw" style="padding:4px"><i style="background:#ff5cf0"></i></span><span class="sw" style="padding:4px"><i style="background:#b9b6f5"></i></span>
+        </div>
+      </div>
+      <div class="card indigotop"><h4>Gobernanza themeable</h4><div class="tag">$extensions</div><p>Flag <code style="font-family:var(--mono)">studio.themeable</code> genera <code style="font-family:var(--mono)">[data-theme]</code> + tipos TS + <code style="font-family:var(--mono)">@theme</code>. Allowlist vs locked (hue de status = solo L).</p></div>
+      <div class="card indigotop"><h4>CI de contraste</h4><div class="tag">vitest + culori</div><p>Por tema: fg×surface ≥4.5 · border ≥3.0 · separación CVD ≥1.5. Un swap de marca <b>no puede</b> regresar a11y.</p></div>
+    </div>
+
+    <div class="callout"><b>🔴 Crítico — <code style="font-family:var(--mono)">@theme inline</code>:</b> con <code style="font-family:var(--mono)">@theme</code> normal Tailwind v4 resuelve el hex en build → pisar <code style="font-family:var(--mono)">--accent</code> en <code style="font-family:var(--mono)">[data-theme]</code> <b>no hace nada</b> (theming muerto, criterio #8 falla en silencio). <code style="font-family:var(--mono)">@theme inline</code> emite <code style="font-family:var(--mono)">var(--token)</code>. Temas exhaustivos (set completo, no diffs) + <code style="font-family:var(--mono)">color-scheme</code> por tema + <code style="font-family:var(--mono)">data-theme</code> en SSR (sin flash).</div>
+
+    <div class="callout teal"><b>Cambios visibles de la paleta:</b> <code style="font-family:var(--mono)">review</code> deja el cian (≡ teal, contraste 1.06) → azul <code style="font-family:var(--mono)">#6cb8ff</code> · <code style="font-family:var(--mono)">faint</code> sube a AA <code style="font-family:var(--mono)">#7b8799</code> · <code style="font-family:var(--mono)">warn</code> ámbar más profundo <code style="font-family:var(--mono)">#E8961A</code> · <code style="font-family:var(--mono)">block</code> sube luminosidad <code style="font-family:var(--mono)">#ff6b78</code> · <code style="font-family:var(--mono)">--on-accent</code> deja de estar hardcodeado. Todo lo demás idéntico.</div>
+  </section>
+
+  <!-- 4 modelo de componente -->
+  <section class="sec">
+    <div class="sec-h"><span class="n">04</span> Modelo de componente — convención que todos siguen</div>
+    <p class="p" style="margin-bottom:14px">Headless + Radix · partes compuestas (<code>X.Root / X.Item</code>) · <code>forwardRef</code> · <code>asChild</code> · <code>data-state</code> para estilar · variantes <code>cva</code> · estilo atado a tokens semantic (<b>nunca hex crudo</b>). La gobernanza vive co-localizada — esto <b>es</b> "átomos con gobernanza + copy":</p>
+    <div class="folder">
+      <div class="frow"><span class="fname">trace-log.tsx</span><span class="fwhat">implementación del compound component</span></div>
+      <div class="frow"><span class="fname">trace-log.variants.ts</span><span class="fwhat">cva — variant / size / tone</span></div>
+      <div class="frow"><span class="fname">trace-log.stories.tsx</span><span class="fwhat">Storybook — un estado por story (spec viviente)</span></div>
+      <div class="frow"><span class="fname">trace-log.test.tsx</span><span class="fwhat">vitest + axe (gate de a11y)</span></div>
+      <div class="frow"><span class="fname">copy.ts</span><span class="fwhat">strings / claves i18n — cero texto hardcodeado</span></div>
+      <div class="frow"><span class="fname">README.md</span><span class="fwhat">API · contrato a11y · do / don't</span></div>
+    </div>
+  </section>
+
+  <!-- 5 trace/log LIVE -->
+  <section class="sec">
+    <div class="sec-h"><span class="n">05</span> Vertical slice — Trace/Log timeline (mockup en vivo)</div>
+    <div class="demo-frame">
+      <div class="demo-label">render real · estilo cockpit · 5 tones + row expandida + streaming</div>
+      <div class="ox-sec-card">
+        <div class="ox-sec-card-h"><span>● Pipeline de una consulta</span><span class="hint">tu lista → mapa</span></div>
+        <div class="ox-log">
+          <div class="ox-log-row is-info">
+            <div class="ox-log-meta"><span class="ox-log-agent"><span class="dot"></span>PARSER</span><span>paso 1</span></div>
+            <div class="ox-log-text">Lee las líneas <code>predio, estatus</code> del textarea y arma la lista única de IDs. <span class="chev" onclick="this.closest('.ox-log-row').querySelector('.detail').style.display = this.closest('.ox-log-row').querySelector('.detail').style.display==='none'?'block':'none'">▾ detalle</span>
+              <div class="detail" style="display:none">Radix <b style="color:var(--ink)">Collapsible</b> — operable por teclado. 142 líneas → 138 IDs únicos tras dedupe.</div>
+            </div>
+          </div>
+          <div class="ox-log-row is-review">
+            <div class="ox-log-meta"><span class="ox-log-agent"><span class="dot"></span>FETCH</span><span>paso 2</span></div>
+            <div class="ox-log-text">Una llamada <code>fetch()</code> a GeoQuito: <code>where=predio IN(...)&amp;outSR=4326</code>.</div>
+          </div>
+          <div class="ox-log-row is-ok">
+            <div class="ox-log-meta"><span class="ox-log-agent"><span class="dot"></span>ARCGIS</span><span>12:04:01</span></div>
+            <div class="ox-log-text">Quito responde el GeoJSON ya en lat/lon.</div>
+          </div>
+          <div class="ox-log-row is-warn">
+            <div class="ox-log-meta"><span class="ox-log-agent"><span class="dot"></span>COLOR</span><span>paso 4</span></div>
+            <div class="ox-log-text">Pinta cada polígono según estatus; 3 predios sin geometría → listados como faltantes.</div>
+          </div>
+          <div class="ox-log-row is-block">
+            <div class="ox-log-meta"><span class="ox-log-agent"><span class="dot"></span>VALIDATE</span><span>error</span></div>
+            <div class="ox-log-text">Predio <code>142099</code> no existe en la capa 14.</div>
+          </div>
+          <div class="ox-log-row is-info">
+            <div class="ox-log-meta"><span class="ox-log-agent"><span class="dot"></span>LEAFLET</span><span><span class="stream-tag">● streaming</span></span></div>
+            <div class="ox-log-text">fitBounds al conjunto + popup… <span style="color:var(--faint)">appendando en vivo (aria-live)</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="tones">
+        <span class="tone"><i style="background:var(--track)"></i>info</span>
+        <span class="tone"><i style="background:var(--ok)"></i>ok</span>
+        <span class="tone"><i style="background:var(--review)"></i>review</span>
+        <span class="tone"><i style="background:var(--warn)"></i>warn</span>
+        <span class="tone"><i style="background:var(--block)"></i>block</span>
+      </div>
+    </div>
+<pre class="code" style="margin-top:14px"><span class="t">&lt;TraceLog.Root</span> <span class="k">density</span>=<span class="s">"comfortable"</span><span class="t">&gt;</span>
+  <span class="t">&lt;TraceLog.Header</span> <span class="k">title</span>=<span class="s">"Pipeline de una consulta"</span> <span class="k">hint</span>=<span class="s">"tu lista → mapa"</span> <span class="t">/&gt;</span>
+  <span class="t">&lt;TraceLog.Body&gt;</span>
+    <span class="t">&lt;TraceLog.Row</span> <span class="k">tone</span>=<span class="s">"info"</span> <span class="k">agent</span>=<span class="s">"PARSER"</span> <span class="k">step</span>=<span class="s">"paso 1"</span><span class="t">&gt;</span>
+      Lee las líneas <span class="t">&lt;TraceLog.Code&gt;</span>predio, estatus<span class="t">&lt;/TraceLog.Code&gt;</span>…
+      <span class="t">&lt;TraceLog.Detail&gt;</span><span class="c">{/* Radix Collapsible */}</span><span class="t">&lt;/TraceLog.Detail&gt;</span>
+    <span class="t">&lt;/TraceLog.Row&gt;</span>
+    <span class="t">&lt;TraceLog.Row</span> <span class="k">tone</span>=<span class="s">"ok"</span> <span class="k">agent</span>=<span class="s">"ARCGIS"</span> <span class="k">timestamp</span>=<span class="s">"12:04:01"</span><span class="t">&gt;</span>…<span class="t">&lt;/TraceLog.Row&gt;</span>
+  <span class="t">&lt;/TraceLog.Body&gt;</span>
+<span class="t">&lt;/TraceLog.Root&gt;</span></pre>
+    <div class="callout teal"><b>Primitives Radix:</b> Collapsible (rows expandibles) + ScrollArea (logs largos). <b>a11y:</b> <code style="font-family:var(--mono)">role="log"</code> + <code style="font-family:var(--mono)">aria-live="polite"</code> en streaming; severidad <b>no solo color</b> (icono + label). <b>Estados:</b> default · hover · expanded · empty · streaming · truncated.</div>
+  </section>
+
+  <!-- 6 webgl -->
+  <section class="sec">
+    <div class="sec-h"><span class="n">06</span> Integración WebGL — creatividad opt-in</div>
+    <div class="cards c3">
+      <div class="card indigotop"><h4>Aislado + lazy</h4><div class="tag">packages/webgl</div><p>Entry separado, import dinámico. El core <code style="font-family:var(--mono)">ui</code> queda ligero — cero GLSL en ruta crítica.</p></div>
+      <div class="card indigotop"><h4>Un solo loop</h4><div class="tag">rAF compartido</div><p>Registry de shaders (tus 10 + extensible). Todas las instancias comparten un <code style="font-family:var(--mono)">requestAnimationFrame</code>.</p></div>
+      <div class="card indigotop"><h4>Respeta motion</h4><div class="tag">a11y</div><p><code style="font-family:var(--mono)">prefers-reduced-motion</code> → frame estático. Lo consume el futuro AgentCard, no Trace/Log.</p></div>
+    </div>
+  </section>
+
+  <!-- 7 user flow -->
+  <section class="sec">
+    <div class="sec-h"><span class="n">07</span> User flow — dev (consumidor) + end-user</div>
+    <div class="flow-wrap">
+      <svg class="flow-svg" viewBox="0 0 1120 340" role="img" aria-label="Flujos de usuario">
+        <defs><marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5a6478"/></marker></defs>
+
+        <!-- DEV flow row -->
+        <text x="20" y="28" class="fsub" style="fill:#23d2d7">DEV · consume el DS</text>
+        <path class="fedge" d="M180 70 H210"/><path class="fedge" d="M390 70 H420"/>
+        <path class="fedge" d="M600 70 H630"/><path class="fedge" d="M810 70 H840"/>
+        <g style="--c:var(--teal)"><rect class="fnode" x="20" y="44" width="160" height="52" rx="12"/><text class="ftxt" x="100" y="68" text-anchor="middle">pnpm add</text><text class="fsub" x="100" y="85" text-anchor="middle">@studio/ui · tokens</text></g>
+        <g style="--c:var(--indigo)"><rect class="fnode" x="210" y="44" width="180" height="52" rx="12"/><text class="ftxt" x="300" y="68" text-anchor="middle">set data-theme</text><text class="fsub" x="300" y="85" text-anchor="middle">marca / cliente</text></g>
+        <g style="--c:var(--review)"><rect class="fnode" x="420" y="44" width="180" height="52" rx="12"/><text class="ftxt" x="510" y="68" text-anchor="middle">import TraceLog</text><text class="fsub" x="510" y="85" text-anchor="middle">desde @studio/ui</text></g>
+        <g style="--c:var(--teal)"><rect class="fnode" x="630" y="44" width="180" height="52" rx="12"/><text class="ftxt" x="720" y="68" text-anchor="middle">componer</text><text class="fsub" x="720" y="85" text-anchor="middle">Root·Header·Row</text></g>
+        <g style="--c:var(--ok)"><rect class="fnode" x="840" y="44" width="160" height="52" rx="12"/><text class="ftxt" x="920" y="72" text-anchor="middle">ship</text></g>
+
+        <!-- END-USER flow row -->
+        <text x="20" y="180" class="fsub" style="fill:#7c8cff">END-USER · usa el Trace/Log</text>
+        <path class="fedge" d="M180 222 H210"/>
+        <path class="fedge" d="M390 222 C 430 222, 440 222, 450 200"/>
+        <path class="fedge" d="M390 222 C 430 222, 440 222, 450 252"/>
+        <path class="fedge" d="M610 188 C 660 188, 670 200, 672 214"/>
+        <path class="fedge" d="M610 262 C 660 262, 670 250, 672 236"/>
+        <path class="fedge" d="M820 222 H850"/>
+        <g style="--c:var(--teal)"><rect class="fnode" x="20" y="196" width="160" height="52" rx="12"/><text class="ftxt" x="100" y="220" text-anchor="middle">ver log</text><text class="fsub" x="100" y="237" text-anchor="middle">rows por severidad</text></g>
+        <g><path class="fdec" d="M300 196 L390 222 L300 248 L210 222 Z"/><text class="ftxt" x="300" y="220" text-anchor="middle" style="font-size:12px">¿proceso</text><text class="ftxt" x="300" y="234" text-anchor="middle" style="font-size:12px">vivo?</text></g>
+        <g style="--c:var(--ok)"><rect class="fnode" x="450" y="162" width="160" height="50" rx="12"/><text class="ftxt" x="530" y="184" text-anchor="middle" style="font-size:12px">streaming</text><text class="fsub" x="530" y="201" text-anchor="middle">append · aria-live</text></g>
+        <g style="--c:var(--indigo)"><rect class="fnode" x="450" y="238" width="160" height="50" rx="12"/><text class="ftxt" x="530" y="260" text-anchor="middle" style="font-size:12px">expandir row</text><text class="fsub" x="530" y="277" text-anchor="middle">Collapsible · detalle</text></g>
+        <g style="--c:var(--review)"><rect class="fnode" x="672" y="196" width="148" height="52" rx="12"/><text class="ftxt" x="746" y="220" text-anchor="middle" style="font-size:12px">inspeccionar</text><text class="fsub" x="746" y="237" text-anchor="middle">leer · scroll</text></g>
+        <g style="--c:var(--block)"><rect class="fnode" x="850" y="196" width="150" height="52" rx="12"/><text class="ftxt" x="925" y="220" text-anchor="middle" style="font-size:12px">empty / truncated</text><text class="fsub" x="925" y="237" text-anchor="middle">estado borde</text></g>
+      </svg>
+      <div class="flow-leg">
+        <span><i style="background:var(--teal)"></i>Entrada / acción</span>
+        <span><i style="background:var(--indigo)"></i>Paso</span>
+        <span><i style="background:var(--warn)"></i>Decisión</span>
+        <span><i style="background:var(--ok)"></i>Éxito / vivo</span>
+        <span><i style="background:var(--block)"></i>Estado borde</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 done -->
+  <section class="sec">
+    <div class="sec-h"><span class="n">08</span> Criterios de "done" del slice</div>
+    <ul class="li">
+      <li><span class="ck">✓</span><span>Renderiza los <b>5 tones</b> con su color de borde correcto.</span></li>
+      <li><span class="ck">✓</span><span>Rows <b>expanden/colapsan</b> por mouse y teclado (Radix Collapsible).</span></li>
+      <li><span class="ck">✓</span><span>Soporta <b>streaming</b> (append en vivo) con <code>aria-live="polite"</code>.</span></li>
+      <li><span class="ck">✓</span><span>Maneja estados <b>empty</b> y <b>truncated</b>.</span></li>
+      <li><span class="ck">✓</span><span>Pasa <b>axe</b> sin violaciones.</span></li>
+      <li><span class="ck">✓</span><span>Tiene <b>story por estado</b> en Storybook.</span></li>
+      <li><span class="ck">✓</span><span>Consume <b>solo tokens semantic</b> (lint sin hex crudo).</span></li>
+      <li><span class="ck">✓</span><span>Idéntico bajo <code>data-theme="cockpit"</code> y un <b>segundo tema</b> de prueba.</span></li>
+    </ul>
+  </section>
+
+  <!-- 9 roadmap -->
+  <section class="sec">
+    <div class="sec-h"><span class="n">09</span> Descomposición / roadmap</div>
+    <div class="roadmap">
+      <div class="rm cur"><span class="rn">1</span><div><div class="rname">Fundación + Trace/Log</div><div class="rwhat">monorepo · tokens · modelo de componente · primer slice</div></div><span class="now">ESTE SPEC</span></div>
+      <div class="rm"><span class="rn">2</span><div><div class="rname">Status system</div><div class="rwhat">tokens status · Badge · StatusDot · Legend editable</div></div></div>
+      <div class="rm"><span class="rn">3</span><div><div class="rname">WebGL core + AgentCard</div><div class="rwhat">packages/webgl · NeuralCore · AgentCard</div></div></div>
+      <div class="rm"><span class="rn">4</span><div><div class="rname">Capa de datos</div><div class="rwhat">MetricCard · DataTable · Stat</div></div></div>
+      <div class="rm"><span class="rn">5</span><div><div class="rname">Orquestación</div><div class="rwhat">FlowDiagram · OrchestrationView</div></div></div>
+      <div class="rm"><span class="rn">6</span><div><div class="rname">Templates / UIs conjuntas</div><div class="rwhat">cockpit shell · layouts compuestos</div></div></div>
+    </div>
+  </section>
+
+  <div style="text-align:center;font-size:10.5px;color:var(--faint);margin-top:44px">
+    Studio DS · spec de fundación — 2026-06-29 · fuente de verdad: <span class="mono">2026-06-29-design-system-foundation-design.md</span>
+  </div>
+
+</div>
+</body>
+</html>

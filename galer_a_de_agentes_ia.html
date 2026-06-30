@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA Agent Gallery - WebGL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-card: rgba(15, 15, 17, 0.7);
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --border-strong: rgba(255, 255, 255, 0.15);
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --font-sans: 'Geist', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 3rem;
+            /* Fondo sutil tipo malla cuántica */
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(30, 30, 40, 0.5), transparent 50%),
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #fff, #777);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .agent-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s;
+            cursor: crosshair;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-strong);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.03), transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Contenedor del Canvas WebGL */
+        .canvas-container {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            border-radius: 50%;
+            /* Glow base dinámico según el agente (se inyecta via JS) */
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .agent-id {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.05);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .agent-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .agent-role {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Modificador para el hover de cada tarjeta */
+        .agent-card:hover .agent-name {
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1.5rem; }
+            .gallery-grid { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Neural Cores</h1>
+        <p>10 WebGL Shaders • Fractional Brownian Motion & SDFs</p>
+    </header>
+
+    <div class="gallery-grid" id="gallery">
+        <!-- Las tarjetas se generan dinámicamente -->
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. CONFIGURACIÓN DE LOS 10 AGENTES (SHADERS)
+        // ==========================================
+        
+        // El bloque común de GLSL para FBM, ruido y variables globales
+        const shaderPreamble = `
+            #ifdef GL_ES
+            precision highp float;
+            #endif
+
+            uniform float u_time;
+            uniform vec2 u_resolution;
+            uniform float u_activity;
+
+            // Funciones matemáticas comunes para texturas orgánicas
+            float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+            
+            float noise(vec2 p) {
+                vec2 i = floor(p); vec2 f = fract(p); vec2 u = f*f*(3.0-2.0*f);
+                return mix(mix(hash(i+vec2(0.0,0.0)), hash(i+vec2(1.0,0.0)), u.x),
+                           mix(hash(i+vec2(0.0,1.0)), hash(i+vec2(1.0,1.0)), u.x), u.y);
+            }
+            
+            float fbm(vec2 p) {
+                float v = 0.0; float a = 0.5; mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));
+                for (int i = 0; i < 5; i++) { v += a * noise(p); p = rot * p * 2.0 + vec2(100.0); a *= 0.5; }
+                return v;
+            }
+        `;
+
+        // Plantilla principal (Main) que envuelve el código específico de cada agente
+        const getFragmentShader = (getColorFunction) => `
+            ${shaderPreamble}
+            
+            ${getColorFunction}
+
+            void main() {
+                // Normalizar coordenadas (-1 a 1)
+                vec2 uv = (gl_FragCoord.xy * 2.0 - u_resolution.xy) / u_resolution.y;
+                float d = length(uv);
+                
+                // Recorte circular estricto
+                if (d > 1.0) {
+                    gl_FragColor = vec4(0.0);
+                    return;
+                }
+
+                // Obtener el color del shader específico
+                vec3 col = getColor(uv, u_time, u_activity, d);
+
+                // Viñeteado 3D base para dar volumen de esfera a todos
+                col *= smoothstep(1.0, 0.3, d) * 0.8 + 0.4;
+
+                // Antialiasing del borde
+                float alpha = smoothstep(1.0, 0.96, d);
+                
+                gl_FragColor = vec4(col * alpha, alpha);
+            }
+        `;
+
+        // Array con los 10 agentes distintos
+        const agents = [
+            {
+                id: 'AE-01',
+                name: 'Aura Orchestrator',
+                role: 'Vórtice Cyan original. Analizador de flujos de datos estructurados.',
+                glow: 'rgba(35, 210, 215, 0.4)',
+                glsl: `
+                    vec3 getColor(vec2 uv, float t, float act, float d) {
+                        t *= (1.0 + act * 2.0);
+                        float angle = d * 2.0 - t * 0.5;
+                        float s = sin(angle), c = cos(angle);
+                        vec2 p = mat2(c, -s, s, c) * uv;
+                        
+                        float w = sin(p.x*6.+t)*cos(p.y*6.-t)*0.5 + sin(p.x*4.-t*1.5)*cos(p.y*4.+t*1.2)*0.5 + 0.5;
+                        vec3 base = mix(vec3(0.02, 0.08, 0.12), vec3(0.13, 0.82, 0.84), w);
+                        
+                        float core = smoothstep(0.7, 0.0, d);
+                        base = mix(base, vec3(0.9, 1.0, 1.0), pow(core, 2.0 - act) * (0.3 + act * 0.7));
+                        
+                        float rim = smoothstep(0.85, 0.98, d) * smoothstep(1.0, 0.95, d);
+                        return base + vec3(0.13, 0.82, 0.84) * rim * (1.0 + act * 1.5);
+                    }
+                `
+            },
+            {
+                id: 'IG-02',
+                name: 'Ignis Prime',
+                role: 'Plasma termodinámico. Se encarga de procesos de alta latencia y purga.',
+                glow: 'rgba(255, 60, 0, 0.4)',
+                glsl: `
+                    vec3 getColor(vec2 uv, float t, float act, float d) {
+                        t *= (1.5 + act * 3.0);
+                        vec2 p = uv * (3.0 - act);
+                        float q = fbm(p - t * 0.4);
+                        float r = fbm(p + q + t * 0.3);
+                        float f = fbm(p + r);
+                        
+                        vec3 dark = vec3(0.1, 0.0, 0.0);
+                        vec3 fire = vec3(1.0, 0.3, 0.0);
+                        vec3 coreC = vec3(1.0, 0.9, 0.2);
+                        
+                        vec3 col = mix(dark, fire, f * 1.5);
+                        float core = smoothstep(0.8, 0.0, d) * f;
+                        col = mix(col, coreC, core * (1.0 + act));
+                        
+                        return col;
+                    }
+                `
+            },
+            {
+                id: 'NX-03',
+                name: 'Nexus Node',
+                role: 'Anomalía Voronoi. Modulador de redes neuronales cuánticas.',
+                glow: 'rgba(180, 40, 255, 0.4)',
+                glsl: `
+                    vec3 getColor(vec2 uv, float t, float act, float d) {
+                        t *= (0.5 + act * 1.5);
+                        vec2 p = uv * 5.0;
+                        float n = sin(p.x + t) * cos(p.y - t) + sin(p.x*1.5 - t*1.2) * cos(p.y*1.5 + t*0.8);
+                        n = smoothstep(0.0, 1.0, n * 0.5 + 0.5);
+                        
+                        vec3 dark = vec3(0.1, 0.0, 0.2);
+                        vec3 purple = vec3(0.7, 0.1, 1.0);
+                        vec3 pink = vec3(1.0, 0.2, 0.6);
+                        
+                        vec3 col = mix(dark, purple, n);
+                        col = mix(col, pink, smoothstep(0.8, 1.0, n) * (0.5 + act));
+                        
+                        float rim = smoothstep(0.7, 1.0, d);
+                        return col + pink * rim * (0.5 + act * 1.0);
+                    }
+                `
+            },
+            {
+                id: 'CP-04',
+                name: 'Cipher Sentinel',
+                role: 'Anillos topológicos. Encriptación en tiempo real y seguridad.',
+                glow: 'rgba(0, 255, 100, 0.4)',
+                glsl: `
+                    vec3 getColor(vec2 uv, float t, float act, float d) {
+                        t *= (1.0 + act * 5.0);
+                        float r = d * 10.0;
+                        float rings = sin(r - t) * sin(r * 2.0 + t * 0.5);
+                        
+                        // Efecto "glitch"
+                        float glitch = step(0.9, hash(uv + t)) * act;
+                        rings += glitch * 2.0;
+                        
+                        vec3 bg = vec3(0.0, 0.1, 0.0);
+                        vec3 matrix = vec3(0.0, 1.0, 0.4);
+                        
+                        vec3 col = mix(bg, matrix, smoothstep(0.0, 0.2, rings));
+                        
+                        float core = smoothstep(0.3, 0.0, d);
+                        return mix(col, vec3(1.0), core * (0.5 + act));
+                    }
+                `
+            },
+            {
+                id: 'VD-05',
+                name: 'Void Walker',
+                role: 'Agujero negro y disco de acreción. Limpiador de memoria.',
+                glow: 'rgba(50, 0, 100, 0.6)',
+                glsl: `
+                    vec3 getColor(vec2 uv, float t, float act, float d) {
+                        t *= (0.8 + act * 3.0);
+                        float angle = atan(uv.y, uv.x);
+                        float radius = d;
+                        
+                        // Disco de acreción giratorio
+                        float noiseVal = fbm(vec2(angle * 3.0 + t, radius * 10.0 - t));
+                        
+                        vec3 black = vec3(0.0);
+                        vec3 gold = vec3(0.9, 0.6, 0.1);
+                        vec3 violet = vec3(0.3, 0.0, 0.5);
+                        
+                        // Horizonte de eventos (negro absoluto en el centro)
+                        float eventHorizon = smoothstep(0.3, 0.35 - act*0.1, radius);
+                        
+                        vec3 col = mix(violet, gold, noiseVal);
+                        col *= eventHorizon; // Cortar el centro
+                        
+                        // Borde exterior brillante
+                        float rim = smoothstep(0.8, 1.0, radius);
+                        col += violet * rim * (1.0 + act);
+                        
+                        return col;
+                    }
+                `
+            },
+            {
+                id: 'SY-06',
+                name: 'Synapse Architect',
+                role: 'Tormenta eléctrica. Enrutador de decisiones de alta velocidad.',
+                glow: 'rgba(50, 150, 255, 0.5)',
+                glsl: `
+                    vec3 getColor(vec2 uv, float t, float act, float d) {
+                        t *= (2.0 + act * 4.0);
+                        vec2 p = uv * 3.0;
+                        
+                        // Ruido caótico para los "rayos"
+                        float f = fbm(p + fbm(p + t));
+                        // Convertir nubes de ruido en arcos afilados
+                        float lightning = abs(sin(f * 10.0)) / (f * 5.0);
+                        lightning = clamp(lightning, 0.0, 1.0);
+                        
+                        vec3 bg = vec3(0.01, 0.02, 0.1);
+                        vec3 bolt = vec3(0.2, 0.6, 1.0);
+                        vec3 flash = vec3(1.0, 1.0, 1.0);
+                        
+                        vec3 col = mix(bg, bolt, lightning * 0.8);
+                        col = mix(col, flash, smoothstep(0.8, 1.0, lightning) * (0.5 + act));
+                        
+                        return col;
+                    }
+                `
+            },
+            {
+                id: 'GA-07',
+                name: 'Gaia Catalyst',
+                role: 'Bioluminiscencia suave. Agente de regeneración y curación de código.',
+                glow: 'rgba(0, 255, 150, 0.3)',
+                glsl: `
+                    vec3 getColor(vec2 uv, float t, float act, float d) {
+                        t *= (0.3 + act * 1.5); // Movimiento orgánico lento
+                        vec2 p = uv * 2.0;
+                        
+                        float q = fbm(p - t * 0.2);
+                        float r = fbm(p + q + t * 0.1);
+                        
+                        vec3 dark = vec3(0.0, 0.15, 0.1);
+                        vec3 bio = vec3(0.0, 0.9, 0.5);
+                        vec3 coreC = vec3(0.8, 1.0, 0.6);
+                        
+                        vec3 col = mix(dark, bio, r);
+                        
+                        // Pulso respiratorio
+                        float breath = sin(t * 2.0) * 0.5 + 0.5;
+                        float core = smoothstep(0.6 + breath*0.1, 0.0, d);
+                        
+                        col = mix(col, coreC, core * (0.4 + act * 0.6));
+                        return col;
+                    }
+                `
+            },
+            {
+                id: 'TH-08',
+                name: 'Thread Weaver',
+                role: 'Túnel hiperespacial Synthwave. Transmisor a otras dimensiones.',
+                glow: 'rgba(255, 0, 255, 0.4)',
+                glsl: `
+                    vec3 getColor(vec2 uv, float t, float act, float d) {
+                        t *= (1.5 + act * 4.0);
+                        float angle = atan(uv.y, uv.x);
+                        float radius = d;
+                        
+                        // Líneas radiales que entran/salen
+                        float stripes = sin(angle * 12.0 + sin(t)*2.0) * 0.5 + 0.5;
+                        // Movimiento hacia adelante en el túnel
+                        float tunnel = fract(1.0 / (radius + 0.01) + t);
+                        
+                        vec3 bg = vec3(0.1, 0.0, 0.2);
+                        vec3 cyan = vec3(0.0, 1.0, 1.0);
+                        vec3 magenta = vec3(1.0, 0.0, 1.0);
+                        
+                        vec3 col = mix(bg, cyan, stripes * smoothstep(0.0, 0.5, tunnel));
+                        col = mix(col, magenta, (1.0-stripes) * smoothstep(0.5, 1.0, tunnel));
+                        
+                        // Destello central
+                        col += vec3(1.0) * smoothstep(0.2, 0.0, d) * (1.0 + act);
+                        return col;
+                    }
+                `
+            },
+            {
+                id: 'AX-09',
+                name: 'Anomaly X',
+                role: 'Metabola cromática. Adaptabilidad pura y polimorfismo.',
+                glow: 'rgba(200, 200, 255, 0.4)',
+                glsl: `
+                    vec3 getColor(vec2 uv, float t, float act, float d) {
+                        t *= (0.5 + act * 2.0);
+                        vec2 p = uv * 1.5;
+                        
+                        // Aberración cromática simulada desplazando el tiempo/espacio por canal
+                        float r = fbm(p + t);
+                        float g = fbm(p + t * 1.1 + 0.1);
+                        float b = fbm(p + t * 1.2 + 0.2);
+                        
+                        vec3 base = vec3(r, g, b);
+                        vec3 silver = vec3(0.8, 0.85, 0.9);
+                        
+                        // Mezclar el rgb desfasado con un plateado brillante
+                        vec3 col = mix(vec3(0.1), silver, length(base) * 0.6);
+                        
+                        // Brillos iridiscentes de alto contraste
+                        col += vec3(r*g, g*b, b*r) * 2.0 * (0.5 + act);
+                        
+                        return col;
+                    }
+                `
+            },
+            {
+                id: 'EC-10',
+                name: 'Echo Vanguard',
+                role: 'Resonancia armónica. Transforma ruido acústico en data estructurada.',
+                glow: 'rgba(255, 200, 50, 0.4)',
+                glsl: `
+                    vec3 getColor(vec2 uv, float t, float act, float d) {
+                        t *= (2.0 + act * 4.0);
+                        float r = d * 15.0; // Alta frecuencia
+                        float angle = atan(uv.y, uv.x);
+                        
+                        // Patrón tipo platillos de Chladni (ondas estacionarias)
+                        float wave = sin(r - t) * cos(angle * 6.0 + t);
+                        wave = abs(wave);
+                        
+                        vec3 bg = vec3(0.1, 0.05, 0.0);
+                        vec3 gold = vec3(1.0, 0.8, 0.2);
+                        vec3 white = vec3(1.0);
+                        
+                        vec3 col = mix(bg, gold, smoothstep(0.0, 0.2, wave));
+                        col = mix(col, white, smoothstep(0.8, 1.0, wave) * (0.5 + act));
+                        
+                        // Núcleo vibrante
+                        col += gold * smoothstep(0.3, 0.0, d) * (1.0 + act*2.0);
+                        
+                        return col;
+                    }
+                `
+            }
+        ];
+
+        // ==========================================
+        // 2. RENDERIZADOR WEBGL & INICIALIZACIÓN
+        // ==========================================
+        
+        const gallery = document.getElementById('gallery');
+        const renderQueue = []; // Almacena los contextos y variables para el loop de animación
+
+        function initAgent(agentConfig) {
+            // 1. Crear DOM
+            const card = document.createElement('div');
+            card.className = 'agent-card';
+
+            const canvasContainer = document.createElement('div');
+            canvasContainer.className = 'canvas-container';
+            canvasContainer.style.boxShadow = `0 0 30px ${agentConfig.glow}, inset 0 0 10px rgba(0,0,0,0.5)`;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 240; // Doble resolución para verse nítido (Retina)
+            canvas.height = 240;
+            
+            canvasContainer.appendChild(canvas);
+
+            const idTag = document.createElement('div');
+            idTag.className = 'agent-id';
+            idTag.innerText = agentConfig.id;
+
+            const nameTag = document.createElement('div');
+            nameTag.className = 'agent-name';
+            nameTag.innerText = agentConfig.name;
+
+            const roleTag = document.createElement('div');
+            roleTag.className = 'agent-role';
+            roleTag.innerText = agentConfig.role;
+
+            card.appendChild(canvasContainer);
+            card.appendChild(idTag);
+            card.appendChild(nameTag);
+            card.appendChild(roleTag);
+            
+            gallery.appendChild(card);
+
+            // 2. Inicializar WebGL
+            const gl = canvas.getContext('webgl', { antialias: false }); // Antialias en shader es más barato
+            if (!gl) return;
+
+            // Compilar Shaders
+            const vsSource = `attribute vec2 position; void main() { gl_Position = vec4(position, 0.0, 1.0); }`;
+            const fsSource = getFragmentShader(agentConfig.glsl);
+
+            const compileShader = (type, source) => {
+                const s = gl.createShader(type);
+                gl.shaderSource(s, source);
+                gl.compileShader(s);
+                if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+                    console.error("Error shader:", agentConfig.name, gl.getShaderInfoLog(s));
+                }
+                return s;
+            };
+
+            const program = gl.createProgram();
+            gl.attachShader(program, compileShader(gl.VERTEX_SHADER, vsSource));
+            gl.attachShader(program, compileShader(gl.FRAGMENT_SHADER, fsSource));
+            gl.linkProgram(program);
+            gl.useProgram(program);
+
+            // Geometría (Quad pantalla completa)
+            const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+            const buffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+            const posLoc = gl.getAttribLocation(program, "position");
+            gl.enableVertexAttribArray(posLoc);
+            gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+            // Uniforms
+            const locTime = gl.getUniformLocation(program, "u_time");
+            const locRes = gl.getUniformLocation(program, "u_resolution");
+            const locAct = gl.getUniformLocation(program, "u_activity");
+
+            // Estado de animación (para la inercia del hover)
+            const state = {
+                currentActivity: 0.0,
+                targetActivity: 0.0,
+                startTime: Date.now() + Math.random() * 1000 // Desfase aleatorio para que no sincronicen exacto
+            };
+
+            // Interacción Hover
+            card.addEventListener('mouseenter', () => state.targetActivity = 1.0);
+            card.addEventListener('mouseleave', () => state.targetActivity = 0.0);
+
+            // Añadir a la cola de render
+            renderQueue.push({
+                gl, program, canvas, locTime, locRes, locAct, state
+            });
+        }
+
+        // Generar todos los agentes
+        agents.forEach(initAgent);
+
+        // ==========================================
+        // 3. MASTER RENDER LOOP
+        // ==========================================
+        function renderLoop() {
+            const now = Date.now();
+
+            renderQueue.forEach(q => {
+                // Inercia suave (Easing)
+                q.state.currentActivity += (q.state.targetActivity - q.state.currentActivity) * 0.1;
+
+                const time = (now - q.state.startTime) / 1000;
+
+                q.gl.useProgram(q.program);
+                q.gl.uniform1f(q.locTime, time);
+                q.gl.uniform2f(q.locRes, q.canvas.width, q.canvas.height);
+                q.gl.uniform1f(q.locAct, q.state.currentActivity);
+
+                q.gl.drawArrays(q.gl.TRIANGLE_STRIP, 0, 4);
+            });
+
+            requestAnimationFrame(renderLoop);
+        }
+
+        // Iniciar motor gráfico
+        renderLoop();
+
+    </script>
+</body>
+</html>

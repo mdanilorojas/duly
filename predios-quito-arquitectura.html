@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Predios Quito · Cómo funciona — /oxteams</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ===========================================================================
+   /oxteams design system — Cockpit. Dark industrial. Tokens scopeados .ox
+=========================================================================== */
+.ox {
+  --bg: #07070a; --bg2: #0a0b0e; --surface: #111113; --raised: #16171b;
+  --border: #2e2e32; --border-soft: #1d2127;
+  --teal: #23d2d7; --indigo: #7c8cff;
+  --ink: #f0f0f2; --dim: #a0a0aa; --faint: #5a6478; --track: #23303a;
+  --ok: #39E0A0; --review: #5ad1ff; --warn: #FFB020; --block: #FF5C6A;
+  position: fixed; inset: 0; height: 100dvh; width: 100vw; overflow: hidden;
+  display: flex; flex-direction: column;
+  background: var(--bg); color: var(--ink);
+  font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.4;
+}
+.ox * { box-sizing: border-box; }
+.ox .mono { font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; }
+.ox button { font-family: inherit; color: inherit; }
+.ox ::-webkit-scrollbar { width: 7px; height: 7px; }
+.ox ::-webkit-scrollbar-thumb { background: #23303a; border-radius: 7px; }
+.ox ::-webkit-scrollbar-track { background: transparent; }
+.ox-grid { position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(circle, #16181d 1.3px, transparent 1.3px) 0 0 / 30px 30px,
+    radial-gradient(900px 520px at 78% -12%, rgba(35,210,215,.10), transparent 60%),
+    radial-gradient(760px 520px at -5% 112%, rgba(124,140,255,.07), transparent 60%); }
+
+/* Header */
+.ox-top { position: relative; z-index: 12; flex: none; height: 54px; display: flex; align-items: center; gap: 14px; padding: 0 16px; border-bottom: 1px solid var(--border); background: rgba(7,7,10,.92); backdrop-filter: blur(10px); }
+.ox-brand { display: flex; align-items: center; gap: 9px; }
+.ox-brand b { font-weight: 800; font-size: 13.5px; }
+.ox-brand .sep { color: var(--faint); }
+.ox-brand-iso { font-size: 12.5px; color: var(--dim); font-weight: 600; }
+.ox-top-ctx { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.ox-top-sub { font-size: 11.5px; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ox-demo { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .6px; color: var(--warn); background: rgba(255,176,32,.1); border: 1px solid rgba(255,176,32,.32); padding: 3px 8px; border-radius: 6px; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; flex: none; }
+.ox-top-right { display: flex; align-items: center; gap: 8px; flex: none; }
+.ox-btn { font-size: 12.5px; font-weight: 700; padding: 8px 14px; border-radius: 9px; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--dim); display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.ox-btn:hover { border-color: var(--teal); color: var(--ink); }
+.ox-btn.sm { padding: 6px 10px; font-size: 11.5px; }
+.ox-btn.primary { background: var(--teal); color: #042427; border-color: var(--teal); box-shadow: 0 0 22px -4px rgba(35,210,215,.45); }
+.ox-btn.block { width: 100%; justify-content: center; }
+
+/* Scroll body */
+.ox-main { position: relative; z-index: 1; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.ox-scroll { flex: 1; min-height: 0; overflow-y: auto; }
+.ox-pad { padding: 22px 26px 64px; max-width: 1160px; margin: 0 auto; }
+.ox-view-title { font-size: 23px; font-weight: 800; letter-spacing: -.015em; }
+.ox-view-sub { font-size: 13px; color: var(--dim); margin-top: 7px; max-width: 74ch; line-height: 1.6; }
+.doc-sec { margin-top: 32px; }
+.doc-sec-h { display: flex; align-items: center; gap: 9px; font-size: 11px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; color: var(--dim); margin-bottom: 14px; }
+.doc-sec-h .n { font-family: 'JetBrains Mono', monospace; color: var(--teal); font-size: 11px; }
+.doc-sec-h::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+
+/* Metrics */
+.ox-metrics { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.ox-metric { background: var(--surface); border: 1px solid var(--border-soft); border-radius: 10px; padding: 12px 13px; }
+.ox-metric-l { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: .3px; color: var(--faint); font-weight: 700; line-height: 1.3; text-transform: uppercase; }
+.ox-metric-v { font-family: 'JetBrains Mono', monospace; font-size: 21px; font-weight: 800; margin-top: 6px; display: flex; align-items: baseline; gap: 4px; }
+.ox-metric-v small { font-size: 11px; color: var(--dim); font-weight: 600; }
+
+/* Browser → servers model */
+.ox-arch-orch { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.ox-arch-orchcard { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-radius: 14px; background: rgba(35,210,215,.08); border: 1px solid rgba(35,210,215,.32); box-shadow: 0 0 30px -8px rgba(35,210,215,.4); }
+.ox-arch-agent-name { font-size: 13px; font-weight: 800; }
+.ox-arch-agent-code { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: .6px; }
+.ox-microorb { position: relative; width: 20px; height: 20px; flex: none; border-radius: 50%; background: radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--c, var(--teal)) 92%, #fff), var(--c, var(--teal)) 48%, transparent 73%); box-shadow: 0 0 10px -2px var(--c, var(--teal)); }
+.ox-microorb.lg { width: 30px; height: 30px; }
+.ox-arch-conn { width: 100%; height: 40px; }
+.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.srv { text-align: left; padding: 14px; border-radius: 13px; background: linear-gradient(165deg, #15161b, #0d0e12); border: 1px solid var(--border); border-top: 2px solid var(--c); transition: transform .15s, box-shadow .15s; }
+.srv:hover { transform: translateY(-3px); box-shadow: 0 0 26px -10px var(--c); }
+.srv-h { display: flex; align-items: center; gap: 10px; }
+.srv-ico { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border-radius: 9px; font-size: 16px; color: var(--c); background: color-mix(in srgb, var(--c) 13%, transparent); border: 1px solid color-mix(in srgb, var(--c) 28%, transparent); }
+.srv-name { font-size: 13px; font-weight: 800; }
+.srv-tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: .6px; text-transform: uppercase; color: var(--c); margin-top: 2px; }
+.srv-body { font-size: 11px; color: var(--dim); margin-top: 10px; line-height: 1.5; }
+.srv-url { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--review); margin-top: 10px; word-break: break-all; background: rgba(90,209,255,.06); border: 1px solid var(--border-soft); border-radius: 7px; padding: 7px 8px; line-height: 1.5; }
+
+/* Request anatomy */
+.reqbox { background: #0a0b10; border: 1px solid var(--border); border-radius: 12px; padding: 6px 16px 8px; }
+.req-get { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ok); font-weight: 700; padding: 11px 0 8px; display: block; border-bottom: 1px solid var(--border-soft); word-break: break-all; }
+.reqline { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; padding: 9px 0; border-bottom: 1px dashed var(--border-soft); }
+.reqline:last-child { border-bottom: 0; }
+.reqk { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--teal); }
+.reqv { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink); }
+.reqc { margin-left: auto; color: var(--faint); font-size: 11px; text-align: right; }
+
+/* Trace log */
+.ox-sec-card { background: var(--surface); border: 1px solid var(--border-soft); border-radius: 12px; overflow: hidden; }
+.ox-sec-card-h { display: flex; align-items: center; justify-content: space-between; gap: 7px; padding: 11px 14px; background: #0e0f12; border-bottom: 1px solid var(--border-soft); font-size: 10px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; color: var(--dim); }
+.ox-log { padding: 12px 14px; display: flex; flex-direction: column; gap: 12px; }
+.ox-log-row { border-left: 2px solid var(--c, var(--border)); padding-left: 12px; }
+.ox-log-row.is-info { --c: var(--track); } .ox-log-row.is-ok { --c: var(--ok); }
+.ox-log-row.is-warn { --c: var(--warn); } .ox-log-row.is-review { --c: var(--review); }
+.ox-log-meta { display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: .5px; color: var(--faint); text-transform: uppercase; }
+.ox-log-agent { color: var(--teal); font-weight: 700; }
+.ox-log-text { font-size: 12px; color: var(--ink); margin-top: 3px; line-height: 1.45; }
+.ox-log-text code, .step-b code, .ox-view-sub code { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--review); background: rgba(90,209,255,.08); padding: 1px 5px; border-radius: 4px; }
+
+/* Discovery steps */
+.steps { display: flex; flex-direction: column; gap: 12px; }
+.step { display: flex; gap: 13px; align-items: flex-start; }
+.step-n { flex: none; width: 27px; height: 27px; border-radius: 8px; display: grid; place-items: center; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 12px; color: var(--teal); background: rgba(35,210,215,.1); border: 1px solid rgba(35,210,215,.3); }
+.step-b { font-size: 12.5px; line-height: 1.55; color: var(--dim); padding-top: 3px; }
+.step-b b { color: var(--ink); }
+.step-b .bad { color: var(--block); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+/* Portability */
+.port { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.port-row { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-bottom: 1px solid var(--border-soft); font-size: 12.5px; }
+.port-row:last-child { border-bottom: 0; }
+.port-ico { flex: none; width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; font-size: 12px; font-weight: 800; }
+.port-yes .port-ico { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
+.port-warn .port-ico { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); }
+.port-row b { color: var(--ink); }
+.port-row .sub { color: var(--dim); display: block; margin-top: 3px; font-size: 11.5px; line-height: 1.5; }
+
+/* Doc rows */
+.ox-doc { border: 1px solid var(--border); border-left: 3px solid var(--teal); border-radius: 10px; overflow: hidden; }
+.ox-doc-row { display: flex; justify-content: space-between; gap: 16px; padding: 9px 13px; font-size: 11.5px; border-bottom: 1px solid var(--border-soft); }
+.ox-doc-row:last-child { border-bottom: 0; }
+.ox-doc-row span { color: var(--faint); font-weight: 600; flex: none; }
+.ox-doc-row b { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: right; color: var(--ink); font-weight: 600; word-break: break-word; }
+.ox-doc-row b.teal { color: var(--teal); } .ox-doc-row b.ok { color: var(--ok); }
+
+/* Status grid */
+.st-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+.st-card { display: flex; align-items: center; gap: 11px; background: var(--surface); border: 1px solid var(--border-soft); border-left: 3px solid var(--c); border-radius: 11px; padding: 11px 13px; }
+.st-sw { width: 26px; height: 26px; border-radius: 7px; flex: none; background: var(--c); box-shadow: 0 0 14px -3px var(--c); }
+.st-code { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: .5px; color: var(--faint); text-transform: uppercase; }
+.st-name { font-size: 12.5px; font-weight: 700; margin-top: 2px; line-height: 1.2; }
+.st-hex { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--c); margin-top: 2px; }
+
+/* Flow svg */
+.flow-wrap { background: var(--surface); border: 1px solid var(--border-soft); border-radius: 14px; padding: 14px; overflow-x: auto; }
+.flow-svg { width: 100%; min-width: 940px; height: auto; display: block; }
+.flow-svg .fnode { fill: #131419; stroke: var(--c, var(--teal)); stroke-width: 1.4; }
+.flow-svg .ftxt { fill: var(--ink); font: 700 13px 'Manrope', sans-serif; }
+.flow-svg .fsub { fill: var(--dim); font: 600 11px 'JetBrains Mono', monospace; }
+.flow-svg .fedge { fill: none; stroke: var(--track); stroke-width: 1.6; marker-end: url(#arrow); }
+.flow-svg .fdec { fill: #1a1408; stroke: var(--warn); stroke-width: 1.4; }
+.flow-leg { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; }
+.flow-leg span { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--dim); }
+.flow-leg i { width: 11px; height: 11px; border-radius: 3px; }
+
+.callout { margin-top: 14px; font-size: 12px; color: var(--dim); line-height: 1.6; background: rgba(124,140,255,.06); border: 1px solid rgba(124,140,255,.22); border-left: 3px solid var(--indigo); border-radius: 10px; padding: 12px 14px; }
+.callout b { color: var(--ink); }
+.callout.teal { background: rgba(35,210,215,.06); border-color: rgba(35,210,215,.26); border-left-color: var(--teal); }
+.ox-dotpulse { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex: none; background: var(--warn); }
+
+@media (max-width: 900px) {
+  .ox-metrics { grid-template-columns: repeat(2, 1fr); }
+  .three { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body class="ox">
+<div class="ox-grid"></div>
+
+<header class="ox-top">
+  <div class="ox-brand">
+    <svg height="24" viewBox="0 0 202 166" fill="none" aria-label="OxTeams" style="filter:drop-shadow(0 0 8px rgba(124,140,255,.4))">
+      <g clip-path="url(#oxc)">
+        <path d="M109.92 53.88L114.2 52.74V69.47C114.2 81.22 114.1 92.98 114.27 104.74C114.27 107.55 113.57 108.66 110.79 108.13C110.47 108.055 110.171 107.912 109.912 107.71C109.653 107.508 109.441 107.252 109.29 106.96C108.983 106.386 108.556 105.884 108.039 105.489C107.521 105.094 106.925 104.815 106.29 104.67C103.32 103.169 100.791 100.922 98.95 98.15C100.433 95.1853 101.093 91.8768 100.86 88.57C100.627 83.7857 100.643 78.9925 100.91 74.21C101.33 68.82 100.04 64.48 95.34 61.47C93.75 59.55 91.57 58.07 90.75 55.54C90.7027 55.0349 90.8573 54.5315 91.18 54.14C93.33 56.14 95.61 58 97.58 60.14C99.55 62.28 101.15 62.51 103.22 60.27C105.29 58.03 107.67 56 109.92 53.88Z" fill="#7D68AA"></path>
+        <path d="M25.09 138.88C29.037 134.177 33.3868 129.827 38.09 125.88C41.47 123.95 43.7 120.76 46.5 118.21C48.8 116.12 49.93 116.93 50.5 119.57C50.7176 120.892 50.7981 122.232 50.74 123.57C50.74 135.343 50.74 147.11 50.74 158.87C50.74 160.99 50.97 163.21 49.47 165.05C45.97 165.86 42.41 165.26 38.89 165.43C36.41 164.18 36.99 161.78 36.95 159.76C36.83 152.33 36.95 144.89 36.89 137.46C36.89 135.85 37.17 134.17 36.17 132.31C33.31 133.67 31.72 136.31 29.46 138.12C28.6716 138.867 27.6737 139.356 26.6 139.52C26.3174 139.526 26.0367 139.472 25.7764 139.362C25.5161 139.252 25.2822 139.087 25.09 138.88Z" fill="#6166AC"></path>
+        <path d="M154 9.77C155.13 7.31 157.46 5.91 159.21 4C164.21 -1.44 164.61 -1.39 169.29 4.7C171.8 11.79 170.88 19.09 170.11 26.24C169.7 30.07 164.99 31.66 163.2 35.05C159.583 39.4159 155.566 43.4335 151.2 47.05C149.81 44.73 151.55 43.27 152.83 41.91C153.869 40.8421 154.668 39.5639 155.171 38.1615C155.675 36.7591 155.872 35.2651 155.75 33.78C155.31 25.78 157.07 17.6 154 9.77Z" fill="#946AA9"></path>
+        <path d="M178.17 164.8C183.92 164.8 189.67 164.88 195.43 164.88C197.01 164.88 198.89 165.28 199.19 162.88C199.596 162.863 199.997 162.984 200.325 163.224C200.654 163.464 200.892 163.808 201 164.2C201.23 165.3 200.44 165.63 199.55 165.71C198.66 165.79 197.88 165.77 197.05 165.77L2.32 165.85C1.65 165.85 0.99 165.85 0.32 165.78C0.19 165.78 -0.02 165.67 -0.04 165.58C-0.0474 165.415 -0.0166 165.251 0.05 165.1L29.18 164.81C30.5024 163.895 32.0721 163.405 33.68 163.405C35.2879 163.405 36.8576 163.895 38.18 164.81H57.18C58.95 163.4 61.04 163.51 63.11 163.53C64.87 163.44 66.63 163.53 68.39 163.53C71.39 163.41 74.33 163.45 77.3 163.53C80.93 163.41 84.56 163.42 88.2 163.53C92.2 163.423 96.1767 163.423 100.13 163.53C104.13 163.42 108.13 163.41 112.13 163.53C116.13 163.42 120.13 163.41 124.13 163.53C128.13 163.43 132.13 163.41 136.06 163.53C139.41 163.44 142.75 163.42 146.06 163.53C149.06 163.44 152.13 163.43 155.16 163.53C158.53 163.41 161.9 163.43 165.27 163.53C169.62 163.72 174.1 162.33 178.17 164.8Z" fill="#A471AD"></path>
+        <path d="M59.16 140C60.55 141.3 62.29 140.92 63.91 140.92C88.1633 140.96 112.417 140.96 136.67 140.92C138.08 140.92 140.1 141.7 140.78 140.14C141.59 138.26 139.36 137.42 138.32 136.31C133.13 130.73 127.24 125.82 122.45 119.85C122.69 119.5 122.93 119.51 123.19 119.85L124.19 119.92C129.35 122.27 132.32 126.92 135.64 130.39C135.98 122.49 135.71 114.03 135.89 105.57C135.826 104.905 135.91 104.234 136.134 103.605C136.359 102.976 136.719 102.404 137.19 101.93L140.13 103.93L146.19 110.93C147.37 112.936 147.927 115.247 147.79 117.57C147.79 131.28 147.79 145 147.79 158.71C147.79 160.85 147.88 163.06 146.21 164.78H136.21C133.65 161.19 135.11 157.08 134.74 153.21C134.63 152.06 134.74 150.9 134.74 149.74C134.65 143.74 134.41 143.47 128.14 143.41C126.82 143.41 125.5 143.41 124.14 143.36C120.18 143.48 116.223 143.48 112.27 143.36C108.27 143.47 104.27 143.48 100.27 143.36C96.27 143.46 92.27 143.48 88.27 143.36C84.64 143.45 81.01 143.48 77.38 143.36C74.38 143.36 71.44 143.46 68.47 143.36C66.7 143.36 64.94 143.45 63.17 143.36C61.4 143.27 59.56 143.42 58.17 141.95C58.25 141.13 58.33 140.38 59.16 140Z" fill="#8B6AAA"></path>
+      </g>
+      <defs><clipPath id="oxc"><rect fill="white" height="165.85" width="201.08"></rect></clipPath></defs>
+    </svg>
+    <b>OxTeams</b><span class="sep">/</span>
+  </div>
+  <div class="ox-top-ctx">
+    <span class="ox-brand-iso">Predios Quito · Cómo funciona</span>
+    <span class="ox-top-sub">Un solo HTML que consulta la data catastral de Quito en vivo</span>
+  </div>
+  <div class="ox-top-right">
+    <span class="ox-demo"><span class="ox-dotpulse"></span>ARQUITECTURA</span>
+    <button class="ox-btn sm">v2.0</button>
+  </div>
+</header>
+
+<div class="ox-main"><div class="ox-scroll"><div class="ox-pad">
+
+  <div>
+    <div class="ox-view-title">El HTML no guarda predios — sabe a quién preguntárselos</div>
+    <div class="ox-view-sub">La aplicación es un <b>visor</b> de un solo archivo. Los polígonos de los predios viven en un <b>servidor público de ArcGIS del Municipio de Quito</b>. Cada vez que pulsas <b>Dibujar</b>, tu navegador hace una petición HTTP a ese servidor, recibe la geometría en GeoJSON y la pinta sobre imagen satelital. Sin internet no dibuja nada: no hay datos dentro del archivo.</div>
+  </div>
+
+  <div class="ox-metrics" style="margin-top:18px">
+    <div class="ox-metric"><div class="ox-metric-l">Archivos</div><div class="ox-metric-v">1 <small>html</small></div></div>
+    <div class="ox-metric"><div class="ox-metric-l">Dependencias instaladas</div><div class="ox-metric-v">0</div></div>
+    <div class="ox-metric"><div class="ox-metric-l">Servidores en vivo</div><div class="ox-metric-v">3</div></div>
+    <div class="ox-metric"><div class="ox-metric-l">Estatus</div><div class="ox-metric-v">5 <small>+1</small></div></div>
+    <div class="ox-metric"><div class="ox-metric-l">Predios / request</div><div class="ox-metric-v">2000</div></div>
+  </div>
+
+  <!-- 01 — server model -->
+  <div class="doc-sec">
+    <div class="doc-sec-h"><span class="n">01</span> De dónde salen los datos</div>
+    <div class="ox-arch-orch">
+      <div class="ox-arch-orchcard">
+        <span class="ox-microorb lg" aria-hidden></span>
+        <div>
+          <div class="ox-arch-agent-name">Tu navegador · predios-quito.html</div>
+          <div class="ox-arch-agent-code mono" style="color:var(--teal)">EL VISOR — NO CONTIENE DATOS, SOLO PIDE Y DIBUJA</div>
+        </div>
+      </div>
+    </div>
+    <svg class="ox-arch-conn" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="50" y1="0" x2="17" y2="40" stroke="var(--teal)" stroke-width="0.4" stroke-dasharray="1.5 2" opacity="0.6"/>
+      <line x1="50" y1="0" x2="50" y2="40" stroke="var(--teal)" stroke-width="0.4" stroke-dasharray="1.5 2" opacity="0.6"/>
+      <line x1="50" y1="0" x2="83" y2="40" stroke="var(--teal)" stroke-width="0.4" stroke-dasharray="1.5 2" opacity="0.6"/>
+    </svg>
+    <div class="three">
+      <div class="srv" style="--c:var(--teal)">
+        <div class="srv-h"><div class="srv-ico">🏛️</div><div><div class="srv-name">GeoQuito · ArcGIS</div><div class="srv-tag">datos catastrales</div></div></div>
+        <div class="srv-body">Los <b>polígonos de los predios</b> en GeoJSON. Servidor público del Municipio de Quito. Una consulta trae todo tu lote.</div>
+        <div class="srv-url">geoquito.quito.gob.ec/server/rest/services/web_reference_dmc/catastro_dmc_view/MapServer/14/query</div>
+      </div>
+      <div class="srv" style="--c:var(--ok)">
+        <div class="srv-h"><div class="srv-ico">🛰️</div><div><div class="srv-name">Esri</div><div class="srv-tag">imagen satelital</div></div></div>
+        <div class="srv-body">Las <b>baldosas (tiles)</b> de World Imagery que ves de fondo. Gratis, sin API key.</div>
+        <div class="srv-url">server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}</div>
+      </div>
+      <div class="srv" style="--c:var(--indigo)">
+        <div class="srv-h"><div class="srv-ico">📦</div><div><div class="srv-name">unpkg + Google</div><div class="srv-tag">librería + fuente</div></div></div>
+        <div class="srv-body"><b>Leaflet</b> (el motor del mapa) y la tipografía <b>Manrope</b>. Se cargan desde CDN.</div>
+        <div class="srv-url">unpkg.com/leaflet@1.9.4 · fonts.googleapis.com</div>
+      </div>
+    </div>
+    <div class="callout teal"><b>En una frase:</b> el HTML (~300 líneas) solo orquesta — lee tu lista, le pregunta a GeoQuito, y dibuja la respuesta sobre la imagen de Esri. Como un <code>&lt;iframe&gt;</code> de Google Maps: la ventana es tuya, el mapa lo sirve otro.</div>
+  </div>
+
+  <!-- 02 — request anatomy -->
+  <div class="doc-sec">
+    <div class="doc-sec-h"><span class="n">02</span> Anatomía de la petición</div>
+    <div class="reqbox">
+      <span class="req-get">GET …/web_reference_dmc/catastro_dmc_view/MapServer/14/query</span>
+      <div class="reqline"><span class="reqk">?where=</span><span class="reqv">predio IN (142078, 142079)</span><span class="reqc">tu lista de predios</span></div>
+      <div class="reqline"><span class="reqk">&outFields=</span><span class="reqv">predio, clavcatastral, parroquia, …</span><span class="reqc">qué columnas traer</span></div>
+      <div class="reqline"><span class="reqk">&returnGeometry=</span><span class="reqv">true</span><span class="reqc">dame el polígono</span></div>
+      <div class="reqline"><span class="reqk">&outSR=</span><span class="reqv">4326</span><span class="reqc">en lat/lon (WGS84), no en la proyección local</span></div>
+      <div class="reqline"><span class="reqk">&f=</span><span class="reqv">geojson</span><span class="reqc">formato de salida</span></div>
+    </div>
+    <div class="callout"><b>Esa URL la puedes pegar en cualquier navegador</b> y ver el JSON con las coordenadas saliendo directo del servidor de Quito. El HTML solo cambia los números y dibuja lo que regresa.</div>
+  </div>
+
+  <!-- 03 — modules -->
+  <div class="doc-sec">
+    <div class="doc-sec-h"><span class="n">03</span> Qué hace el archivo por dentro</div>
+    <div class="ox-sec-card">
+      <div class="ox-sec-card-h"><span>● Pipeline de una consulta</span><span class="mono" style="color:var(--faint)">tu lista → mapa</span></div>
+      <div class="ox-log">
+        <div class="ox-log-row is-info"><div class="ox-log-meta"><span class="ox-log-agent">PARSER</span><span>paso 1</span></div><div class="ox-log-text">Lee las líneas <code>predio, estatus</code> del textarea y arma la lista única de IDs.</div></div>
+        <div class="ox-log-row is-review"><div class="ox-log-meta"><span class="ox-log-agent">FETCH</span><span>paso 2</span></div><div class="ox-log-text">Una llamada <code>fetch()</code> a GeoQuito: <code>where=predio IN(...)&outSR=4326&f=geojson</code>.</div></div>
+        <div class="ox-log-row is-ok"><div class="ox-log-meta"><span class="ox-log-agent">ARCGIS</span><span>paso 3</span></div><div class="ox-log-text">Quito responde el GeoJSON ya en lat/lon. CORS <code>Access-Control-Allow-Origin: null</code> → corre incluso abriendo el archivo con doble-click (<code>file://</code>).</div></div>
+        <div class="ox-log-row is-warn"><div class="ox-log-meta"><span class="ox-log-agent">COLOR</span><span>paso 4</span></div><div class="ox-log-text">Pinta cada polígono según su estatus; los predios sin geometría se listan como faltantes.</div></div>
+        <div class="ox-log-row is-ok"><div class="ox-log-meta"><span class="ox-log-agent">LEAFLET</span><span>paso 5</span></div><div class="ox-log-text"><code>fitBounds</code> al conjunto + popup con clave, parroquia, área, avalúo, propietario y estatus.</div></div>
+        <div class="ox-log-row is-info"><div class="ox-log-meta"><span class="ox-log-agent">EDICIÓN</span><span>interactivo</span></div><div class="ox-log-text">Cambias el estatus desde el popup (clic en un color) o en lote desde el texto; ambos quedan sincronizados. Ordenas la lista por N° o por metraje.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 — user flow -->
+  <div class="doc-sec">
+    <div class="doc-sec-h"><span class="n">04</span> Flujo de usuario</div>
+    <div class="flow-wrap">
+      <svg class="flow-svg" viewBox="0 0 1120 300" role="img" aria-label="Flujo de usuario">
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5a6478"/></marker></defs>
+        <path class="fedge" d="M170 150 H200"/>
+        <path class="fedge" d="M350 150 H380"/>
+        <path class="fedge" d="M530 150 H560"/>
+        <path class="fedge" d="M700 130 C 730 90, 740 75, 750 72"/>
+        <path class="fedge" d="M700 170 C 730 210, 740 225, 750 228"/>
+        <path class="fedge" d="M900 72 C 930 90, 945 118, 948 138"/>
+        <path class="fedge" d="M900 228 C 930 210, 945 182, 948 162"/>
+        <g style="--c:var(--teal)"><rect class="fnode" x="20" y="118" width="150" height="64" rx="13"/><text class="ftxt" x="95" y="146" text-anchor="middle">Lista de predios</text><text class="fsub" x="95" y="165" text-anchor="middle">número, estatus</text></g>
+        <g style="--c:var(--indigo)"><rect class="fnode" x="200" y="118" width="150" height="64" rx="13"/><text class="ftxt" x="275" y="146" text-anchor="middle">Parse + dedupe</text><text class="fsub" x="275" y="165" text-anchor="middle">en el navegador</text></g>
+        <g style="--c:var(--review)"><rect class="fnode" x="380" y="118" width="150" height="64" rx="13"/><text class="ftxt" x="455" y="146" text-anchor="middle">Query GeoQuito</text><text class="fsub" x="455" y="165" text-anchor="middle">IN(...) · outSR 4326</text></g>
+        <g><path class="fdec" d="M630 110 L700 150 L630 190 L560 150 Z"/><text class="ftxt" x="630" y="146" text-anchor="middle" style="font-size:12px">¿predio</text><text class="ftxt" x="630" y="162" text-anchor="middle" style="font-size:12px">existe?</text></g>
+        <g style="--c:var(--ok)"><rect class="fnode" x="750" y="40" width="150" height="64" rx="13"/><text class="ftxt" x="825" y="68" text-anchor="middle">Polígono coloreado</text><text class="fsub" x="825" y="87" text-anchor="middle">por estatus</text></g>
+        <g style="--c:var(--block)"><rect class="fnode" x="750" y="196" width="150" height="64" rx="13"/><text class="ftxt" x="825" y="224" text-anchor="middle">No encontrado</text><text class="fsub" x="825" y="243" text-anchor="middle">marcado en lista</text></g>
+        <g style="--c:var(--teal)"><rect class="fnode" x="948" y="118" width="152" height="64" rx="13"/><text class="ftxt" x="1024" y="142" text-anchor="middle" style="font-size:12px">Inspección y edición</text><text class="fsub" x="1024" y="161" text-anchor="middle">popup·orden·export</text></g>
+      </svg>
+      <div class="flow-leg">
+        <span><i style="background:var(--teal)"></i>Entrada / salida</span>
+        <span><i style="background:var(--review)"></i>Consulta</span>
+        <span><i style="background:var(--warn)"></i>Decisión</span>
+        <span><i style="background:var(--ok)"></i>Éxito</span>
+        <span><i style="background:var(--block)"></i>Faltante</span>
+      </div>
+    </div>
+    <div class="callout">En <b>Inspección y edición</b>: cambias el estatus de un predio dando clic en un color del popup (recolorea al instante y actualiza el texto en lote), ordenas la lista por <b>N° de predio</b> o <b>metraje</b>, y exportas todo a GeoJSON.</div>
+  </div>
+
+  <!-- 05 — how I found it -->
+  <div class="doc-sec">
+    <div class="doc-sec-h"><span class="n">05</span> Cómo descubrí el endpoint</div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div><div class="step-b">El portal que me pasaste es <b>ArcGIS Experience Builder</b>. Ese tipo de app <b>siempre</b> lee sus datos de un servidor REST estándar detrás.</div></div>
+      <div class="step"><div class="step-n">2</div><div class="step-b">Abrí el directorio fijo de ese servidor: <code>/server/rest/services</code> → aparecieron las carpetas de servicios.</div></div>
+      <div class="step"><div class="step-n">3</div><div class="step-b">Probé las de catastro. La principal pedía login: <span class="bad">error 499 · Token Required</span>. Sin acceso por ahí.</div></div>
+      <div class="step"><div class="step-n">4</div><div class="step-b">Encontré una <b>pública sin token</b>: <code>web_reference_dmc/catastro_dmc_view/MapServer</code> con capabilities <code>Map,Query,Data</code>.</div></div>
+      <div class="step"><div class="step-n">5</div><div class="step-b">La capa <b>14 (“Predio regularizado”)</b> tiene el campo <code>predio</code>. Una consulta de prueba devolvió un polígono real en lat/lon. Confirmé que <code>predio</code> es único (count=1) y que el CORS permite abrir desde <code>file://</code>.</div></div>
+      <div class="step"><div class="step-n">6</div><div class="step-b">Envolví esa <b>única llamada HTTP</b> en un HTML con Leaflet. Eso es todo el “backend”.</div></div>
+    </div>
+  </div>
+
+  <!-- 06 — portability -->
+  <div class="doc-sec">
+    <div class="doc-sec-h"><span class="n">06</span> Portabilidad — “córrelo desde cualquier lado”</div>
+    <div class="callout teal" style="margin-top:0;margin-bottom:14px"><b>Sí:</b> copias el archivo a cualquier computadora, lo abres con doble-clic en cualquier navegador moderno y funciona. No hay que instalar nada, ni servidor, ni API key, ni paso de compilación.</div>
+    <div class="port">
+      <div class="port-row port-yes"><div class="port-ico">✓</div><div><b>1 solo archivo .html</b><span class="sub">Windows, Mac o Linux — da igual. Toda la lógica está dentro del archivo; 0 dependencias instaladas.</span></div></div>
+      <div class="port-row port-yes"><div class="port-ico">✓</div><div><b>Cualquier navegador</b><span class="sub">Chrome, Edge, Firefox, Safari. Doble-clic y listo, o súbelo a cualquier hosting estático.</span></div></div>
+      <div class="port-row port-warn"><div class="port-ico">!</div><div><b>Necesita internet</b><span class="sub">Los 3 servidores se consultan en vivo en cada uso. Offline no dibuja.</span></div></div>
+      <div class="port-row port-warn"><div class="port-ico">!</div><div><b>Depende del servidor de Quito</b><span class="sub">Si lo vuelven privado o le ponen token, habría que ajustar la consulta. Hoy es público.</span></div></div>
+      <div class="port-row port-warn"><div class="port-ico">!</div><div><b>Leaflet, fuente y baldosas vienen de CDN</b><span class="sub">Para un 100% offline habría que vendorizar la librería — pero la imagen satelital igual necesita red.</span></div></div>
+    </div>
+  </div>
+
+  <!-- 07 — status system -->
+  <div class="doc-sec">
+    <div class="doc-sec-h"><span class="n">07</span> Sistema de estatus y color</div>
+    <div class="st-grid">
+      <div class="st-card" style="--c:#ff8c00"><div class="st-sw"></div><div><div class="st-code">cód 1</div><div class="st-name">Reproceso fichas valorativas</div><div class="st-hex">#ff8c00</div></div></div>
+      <div class="st-card" style="--c:#e63946"><div class="st-sw"></div><div><div class="st-code">cód 2</div><div class="st-name">Juicio de consignación</div><div class="st-hex">#e63946</div></div></div>
+      <div class="st-card" style="--c:#2ecc71"><div class="st-sw"></div><div><div class="st-code">cód 3</div><div class="st-name">Liberado</div><div class="st-hex">#2ecc71</div></div></div>
+      <div class="st-card" style="--c:#3aa3ff"><div class="st-sw"></div><div><div class="st-code">cód 4</div><div class="st-name">En proceso</div><div class="st-hex">#3aa3ff</div></div></div>
+      <div class="st-card" style="--c:#c77dff"><div class="st-sw"></div><div><div class="st-code">cód 5</div><div class="st-name">Nudos críticos / hereditarios</div><div class="st-hex">#c77dff</div></div></div>
+      <div class="st-card" style="--c:#bdbdbd"><div class="st-sw"></div><div><div class="st-code">cód 0</div><div class="st-name">Sin estatus</div><div class="st-hex">#bdbdbd</div></div></div>
+    </div>
+    <div class="callout"><b>Editable en vivo:</b> desde la leyenda lateral cambias nombres y colores; desde el popup de cada predio cambias su estatus con un clic. El cambio recolorea el mapa y sincroniza el texto en lote.</div>
+  </div>
+
+  <!-- 08 — endpoint -->
+  <div class="doc-sec">
+    <div class="doc-sec-h"><span class="n">08</span> Ficha técnica del endpoint</div>
+    <div class="ox-doc">
+      <div class="ox-doc-row"><span>Servicio</span><b>web_reference_dmc/catastro_dmc_view/MapServer</b></div>
+      <div class="ox-doc-row"><span>Capa</span><b class="teal">14 · Predio regularizado</b></div>
+      <div class="ox-doc-row"><span>Operación</span><b>/query</b></div>
+      <div class="ox-doc-row"><span>where</span><b>predio IN (…)</b></div>
+      <div class="ox-doc-row"><span>outFields</span><b>predio, clavcatastral, nomenclatura, parroquia, arterrpredio, valtotal, denominacion, estado</b></div>
+      <div class="ox-doc-row"><span>Geometría</span><b>returnGeometry=true · outSR=4326 · f=geojson</b></div>
+      <div class="ox-doc-row"><span>Identificador</span><b>predio (único citywide · count=1)</b></div>
+      <div class="ox-doc-row"><span>Autenticación</span><b class="ok">Pública — sin token</b></div>
+      <div class="ox-doc-row"><span>CORS</span><b>Access-Control-Allow-Origin refleja Origin (incl. null)</b></div>
+      <div class="ox-doc-row"><span>Proyección nativa</span><b>SIRES-DMQ (TMQ, meridiano -78.5) → WGS84 server-side</b></div>
+    </div>
+  </div>
+
+  <div style="text-align:center;font-size:10.5px;color:var(--faint);margin-top:38px">/oxteams design system · documento de arquitectura — Predios Quito · listo para pulir en Claude Design</div>
+
+</div></div></div>
+</body>
+</html>
