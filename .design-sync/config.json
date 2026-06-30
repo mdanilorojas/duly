@@ -1,0 +1,19 @@
+{
+  "projectId": "d54336f1-f043-42a8-9d22-fd161a4e6046",
+  "pkg": "@studio/ui",
+  "shape": "storybook",
+  "storybookConfigDir": "apps/docs/.storybook",
+  "storybookStatic": ".design-sync/sb-reference",
+  "buildCmd": "pnpm --filter \"@studio/ui...\" build",
+  "extraEntries": ["../../.design-sync/preview-wrapper.tsx"],
+  "provider": {
+    "component": "PreviewWrapper"
+  },
+  "cssEntry": "./dist/bundle-with-preflight.css",
+  "overrides": {
+    "Accordion": { "cardMode": "column" },
+    "Skeleton": { "cardMode": "column" },
+    "RadioGroup": { "cardMode": "column" },
+    "Textarea": { "cardMode": "column" }
+  }
+}
