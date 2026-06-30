@@ -1,0 +1,24 @@
+{
+  "name": "@studio/tokens",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./css": "./dist/index.css",
+    ".": "./dist/tokens.ts"
+  },
+  "scripts": {
+    "tokens": "tsx build.ts",
+    "build": "tsx build.ts",
+    "test": "vitest run",
+    "lint": "eslint src --max-warnings 0"
+  },
+  "devDependencies": {
+    "@studio/tsconfig": "workspace:*",
+    "@studio/eslint-config": "workspace:*",
+    "eslint": "^9.13.0",
+    "tsx": "^4.19.0",
+    "vitest": "^2.1.0",
+    "culori": "^4.0.1",
+    "typescript": "^5.6.0"
+  }
+}
