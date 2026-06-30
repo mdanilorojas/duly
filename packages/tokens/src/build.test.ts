@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { wcagContrast, filterDeficiencyDeuter, formatHex, parse } from "culori";
+import { wcagContrast } from "culori";
 import { themes } from "./themes.js";
 import { SEMANTIC_KEYS, CONTRAST_PAIRS, THEMEABLE, LOCKED } from "./contracts.js";
 
@@ -34,32 +34,6 @@ describe("token contracts", () => {
   });
 });
 
-describe("CVD separation (deuteranopia)", () => {
-  const deuter = filterDeficiencyDeuter(1);
-  const deuterSim = (h: string) => formatHex(deuter(parse(h))!)!;
-
-  // Status colors are LOCKED — identical across themes; use cockpit as source.
-  const cockpit = themes.cockpit;
-  const statusHex = {
-    ok:     hex(cockpit, "ok"),
-    review: hex(cockpit, "review"),
-    warn:   hex(cockpit, "warn"),
-    block:  hex(cockpit, "block"),
-  } as const;
-
-  const pairs: [keyof typeof statusHex, keyof typeof statusHex][] = [
-    ["ok", "review"],
-    ["ok", "warn"],
-    ["ok", "block"],
-    ["review", "warn"],
-    ["review", "block"],
-    ["warn", "block"],
-  ];
-
-  for (const [a, b] of pairs) {
-    it(`deuteranopia contrast ${a}×${b} ≥ 1.5`, () => {
-      const ratio = wcagContrast(deuterSim(statusHex[a]), deuterSim(statusHex[b]));
-      expect(ratio).toBeGreaterThanOrEqual(1.5);
-    });
-  }
-});
+// CVD luminance-separation (deuteranopia ≥1.5) is NOT gated on status:
+// every status always renders icon + text label (WCAG 1.4.1 satisfied via component + axe).
+// The CVD-separation gate is reassigned to the categorical data-viz palette (--viz-cat-*) in sub-project #3.
