@@ -1,0 +1,9 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "tokens": { "outputs": ["dist/**"] },
+    "build": { "dependsOn": ["^build", "tokens"], "outputs": ["dist/**"] },
+    "lint": {},
+    "test": { "dependsOn": ["tokens"] }
+  }
+}
