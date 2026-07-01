@@ -18,6 +18,7 @@
     ".": { "types": "./dist/tokens.d.ts", "import": "./dist/tokens.js" },
     "./css": "./dist/index.css",
     "./theme.css": "./dist/theme.css",
+    "./motion.css": "./dist/motion.css",
     "./theme-cockpit.css": "./dist/theme-cockpit.css",
     "./theme-light.css": "./dist/theme-light.css",
     "./theme-test.css": "./dist/theme-test.css"

@@ -5,6 +5,17 @@ export const FONT = {
   mono: "'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace",
 };
 
+// Motion: duración (ms) + easing (cubic-bezier). Agnóstico de tema — no varía entre light/dark.
+// Curvas siguiendo Material 3 (standard = simétrica, emphasized = decelerate-heavy para entradas).
+export const MOTION = {
+  "duration-fast": "150ms",
+  "duration-base": "200ms",
+  "duration-slow": "300ms",
+  "duration-slower": "500ms",
+  "ease-standard": "cubic-bezier(0.2, 0, 0, 1)",
+  "ease-emphasized": "cubic-bezier(0.3, 0, 0.1, 1)",
+};
+
 // Neutros anclados a hue 285, ΔL≈0.04
 export const NEUTRAL = {
   "0": "#07070a|oklch(0.13 0.008 285)",

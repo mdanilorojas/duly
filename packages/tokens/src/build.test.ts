@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { wcagContrast, oklch as okParse } from "culori";
 import { themes } from "./themes.js";
 import { SEMANTIC_KEYS, CONTRAST_PAIRS, THEMEABLE, LOCKED } from "./contracts.js";
+import { MOTION } from "./primitives.js";
 
 const hex = (theme: Record<string, string>, key: string) => theme[key].split("|")[0];
 
@@ -33,6 +34,37 @@ describe("token contracts", () => {
       const hues = Object.values(themes).map((t) => Math.round(hue(t, k)));
       expect(new Set(hues).size).toBe(1);
     }
+  });
+});
+
+describe("motion tokens", () => {
+  const durationKeys = Object.keys(MOTION).filter((k) => k.startsWith("duration"));
+  const easingKeys = Object.keys(MOTION).filter((k) => k.startsWith("ease"));
+
+  it("declara al menos una duración y un easing", () => {
+    expect(durationKeys.length).toBeGreaterThan(0);
+    expect(easingKeys.length).toBeGreaterThan(0);
+  });
+
+  for (const k of durationKeys) {
+    it(`${k}: es una duración en ms`, () => {
+      expect(MOTION[k as keyof typeof MOTION]).toMatch(/^\d+ms$/);
+    });
+  }
+
+  for (const k of easingKeys) {
+    it(`${k}: es una curva cubic-bezier válida`, () => {
+      expect(MOTION[k as keyof typeof MOTION]).toMatch(
+        /^cubic-bezier\((-?\d*\.?\d+,\s*){3}-?\d*\.?\d+\)$/
+      );
+    });
+  }
+
+  it("duraciones son crecientes en el orden fast → base → slow → slower", () => {
+    const ms = (k: string) => parseInt(MOTION[k as keyof typeof MOTION], 10);
+    expect(ms("duration-fast")).toBeLessThan(ms("duration-base"));
+    expect(ms("duration-base")).toBeLessThan(ms("duration-slow"));
+    expect(ms("duration-slow")).toBeLessThan(ms("duration-slower"));
   });
 });
 
