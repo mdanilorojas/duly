@@ -16,12 +16,14 @@ export const MOTION = {
   "ease-emphasized": "cubic-bezier(0.3, 0, 0.1, 1)",
 };
 
-// Neutros anclados a hue 285, ΔL≈0.04
+// Neutros anclados a hue 285, ΔL≈0.045. La rampa arranca fuera del negro puro
+// (base 0.145, no 0.13) para que los escalones de elevación sean perceptibles:
+// en L<0.14 el ojo colapsa todo a "negro" y las superficies dejan de leerse.
 export const NEUTRAL = {
-  "0": "#07070a|oklch(0.13 0.008 285)",
-  "1": "#0c0d11|oklch(0.17 0.008 285)",
-  "2": "#131418|oklch(0.21 0.010 285)",
-  "3": "#191a1f|oklch(0.25 0.012 285)",
+  "0": "#0a0a0e|oklch(0.145 0.008 285)",
+  "1": "#101116|oklch(0.190 0.009 285)",
+  "2": "#17181e|oklch(0.235 0.010 285)",
+  "3": "#1f2027|oklch(0.280 0.012 285)",
   ink: "#f0f0f2|oklch(0.95 0.004 285)",
   dim: "#b4b4be|oklch(0.78 0.008 285)",
   faint: "#7b8799|oklch(0.58 0.016 285)",
