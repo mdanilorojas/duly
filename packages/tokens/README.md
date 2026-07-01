@@ -10,7 +10,7 @@ pnpm add @studio/tokens
 
 ## CSS exports
 
-Three CSS entry points cover different use cases:
+Several CSS entry points cover different use cases:
 
 ### `@studio/tokens/css` — full standalone bundle
 
@@ -26,19 +26,20 @@ Includes the full Tailwind v4 engine (`@import "tailwindcss"`) plus all theme va
 @import "@studio/tokens/theme.css";
 ```
 
-Emits only `@theme inline { … }` — maps `--color-<token>` Tailwind color utilities to CSS custom property names without pulling in the Tailwind engine or preflight. This file does **not** define the actual token values (`--surface-2`, `--ink`, etc.); it only wires utility names to variable names.
+Emits only `@theme inline { … }` — maps `--color-<token>` Tailwind color utilities and `duration-*`/`ease-*` motion utilities to CSS custom property names without pulling in the Tailwind engine or preflight. This file does **not** define the actual token values (`--surface-2`, `--ink`, `--duration-base`, etc.); it only wires utility names to variable names.
 
 **Always pair with a value layer** when using Tailwind v4. A complete Tailwind consumer CSS entry looks like:
 
 ```css
 @import "tailwindcss";
-@import "@studio/tokens/theme.css";          /* mapping layer: --color-<token> utilities */
+@import "@studio/tokens/theme.css";          /* mapping layer: --color-<token>, duration-*, ease-* utilities */
+@import "@studio/tokens/motion.css";         /* value layer: duration + easing tokens (theme-agnostic) */
 @import "@studio/tokens/theme-cockpit.css";  /* value layer: cockpit theme at :root (default) */
 @import "@studio/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
 @source "../node_modules/@studio/ui/dist/**/*.js";  /* scan compiled output for utility classes */
 ```
 
-Without the value layer, color utilities resolve to undefined CSS variables and components render colorless.
+Without the value layer, color and motion utilities resolve to undefined CSS variables (colorless components, no transitions).
 
 ### `@studio/tokens/theme-cockpit.css` / `@studio/tokens/theme-test.css` — per-theme variable sets
 
@@ -48,6 +49,16 @@ Without the value layer, color utilities resolve to undefined CSS variables and 
 ```
 
 Each file emits the raw `:root` / `[data-theme="<name>"]` CSS custom property blocks with hex + oklch fallback pairs. Use these when you need fine-grained control over which themes are loaded, or for server-side pre-rendering a specific theme.
+
+### `@studio/tokens/motion.css` — duration + easing tokens
+
+```css
+@import "@studio/tokens/motion.css";
+```
+
+Theme-agnostic (applies at `:root`, no `data-theme` needed). Ships four durations (`--duration-fast` 150ms, `--duration-base` 200ms, `--duration-slow` 300ms, `--duration-slower` 500ms) and two easing curves (`--ease-standard`, `--ease-emphasized`), wired into Tailwind so components can use `duration-base`, `ease-standard`, etc. as utility classes.
+
+Honors `prefers-reduced-motion: reduce` by collapsing every duration to `1ms` — components still change state, just without perceptible animation. Consumers get this for free; no per-component opt-in required.
 
 ## Theme switching
 

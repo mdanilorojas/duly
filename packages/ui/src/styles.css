@@ -11,6 +11,7 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 
 @import "@studio/tokens/theme.css";
+@import "@studio/tokens/motion.css";
 @import "@studio/tokens/theme-cockpit.css";
 @import "@studio/tokens/theme-test.css";
 

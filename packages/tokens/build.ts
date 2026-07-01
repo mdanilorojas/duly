@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { themes, LIGHT_THEMES } from "./src/themes.js";
 import { SEMANTIC_KEYS } from "./src/contracts.js";
-import { FONT } from "./src/primitives.js";
+import { FONT, MOTION } from "./src/primitives.js";
 
 const DIST = new URL("./dist/", import.meta.url);
 mkdirSync(DIST, { recursive: true });
@@ -26,21 +26,37 @@ for (const [name, vars] of Object.entries(themes)) {
   writeFileSync(new URL(`theme-${name}.css`, DIST), css);
 }
 
-// 2. theme.css — @theme inline (var(--token), no hex) + fuentes. Mapea el namespace de color
-//    de Tailwind sin arrastrar el motor/preflight, para que @studio/ui lo reutilice.
+// 2. motion.css — duración + easing, agnóstico de tema (:root, no [data-theme]). Honra
+//    prefers-reduced-motion (WCAG 2.3.3) colapsando duraciones a ~instantáneo; los componentes
+//    cambian de estado igual, sin animación perceptible.
+const motionLines = Object.entries(MOTION).map(([k, v]) => `  --${k}: ${v};`).join("\n");
+const durationKeys = Object.keys(MOTION).filter((k) => k.startsWith("duration"));
+const reducedMotionLines = durationKeys.map((k) => `    --${k}: 1ms;`).join("\n");
+const motionCss =
+  `:root {\n${motionLines}\n}\n\n` +
+  `@media (prefers-reduced-motion: reduce) {\n  :root {\n${reducedMotionLines}\n  }\n}\n`;
+writeFileSync(new URL("motion.css", DIST), motionCss);
+
+// 3. theme.css — @theme inline (var(--token), no hex) + fuentes. Mapea el namespace de color
+//    y motion de Tailwind sin arrastrar el motor/preflight, para que @studio/ui lo reutilice.
+//    Tailwind resuelve la utilidad "duration-*" contra el theme key "--transition-duration-*"
+//    (no "--duration-*"); "ease-*" sí resuelve directo contra "--ease-*".
 const themeMap = SEMANTIC_KEYS.map((k) => `  --color-${k}: var(--${k});`).join("\n");
 const fontMap = `  --font-sans: ${FONT.sans};\n  --font-display: ${FONT.display};\n  --font-mono: ${FONT.mono};`;
-const themeBlock = `@theme inline {\n${themeMap}\n${fontMap}\n}\n`;
+const motionMap = Object.keys(MOTION)
+  .map((k) => `  --${k.startsWith("duration-") ? `transition-${k}` : k}: var(--${k});`)
+  .join("\n");
+const themeBlock = `@theme inline {\n${themeMap}\n${fontMap}\n${motionMap}\n}\n`;
 writeFileSync(new URL("theme.css", DIST), themeBlock);
 
-// 3. index.css — bundle completo standalone: tailwind (incl. preflight) + temas + @theme inline.
+// 4. index.css — bundle completo standalone: tailwind (incl. preflight) + temas + motion + @theme inline.
 const imports = Object.keys(themes).map((n) => `@import "./theme-${n}.css";`).join("\n");
 writeFileSync(
   new URL("index.css", DIST),
-  `@import "tailwindcss";\n${imports}\n\n${themeBlock}`,
+  `@import "tailwindcss";\n${imports}\n@import "./motion.css";\n\n${themeBlock}`,
 );
 
-// 4. tokens.js + tokens.d.ts (objeto por tema, solo hex para consumo JS) + tipo.
+// 5. tokens.js + tokens.d.ts (objeto por tema, solo hex para consumo JS) + tipo.
 const tokensObj = Object.fromEntries(
   Object.entries(themes).map(([n, vars]) => [
     n, Object.fromEntries(SEMANTIC_KEYS.map((k) => [k, split(vars[k])[0]])),
@@ -58,7 +74,7 @@ writeFileSync(
     `export declare const tokens: Record<${themeUnion}, Record<ThemeableToken, string>>;\n`,
 );
 
-// 5. tokens.lock.json
+// 6. tokens.lock.json
 writeFileSync(
   new URL("tokens.lock.json", DIST),
   JSON.stringify([...SEMANTIC_KEYS].sort(), null, 2) + "\n",
