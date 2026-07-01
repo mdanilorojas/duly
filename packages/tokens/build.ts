@@ -1,5 +1,5 @@
 import { mkdirSync, writeFileSync } from "node:fs";
-import { themes } from "./src/themes.js";
+import { themes, LIGHT_THEMES } from "./src/themes.js";
 import { SEMANTIC_KEYS } from "./src/contracts.js";
 import { FONT } from "./src/primitives.js";
 
@@ -21,7 +21,8 @@ for (const [name, vars] of Object.entries(themes)) {
     return `  --${k}: ${hex};\n  --${k}: ${ok};`;
   });
   const selector = name === DEFAULT_THEME ? `:root, [data-theme="${name}"]` : `[data-theme="${name}"]`;
-  const css = `${selector} {\n  color-scheme: dark;\n${lines.join("\n")}\n}\n`;
+  const scheme = LIGHT_THEMES.has(name) ? "light" : "dark";
+  const css = `${selector} {\n  color-scheme: ${scheme};\n${lines.join("\n")}\n}\n`;
   writeFileSync(new URL(`theme-${name}.css`, DIST), css);
 }
 

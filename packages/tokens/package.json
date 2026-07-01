@@ -19,6 +19,7 @@
     "./css": "./dist/index.css",
     "./theme.css": "./dist/theme.css",
     "./theme-cockpit.css": "./dist/theme-cockpit.css",
+    "./theme-light.css": "./dist/theme-light.css",
     "./theme-test.css": "./dist/theme-test.css"
   },
   "publishConfig": { "access": "public" },

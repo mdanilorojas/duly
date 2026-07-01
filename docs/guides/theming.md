@@ -85,7 +85,8 @@ Tokens are grouped by role:
 
 Every call to `pnpm turbo run tokens` regenerates the CSS files in `packages/tokens/dist/`:
 
-- `theme-cockpit.css` applies its variables under `:root, [data-theme="cockpit"]` (cockpit is the default theme, so it is always active unless overridden by another `[data-theme]` lower in the tree).
+- `theme-cockpit.css` applies its variables under `:root, [data-theme="cockpit"]` (cockpit is the default theme, so it is always active unless overridden by another `[data-theme]` lower in the tree). It emits `color-scheme: dark`.
+- `theme-light.css` applies its variables only under `[data-theme="light"]` and emits `color-scheme: light` — the light mode of the default brand. Status hues (`ok`, `warn`, …) are LOCKED to the same hue as the dark themes; only their L/C drop so they clear AA contrast on light surfaces.
 - `theme-test.css` applies its variables only under `[data-theme="test"]`.
 
 To activate a theme, set `data-theme` on any container:
@@ -141,7 +142,7 @@ To activate a theme, set `data-theme` on any container:
 
 ## Status colors are LOCKED
 
-The six status tokens — `ok`, `review`, `warn`, `block`, `info`, and `ring` — share identical hue values across all themes. Client themes may only adjust lightness (`L` in OKLCH); rotating the hue is intentionally prohibited.
+The six status tokens — `ok`, `review`, `warn`, `block`, `info`, and `ring` — share identical hue values across all themes. Client themes may adjust lightness and chroma (`L`/`C` in OKLCH) — e.g. the `light` theme darkens each status so it clears AA contrast on light surfaces — but rotating the hue is intentionally prohibited. The build test (`build.test.ts`) gates this by comparing the hue channel, not the full hex.
 
 **Why?** These colors carry semantic meaning that must remain consistent across brand surfaces. Because every status state also renders an icon and a visually-hidden text label (see `TraceLog.Row`), the design system satisfies WCAG 1.4.1 (use of color) at the component level — color is never the sole information carrier.
 

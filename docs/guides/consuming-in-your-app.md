@@ -24,7 +24,8 @@ import "@studio/ui/styles.css";
 
 This single import provides:
 - All Tailwind utility classes used by Studio DS components
-- The `cockpit` theme variables at `:root` (default)
+- The `cockpit` theme variables at `:root` (default, dark)
+- The `light` theme variables under `[data-theme="light"]` (light mode of the default brand)
 - The `test` theme variables under `[data-theme="test"]`
 
 No PostCSS, no `tailwind.config`, no build plugin needed.
@@ -47,7 +48,7 @@ export function App() {
 To switch the theme at runtime (e.g. from a user preference):
 
 ```tsx
-const [theme, setTheme] = React.useState<"cockpit" | "test">("cockpit");
+const [theme, setTheme] = React.useState<"cockpit" | "light" | "test">("cockpit");
 
 return <div data-theme={theme}>{/* … */}</div>;
 ```
@@ -116,7 +117,8 @@ pnpm add @studio/ui @studio/tokens
 @import "@studio/tokens/theme.css";
 
 /* Value layers: define the actual --surface-2, --ink, etc. custom property values */
-@import "@studio/tokens/theme-cockpit.css";  /* cockpit theme at :root (default) */
+@import "@studio/tokens/theme-cockpit.css";  /* cockpit theme at :root (default, dark) */
+@import "@studio/tokens/theme-light.css";    /* optional: light theme under [data-theme="light"] */
 @import "@studio/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
 
 /* Scan the compiled UI package so Tailwind generates component utility classes */

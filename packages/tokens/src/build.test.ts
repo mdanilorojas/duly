@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { wcagContrast } from "culori";
+import { wcagContrast, oklch as okParse } from "culori";
 import { themes } from "./themes.js";
 import { SEMANTIC_KEYS, CONTRAST_PAIRS, THEMEABLE, LOCKED } from "./contracts.js";
 
@@ -25,11 +25,13 @@ describe("token contracts", () => {
     }
   }
 
-  it("status (LOCKED) idéntico entre temas (hue no rota)", () => {
-    const keys = [...LOCKED];
-    for (const k of keys) {
-      const values = Object.values(themes).map((t) => hex(t, k));
-      expect(new Set(values).size).toBe(1);
+  it("status (LOCKED): hue idéntico entre temas (L/C pueden variar por modo claro/oscuro)", () => {
+    // "cliente solo ajusta L, no rota hue" → se bloquea el HUE, no el hex completo.
+    const hue = (theme: Record<string, string>, key: string) =>
+      okParse(theme[key].split("|")[1])?.h ?? 0;
+    for (const k of [...LOCKED]) {
+      const hues = Object.values(themes).map((t) => Math.round(hue(t, k)));
+      expect(new Set(hues).size).toBe(1);
     }
   });
 });
