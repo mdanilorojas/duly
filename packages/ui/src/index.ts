@@ -24,3 +24,6 @@ export * from "./components/ui/tabs.js";
 export * from "./components/ui/accordion.js";
 export * from "./components/ui/progress.js";
 export * from "./components/ui/skeleton.js";
+
+// agentic — AI agent UI experiments
+export * from "./agentic/index.js";
