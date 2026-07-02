@@ -28,7 +28,7 @@ export const NeuralCores: S = {
 export const SingleCard: S = {
   render: () => (
     <div className="grid min-h-screen place-items-center bg-bg-base p-12">
-      <div className="w-[320px]">
+      <div className="w-full max-w-[320px]">
         <AgentCard agent={NEURAL_AGENTS[0]} />
       </div>
     </div>

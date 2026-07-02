@@ -63,7 +63,7 @@ export const RetryAfterFailure: S = {
 export const StatusGrammarLegend: S = {
   render: () => (
     <div className="grid min-h-screen place-items-center bg-bg-base p-12">
-      <div className="w-[520px] space-y-3">
+      <div className="w-full max-w-[520px] space-y-3">
         <h2 className="font-mono text-[11px] font-bold uppercase tracking-wide text-dim">
           6-state node grammar
         </h2>

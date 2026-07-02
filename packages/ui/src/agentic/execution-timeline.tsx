@@ -102,13 +102,13 @@ export function RunStep({
 
       <div className="min-w-0 flex-1 pt-0.5">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <span className="font-mono text-[8.5px] font-bold uppercase tracking-wide text-faint">
+          <span className="font-mono text-[8.5px] font-bold uppercase tracking-wide text-dim">
             {kindLabel[kind]}
           </span>
-          <span className="font-mono text-[8.5px] uppercase tracking-wide text-faint">
+          <span className="font-mono text-[8.5px] uppercase tracking-wide text-dim">
             {agent}
           </span>
-          <span className="ml-auto flex items-center gap-2 font-mono text-[10px] text-faint">
+          <span className="ml-auto flex items-center gap-2 font-mono text-[10px] text-dim">
             {timestamp}
             {duration ? (
               <span className={cn("rounded px-1.5 py-0.5 text-[9.5px] font-semibold", toneChip[tone])}>
@@ -122,7 +122,7 @@ export function RunStep({
 
         {children ? (
           <Collapsible.Root open={open} onOpenChange={setOpen} className="mt-2">
-            <Collapsible.Trigger className="inline-flex items-center gap-1 rounded font-mono text-[10px] text-faint hover:text-dim focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:ring-2 focus-visible:ring-ring">
+            <Collapsible.Trigger className="inline-flex items-center gap-1 rounded font-mono text-[10px] text-dim hover:text-dim focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:ring-2 focus-visible:ring-ring">
               <ChevronDown className={cn("size-3 transition-transform duration-base ease-standard", open && "rotate-180")} aria-hidden />
               {open ? "ocultar detalle" : "ver detalle"}
             </Collapsible.Trigger>
@@ -178,7 +178,7 @@ export function ToolCallCard({
       <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 px-3 py-2 text-[11.5px]">
         {Object.entries(input).map(([key, value]) => (
           <React.Fragment key={key}>
-            <dt className="font-mono text-faint">{key}</dt>
+            <dt className="font-mono text-dim">{key}</dt>
             <dd className="min-w-0 truncate text-dim">{value}</dd>
           </React.Fragment>
         ))}
@@ -215,7 +215,7 @@ export function ExecutionTimeline({ title, hint, children, className, ...props }
       {title ? (
         <div className="flex flex-col gap-1 border-b border-border-subtle bg-surface-header px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-[11px] font-extrabold uppercase tracking-wide text-dim">{title}</span>
-          {hint ? <span className="min-w-0 truncate font-mono text-[11px] text-faint">{hint}</span> : null}
+          {hint ? <span className="min-w-0 truncate font-mono text-[11px] text-dim">{hint}</span> : null}
         </div>
       ) : null}
       <ol className="px-4 pt-4">{children}</ol>

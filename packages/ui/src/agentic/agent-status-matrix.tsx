@@ -18,8 +18,9 @@ const swatchBorder: Record<Tone, string> = {
   block: "border-l-block",
 };
 
+// "info" usa text-dim: el gris del tono (L 0.61) no llega a 4.5:1 sobre surface-2.
 const swatchText: Record<Tone, string> = {
-  info: "text-info",
+  info: "text-dim",
   ok: "text-ok",
   review: "text-review",
   warn: "text-warn",
@@ -69,7 +70,7 @@ export function AgentStatusMatrix({ items, className, ...props }: AgentStatusMat
             className={cn("size-[22px] shrink-0 rounded-[7px]", swatchBg[item.tone])}
           />
           <div className="min-w-0">
-            <div className="font-mono text-[8.5px] uppercase tracking-wide text-faint">
+            <div className="font-mono text-[8.5px] uppercase tracking-wide text-dim">
               {item.code}
             </div>
             <div className="truncate text-[12.5px] font-semibold leading-tight text-ink">

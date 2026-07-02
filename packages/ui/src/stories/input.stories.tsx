@@ -26,11 +26,12 @@ export const WithLabel: S = {
 export const States: S = {
   render: () => (
     <div className="flex flex-col gap-3 max-w-xs">
-      <Input placeholder="Default" />
-      <Input placeholder="Disabled" disabled />
-      <Input defaultValue="Read only" readOnly />
+      <Input placeholder="Default" aria-label="Default" />
+      <Input placeholder="Disabled" aria-label="Disabled" disabled />
+      <Input defaultValue="Read only" aria-label="Read only" readOnly />
       <div className="flex flex-col gap-1.5">
         <Input
+          aria-label="Email"
           aria-invalid="true"
           defaultValue="invalid@"
           aria-describedby="email-err"

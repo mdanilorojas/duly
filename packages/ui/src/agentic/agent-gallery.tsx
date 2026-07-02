@@ -38,7 +38,7 @@ export function AgentGallery({
           )}
         </header>
       )}
-      <div className="mx-auto grid max-w-[1400px] grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-8">
+      <div className="mx-auto grid max-w-[1400px] grid-cols-[repeat(auto-fit,minmax(min(280px,100%),1fr))] gap-8">
         {agents.map((agent) => (
           <AgentCard key={agent.id} agent={agent} />
         ))}

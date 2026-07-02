@@ -34,13 +34,13 @@ export const Vertical: S = {
 export const InNav: S = {
   render: () => (
     <div className="max-w-xs rounded-lg bg-surface-2 p-4">
-      <p className="text-xs font-semibold text-faint uppercase tracking-wider mb-2">Workspace</p>
+      <p className="text-xs font-semibold text-dim uppercase tracking-wider mb-2">Workspace</p>
       <nav className="flex flex-col gap-1 text-sm text-ink">
         <a href="#" className="hover:text-accent px-2 py-1 rounded">Dashboard</a>
         <a href="#" className="hover:text-accent px-2 py-1 rounded">Agents</a>
       </nav>
       <Separator className="my-3" />
-      <p className="text-xs font-semibold text-faint uppercase tracking-wider mb-2">Data</p>
+      <p className="text-xs font-semibold text-dim uppercase tracking-wider mb-2">Data</p>
       <nav className="flex flex-col gap-1 text-sm text-ink">
         <a href="#" className="hover:text-accent px-2 py-1 rounded">Predios</a>
         <a href="#" className="hover:text-accent px-2 py-1 rounded">Reports</a>

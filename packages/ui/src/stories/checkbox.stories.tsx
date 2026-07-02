@@ -1,5 +1,5 @@
 import React from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { StoryObj } from "@storybook/react";
 import { Checkbox } from "../components/ui/checkbox.js";
 import { Label } from "../components/ui/label.js";
 
@@ -8,21 +8,21 @@ export default meta;
 type S = StoryObj<typeof meta>;
 
 export const Default: S = {
-  render: () => <Checkbox />,
+  render: () => <Checkbox aria-label="Run preflight checks" />,
 };
 
 export const Checked: S = {
-  render: () => <Checkbox defaultChecked />,
+  render: () => <Checkbox aria-label="Run preflight checks" defaultChecked />,
 };
 
 export const Disabled: S = {
-  render: () => <Checkbox disabled />,
+  render: () => <Checkbox aria-label="Run preflight checks" disabled />,
 };
 
 export const WithLabel: S = {
   render: () => (
     <div className="flex items-center gap-2">
-      <Checkbox id="notify" defaultChecked />
+      <Checkbox id="notify" aria-label="Notify on failure" defaultChecked />
       <Label htmlFor="notify">Notify on failure</Label>
     </div>
   ),
@@ -38,7 +38,7 @@ export const List: S = {
         { id: "c4", label: "Log to audit trail", checked: false },
       ].map(({ id, label, checked }) => (
         <div key={id} className="flex items-center gap-2">
-          <Checkbox id={id} defaultChecked={checked} />
+          <Checkbox id={id} aria-label={label} defaultChecked={checked} />
           <Label htmlFor={id}>{label}</Label>
         </div>
       ))}

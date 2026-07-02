@@ -16,7 +16,7 @@ const alertVariants = cva(
         warn:
           "border-warn/30 bg-warn/8 text-warn *:data-[slot=alert-description]:text-warn/80",
         info:
-          "border-info/30 bg-info/8 text-ink *:data-[slot=alert-description]:text-faint [&>svg]:text-info",
+          "border-info/30 bg-info/8 text-ink *:data-[slot=alert-description]:text-dim [&>svg]:text-info",
       },
     },
     defaultVariants: {
@@ -61,7 +61,7 @@ function AlertDescription({
     <div
       data-slot="alert-description"
       className={cn(
-        "col-start-2 grid justify-items-start gap-1 text-sm text-faint [&_p]:leading-relaxed",
+        "col-start-2 grid justify-items-start gap-1 text-sm text-dim [&_p]:leading-relaxed",
         className
       )}
       {...props}

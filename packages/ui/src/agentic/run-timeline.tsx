@@ -39,36 +39,44 @@ export function RunTimeline({ title, hint, nodes, className, ...props }: RunTime
       {title ? (
         <div className="flex flex-col gap-1 border-b border-border-subtle bg-surface-header px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-[11px] font-extrabold uppercase tracking-wide text-dim">{title}</span>
-          {hint ? <span className="min-w-0 truncate font-mono text-[11px] text-faint">{hint}</span> : null}
+          {hint ? <span className="min-w-0 truncate font-mono text-[11px] text-dim">{hint}</span> : null}
         </div>
       ) : null}
 
-      <ol className="flex items-start overflow-x-auto px-5 py-5" aria-label={title ?? "Run timeline"}>
-        {nodes.map((node, i) => (
-          <li key={node.id} className="flex items-start last:flex-none">
-            <div className="flex w-[118px] shrink-0 flex-col items-center gap-2 text-center">
-              <NodeStatusBadge status={node.status} attempt={node.attempt} />
-              <div className="min-w-0">
-                <div className="truncate text-[11px] font-semibold leading-tight text-ink">{node.title}</div>
-                {node.owner ? (
-                  <div className="mt-0.5 truncate font-mono text-[8.5px] uppercase tracking-wide text-faint">
-                    {node.owner}
-                  </div>
-                ) : null}
-                {node.meta ? (
-                  <div className="mt-0.5 font-mono text-[9.5px] text-faint">{node.meta}</div>
-                ) : null}
+      {/* El contenedor scrolleable necesita foco de teclado + nombre accesible (WCAG 2.1.1). */}
+      <div
+        tabIndex={0}
+        role="region"
+        aria-label={title ?? "Run timeline"}
+        className="overflow-x-auto focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+      >
+        <ol className="flex items-start px-5 py-5">
+          {nodes.map((node, i) => (
+            <li key={node.id} className="flex items-start last:flex-none">
+              <div className="flex w-[118px] shrink-0 flex-col items-center gap-2 text-center">
+                <NodeStatusBadge status={node.status} attempt={node.attempt} />
+                <div className="min-w-0">
+                  <div className="truncate text-[11px] font-semibold leading-tight text-ink">{node.title}</div>
+                  {node.owner ? (
+                    <div className="mt-0.5 truncate font-mono text-[8.5px] uppercase tracking-wide text-dim">
+                      {node.owner}
+                    </div>
+                  ) : null}
+                  {node.meta ? (
+                    <div className="mt-0.5 font-mono text-[9.5px] text-dim">{node.meta}</div>
+                  ) : null}
+                </div>
               </div>
-            </div>
-            {i < nodes.length - 1 ? (
-              <div
-                aria-hidden
-                className={cn("mt-4 h-0 min-w-8 flex-1", nodeStatusConnectorClass(node.status))}
-              />
-            ) : null}
-          </li>
-        ))}
-      </ol>
+              {i < nodes.length - 1 ? (
+                <div
+                  aria-hidden
+                  className={cn("mt-4 h-0 min-w-8 flex-1", nodeStatusConnectorClass(node.status))}
+                />
+              ) : null}
+            </li>
+          ))}
+        </ol>
+      </div>
     </div>
   );
 }

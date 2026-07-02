@@ -1,5 +1,5 @@
 import React from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { StoryObj } from "@storybook/react";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group.js";
 import { Label } from "../components/ui/label.js";
 
@@ -19,7 +19,7 @@ export const Default: S = {
     <RadioGroup defaultValue="high">
       {priorities.map(({ value, label }) => (
         <div key={value} className="flex items-center gap-2">
-          <RadioGroupItem value={value} id={`p-${value}`} />
+          <RadioGroupItem value={value} id={`p-${value}`} aria-label={label} />
           <Label htmlFor={`p-${value}`}>{label}</Label>
         </div>
       ))}
@@ -29,10 +29,10 @@ export const Default: S = {
 
 export const Horizontal: S = {
   render: () => (
-    <RadioGroup defaultValue="medium" className="flex flex-row gap-6">
+    <RadioGroup defaultValue="medium" className="flex flex-row flex-wrap gap-6">
       {priorities.map(({ value, label }) => (
         <div key={value} className="flex items-center gap-2">
-          <RadioGroupItem value={value} id={`h-${value}`} />
+          <RadioGroupItem value={value} id={`h-${value}`} aria-label={label} />
           <Label htmlFor={`h-${value}`}>{label}</Label>
         </div>
       ))}

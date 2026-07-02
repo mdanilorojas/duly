@@ -27,7 +27,7 @@ export const Basic: S = {
         <CardDescription>Automated property sync workflow</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-faint">
+        <p className="text-sm text-dim">
           Processes 138 predios through geocoding, validation, and enrichment stages.
         </p>
       </CardContent>
@@ -51,19 +51,19 @@ export const AgentStatus: S = {
       <CardContent>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <p className="text-faint">Processed</p>
+            <p className="text-dim">Processed</p>
             <p className="text-xl font-semibold text-ink">1,248</p>
           </div>
           <div>
-            <p className="text-faint">Errors</p>
+            <p className="text-dim">Errors</p>
             <p className="text-xl font-semibold text-block">3</p>
           </div>
           <div>
-            <p className="text-faint">Avg latency</p>
+            <p className="text-dim">Avg latency</p>
             <p className="text-xl font-semibold text-ink">142ms</p>
           </div>
           <div>
-            <p className="text-faint">Uptime</p>
+            <p className="text-dim">Uptime</p>
             <p className="text-xl font-semibold text-ok">99.8%</p>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { StoryObj } from "@storybook/react";
 import {
   Select,
   SelectContent,
@@ -15,7 +15,7 @@ type S = StoryObj<typeof meta>;
 export const Priority: S = {
   render: () => (
     <Select>
-      <SelectTrigger className="w-48">
+      <SelectTrigger className="w-48" aria-label="Select priority">
         <SelectValue placeholder="Select priority" />
       </SelectTrigger>
       <SelectContent>
@@ -31,7 +31,7 @@ export const Priority: S = {
 export const WithDefault: S = {
   render: () => (
     <Select defaultValue="medium">
-      <SelectTrigger className="w-48">
+      <SelectTrigger className="w-48" aria-label="Select priority">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
@@ -47,7 +47,7 @@ export const WithDefault: S = {
 export const Disabled: S = {
   render: () => (
     <Select disabled>
-      <SelectTrigger className="w-48">
+      <SelectTrigger className="w-48" aria-label="Select priority">
         <SelectValue placeholder="Select priority" />
       </SelectTrigger>
       <SelectContent>
