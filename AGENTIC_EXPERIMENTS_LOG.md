@@ -333,3 +333,94 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
     único área del catálogo en 0% absoluto); `AgentConsentCard`; conectar `HumanInterruptQueue`
     como panel dentro de una futura `ComplianceAgentConsole` o `MissionControlPanel`; segunda
     industria (petróleo & energía) con una consola de operaciones.
+
+---
+
+## Iteración 6 — V001 Audit Log Table + Who Did What Timeline (Auditoría/Compliance)
+
+- **Fecha:** 2026-07-02T10:14:17Z
+- **Versión:** `AuditLogTableV001` + `WhoDidWhatTimelineV001`
+- **Tipo:** primitive + composition (auditoría/compliance UI, agnóstico de industria)
+- **Industria:** ninguna en particular — primitive de infraestructura, prioridad #1 del NORTH_STAR
+  (2026-07-02): área C (auditoría/compliance) era la única de las 4 del catálogo en 0% absoluto,
+  sosteniendo 3 de los 10 principios de credibilidad enterprise (#3, #4, #10).
+- **Storybook:** `Agentic/Audit Log Table/V001 Immutable Stream` (stories: `ComplianceAuditTrail`,
+  `ScrollableDense`, `EmptyLog`) y `Agentic/Who Did What Timeline/V001 Auditor Self-Service`
+  (stories: `AuditorSelfService`, `MobileWidth`, `EmptyTimeline`).
+- **Inspiración investigada:** el propio catálogo NORTH_STAR ya especificaba el propósito exacto
+  de ambos componentes (`AuditLogTable`: "stream inmutable: actor/acción/recurso/hash badge";
+  `WhoDidWhatTimeline`: "feed cronológico filtrable con saved-query chips") a partir de EU AI Act
+  Art. 12/13, SOC2 CC7/CC8 e ISO 42001/prEN 18286 — no se reinventó el alcance. Se tradujo el
+  principio #5 ("dualidad de actor: humano vs agente vs sistema, distinguible de un vistazo") a
+  icono + anillo de color por tipo de actor (no solo texto), y el principio #10 ("saved queries
+  como feature de compliance") a chips de un solo toque con conteo en vivo — patrón visto en
+  filtros de auditoría enterprise (Datadog/Retool-style saved views), sin copiar ningún layout
+  específico de vendor.
+- **Razón de producto:** cierra el gap #1 priorizado por `NORTH_STAR.md`/`VANGUARD_REPORT.md` —
+  los principios #4 ("la inmutabilidad se ve") y #10 ("saved queries como feature de compliance")
+  no tenían ningún componente. `AuditLogTable` es la vista densa tipo hoja de cálculo para un
+  auditor que necesita escanear muchas filas; `WhoDidWhatTimeline` es la vista narrativa
+  cronológica con autoservicio de filtro — ambas comparten el mismo tipo `AuditEvent` y el mismo
+  vocabulario visual de actor/tono/hash para que una futura `ComplianceAgentConsole` pueda
+  combinarlas sin reconciliar dos modelos de datos distintos.
+- **Componentes creados:**
+  - `packages/ui/src/agentic/audit-log-table.tsx`:
+    - Tipo `AuditEvent` (actorKind, actor, action, resource, outcome, timestamp, hash) — modelo
+      de datos compartido por ambos componentes de esta iteración.
+    - `actorKindConfig` — mapeo icono+anillo de color por `human`/`agent`/`system` (dualidad de
+      actor, principio #5), exportado para reuso.
+    - `outcomeLabel` — labels de los 5 tonos del sistema aplicados a un "outcome" de auditoría.
+    - `<HashBadge>` — chip mono con hash truncado + `title` con el hash completo, señal visual de
+      inmutabilidad (principio #4); exportado para reuso en `WhoDidWhatTimeline`.
+    - `<AuditLogTable>` — tabla semántica (`<table>`, no virtualizada — ver "DataTable denso" en
+      NORTH_STAR como ítem separado) con columnas Actor/Action/Resource/Outcome/Timestamp/Hash,
+      header sticky, `maxHeight` opcional con scroll interno.
+  - `packages/ui/src/agentic/who-did-what-timeline.tsx`:
+    - Tipo `SavedQuery` (id, label, predicate) y `AuditEventGroup` (label de grupo cronológico +
+      eventos) — el agrupamiento por fecha lo decide el caller (mismo criterio determinístico que
+      `ageMinutes` en `HumanInterruptQueue`: sin `Date.now()` dentro del componente).
+    - `<WhoDidWhatTimeline>` — feed vertical agrupado por rango de tiempo con línea conectora,
+      icono dual de actor por evento, y una fila de chips de "saved query" (toggle de un toque,
+      con conteo recalculado sobre el total de eventos, no solo lo visible) sobre el header.
+  - `packages/ui/src/agentic/audit-log-table.stories.tsx` — 3 stories: trail de compliance con 10
+    eventos mixtos (humano/agente/sistema, 5 tonos), variante con `maxHeight` + scroll, log vacío.
+  - `packages/ui/src/agentic/who-did-what-timeline.stories.tsx` — 3 stories: feed de 3 grupos
+    cronológicos (Today/Yesterday/Last week) con 4 saved queries interactivas, vista a 375px, feed
+    vacío.
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 2 módulos nuevos.
+  - Reutiliza `Tone`/`toneChip` (de `trace-log.variants.ts` vía `approval-gate-card.tsx`, mismos 5
+    tonos del sistema, sin color crudo) y los tokens `accent`/`accent-surface`/`accent-border` ya
+    existentes para el estado activo de los chips de saved query.
+- **Comandos ejecutados:** `git checkout main` + `git pull origin main` (el contenedor arrancó con
+  `HEAD` detached, 15 commits detrás del remoto real — sincronizado sin perder nada) ·
+  `pnpm install` (faltaba `node_modules`) · `pnpm --filter @studio/ui test` (26 passed, sin
+  cambios) · `pnpm exec turbo run build --filter=@studio/ui...` (OK) · `pnpm --filter @studio/ui
+  exec eslint src/agentic/audit-log-table.tsx src/agentic/audit-log-table.stories.tsx
+  src/agentic/who-did-what-timeline.tsx src/agentic/who-did-what-timeline.stories.tsx
+  src/agentic/index.ts` (0 errores) · `pnpm exec turbo run build --filter=@studio/docs...`
+  (Storybook static build OK, incluye ambos `.stories`, chunks nuevos `audit-log-table-*.js` y
+  `who-did-what-timeline.stories-*.js` visibles en el output).
+- **Resultado:** ✅ mergeado a main. `NORTH_STAR.md` actualizado: `AuditLogTable` y
+  `WhoDidWhatTimeline` pasan de ❌ a ✅ (sección C, primera cobertura no nula del área) y
+  reordenada la "Prioridad de construcción" con `TraceTree`/`TokenCostMeter` como nuevo #1.
+- **Notas para revisión humana:**
+  - `AuditLogTable` no es virtualizada — para el catálogo de tamaño de esta iteración (decenas de
+    filas por consola) es suficiente; si una futura consola necesita cientos/miles de filas,
+    conviene resolverlo junto con el ítem "DataTable denso" del NORTH_STAR (virtualización +
+    roving tabindex) en vez de improvisarlo aquí.
+  - `HashBadge` es solo visual (sin copiar al portapapeles) — no había precedente de `clipboard`
+    API en el repo; se dejó como chip con `title` del hash completo. Si una futura iteración
+    quiere un botón de copiar real, es una extensión aislada del mismo componente.
+  - Los chips de "saved query" en `WhoDidWhatTimeline` son single-select con toggle (tocar de
+    nuevo el mismo chip activo vuelve a "All activity") — más simple que multi-select para esta
+    primera versión; si el catálogo pide combinar filtros (ej. "AI actions" + "blocked") en una
+    futura iteración, es un cambio de `activeQueryId: string | null` a un `Set<string>`.
+  - No se probó `WhoDidWhatTimeline` con lector de pantalla real — los chips usan `aria-pressed`
+    y el actor lleva un `sr-only` con el tipo de actor antes del nombre, pero queda pendiente una
+    pasada de accesibilidad con AT real junto con el resto del catálogo HITL/auditoría (misma nota
+    dejada en la iteración 5).
+  - Próximas versiones sugeridas: `TraceTree` con costo por span + `TokenCostMeter` (nuevo #1 del
+    NORTH_STAR); `EvidenceExportDialog`/`ApprovalChainStepper` (pueden reutilizar el vocabulario
+    visual de actor/tono/hash de esta iteración); `ComplianceAgentConsole` que combine
+    `AuditLogTable` + `WhoDidWhatTimeline` + `HumanInterruptQueue` en una sola consola por
+    industria (financiera es la candidata más natural); segunda industria (petróleo & energía).

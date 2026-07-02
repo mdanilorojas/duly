@@ -106,8 +106,8 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 | Componente | Propósito | Estado |
 |---|---|---|
-| AuditLogTable | Stream inmutable: actor (humano/agente/sistema), acción, recurso, hash badge | ❌ |
-| WhoDidWhatTimeline | Feed cronológico filtrable con saved-query chips | ❌ |
+| AuditLogTable | Stream inmutable: actor (humano/agente/sistema), acción, recurso, hash badge | ✅ (V001, Storybook `Agentic/Audit Log Table` — tabla semántica densa, actor con icono+anillo dual, hash badge de inmutabilidad) |
+| WhoDidWhatTimeline | Feed cronológico filtrable con saved-query chips | ✅ (V001, Storybook `Agentic/Who Did What Timeline` — grupos cronológicos + chips de consulta guardada con conteo, autoservicio del auditor) |
 | EvidenceExportDialog | Export firmado (PDF/CSV/JSON) de un rango filtrado con manifiesto de hashes | ❌ |
 | ApprovalChainStepper | Quién aprobó qué, cuándo, en qué orden, con ramas de rechazo | ❌ |
 | ModelProvenanceCard | Modelo, versión, prompt version, config hash por run | ❌ |
@@ -165,32 +165,30 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 ## Prioridad de construcción (guía para el loop de 5h)
 
-Reordenado 2026-07-02. Mientras se investigaba esta semana, el loop de construcción cerró
-**la prioridad #1 anterior** (`NodeStatusBadge` + gramática de estado vivo, commit `3b39be4`) y,
-por separado, `WCAG 2.2 AA` pasó a ✅ (commit `539e9db`, hit-areas 24px + auditoría axe). Con eso
-resuelto, `ApprovalGateCard`/`HumanInterruptQueue` tomaron el primer lugar — la investigación de
-esa semana los validó de forma cruzada e independiente en 5 fuentes (OpenAI guardrails/approvals,
-Microsoft AG-UI HITL, Codex Remote mobile approvals, patrón fintech KYA, patrón software de cola
-de aprobación) — y **ya están construidos** (`ApprovalGateCard`/`HumanInterruptQueue` V001,
-mobile-first, ver Storybook `Agentic/Approval Gate` y `Agentic/Human Interrupt Queue`). El área B
-(agent ops) sube de 27%✅ a 33%✅. Con eso resuelto, `AuditLogTable`/`WhoDidWhatTimeline` toman el
-primer lugar — es la única área del catálogo (C, auditoría/compliance) todavía en 0% absoluto.
+Reordenado 2026-07-02 (loop de construcción, iteración 6). El área C (auditoría/compliance) acaba
+de salir de 0% absoluto: `AuditLogTable`/`WhoDidWhatTimeline` — la prioridad #1 anterior — ya están
+construidos (V001, ver Storybook `Agentic/Audit Log Table` y `Agentic/Who Did What Timeline`),
+cerrando los principios #4 y #10 de credibilidad enterprise que no tenían ningún componente. Antes
+de eso el loop ya había cerrado `NodeStatusBadge`/`RunTimeline` (commit `3b39be4`), `WCAG 2.2 AA`
+(commit `539e9db`) y `ApprovalGateCard`/`HumanInterruptQueue` (commit `5dd5964`). Con auditoría
+resuelta, `TraceTree`/`TokenCostMeter` toman el primer lugar — el área B (agent ops) sigue con
+observabilidad de costo sin dueño.
 
-1. **AuditLogTable + WhoDidWhatTimeline** (nueva prioridad #1) — credibilidad de auditoría, 0% de
-   cobertura en toda el área C. El deadline EU AI Act sigue operativo (2-ago-2026) aunque el
-   Digital Omnibus podría retrasarlo — no bajar prioridad, pero ya no comunicar como "inminente
-   sin alternativa": SOC2 CC7/CC8 exige esto igual, sin deadline fijo. Separar diseño de
-   `AuditLogTable` (Art. 12/13) de `RetentionBadge` (Art. 19) — son obligaciones distintas.
-2. **TraceTree con costo por span + TokenCostMeter** — observabilidad con dinero visible.
-3. **Rich Tool-UI sobre ToolCallCard** — MCP Apps/AG-UI Tool-based Generative UI es convergencia
+1. **TraceTree con costo por span + TokenCostMeter** (nueva prioridad #1) — `TraceLog`/
+   `ExecutionTimeline` no anidan spans ni suman costo; observabilidad con dinero visible es el
+   siguiente gap más citado por las fuentes de vanguardia.
+2. **Rich Tool-UI sobre ToolCallCard** — MCP Apps/AG-UI Tool-based Generative UI es convergencia
    de 3 vendors (Vercel, Microsoft, OpenAI ChatKit); `ToolCallCard` ya tiene la base de key/value,
    falta soporte de contenido enriquecido por tipo de tool.
-4. **ExecutionHistoryTable + RunInspector** — el wrapper enterprise sobre n8n (recordar: n8n no
+3. **ExecutionHistoryTable + RunInspector** — el wrapper enterprise sobre n8n (recordar: n8n no
    permite branding propio ni en su plan OEM — construir independiente, no como iframe de marca).
    Área A sigue en 13% de cobertura salvo `NodeStatusBadge`.
-5. **AgentConsentCard (Know-Your-Agent)** — perfil de agente + alcance + consentimiento explícito
+4. **AgentConsentCard (Know-Your-Agent)** — perfil de agente + alcance + consentimiento explícito
    antes de una acción sensible; ahora tiene una base natural en `ApprovalGateCard` para
    reutilizar (evidence pack + evidencia visual de tono/riesgo).
+5. **EvidenceExportDialog + ApprovalChainStepper** — siguientes filas de área C ahora que
+   `AuditLogTable`/`WhoDidWhatTimeline` sientan el vocabulario visual (actor dual, hash badge,
+   tono) que estos dos componentes pueden reutilizar directamente.
 6. **DataTable denso + Density modes + CommandPalette** — table stakes ops.
 7. Resto del catálogo, variante por industria (inmobiliaria, petróleo, software, finanzas, salud).
    Nota de investigación: inmobiliaria y petróleo/energía siguen sin patrones de UI de agentes-IA

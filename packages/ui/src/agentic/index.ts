@@ -11,3 +11,5 @@ export * from "./node-status-badge.js";
 export * from "./run-timeline.js";
 export * from "./approval-gate-card.js";
 export * from "./human-interrupt-queue.js";
+export * from "./audit-log-table.js";
+export * from "./who-did-what-timeline.js";
