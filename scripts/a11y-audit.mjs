@@ -25,6 +25,21 @@ for (const id of ids) {
   });
   if (r.length) results.push({ story: id, violations: r });
 }
+
+// WCAG 1.4.10 Reflow: a 320px de ancho no debe aparecer scroll horizontal.
+// Este check existe porque un overflow real (Accordion w-96) paso todas las
+// verificaciones — todas renderizaban a un solo ancho desktop.
+const rp = await b.newPage({ viewport: { width: 320, height: 800 } });
+for (const id of ids) {
+  await rp.goto(`file:///C:/dev/Enterprise Design System/apps/docs/storybook-static/iframe.html?id=${id}&viewMode=story`, { waitUntil: 'networkidle' });
+  await rp.waitForTimeout(300);
+  const overflow = await rp.evaluate(() => {
+    const el = document.scrollingElement;
+    return el.scrollWidth > el.clientWidth + 1 ? el.scrollWidth - el.clientWidth : 0;
+  });
+  if (overflow > 0) results.push({ story: id, violations: [{ id: 'reflow-320', impact: 'serious', help: `WCAG 1.4.10: ${overflow}px horizontal overflow at 320px viewport`, nodes: [] }] });
+}
+await rp.close();
 await b.close();
 writeFileSync(`${ROOT}/.ds-sync/a11y-report.json`, JSON.stringify(results, null, 2));
 const total = results.reduce((a, s) => a + s.violations.length, 0);

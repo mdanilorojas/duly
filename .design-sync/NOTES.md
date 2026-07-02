@@ -42,3 +42,12 @@ Expected when only CSS changes (not DS source). The storybook reference is still
 ## Grade results
 
 All 22 components: `match` across all stories. Zero failures. Zero regressions.
+
+## GRID_OVERFLOW root cause (2026-07-01)
+
+El `cardMode: "column"` de Accordion/Skeleton/RadioGroup/Textarea silenciaba un
+bug real: stories con anchos fijos (`w-96`/`w-80`) que desbordan contenedores
+angostos, y `border-b` sin color (= currentColor blanco en Tailwind v4 sin
+preflight). Ambos corregidos: stories ahora `w-full max-w-*`, y `styles.css`
+restaura el default `border-color: var(--border-subtle)` a nivel components
+layer. Lección: un GRID_OVERFLOW nuevo se investiga, no se silencia con config.

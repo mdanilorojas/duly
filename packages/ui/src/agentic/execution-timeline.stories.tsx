@@ -93,7 +93,7 @@ export const DocumentIntelligenceRun: S = {
 export const ToolCallDetailOnly: S = {
   render: () => (
     <div className="grid min-h-screen place-items-center bg-bg-base p-12">
-      <div className="w-[420px]">
+      <div className="w-full max-w-[420px]">
         <ToolCallCard
           tone="review"
           tool="draft_redline(clause, policy)"

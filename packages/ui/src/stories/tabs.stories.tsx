@@ -13,7 +13,7 @@ type S = StoryObj<typeof meta>;
 
 export const Default: S = {
   render: () => (
-    <Tabs defaultValue="overview" className="w-80">
+    <Tabs defaultValue="overview" className="w-full max-w-80">
       <TabsList>
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="logs">Logs</TabsTrigger>

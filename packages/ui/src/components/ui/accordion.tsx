@@ -19,7 +19,8 @@ function AccordionItem({
   return (
     <AccordionPrimitive.Item
       data-slot="accordion-item"
-      className={cn("border-b last:border-b-0", className)}
+      // border-border-subtle explícito: en Tailwind v4 `border-b` sin color = currentColor (blanco sobre dark)
+      className={cn("border-b border-border-subtle last:border-b-0", className)}
       {...props}
     />
   )

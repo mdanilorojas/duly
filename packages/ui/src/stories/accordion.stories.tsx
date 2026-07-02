@@ -34,7 +34,7 @@ const items = [
 
 export const Default: S = {
   render: () => (
-    <Accordion type="single" collapsible className="w-96">
+    <Accordion type="single" collapsible className="w-full max-w-96">
       {items.map(({ value, trigger, content }) => (
         <AccordionItem key={value} value={value}>
           <AccordionTrigger>{trigger}</AccordionTrigger>
@@ -47,7 +47,7 @@ export const Default: S = {
 
 export const Multiple: S = {
   render: () => (
-    <Accordion type="multiple" className="w-96">
+    <Accordion type="multiple" className="w-full max-w-96">
       {items.map(({ value, trigger, content }) => (
         <AccordionItem key={value} value={value}>
           <AccordionTrigger>{trigger}</AccordionTrigger>

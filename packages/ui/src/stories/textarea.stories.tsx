@@ -7,13 +7,13 @@ export default meta;
 type S = StoryObj<typeof meta>;
 
 export const Default: S = {
-  render: () => <Textarea className="w-80" placeholder="Describe the agent task..." />,
+  render: () => <Textarea className="w-full max-w-80" placeholder="Describe the agent task..." />,
 };
 
 export const Disabled: S = {
   render: () => (
     <Textarea
-      className="w-80"
+      className="w-full max-w-80"
       placeholder="Describe the agent task..."
       disabled
       defaultValue="Pipeline processing paused."
@@ -24,7 +24,7 @@ export const Disabled: S = {
 export const Error: S = {
   render: () => (
     <Textarea
-      className="w-80"
+      className="w-full max-w-80"
       placeholder="Describe the agent task..."
       aria-invalid
       defaultValue="Invalid JSON payload"

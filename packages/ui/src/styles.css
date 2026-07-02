@@ -16,3 +16,18 @@
 @import "@studio/tokens/theme-test.css";
 
 @source "./**/*.{ts,tsx}";
+
+/*
+ * Default border-color. Tailwind v4 dropped the v3 default (border → theme color)
+ * in favor of currentColor, and we don't ship preflight — so a bare `border-b`
+ * rendered white-on-dark. This restores the shadcn base rule without pulling in
+ * the full base layer. Explicit border-* color utilities still win (higher
+ * specificity than `*`, and utilities layer comes after components).
+ */
+@layer components {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border-subtle);
+  }
+}
