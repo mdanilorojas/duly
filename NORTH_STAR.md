@@ -55,12 +55,12 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 | Componente | Propósito | Estado |
 |---|---|---|
-| TraceTree / SpanRow | Spans anidados (LLM/tool/agente/retrieval) con duración, tokens y costo por span | 🟡 (TraceLog + ExecutionTimeline existen; ninguno anida spans ni suma costo) |
+| TraceTree / SpanRow | Spans anidados (LLM/tool/agente/retrieval) con duración, tokens y costo por span | ✅ (V001, Storybook `Agentic/Trace Tree` — árbol colapsable con waterfall de tiempo y rollup de costo/tokens por rama) |
 | ApprovalGateCard | Evidence pack: qué/por qué/blast-radius/rollback + approve/reject/escalate + timeout | ✅ (V001, Storybook `Agentic/Approval Gate` — 4 estados de resolución: approved/rejected/escalated/expired, mobile-first) |
 | HumanInterruptQueue | Inbox de runs pausados esperando revisión, ordenado por riesgo/edad; debe funcionar también en mobile (ver nota) | ✅ (V001, Storybook `Agentic/Human Interrupt Queue` — ordena por tono de riesgo y luego edad, filas expandibles a `ApprovalGateCard`) |
 | AgentConsentCard (Know-Your-Agent) | Perfil de agente + alcance + consentimiento explícito antes de una acción sensible | ❌ (nuevo — ver fuente abajo) |
 | RunTimeline | Timeline estilo Temporal con estados vivos (dashed/solid/color) | ✅ (V001, Storybook `Agentic/Run Timeline` — construido sobre la gramática de 6 estados de `NodeStatusBadge`) |
-| TokenCostMeter | Costo por run y agregado (modelo vs tools vs retrieval), umbrales de presupuesto | ❌ |
+| TokenCostMeter | Costo por run y agregado (modelo vs tools vs retrieval), umbrales de presupuesto | ✅ (V001, Storybook `Agentic/Token Cost Meter` — desglose por categoría + barra de presupuesto con umbral ok/warn/block) |
 | GuardrailIndicator | Pill passed/warned/blocked, expandible a la política que disparó | ❌ |
 | EvalScoreBadge + Sparkline | Score vs umbral, flechas de regresión | ❌ |
 | AgentHandoffMarker | Punto visual de transferencia agente↔agente o agente→humano | ❌ |
@@ -165,30 +165,31 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 ## Prioridad de construcción (guía para el loop de 5h)
 
-Reordenado 2026-07-02 (loop de construcción, iteración 6). El área C (auditoría/compliance) acaba
-de salir de 0% absoluto: `AuditLogTable`/`WhoDidWhatTimeline` — la prioridad #1 anterior — ya están
-construidos (V001, ver Storybook `Agentic/Audit Log Table` y `Agentic/Who Did What Timeline`),
-cerrando los principios #4 y #10 de credibilidad enterprise que no tenían ningún componente. Antes
-de eso el loop ya había cerrado `NodeStatusBadge`/`RunTimeline` (commit `3b39be4`), `WCAG 2.2 AA`
-(commit `539e9db`) y `ApprovalGateCard`/`HumanInterruptQueue` (commit `5dd5964`). Con auditoría
-resuelta, `TraceTree`/`TokenCostMeter` toman el primer lugar — el área B (agent ops) sigue con
-observabilidad de costo sin dueño.
+Reordenado 2026-07-02 (loop de construcción, iteración 7). `TraceTree`/`TokenCostMeter` — la
+prioridad #1 anterior — ya están construidos (V001, ver Storybook `Agentic/Trace Tree` y
+`Agentic/Token Cost Meter`), cerrando el principio #2 de credibilidad enterprise ("costo y tokens
+son UI de primera clase") que no tenía ningún componente propio. Antes de eso el loop ya había
+cerrado `AuditLogTable`/`WhoDidWhatTimeline` (commit `08256e9`), `ApprovalGateCard`/
+`HumanInterruptQueue` (commit `5dd5964`), `NodeStatusBadge`/`RunTimeline` (commit `3b39be4`) y
+`WCAG 2.2 AA` (commit `539e9db`). Con observabilidad de costo resuelta, `Rich Tool-UI` toma el
+primer lugar — convergencia de 3 vendors (Vercel MCP Apps, Microsoft AG-UI, OpenAI ChatKit) sobre
+una base que ya existe (`ToolCallCard`).
 
-1. **TraceTree con costo por span + TokenCostMeter** (nueva prioridad #1) — `TraceLog`/
-   `ExecutionTimeline` no anidan spans ni suman costo; observabilidad con dinero visible es el
-   siguiente gap más citado por las fuentes de vanguardia.
-2. **Rich Tool-UI sobre ToolCallCard** — MCP Apps/AG-UI Tool-based Generative UI es convergencia
-   de 3 vendors (Vercel, Microsoft, OpenAI ChatKit); `ToolCallCard` ya tiene la base de key/value,
-   falta soporte de contenido enriquecido por tipo de tool.
-3. **ExecutionHistoryTable + RunInspector** — el wrapper enterprise sobre n8n (recordar: n8n no
+1. **Rich Tool-UI sobre ToolCallCard** (nueva prioridad #1) — MCP Apps/AG-UI Tool-based Generative
+   UI es convergencia de 3 vendors (Vercel, Microsoft, OpenAI ChatKit); `ToolCallCard` ya tiene la
+   base de key/value, falta soporte de contenido enriquecido por tipo de tool.
+2. **ExecutionHistoryTable + RunInspector** — el wrapper enterprise sobre n8n (recordar: n8n no
    permite branding propio ni en su plan OEM — construir independiente, no como iframe de marca).
    Área A sigue en 13% de cobertura salvo `NodeStatusBadge`.
-4. **AgentConsentCard (Know-Your-Agent)** — perfil de agente + alcance + consentimiento explícito
+3. **AgentConsentCard (Know-Your-Agent)** — perfil de agente + alcance + consentimiento explícito
    antes de una acción sensible; ahora tiene una base natural en `ApprovalGateCard` para
    reutilizar (evidence pack + evidencia visual de tono/riesgo).
-5. **EvidenceExportDialog + ApprovalChainStepper** — siguientes filas de área C ahora que
+4. **EvidenceExportDialog + ApprovalChainStepper** — siguientes filas de área C ahora que
    `AuditLogTable`/`WhoDidWhatTimeline` sientan el vocabulario visual (actor dual, hash badge,
    tono) que estos dos componentes pueden reutilizar directamente.
+5. **GuardrailIndicator + EvalScoreBadge** — `TraceTree` ya expone tono por span (ok/warn/block);
+   estos dos ítems reutilizan ese mismo vocabulario para exponer policy checks y regresión de eval
+   junto al costo, cerrando más filas del área B.
 6. **DataTable denso + Density modes + CommandPalette** — table stakes ops.
 7. Resto del catálogo, variante por industria (inmobiliaria, petróleo, software, finanzas, salud).
    Nota de investigación: inmobiliaria y petróleo/energía siguen sin patrones de UI de agentes-IA

@@ -424,3 +424,98 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
     visual de actor/tono/hash de esta iteración); `ComplianceAgentConsole` que combine
     `AuditLogTable` + `WhoDidWhatTimeline` + `HumanInterruptQueue` en una sola consola por
     industria (financiera es la candidata más natural); segunda industria (petróleo & energía).
+
+---
+
+## Iteración 7 — V001 Trace Tree + Token Cost Meter (Agent Ops / Cost Observability)
+
+- **Fecha:** 2026-07-02T15:12:26Z
+- **Versión:** `TraceTreeV001` + `TokenCostMeterV001`
+- **Tipo:** primitive + composition (agent ops UI, agnóstico de industria)
+- **Industria:** ninguna en particular — primitive de infraestructura, prioridad #1 del NORTH_STAR
+  (2026-07-02, tras el reordenamiento de la iteración 6): `TraceLog`/`ExecutionTimeline` no anidan
+  spans ni suman costo; el principio #2 de credibilidad enterprise ("costo y tokens son UI de
+  primera clase, atribuidos por paso — no un reporte enterrado") no tenía ningún componente propio.
+- **Storybook:** `Agentic/Trace Tree/V001 Cost-Attributed Spans` (stories: `DocumentIntelligenceRun`,
+  `NestedResearchSwarm`, `CollapsedByDefault`) y `Agentic/Token Cost Meter/V001 Budget Attribution`
+  (stories: `WithinBudget`, `OverBudget`, `NoBudgetConfigured`, `AggregatedFleetSpend`).
+- **Inspiración investigada:** LangSmith/LangGraph (trace tree con spans anidados LLM/tool/chain y
+  costo por span, referencia directa del ítem del catálogo), Temporal UI (event history timeline
+  con navegación por teclado), waterfall/flame-graph de herramientas de performance (Chrome
+  DevTools Network/Performance panel — barra posicionada y dimensionada según offset/duración
+  relativos al total, patrón genérico no específico de IA) y Datadog/Stripe-style cost dashboards
+  (desglose categórico + barra de presupuesto con umbral de color). Se tradujo el patrón común
+  "árbol colapsable + barra de tiempo relativa + rollup numérico por rama" a dos componentes
+  propios (`TraceTree` para el detalle de un run, `TokenCostMeter` para el agregado por categoría),
+  sin copiar ningún layout específico de vendor.
+- **Razón de producto:** cierra el gap #1 priorizado por `NORTH_STAR.md` tras la iteración 6 — el
+  área B (agent ops) tenía observabilidad de ejecución (`ExecutionTimeline`, `RunTimeline`) pero
+  ningún componente mostraba costo ni tokens de forma jerárquica ni agregada. `TraceTree` responde
+  "¿qué pasó y cuánto costó, span por span, en esta rama del run?"; `TokenCostMeter` responde
+  "¿cuánto va gastado en total y en qué se fue, contra qué presupuesto?" — son complementarios, no
+  duplicados: el primero vive junto al detalle de un run (ej. dentro de `ExecutionTimeline` o una
+  consola de industria), el segundo vive en el header de una consola u ops dashboard como resumen.
+- **Componentes creados:**
+  - `packages/ui/src/agentic/trace-tree.tsx`:
+    - Tipo `TraceSpan` (kind, name, tone, startMs, durationMs, tokens, costUsd, children) — árbol
+      recursivo, no lista plana.
+    - `rollup()` — suma costo/tokens propios + de todos los hijos, recursivo; cada nodo padre
+      muestra el total de su rama, no solo su propio costo.
+    - `<SpanRow>` (interno) — fila recursiva con icono+tono por `kind` (llm/tool/agent/retrieval),
+      barra waterfall posicionada/dimensionada según `startMs`/`durationMs` relativos a la duración
+      total del run (piso de 2% de ancho para que spans muy cortos sigan siendo visibles),
+      `Collapsible` de Radix para expandir/colapsar ramas, columna de duración y columna de costo
+      con tokens in→out en pantallas ≥md.
+    - `<TraceTree>` — contenedor con header (título, run id, total de duración/costo/tokens del
+      run completo) + header de columnas + lista de `SpanRow` raíz. `defaultOpenDepth` controla
+      cuántos niveles empiezan expandidos (por defecto 2).
+  - `packages/ui/src/agentic/token-cost-meter.tsx`:
+    - Tipo `CostBreakdownItem` (label, costUsd, tone) — reutiliza los 5 tonos del sistema como
+      categórico (Model/Tools/Retrieval), mismo patrón que `AgentStatusMatrix` en la iteración 2.
+    - `<TokenCostMeter>` — costo total (prop directa o suma de `breakdown`), barra de composición
+      horizontal (`role="img"` con `aria-label` textual del desglose para lectores de pantalla, ya
+      que el color solo no comunica proporción), leyenda con dot+label+monto por categoría, y una
+      barra de presupuesto opcional (`role="progressbar"`) con tono `ok`/`warn`/`block` según el
+      % consumido (umbral en 75%/100%, mismo criterio semántico de riesgo que `ApprovalGateCard`).
+  - `packages/ui/src/agentic/trace-tree.stories.tsx` — 3 stories: el mismo run `run_8f21c0`
+    (document intelligence review) de `Agentic/Execution Timeline` visto como árbol de spans en vez
+    de secuencia lineal (demuestra que ambas vistas comparten vocabulario de run), un run de
+    "research swarm" con 3 niveles de anidamiento para probar el rollup en profundidad, y una
+    variante colapsada por defecto.
+  - `packages/ui/src/agentic/token-cost-meter.stories.tsx` — 4 stories: dentro de presupuesto,
+    sobre presupuesto (tono `block`), sin presupuesto configurado (vista mínima), y un agregado de
+    "fleet spend" 24h con cifras de escala enterprise (millones de tokens).
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 2 módulos nuevos.
+  - Reutiliza `Tone` de `../trace-log/trace-log.variants.js` (mismos 5 tonos del sistema, sin color
+    crudo), `cn` de `@/lib/utils`, y el patrón `Collapsible.Root/Trigger/Content` ya establecido en
+    `TraceLog.Detail`/`RunStep`/`WhoDidWhatTimeline`.
+- **Comandos ejecutados:** `git checkout main` + `git pull origin main` (el contenedor arrancó con
+  `HEAD` detached, 16 commits detrás del remoto real — sincronizado sin perder nada) · `pnpm
+  install` (faltaba `node_modules`) · `pnpm --filter @studio/ui test` (26 passed, sin cambios) ·
+  `pnpm exec turbo run build --filter=@studio/ui...` (OK) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/trace-tree.tsx src/agentic/trace-tree.stories.tsx src/agentic/token-cost-meter.tsx
+  src/agentic/token-cost-meter.stories.tsx src/agentic/index.ts` (0 errores) · `pnpm exec turbo run
+  build --filter=@studio/docs...` (Storybook static build OK, incluye ambos `.stories`, chunks
+  nuevos `trace-tree.stories-*.js` y `token-cost-meter.stories-*.js` visibles en el output).
+- **Resultado:** ✅ mergeado a main. `NORTH_STAR.md` actualizado: `TraceTree`/`SpanRow` y
+  `TokenCostMeter` pasan de ❌/🟡 a ✅ (sección B) y reordenada la "Prioridad de construcción" con
+  `Rich Tool-UI sobre ToolCallCard` como nuevo #1.
+- **Notas para revisión humana:**
+  - La barra waterfall de `TraceTree` es puramente visual (`aria-hidden`) — la información de
+    tiempo ya está disponible como texto en la columna de duración, así que no se pierde nada para
+    AT, pero no se probó con lector de pantalla real (misma nota pendiente que iteraciones 5 y 6).
+  - `rollup()` recorre el árbol completo en cada render vía `React.useMemo` a nivel de `TraceTree`
+    (totales del run) pero cada `SpanRow` vuelve a llamar `rollup()` sobre su propio subárbol sin
+    memoizar — aceptable para los tamaños de árbol de esta versión (decenas de spans), pero si una
+    futura consola muestra runs con cientos de spans conviene memoizar por nodo o precomputar
+    rollups una sola vez fuera del componente.
+  - Los tonos de `CostBreakdownItem` en `TokenCostMeter` se usan como categórico (Model=review,
+    Tools=info, Retrieval=warn) en vez de semántico — mismo patrón ya aceptado en
+    `AgentStatusMatrix` (iteración 2); si el ítem "Data-viz tokens: paleta categórica 3:1" del
+    NORTH_STAR se construye en una futura iteración, migrar `TokenCostMeter` a esa paleta dedicada
+    en vez de forzar los 5 tonos semánticos como si fueran categorías.
+  - Próximas versiones sugeridas: Rich Tool-UI sobre `ToolCallCard` (nuevo #1 del NORTH_STAR,
+    convergencia de 3 vendors en MCP Apps/AG-UI/ChatKit); conectar `TraceTree` como drill-down
+    dentro de `ExecutionTimeline` o una futura consola por industria; `GuardrailIndicator`/
+    `EvalScoreBadge` reutilizando el vocabulario de tono ya establecido; segunda industria
+    (petróleo & energía).
