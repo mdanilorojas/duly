@@ -81,7 +81,7 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 | Capacidad | Propósito | Estado |
 |---|---|---|
-| WCAG 2.2 AA | focus-not-obscured, targets 24px, alternativas a drag | 🟡 (focus-visible sí; sin auditoría 2.2 formal) |
+| WCAG 2.2 AA | focus-not-obscured, targets 24px, alternativas a drag | ✅ (axe wcag2a/aa/21aa/22aa: 0 violaciones en todas las stories; hit-areas 24px en Checkbox/Radio/Switch; auditor: `scripts/a11y-audit.mjs` (requiere playwright)) |
 | Density modes | comfortable/compact (Spectrum-style) para tablas ops | ❌ |
 | Theming white-label | ThemeProvider + tokens OKLCH re-brandeable | 🟡 (3 temas; falta guía white-label) |
 | Data-viz tokens | Paleta categórica 3:1 sobre dark (Carbon-style), sequential + alert | ❌ |

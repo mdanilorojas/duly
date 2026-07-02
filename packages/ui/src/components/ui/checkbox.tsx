@@ -14,7 +14,8 @@ function Checkbox({
     <CheckboxPrimitive.Root
       data-slot="checkbox"
       className={cn(
-        "peer size-4 shrink-0 rounded-[4px] border border-border-default shadow-xs transition-shadow outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-block aria-invalid:ring-block/20 data-[state=checked]:border-accent data-[state=checked]:bg-accent data-[state=checked]:text-on-accent",
+        // after: hit-area de 24px (WCAG 2.2 — 2.5.8 Target Size) sin alterar el visual de 16px
+        "peer relative size-4 shrink-0 rounded-[4px] border border-border-default shadow-xs transition-shadow outline-none after:absolute after:-inset-1 after:content-[''] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-block aria-invalid:ring-block/20 data-[state=checked]:border-accent data-[state=checked]:bg-accent data-[state=checked]:text-on-accent",
         className
       )}
       {...props}

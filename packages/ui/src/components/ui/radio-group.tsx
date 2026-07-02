@@ -25,7 +25,8 @@ function RadioGroupItem({
     <RadioGroupPrimitive.Item
       data-slot="radio-group-item"
       className={cn(
-        "aspect-square size-4 shrink-0 rounded-full border border-border-default text-accent shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-block aria-invalid:ring-block/20",
+        // after: hit-area de 24px (WCAG 2.2 — 2.5.8 Target Size) sin alterar el visual de 16px
+        "relative aspect-square size-4 shrink-0 rounded-full border border-border-default text-accent shadow-xs transition-[color,box-shadow] outline-none after:absolute after:-inset-1 after:content-[''] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-block aria-invalid:ring-block/20",
         className
       )}
       {...props}
