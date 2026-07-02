@@ -15,3 +15,4 @@ export * from "./audit-log-table.js";
 export * from "./who-did-what-timeline.js";
 export * from "./trace-tree.js";
 export * from "./token-cost-meter.js";
+export * from "./rich-tool-call-card.js";

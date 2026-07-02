@@ -519,3 +519,101 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
     dentro de `ExecutionTimeline` o una futura consola por industria; `GuardrailIndicator`/
     `EvalScoreBadge` reutilizando el vocabulario de tono ya establecido; segunda industria
     (petróleo & energía).
+
+---
+
+## Iteración 8 — V002 Rich Tool-UI sobre ToolCallCard (Agent Ops / Generative UI)
+
+- **Fecha:** 2026-07-02T23:38:00Z
+- **Versión:** `RichToolCallCardV002` (extiende la familia `ToolCallCard` de `execution-timeline.tsx`,
+  no la reemplaza — `ToolCallCard` V001 queda intacto y sigue siendo el default para resultados
+  de texto/key-value simples).
+- **Tipo:** primitive (agent ops UI, agnóstico de industria)
+- **Industria:** ninguna en particular — primitive de infraestructura, prioridad #1 del NORTH_STAR
+  tras el reordenamiento de la iteración 7.
+- **Storybook:** `Agentic/Tool Call Card/V002 Rich Tool-UI` (stories: `TableResult`, `DiffResult`,
+  `CitationsResult`, `MetricsResult`, `CodeResult`, `ConfirmResultInteractive` — con estado real
+  vía `useState` para demostrar el flujo pending→confirmed/declined, no solo una captura estática
+  — y `MultiBlockResult` combinando 3 bloques en un solo tool result).
+- **Inspiración investigada (WebSearch, 2026-07-02):** ChatKit widgets de OpenAI
+  (developers.openai.com/api/docs/guides/chatkit-widgets — "Card" como contenedor con
+  status/confirm/cancel, "Card as Form" para validación embebida) y AG-UI/CopilotKit
+  (copilotkit.ai/ag-ui, copilotkit.ai/blog/the-developer-s-guide-to-generative-ui-in-2026 — el
+  espectro Controlled/Declarative/Open-ended Generative UI; "Controlled Generative UI" = el agente
+  elige entre componentes pre-construidos y les pasa datos, sin generar markup libre). Se adoptó
+  explícitamente el patrón **Controlled Generative UI** (el más predecible y auditable de los 3,
+  coherente con el principio de credibilidad enterprise de este sistema) en vez de open-ended
+  (iframe/HTML libre) — un discriminated union de tipos de bloque (`table`/`diff`/`citations`/
+  `confirm`/`metrics`/`code`) que el agente puebla con datos, no con UI arbitraria.
+- **Razón de producto:** cierra el gap #1 priorizado por `NORTH_STAR.md` tras la iteración 7 —
+  `ToolCallCard` (V001, en `execution-timeline.tsx`) solo soporta input/output como texto o pares
+  clave/valor truncados; 3 vendors (Vercel MCP Apps, Microsoft AG-UI Tool-based Generative UI,
+  OpenAI ChatKit) convergieron esta semana en el mismo patrón de UI enriquecida por tipo de tool
+  dentro del resultado, no solo texto/JSON. Un tool que devuelve una tabla de reclamos, un diff de
+  contrato, fuentes de retrieval con score, o una transferencia que necesita confirmación explícita
+  del humano, hoy se aplastaba a una sola línea de `output: React.ReactNode` — perdía estructura y
+  no soportaba el patrón "confirm/cancel embebido en el resultado del tool" (ChatKit "Card as
+  Form"), que es exactamente el tipo de HITL de bajo-fricción que el catálogo pide en el área B.
+- **Componentes creados:**
+  - `packages/ui/src/agentic/rich-tool-call-card.tsx`:
+    - Tipo `ToolResultBlock` — discriminated union de 6 kinds (`table`, `diff`, `citations`,
+      `confirm`, `metrics`, `code`), cada uno con su propio shape de datos tipado.
+    - 6 renderers internos (`TableBlock`, `DiffBlock`, `CitationsBlock`, `ConfirmBlock`,
+      `MetricsBlock`, `CodeBlock`) + `ToolResultBlockView` como switch exhaustivo (TypeScript
+      narrowing por `kind`, sin `default` — un nuevo kind sin case rompe el build).
+    - `DiffBlock` reutiliza los tonos semánticos `block`/`ok` para removido/agregado (mismo
+      vocabulario de riesgo del resto del sistema, no colores crudos de "git diff").
+    - `ConfirmBlock` implementa el patrón HITL embebido: en `status="pending"` muestra
+      Confirm/Decline (reutiliza `Button` de `components/ui/button.js`, mismo patrón de
+      `ApprovalGateCard`); en `confirmed`/`declined` colapsa a un chip de estado resuelto — nunca
+      desaparece silenciosamente (mismo principio #3 del NORTH_STAR que `ApprovalGateCard`).
+    - `<RichToolCallCard>` — mismo header que `ToolCallCard` V001 (nombre de tool + latencia +
+      tono) para que ambas versiones se sientan como la misma familia visual; `input` opcional
+      (a diferencia de V001 donde es requerido, porque no todo tool con resultado rico tiene
+      parámetros de entrada relevantes de mostrar); `blocks: ToolResultBlock[]` reemplaza el
+      `output: ReactNode` único de V001, permitiendo componer varios bloques en un solo resultado
+      (ver story `MultiBlockResult`: metrics + table + citations en un solo tool call de
+      reconciliación de facturas).
+  - `packages/ui/src/agentic/rich-tool-call-card.stories.tsx` — 8 stories cubriendo los 6 kinds de
+    bloque individualmente con datos de dominio distintos (SQL de claims/seguros, redline legal,
+    retrieval con score, risk scoring, config JSON generado, wire transfer con confirmación), más
+    la variante interactiva de confirm y la variante multi-bloque.
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con el módulo nuevo.
+  - Reutiliza `Tone`/`Button`/`cn` de los mismos módulos que `ApprovalGateCard`/`ToolCallCard`, sin
+    tocar ninguno de los dos.
+- **Comandos ejecutados:** `git checkout main` + `git pull origin main` (contenedor arrancó de
+  nuevo con `HEAD` detached, 17 commits detrás del remoto real — sincronizado) · `pnpm install`
+  (faltaba `node_modules`) · `pnpm --filter @studio/ui test` (26 passed, sin cambios — el paquete
+  no tiene tests de componentes agentic salvo `neural-agents`/`real-estate-agents`) · `pnpm
+  --filter @studio/ui exec eslint src/agentic/rich-tool-call-card.tsx
+  src/agentic/rich-tool-call-card.stories.tsx src/agentic/index.ts` (0 errores, sin colores crudos)
+  · `pnpm exec turbo run build --filter=@studio/ui...` (OK) · `pnpm exec turbo run build
+  --filter=@studio/docs...` (Storybook static build OK, chunk nuevo
+  `rich-tool-call-card.stories-*.js` de 24.01 kB visible en el output).
+- **Resultado:** ✅ mergeado a main. `NORTH_STAR.md` actualizado: fila "Rich Tool-UI (tool-based
+  generative UI)" pasa de 🟡 a ✅ (sección B) y reordenada la "Prioridad de construcción" con
+  `ExecutionHistoryTable + RunInspector` como nuevo #1 (área A sigue siendo la de menor cobertura,
+  13%, con solo `NodeStatusBadge`).
+- **Notas para revisión humana:**
+  - El discriminated union de `ToolResultBlock` no incluye un bloque de tipo "form" genérico (ej.
+    ChatKit `Card asForm` con validación de campos arbitrarios) — se dejó fuera intencionalmente
+    porque requeriría un sistema de definición de formulario completo (field types, validación,
+    submit handler tipado) que es alcance de un componente propio, no una extensión de esta
+    versión. `confirm` cubre el caso más común (aprobar/rechazar una acción propuesta) sin ese
+    alcance.
+  - `TableBlock`/`CodeBlock` no son virtualizados — para tool results con cientos de filas o
+    bloques de código muy largos, la tabla/pre crecen sin límite. Aceptable para el tamaño de
+    mock de esta versión (decenas de filas), pero si una futura consola de industria muestra
+    resultados de tools con datasets grandes, conviene reutilizar el patrón de límite/paginación
+    que necesitará `ExecutionHistoryTable` de todos modos (ver prioridad #1 siguiente).
+  - `ConfirmBlock` en la story `ConfirmResultInteractive` usa `useState` local en un wrapper de
+    story (`ConfirmDemo`) — es el primer componente agentic de este lab con una story genuinamente
+    interactiva (no solo variantes estáticas por prop); si se adopta como patrón, vale la pena un
+    helper de story reutilizable en vez de repetir el wrapper en cada archivo.
+  - Próximas versiones sugeridas: `ExecutionHistoryTable` + `RunInspector` (nuevo #1 del
+    NORTH_STAR, wrapper propio sobre ejecuciones estilo n8n — recordar que n8n no permite
+    white-label ni en su plan OEM); `AgentConsentCard` (Know-Your-Agent) reutilizando el widget
+    `confirm` de esta iteración como base de la UI de consentimiento; segunda industria (petróleo
+    & energía) o primera variante financiera de una consola completa (`AuditLogTable` +
+    `WhoDidWhatTimeline` + `HumanInterruptQueue` + `RichToolCallCard` ya dan suficiente vocabulario
+    para una `ComplianceAgentConsole` compuesta).
