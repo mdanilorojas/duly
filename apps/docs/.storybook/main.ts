@@ -5,6 +5,7 @@ const UI_SRC = resolve(__dirname, "../../../packages/ui/src");
 
 const config: StorybookConfig = {
   stories: ["../../../packages/ui/src/**/*.stories.tsx"],
+  staticDirs: ["./public"],
   addons: ["@storybook/addon-a11y", "@storybook/addon-essentials"],
   framework: "@storybook/react-vite",
   core: { disableTelemetry: true },
