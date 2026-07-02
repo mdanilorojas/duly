@@ -82,15 +82,33 @@ Sizes: `xs` `sm` `default` `lg` — icon variants: `icon-xs` `icon-sm` `icon` `i
 </Card>
 ```
 
-## Spacing + typography tokens
+## Color + typography tokens
 
-Use CSS custom properties from `styles.css`. Key tokens:
-- `--bg-base` — primary background
-- `--bg-muted` — subtle background (card surfaces)
-- `--fg-base` — primary text
-- `--fg-muted` — secondary text
-- `--border` — default border color
-- `--color-accent` — teal accent (primary actions)
-- `--color-destructive` — red (errors/warnings)
-- `--radius` — component border radius
-- `--font-mono` — JetBrains Mono (falls back to system monospace)
+Use CSS custom properties (defined under `[data-theme="cockpit"]` in `styles.css`). Verified token names:
+
+**Surfaces / background**
+- `--bg-base` — primary page background
+- `--bg-elevated` — elevated background
+- `--surface-2` — card / panel surface
+- `--surface-3` — raised surface
+- `--surface-sunken` — inset surface
+- `--surface-header` — header strip
+
+**Text**
+- `--ink` — primary text (near-white)
+- `--dim` — secondary text
+- `--faint` — tertiary / disabled text
+
+**Borders** (default border-color is applied to every element via the `components` layer)
+- `--border-subtle` — default border
+- `--border-default`, `--border-strong`, `--border-divider` — heavier / divider borders
+
+**Accent + state**
+- `--accent` — primary teal accent (primary actions)
+- `--accent-secondary` — violet accent
+- `--ok` green, `--warn` yellow, `--block` red (destructive), `--review` cyan, `--info` — status tones (each has a matching `--on-*` for text-on-tone, e.g. `--on-block`)
+
+**Radius**
+- `--radius-2xl` (1rem) plus the Tailwind radius scale `--radius-xs … --radius-2xl` — component corner radius
+
+Monospace: apply the `font-mono` utility class (JetBrains Mono; falls back to system monospace — no woff2 ships, so `var(--font-mono)` is not a resolvable custom property).

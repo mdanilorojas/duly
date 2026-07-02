@@ -10,6 +10,7 @@
     "component": "PreviewWrapper"
   },
   "cssEntry": "./dist/bundle-with-preflight.css",
+  "readmeHeader": ".design-sync/conventions.md",
   "overrides": {
     "Accordion": { "cardMode": "column" },
     "Skeleton": { "cardMode": "column" },

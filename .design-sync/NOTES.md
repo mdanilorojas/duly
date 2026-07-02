@@ -51,3 +51,30 @@ angostos, y `border-b` sin color (= currentColor blanco en Tailwind v4 sin
 preflight). Ambos corregidos: stories ahora `w-full max-w-*`, y `styles.css`
 restaura el default `border-color: var(--border-subtle)` a nivel components
 layer. Lección: un GRID_OVERFLOW nuevo se investiga, no se silencia con config.
+
+## Re-sync risks (updated 2026-07-02)
+
+Watch-list for the next sync:
+
+- **grade.json keys are story DISPLAY names, not export names.** Compare grade keys are
+  the human titles with spaces ("With Label", "All States", "Neural Cores", "Agent Status",
+  "Live Workflow Run") — NOT export identifiers ("WithLabel", "AllStates"). The capture
+  facts `.stories[].name` field returns the EXPORT name; do not use it for grade keys. Read
+  the exact keys from the `[COMPARE] <Name>: N needs-grade — grade keys: …` log line. A wrong
+  key silently leaves that story in pendingGrade (hit this 2026-07-02: 9 components re-keyed).
+- **Card / "Agent Status" = close (not match).** Secondary/outline "Logs" button border
+  renders in storybook (app.css preflight) but is absent in the shipped bundle preview.
+  Pre-existing bundle-vs-preflight gap. Fix candidate: give the outline/secondary Button
+  variant an explicit border-width + border-color in packages/ui so it doesn't depend on
+  preflight. Re-check this story after any Button/border CSS change.
+- **conventions.md token drift (fixed 2026-07-02).** Prior conventions.md named tokens that
+  don't exist in the compiled CSS (--bg-muted, --fg-base, --fg-muted, --color-accent,
+  --color-destructive, bare --border/--radius/--font-mono). Corrected to real vocabulary:
+  --surface-2/--bg-elevated (surfaces), --ink/--dim/--faint (text), --border-subtle + --border-*
+  (borders), --accent/--accent-secondary + tones --ok/--warn/--block/--review/--info, --radius-2xl.
+  LESSON: validate every conventions token against ds-bundle/_ds_bundle.css each sync — a wrong
+  name ships silently-unstyled designs.
+- **New components 2026-07-02:** ExecutionTimeline, RunTimeline (agentic) — first graded, all
+  stories match. AgentGallery uses WebGL cores; animation-frame diffs between panels are expected.
+- **JetBrains Mono still unresolved.** var(--font-mono) is not a resolvable custom property and
+  no woff2 ships; the font-mono utility class falls back to system monospace on both panels. Accepted.
