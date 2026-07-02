@@ -38,7 +38,7 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 |---|---|---|
 | ExecutionHistoryTable | Lista virtualizada: status dot, workflow, modo trigger, duración, retry | ❌ |
 | RunInspector | Replay read-only por nodo con input/output y marcador "falló aquí" | ❌ |
-| NodeStatusBadge | success/error/running/waiting/skipped/retrying (anillo dashed animado) | ❌ |
+| NodeStatusBadge | success/error/running/waiting/skipped/retrying (anillo dashed animado) | ✅ (V001) |
 | RetryControls | Retry-desde-inicio vs desde-nodo-fallido, contador de intentos | ❌ |
 | CredentialCard/Picker | Credencial: tipo, owner, last-used, compartida-con, health | ❌ |
 | SubworkflowChip | Referencia expandible/deep-link a ejecución hija | ❌ |
@@ -51,7 +51,7 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 |---|---|---|
 | TraceTree / SpanRow | Spans anidados (LLM/tool/agente/retrieval) con duración, tokens y costo por span | 🟡 (TraceLog existe; falta árbol anidado + costo) |
 | ApprovalGateCard | Evidence pack: qué/por qué/blast-radius/rollback + approve/reject/escalate + timeout | ❌ |
-| RunTimeline | Timeline estilo Temporal con estados vivos (dashed/solid/color) | ❌ |
+| RunTimeline | Timeline estilo Temporal con estados vivos (dashed/solid/color) | ✅ (V001) |
 | TokenCostMeter | Costo por run y agregado (modelo vs tools vs retrieval), umbrales de presupuesto | ❌ |
 | GuardrailIndicator | Pill passed/warned/blocked, expandible a la política que disparó | ❌ |
 | EvalScoreBadge + Sparkline | Score vs umbral, flechas de regresión | ❌ |

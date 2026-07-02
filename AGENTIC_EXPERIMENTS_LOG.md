@@ -153,3 +153,88 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
     operaciones reutilizando `AgentGallery` + `ExecutionTimeline`; o `AgentHealth`/`AgentRisk`/
     `AgentConfidence` primitives; o conectar `ExecutionTimeline` como drill-down dentro de
     `PropertyIntelligenceConsole` en una V002.
+
+---
+
+## Iteración 4 — V001 State Grammar (NodeStatusBadge + RunTimeline)
+
+- **Fecha:** 2026-07-02T03:34:16Z
+- **Versión:** `NodeStatusBadgeV001` + `RunTimelineV001`
+- **Tipo:** primitive + composition (n8n / agent ops UI, agnóstico de industria)
+- **Industria:** ninguna en particular — primitive de infraestructura, ítem #1 de la
+  "Prioridad de construcción" del NORTH_STAR ("la gramática de estados es la base de todo lo
+  demás").
+- **Storybook:** `Agentic/Run Timeline/V001 State Grammar` (stories: `LiveWorkflowRun`,
+  `RetryAfterFailure`, `StatusGrammarLegend`)
+- **Nota de housekeeping:** al iniciar la iteración, `git status` reportó `HEAD` en estado
+  detached y la copia local de `origin/main` desactualizada (apuntando 8 commits atrás del
+  remoto real). Se corrió `git fetch origin main` + `git checkout main` + `git reset --hard
+  origin/main` para sincronizar antes de tocar código — no se perdió ningún commit, los 8
+  commits (iteraciones 1-3 + docs NORTH_STAR) ya estaban en el remoto, solo desactualizada la
+  referencia local del contenedor.
+- **Inspiración investigada:** Temporal UI (estados de step con trazo distinto — dashed
+  animado = pending, dashed rojo = retry — es la referencia explícita del principio #1 del
+  NORTH_STAR), n8n (executions: nodos success/error/waiting/running en el canvas del workflow,
+  conectores que heredan el estado del nodo previo), LangSmith (badges de estado de span). Se
+  tradujo el patrón "gramática de estado ≠ solo color" a un componente propio: cada uno de los
+  6 estados combina tono semántico + estilo de trazo (sólido/discontinuo/punteado) + animación
+  vía `motion-safe:`, sin copiar ningún layout específico de las referencias.
+- **Razón de producto:** el NORTH_STAR marca esto como la base de todo lo demás — sin una
+  gramática de estado consistente, cualquier `ExecutionHistoryTable`, `RunInspector` o
+  `ApprovalGateCard` futuro tendría que inventar su propia codificación de "en curso" vs
+  "resuelto" vs "reintentando". Este componente resuelve eso una vez y queda disponible para
+  toda consola futura (las 5 industrias comparten el mismo vocabulario visual de ejecución).
+- **Componentes creados:**
+  - `packages/ui/src/agentic/node-status-badge.tsx`:
+    - `<NodeStatusBadge>` — anillo de estado (icono + tono + trazo + animación) para los 6
+      estados del catálogo (`success`/`error`/`running`/`waiting`/`retrying`/`skipped`).
+      Accesible: `role="status"` + `aria-label` describe el estado en texto (incluye intento
+      actual/máximo si aplica), no depende solo de color para daltonismo. Tamaños `sm`/`md`.
+    - `nodeStatusConnectorClass()` — helper que expone el trazo de conector correspondiente a
+      un estado, reutilizado por `RunTimeline`.
+    - `<NodeStatusLegend>` — leyenda de los 6 estados con su descripción de trazo, para
+      demostrar en revisión que la gramática es intencional y no solo color.
+  - `packages/ui/src/agentic/run-timeline.tsx` — `<RunTimeline>`, stepper horizontal estilo
+    n8n/Temporal: un `NodeStatusBadge` por nodo de workflow, conectados por líneas cuyo trazo
+    hereda el estado del nodo previo (sólido = resuelto, discontinuo animado = en curso/
+    reintentando, punteado = omitido). Complementa a `ExecutionTimeline` (vista vertical
+    "un paso a la vez" de un run de agentes) con la vista horizontal "estado del workflow
+    completo" típica de listas de ejecuciones n8n/Temporal.
+  - `packages/ui/src/agentic/run-timeline.stories.tsx` — 3 stories: un workflow en vivo con
+    nodo corriendo + 2 nodos en espera + 1 omitido (rama condicional), un workflow con un nodo
+    reintentando tras timeout (con contador de intento), y la leyenda de gramática sola.
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 2 módulos nuevos.
+  - Reutiliza `cn` de `@/lib/utils` y los 5 tonos semánticos existentes (`ok`/`review`/`warn`/
+    `block`/`info`) — el estado `skipped` usa el tono neutral `faint`/`faint-deco` ya existente
+    en tokens (no agrega tono nuevo).
+- **Comandos ejecutados:** `git fetch origin main` + `git reset --hard origin/main` (housekeeping,
+  ver nota arriba) · `pnpm install` (faltaba `node_modules` en el contenedor fresco) ·
+  `pnpm --filter @studio/ui test` (26 passed) · `pnpm exec turbo run build --filter=@studio/ui...`
+  (OK) · `pnpm --filter @studio/ui exec eslint src/agentic/node-status-badge.tsx
+  src/agentic/run-timeline.tsx src/agentic/run-timeline.stories.tsx src/agentic/index.ts` —
+  primera corrida falló con 2 falsos positivos de la regla anti-color-crudo: los mocks
+  `run #4821`/`run #1092` matchean el regex `#[0-9a-fA-F]{3,8}` por parecer un hex de 4
+  dígitos; corregido cambiando el mock a `run 4821`/`run 1092` (sin `#`) — 0 errores tras el
+  fix · `pnpm exec turbo run build --filter=@studio/docs...` (Storybook static build OK,
+  incluye `run-timeline.stories`).
+- **Resultado:** ✅ mergeado a main.
+- **Notas para revisión humana:**
+  - `NodeStatusBadge` marca ✅ dos filas del catálogo NORTH_STAR de una vez
+    (`NodeStatusBadge` en sección A y `RunTimeline` en sección B) porque el brief los agrupa
+    como una sola prioridad de construcción — decisión deliberada, no scope creep.
+  - El estado `retrying` y `running` comparten el mismo trazo visual (discontinuo + animado)
+    pero distinto tono (`block` rojo vs `info`) — esto sigue literalmente la referencia del
+    NORTH_STAR ("dashed rojo = retry"). Si una futura revisión quiere diferenciarlos también
+    por velocidad de animación o forma de icono, es un ajuste aislado en `node-status-badge.tsx`.
+  - La animación usa `motion-safe:animate-spin` / `motion-safe:animate-pulse` de Tailwind, que
+    ya respeta `prefers-reduced-motion` a nivel de navegador sin JS adicional — degradación
+    verificada por inspección de clase (no hay fallback manual porque Tailwind lo maneja).
+  - Riesgo de performance: si `RunTimeline` se usa con muchos nodos "running"/"retrying"
+    simultáneos (>20), múltiples `animate-spin` en paralelo son baratos (solo CSS transform)
+    pero no se probó a esa escala — no crítico para el uso previsto (listas de un run, no
+    listas masivas).
+  - Próximas versiones sugeridas: `ExecutionHistoryTable` (prioridad #5 del NORTH_STAR,
+    ahora desbloqueada porque puede reusar `NodeStatusBadge` como status dot por fila);
+    `ApprovalGateCard` (prioridad #3, evidence pack + approve/reject/escalate); conectar
+    `RunTimeline` como header resumen dentro de `ExecutionTimeline` o `PropertyIntelligenceConsole`
+    en una V002; segunda industria (petróleo & energía) con una consola de operaciones.
