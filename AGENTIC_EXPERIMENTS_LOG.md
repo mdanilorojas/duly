@@ -238,3 +238,98 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
     `ApprovalGateCard` (prioridad #3, evidence pack + approve/reject/escalate); conectar
     `RunTimeline` como header resumen dentro de `ExecutionTimeline` o `PropertyIntelligenceConsole`
     en una V002; segunda industria (petróleo & energía) con una consola de operaciones.
+
+---
+
+## Iteración 5 — V001 Approval Gate + Human Interrupt Queue (HITL)
+
+- **Fecha:** 2026-07-02T05:15:19Z
+- **Versión:** `ApprovalGateCardV001` + `HumanInterruptQueueV001`
+- **Tipo:** primitive + composition (agent ops UI, agnóstico de industria)
+- **Industria:** ninguna en particular — primitive de infraestructura, ítem #1 de la
+  "Prioridad de construcción" del NORTH_STAR (2026-07-02): 5 fuentes independientes
+  convergieron en el patrón approval/HITL con evidencia esta semana (ver `VANGUARD_REPORT.md`).
+- **Storybook:** `Agentic/Approval Gate/V001 Evidence Pack` (stories: `CriticalPending`,
+  `ResolutionStates`, `MobileWidth`) y `Agentic/Human Interrupt Queue/V001 Risk-Ordered Inbox`
+  (stories: `MixedRiskQueue`, `MobileWidth`, `EmptyQueue`).
+- **Inspiración investigada:** guía formal de OpenAI "Guardrails and human review" (patrón
+  `interruptions`/`RunState` para pausar-y-aprobar), Microsoft AG-UI (Human-in-the-Loop como una
+  de sus 7 features core, GA con Agent Framework 1.0), Codex Remote (aprobación de acciones de
+  agente desde el móvil — motivó el requisito mobile-first), patrón fintech "Know Your Agent"
+  (perfil + consentimiento explícito por transacción antes de ejecutar), patrón software de "cola
+  de aprobación con contexto enriquecido" (confidence/razonamiento + señalización binaria de
+  riesgo, no porcentajes). Las 5 fuentes ya estaban documentadas en el NORTH_STAR por el routine
+  de vanguardia; esta iteración las tradujo a componentes propios sin copiar ningún layout
+  específico de ningún vendor.
+- **Razón de producto:** cierra el gap #1 priorizado por `NORTH_STAR.md`/`VANGUARD_REPORT.md` —
+  el principio de credibilidad enterprise #3 ("un botón Approve nunca va desnudo: lleva
+  evidencia") no tenía ningún componente que lo implementara. `ApprovalGateCard` es el "gate" de
+  una sola solicitud (evidencia completa + 3 acciones de igual peso visual); `HumanInterruptQueue`
+  es el inbox que un operador o auditor revisa cuando hay varias solicitudes en paralelo,
+  ordenadas por riesgo y luego por edad — no por orden de llegada, que es como fallan la mayoría
+  de colas de aprobación ingenuas cuando hay una crítica antigua compitiendo con una trivial
+  reciente.
+- **Componentes creados:**
+  - `packages/ui/src/agentic/approval-gate-card.tsx`:
+    - `<ApprovalGateCard>` — tarjeta de evidencia (What/Why/Blast radius/Rollback como grid de 4
+      campos con icono) + badge de riesgo (reutiliza los 5 tonos del sistema) + chip de
+      countdown (`expiresIn`) cuando está pendiente. 3 acciones (`Approve`/`Reject`/`Escalate`)
+      de igual peso visual, no una "fácil" y dos secundarias — usa `bg-ok`/`text-on-ok`,
+      `border-block`/`text-block`, `border-warn`/`text-warn` en vez de tratar Approve como el
+      único botón "primario" tipo `default`. 5 estados (`pending`/`approved`/`rejected`/
+      `escalated`/`expired`) — `expired` no desaparece, se resuelve visualmente como "sin
+      revisor" (tono `block`), evitando que un timeout no atendido quede invisible.
+    - `approvalStatusConfig` + `toneChip` — exportados para reuso en `HumanInterruptQueue` (evita
+      duplicar el mapeo de tono/ícono/label por estado).
+  - `packages/ui/src/agentic/human-interrupt-queue.tsx`:
+    - `<HumanInterruptQueue>` — inbox de solicitudes, cada fila es un `Collapsible.Trigger` de
+      una sola línea (dot de riesgo + acción truncada + agente + edad + chip de estado o
+      countdown) que expande a un `<ApprovalGateCard>` completo. Orden interno: peso de tono de
+      riesgo (`block`>`warn`>`review`>`info`>`ok`) y luego `ageMinutes` descendente — el criterio
+      "riesgo primero, edad después" que pide el ítem del catálogo, no orden de llegada.
+      Mobile-first: la fila es de ancho completo con `flex-wrap` en pantallas angostas (sin
+      depender de hover ni de una tabla ancha), sin JS de temporizador (`ageMinutes` es un dato
+      del caller, no `Date.now()`, para que el ordenamiento sea determinístico en Storybook/SSR).
+  - `packages/ui/src/agentic/approval-gate-card.stories.tsx` — 3 stories: una solicitud crítica
+    pendiente (evidence pack completo), 4 tarjetas mostrando los 4 estados de resolución
+    (approved/rejected/escalated/expired) con distintos niveles de riesgo, y una vista a 375px de
+    ancho para verificar mobile-first.
+  - `packages/ui/src/agentic/human-interrupt-queue.stories.tsx` — 3 stories: cola mixta de 7
+    solicitudes (2 críticas con distinta edad, 2 altas, 1 media expirada, 2 ya resueltas) con
+    nota explicando el criterio de orden, vista a 375px, y cola vacía.
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 2 módulos nuevos.
+  - Reutiliza `Tone` de `../trace-log/trace-log.variants.js` (mismos 5 tonos), `Button` de
+    `../components/ui/button.js` (variant `outline` + overrides de color por acción), y el
+    patrón `Collapsible.Root/Trigger/Content` ya establecido en `TraceLog.Detail`/`RunStep`.
+- **Comandos ejecutados:** `git checkout main` + `git pull origin main` (el contenedor arrancó
+  con `HEAD` detached, 14 commits detrás del remoto real — sincronizado sin perder nada, todos
+  los commits ya estaban en `origin/main`) · `pnpm install` (faltaba `node_modules`) ·
+  `pnpm --filter @studio/ui test` (26 passed, sin cambios — no se tocaron tests existentes) ·
+  `pnpm exec turbo run build --filter=@studio/ui...` (OK) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/approval-gate-card.tsx src/agentic/human-interrupt-queue.tsx
+  src/agentic/approval-gate-card.stories.tsx src/agentic/human-interrupt-queue.stories.tsx
+  src/agentic/index.ts` (0 errores) · `pnpm exec turbo run build --filter=@studio/docs...`
+  (Storybook static build OK, incluye ambos `.stories`).
+- **Resultado:** ✅ mergeado a main. `NORTH_STAR.md` actualizado: `ApprovalGateCard` y
+  `HumanInterruptQueue` pasan de ❌ a ✅ (sección B), reordenada la "Prioridad de construcción"
+  con `AuditLogTable`/`WhoDidWhatTimeline` como nuevo #1 (única área en 0% absoluto).
+- **Notas para revisión humana:**
+  - `HumanInterruptQueue` reutiliza `ApprovalGateCard` completo dentro de cada fila expandida en
+    vez de reimplementar una vista resumida — significa que la evidencia completa siempre está a
+    un tap de distancia, nunca hay una versión "recortada" de la evidencia en la cola.
+  - El campo `ageMinutes` es deliberadamente numérico y separado de `requestedAt` (string libre
+    para mostrar) para que el ordenamiento no dependa de parsear texto como "2m ago" — si una
+    futura versión conecta datos reales, `ageMinutes` se deriva una vez en el borde (server/hook),
+    no en cada render.
+  - Riesgo de accesibilidad menor: la fila de la cola comunica riesgo/estado también por texto
+    `sr-only` antes del título (no solo por el dot de color ni por el chip), pero no se probó con
+    lector de pantalla real en este entorno — revisar en una pasada de accesibilidad futura junto
+    con el resto del catálogo HITL.
+  - `AgentConsentCard` (Know-Your-Agent, patrón fintech) quedó fuera de esta iteración a propósito
+    — es un componente distinto (perfil + consentimiento previo a UNA acción, no evidencia de una
+    solicitud ya generada) que ahora puede apoyarse en el mismo lenguaje visual de `toneChip`/
+    `approvalStatusConfig` de `approval-gate-card.tsx`.
+  - Próximas versiones sugeridas: `AuditLogTable` + `WhoDidWhatTimeline` (nuevo #1 del NORTH_STAR,
+    único área del catálogo en 0% absoluto); `AgentConsentCard`; conectar `HumanInterruptQueue`
+    como panel dentro de una futura `ComplianceAgentConsole` o `MissionControlPanel`; segunda
+    industria (petróleo & energía) con una consola de operaciones.

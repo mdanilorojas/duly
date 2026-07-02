@@ -9,3 +9,5 @@ export * from "./property-intelligence-console.js";
 export * from "./execution-timeline.js";
 export * from "./node-status-badge.js";
 export * from "./run-timeline.js";
+export * from "./approval-gate-card.js";
+export * from "./human-interrupt-queue.js";
