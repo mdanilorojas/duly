@@ -4,7 +4,7 @@
 > interfaces de orquestación de agentes, automatización de procesos con n8n, y auditoría/compliance.
 > El loop semanal de vanguardia re-verifica este documento contra el estado del arte y contra el
 > inventario real de componentes, y mantiene la tabla de gaps al día.
-> Última revisión: 2026-07-01 · Próxima: semanal (routine cloud "vanguard check").
+> Última revisión: 2026-07-02 · Próxima: semanal (routine cloud "vanguard check").
 
 ## Visión
 
@@ -45,22 +45,62 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | ErrorWorkflowBanner | "Este fallo se enrutó al error handler X" con cross-link | ❌ |
 | WorkflowCanvasFrame | Contenedor temado para embeber el editor n8n (zoom, fit, read-only) | ❌ |
 
+> **Nota 2026-07-02**: n8n confirma que su plan OEM **no ofrece white-label completo** — el
+> branding de n8n permanece visible en el editor incluso pagando por RBAC/SSO/audit-logging
+> (fuente: n8n.io/oem/). `WorkflowCanvasFrame` no debe asumirse como "iframe rebrandeable del
+> editor n8n" — hay que diseñarlo como reconstrucción propia de la vista de ejecución, no como
+> wrapper de marca ajena.
+
 ### B. Agent ops / consola de IA
 
 | Componente | Propósito | Estado |
 |---|---|---|
-| TraceTree / SpanRow | Spans anidados (LLM/tool/agente/retrieval) con duración, tokens y costo por span | 🟡 (TraceLog existe; falta árbol anidado + costo) |
+| TraceTree / SpanRow | Spans anidados (LLM/tool/agente/retrieval) con duración, tokens y costo por span | 🟡 (TraceLog + ExecutionTimeline existen; ninguno anida spans ni suma costo) |
 | ApprovalGateCard | Evidence pack: qué/por qué/blast-radius/rollback + approve/reject/escalate + timeout | ❌ |
-| RunTimeline | Timeline estilo Temporal con estados vivos (dashed/solid/color) | ✅ (V001) |
+| AgentConsentCard (Know-Your-Agent) | Perfil de agente + alcance + consentimiento explícito antes de una acción sensible | ❌ (nuevo — ver fuente abajo) |
+| RunTimeline | Timeline estilo Temporal con estados vivos (dashed/solid/color) | ✅ (V001, Storybook `Agentic/Run Timeline` — construido sobre la gramática de 6 estados de `NodeStatusBadge`) |
 | TokenCostMeter | Costo por run y agregado (modelo vs tools vs retrieval), umbrales de presupuesto | ❌ |
 | GuardrailIndicator | Pill passed/warned/blocked, expandible a la política que disparó | ❌ |
 | EvalScoreBadge + Sparkline | Score vs umbral, flechas de regresión | ❌ |
 | AgentHandoffMarker | Punto visual de transferencia agente↔agente o agente→humano | ❌ |
 | StreamingMessage / ThinkingIndicator | Stream de tokens con chips de tool-call inline | ❌ |
-| HumanInterruptQueue | Inbox de runs pausados esperando revisión, ordenado por riesgo/edad | ❌ |
+| Rich Tool-UI (tool-based generative UI) | UI enriquecida por tipo de tool dentro de un tool-call, no solo texto/JSON | 🟡 (`ToolCallCard` existe con input/output clave-valor; falta UI por tipo de tool — ver fuente abajo) |
+| HumanInterruptQueue | Inbox de runs pausados esperando revisión, ordenado por riesgo/edad; debe funcionar también en mobile (ver nota) | ❌ |
 | CheckpointBadge | "Estado persistido aquí; reanudable" | ❌ |
-| AgentCore/Card/Gallery (identidad) | Orbs WebGL con identidad por agente | ✅ (V001) |
-| AgentMetric / AgentStatusMatrix | Tiles de métrica y matriz de estatus con tonos semánticos | ✅ (V002) |
+| AgentCore/Card/Gallery (identidad) | Orbs WebGL con identidad por agente | ✅ (V001, Storybook `Agentic/Agent Gallery`) |
+| AgentMetric / AgentStatusMatrix | Tiles de métrica y matriz de estatus con tonos semánticos | ✅ (Storybook `Agentic/Property Intelligence`) |
+| ExecutionTimeline / RunStep / ToolCallCard | Timeline vertical de un run multi-agente, paso a paso, con detalle expandible | ✅ (V001, Storybook `Agentic/Execution Timeline`) |
+
+> **Novedades 2026-07-02 relevantes para esta área:**
+> - OpenAI formalizó una guía única "Guardrails and human review" (input/output/tool guardrails +
+>   patrón `interruptions`/`RunState` para pausar-y-aprobar) — referencia directa para
+>   `ApprovalGateCard` + `GuardrailIndicator`. Fuente: developers.openai.com/api/docs/guides/agents/guardrails-approvals.
+> - OpenAI descontinúa **Agent Builder** (el canvas visual de AgentKit) y Evals hosteados —
+>   sunset 30-nov-2026, migrar a Agents SDK/ChatGPT Workspace Agents. AgentKit deja de ser
+>   benchmark de referencia para "canvas visual"; el patrón vivo a seguir es ChatKit (widgets:
+>   Card con status, confirm/cancel, listas, forms) + Agents SDK. Fuente: OpenAI community
+>   deprecation notice, 04-jun-2026.
+> - Microsoft Agent Framework (GA 1.0, abr-2026) adoptó el protocolo **AG-UI** con 7 features
+>   (incl. Human-in-the-Loop, Tool-based Generative UI, Shared State) y recomienda CopilotKit
+>   como capa de UI — mismo vocabulario que este catálogo (aprobaciones + tool-UI enriquecida).
+>   Fuente: learn.microsoft.com/agent-framework/integrations/ag-ui.
+> - Codex Remote (OpenAI, GA jul-2026) permite **aprobar acciones de un agente desde el móvil**
+>   — refuerza que `HumanInterruptQueue`/`ApprovalGateCard` no pueden asumir solo desktop.
+> - Patrón fintech "Know Your Agent (KYA)": perfil visible del agente + consentimiento explícito
+>   por transacción + límites configurables antes de ejecutar. Fuente: "Fintech Design Trends
+>   2026", Outcrowd/Medium, 27-mar-2026 — motiva la nueva fila `AgentConsentCard`.
+> - Patrón software: "cola de aprobación con contexto enriquecido" (confidence score +
+>   razonamiento + ruteo por umbral de confianza) y señalización binaria alto/bajo de confianza
+>   (superó a porcentajes en pruebas de UX) — insumo de diseño para `HumanInterruptQueue` y
+>   `EvalScoreBadge`. Fuente: Fuselab Creative, "Agent UX: UI Design for AI Agents in 2026",
+>   28-ago-2025.
+> - Vercel AI SDK 7 (25-jun-2026) formaliza **MCP Apps**: tools "solo de app" que renderizan UI
+>   en iframe sandboxed vía JSON-RPC, separadas de las tools visibles al modelo — mismo patrón
+>   que "Rich Tool-UI" arriba. `streamText` ahora también trackea time-to-first-output y timing
+>   por tool, con approvals integrados al streaming (automático + HITL).
+> - Claude Managed Agents añadió eventos `event_start`/`event_delta` para previsualizar el texto
+>   de un agente mientras se genera — referencia directa para `StreamingMessage`. Fuente:
+>   platform.claude.com/docs/release-notes, 01-jul-2026.
 
 ### C. Auditoría / compliance (EU AI Act Art. 12-13, SOC2 CC7/CC8, ISO 42001)
 
@@ -77,6 +117,30 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | IncidentView | Timeline de incidente: run disparador, recursos afectados, remediación | ❌ |
 | RetentionBadge / ImmutabilityIndicator | Señal de confianza "WORM, retenido 6+ meses" | ❌ |
 
+> **Señal regulatoria crítica (2026-07-02) — EU AI Act:** el "Digital Omnibus on AI" fue aprobado
+> por el Parlamento Europeo (16-jun-2026) y recibió luz verde final del Consejo (29-jun-2026),
+> pero **aún no está publicado en el Diario Oficial de la UE**. De confirmarse, retrasaría el
+> deadline de sistemas de alto riesgo standalone (Anexo III) del **2-ago-2026 al 2-dic-2027**, y
+> el de sistemas embebidos (Anexo I) del 2-ago-2027 al 2-ago-2028. **Hasta la publicación oficial,
+> el 2-ago-2026 sigue siendo la fecha legalmente vigente** — no bajar la prioridad de auditoría
+> todavía, pero monitorear eur-lex.europa.eu las próximas semanas. Fuentes: DLA Piper, Gibson
+> Dunn, Sidley (despachos que citan el proceso legislativo; texto aún no en EUR-Lex a esta fecha).
+> Detalle útil de diseño: la retención mínima de logs (6 meses) vive en el **Art. 19**, no en el
+> Art. 12 (que solo exige la capacidad técnica de logging) — separar `RetentionBadge` (Art. 19) de
+> `AuditLogTable`/`ModelProvenanceCard` (Art. 12/13) en cualquier implementación futura.
+>
+> **SOC2/AICPA:** sin actualización formal de Trust Services Criteria para IA a 2026-07-02; el
+> ASB de AICPA solo "está considerando" guías sobre IA generativa/agéntica (roadmap 26-feb-2026,
+> sin entregable ni fecha). El sector mapea controles de IA a CC6/CC7/CC8 existentes de forma
+> interpretativa — no hay estándar nuevo que implemente. (Se descartó un rumor no verificado de
+> "SOC for AI" de junio 2026 — fuente única no confiable, no usar.)
+>
+> **ISO/IEC 42001:** sin revisión en 2026 (sigue la edición 2023). Corrección importante: **NO es
+> el estándar armonizado que da presunción de conformidad con el EU AI Act** — ese es
+> **prEN 18286** (CEN-CENELEC JTC 21), en consulta pública desde 30-oct-2025, con cierre esperado
+> a fines de 2026; su Anexo D mapea a los controles del Anexo A de ISO 42001. Agregar prEN 18286
+> a "Fuentes de vanguardia" (abajo) como el estándar real a seguir para compliance UI.
+
 ### D. Table stakes enterprise 2026
 
 | Capacidad | Propósito | Estado |
@@ -90,20 +154,55 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | EmptyState/ErrorState/Skeleton triad | Estados vacío/error diseñados | 🟡 (Skeleton sí) |
 | DateRangePicker + timezone | Rango con zona horaria visible | ❌ |
 | i18n/RTL | Propiedades CSS lógicas, dirección tokenizada | ❌ |
+| RBAC granular (Custom Roles) | Complementa `RBACMatrixViewer`: definición de roles con permisos finos por recurso | ❌ (Temporal Cloud lanzó "Custom Roles" en pre-release, 25-jun-2026 — referencia de patrón) |
+
+> **WCAG:** 2.2 (oct-2023) sigue siendo la Recommendation vigente (ahora también ISO/IEC
+> 40500:2025) — no existe "WCAG 2.3". WCAG 3.0 solo tiene Working Draft (03-mar-2026, modelo
+> Bronze/Silver/Gold, Bronze≈2.2 AA) y el propio W3C dice que faltan "varios años" para
+> Recommendation final — sin urgencia de rediseño todavía. Dato a vigilar a largo plazo: un issue
+> abierto en w3c/wcag3 propone tratar a los agentes de IA autónomos como "usuarios" de WCAG 3
+> (CAPTCHAs, barreras solo-JS) — no normativo aún, pero alineado con el rol de este design system.
 
 ## Prioridad de construcción (guía para el loop de 5h)
 
-1. **RunTimeline + NodeStatusBadge** — la gramática de estados es la base de todo lo demás.
-2. **AuditLogTable + WhoDidWhatTimeline** — credibilidad de auditoría (EU AI Act ya exigible).
-3. **ApprovalGateCard + HumanInterruptQueue** — human-in-the-loop con evidencia.
-4. **TraceTree con costo por span + TokenCostMeter** — observabilidad con dinero visible.
-5. **ExecutionHistoryTable + RunInspector** — el wrapper enterprise sobre n8n.
+Reordenado 2026-07-02. Mientras se investigaba esta semana, el loop de construcción cerró
+**la prioridad #1 anterior** (`NodeStatusBadge` + gramática de estado vivo, commit `3b39be4`) y,
+por separado, `WCAG 2.2 AA` pasó a ✅ (commit `539e9db`, hit-areas 24px + auditoría axe). Con eso
+resuelto, `ApprovalGateCard`/`HumanInterruptQueue` toman el primer lugar — la investigación de esta
+semana los valida de forma cruzada e independiente en 5 fuentes (OpenAI guardrails/approvals,
+Microsoft AG-UI HITL, Codex Remote mobile approvals, patrón fintech KYA, patrón software de cola
+de aprobación).
+
+1. **ApprovalGateCard + HumanInterruptQueue** (nueva prioridad #1) — human-in-the-loop con
+   evidencia, validado por 5 fuentes independientes esta semana; diseñar mobile-first desde el
+   inicio (no solo desktop ops console). Área con 0 avance hoy.
+2. **AuditLogTable + WhoDidWhatTimeline** — credibilidad de auditoría, 0% de cobertura en toda el
+   área C. El deadline EU AI Act sigue operativo (2-ago-2026) aunque el Digital Omnibus podría
+   retrasarlo — no bajar prioridad, pero ya no comunicar como "inminente sin alternativa": SOC2
+   CC7/CC8 exige esto igual, sin deadline fijo.
+3. **TraceTree con costo por span + TokenCostMeter** — observabilidad con dinero visible.
+4. **Rich Tool-UI sobre ToolCallCard** (nuevo) — MCP Apps/AG-UI Tool-based Generative UI es
+   convergencia de 3 vendors esta semana (Vercel, Microsoft, OpenAI ChatKit); `ToolCallCard` ya
+   tiene la base de key/value, falta soporte de contenido enriquecido por tipo de tool.
+5. **ExecutionHistoryTable + RunInspector** — el wrapper enterprise sobre n8n (recordar: n8n no
+   permite branding propio ni en su plan OEM — construir independiente, no como iframe de marca).
+   Área A sigue en 0% de cobertura salvo `NodeStatusBadge`.
 6. **DataTable denso + Density modes + CommandPalette** — table stakes ops.
 7. Resto del catálogo, variante por industria (inmobiliaria, petróleo, software, finanzas, salud).
+   Nota de investigación: inmobiliaria y petróleo/energía siguen sin patrones de UI de agentes-IA
+   verificables en fuentes públicas 2026 — Studio DS puede ser pionero ahí en vez de seguir a
+   alguien (ver `VANGUARD_REPORT.md`).
 
 ## Fuentes de vanguardia (el loop semanal las re-visita)
 
-n8n docs (executions, error handling, embed/white-label) · Temporal Web UI · LangSmith
-(observability/evals) · OpenAI platform (guardrails, approvals, AgentKit) · Anthropic Console ·
-Vercel AI SDK UI · Microsoft AG-UI / Agent Framework · IBM Carbon (data-viz, dashboards) ·
-Adobe Spectrum (density) · EU AI Act (Art. 12-13 logging) · SOC2 CC7/CC8 · ISO 42001 · WCAG 2.2.
+n8n docs (executions, error handling; el embed NO es white-label — confirmado 2026-07-02) ·
+Temporal Web UI (Custom Roles, a11y de event history) · LangSmith/LangGraph (observability,
+evals, Harbor) · OpenAI Agents SDK + ChatKit + guía "Guardrails and human review" (AgentKit/Agent
+Builder se retira 30-nov-2026, ya no es fuente de canvas visual) · Anthropic Console / Claude
+(Managed Agents streaming, Claude Code agents view) · Vercel AI SDK UI (v7, MCP Apps) ·
+Microsoft AG-UI / Agent Framework (GA 1.0, CopilotKit como capa de UI) · IBM Carbon (data-viz,
+dashboards, density) · Adobe Spectrum / React Spectrum S2 (density, tablas) · EU AI Act (Art.
+12/13 logging, Art. 19 retención — vigilar publicación del Digital Omnibus en EUR-Lex) ·
+SOC2 CC7/CC8 (sin TSC de IA formal aún) · ISO/IEC 42001 + **prEN 18286** (el estándar armonizado
+real para presunción de conformidad EU AI Act) · WCAG 2.2 AA (vigente; WCAG 3.0 aún a años de
+Recommendation).
