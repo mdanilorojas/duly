@@ -93,3 +93,63 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
   - Próximas versiones sugeridas: `AgentHealth`/`AgentRisk`/`AgentConfidence` primitives;
     `ExecutionTimeline`/`WorkflowCanvas` para orquestación multi-agente; segunda industria
     (petróleo & energía) reutilizando el mismo patrón de consola.
+
+---
+
+## Iteración 3 — V001 Execution Timeline (Orchestration UI)
+
+- **Fecha:** 2026-07-02T00:12:03Z
+- **Versión:** `ExecutionTimelineV001` + primitives `RunStep`, `ToolCallCard`
+- **Tipo:** primitives + composition (orchestration UI, agnóstico de industria)
+- **Industria:** ninguna en particular — primitive de infraestructura reutilizable por las 5
+  industrias (cualquier consola de negocio necesita mostrar el detalle de un run multi-agente).
+- **Storybook:** `Agentic/Execution Timeline/V001 Agent Run Trace` (stories:
+  `DocumentIntelligenceRun`, `ToolCallDetailOnly`)
+- **Inspiración investigada:** LangSmith (trace tree de un run), Temporal UI (timeline vertical
+  de un workflow con pasos conectados), Anthropic Console (tool call cards con input/output),
+  GitHub Actions (steps conectados por línea vertical con iconos de estado). Se tradujo el
+  patrón común — "línea vertical + nodo por paso + detalle expandible" — a componentes propios,
+  sin copiar ningún layout específico.
+- **Razón de producto:** el laboratorio ya tenía `TraceLog` (log lineal denso, bueno para un
+  stream de eventos) pero nada que muestre la ejecución de un único run multi-agente como
+  secuencia espacial "un paso a la vez" con tipos de paso distintos (tool call / decisión /
+  aprobación humana / evento). Esto es la base para "Agent Run Detail" y "Tool Execution
+  Timeline" del brief, y para el detalle de cualquier consola futura por industria (ej. abrir
+  un run específico desde `PropertyIntelligenceConsole` o una futura `ComplianceAgentConsole`).
+- **Componentes creados:**
+  - `packages/ui/src/agentic/execution-timeline.tsx`:
+    - `<RunStep>` — nodo del timeline (icono + tono por `kind`: `tool_call`/`decision`/
+      `approval`/`event`, conector vertical continuo, agente, timestamp, duración, detalle
+      expandible vía `@radix-ui/react-collapsible`, ya usado por `TraceLog.Detail`).
+    - `<ToolCallCard>` — tarjeta de detalle de una tool call (nombre, input clave/valor,
+      output, latencia), pensada para vivir dentro de un `RunStep` de tipo `tool_call`.
+    - `<ExecutionTimeline>` — contenedor con header (título + hint de run id/duración total).
+  - `packages/ui/src/agentic/execution-timeline.stories.tsx` — 2 stories: un run completo de
+    "document intelligence review" (6 pasos: evento inicial → 2 tool calls → decisión de riesgo
+    → aprobación humana pendiente → evento final) y un `ToolCallCard` aislado.
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado.
+  - Reutiliza `Tone` de `../trace-log/trace-log.variants.js` (mismos 5 tonos del sistema, sin
+    color crudo) y el patrón de `Collapsible.Root`/`Trigger`/`Content` ya establecido en
+    `TraceLog.Detail`.
+- **Comandos ejecutados:** `pnpm install` (lockfile ya resuelto, solo instala node_modules) ·
+  `pnpm --filter @studio/ui test` (26 passed) · `pnpm exec turbo run build --filter=@studio/ui...`
+  (falló primero por un mismatch de tipos en el `Record` de iconos de lucide-react —
+  `"aria-hidden"?: boolean` vs `boolean | "true" | "false"` — corregido para calzar con el mismo
+  patrón que `TraceLog`'s `toneIcon`; luego OK) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/execution-timeline.tsx src/agentic/execution-timeline.stories.tsx
+  src/agentic/index.ts` (0 errores) · `pnpm exec turbo run build --filter=@studio/docs...`
+  (Storybook static build OK, incluye `execution-timeline.stories`).
+- **Resultado:** ✅ mergeado a main.
+- **Notas para revisión humana:**
+  - Nota externa: entre la iteración 2 y esta, el usuario aplicó manualmente el commit
+    `50ec23e` ("lift dark elevation ladder + visible borders; fix Tabs segmented control") —
+    no generado por este loop, pero ya integrado en `main` antes de esta iteración.
+  - `ExecutionTimeline` es intencionalmente genérico (no atado a industria) — moverse rápido
+    en primitives de infraestructura antes de multiplicar consolas por industria evita
+    reconstruir el mismo patrón 5 veces.
+  - El icono de `RunStep` toma su color de `text-{tone}` heredado por `currentColor` en el SVG
+    de lucide-react — si se cambia el ícono por uno sin `currentColor` habría que revisar.
+  - Próximas versiones sugeridas: segunda industria (petróleo & energía) con una consola de
+    operaciones reutilizando `AgentGallery` + `ExecutionTimeline`; o `AgentHealth`/`AgentRisk`/
+    `AgentConfidence` primitives; o conectar `ExecutionTimeline` como drill-down dentro de
+    `PropertyIntelligenceConsole` en una V002.
