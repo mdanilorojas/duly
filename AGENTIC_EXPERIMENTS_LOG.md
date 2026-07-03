@@ -825,3 +825,10 @@ Recharts), rung 5 (industrial OT, ISA-101), rung 6 (6 correcciones/refactors).
 - **Patrón:** número formateado con `toLocaleString("en-US")` (determinista; i18n es área D aparte). Chart aria-hidden + `<table>` con `<caption>` como representación AT.
 - **Verificación:** test 84/84 (10 nuevos, incl. cálculo puro + axe) · build OK (recharts external) · eslint 0.
 - **Resultado:** ✅ branch. Rung 4: 2/7. Próximo: ForecastRollupTable (DataTable + subrows).
+
+## Unit 12 — MRRMovementWaterfall (área E)
+
+- **Fecha:** 2026-07-03 · **Tipo:** wrapper de WaterfallChart · **Framework:** Recharts (heredado).
+- **Purpose:** bridge de MRR (new/expansion/reactivation/contraction/churn). Reusa la base waterfall.
+- **Verificación:** test 86/86 (2 nuevos, incl. axe) · build OK · eslint 0.
+- **Resultado:** ✅ branch. Rung 4: 3/7 (RatioGauge, Pipeline, MRR). Restan Forecast, MutualActionPlan, RelationshipMap, PricingApprovalMatrix.
