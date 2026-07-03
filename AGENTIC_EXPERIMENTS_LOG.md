@@ -736,3 +736,16 @@ Secuencia separada del loop agentic de arriba. Construye el catálogo del gap an
 - **Verificación:** test 38/38 (incl. axe) · build tsup OK · eslint src/data-table 0.
 - **Resultado:** ✅ branch `feat/component-build-ladder`.
 - **Próximo:** Unit 3/19 `SavedViews` + `useSavedViews` (cierra rung 1).
+
+## Unit 3/19 — SavedViews + useSavedViews (área D) · cierra rung 1
+
+- **Fecha:** 2026-07-03 · **Tipo:** hook + composición (toolbar)
+- **Purpose:** guardar/reaplicar {sorting, columnFilters, density} nombradas y persistidas — principio #10 (autoservicio del auditor).
+- **Framework reusado:** primitivas `Input`/`Button`; Storage API (inyectable para test); estado de TanStack (`table.setSorting/setColumnFilters`).
+- **Archivos:** `saved-views.{tsx,test.tsx,stories.tsx}` + export en barrel.
+- **Storybook:** `DataTable/V001 Saved Views` (FullToolbar — FilterBar + SavedViews sobre una instancia, density reaplicada por vista).
+- **Verificación:** test 43/43 (incl. axe + 3 tests de hook con storage mock) · build OK · eslint 0.
+- **Resultado:** ✅ branch `feat/component-build-ladder`.
+
+### ✅ Rung 1 COMPLETO (3/3) — DataTable · FilterBar · SavedViews
+Columna vertebral de tablas lista y exportada. Desbloquea rungs 4/5/6 (Forecast/Alarm/Registry tables + refactor de AuditLog/ExecHistory). Próximo: Rung 2 — Orquestación (AgentTopologyGraph, SwarmControlBar, BudgetCapGovernor).
