@@ -796,3 +796,17 @@ El DS pasa de observar 1 agente a ver + controlar la flota (topología, control 
 - **Purpose:** quién aprobó qué, cuándo, en qué orden, con rama de rechazo. Un rechazo corta la cadena (pasos posteriores "no alcanzados"). Decisión = ícono+color+etiqueta (colorblind-safe).
 - **Verificación:** test 68/68 (5 nuevos, incl. axe + corte de cadena) · build OK · eslint 0.
 - **Resultado:** ✅ branch. Próximo: Unit 9/19 `ModelProvenanceCard` (cierra rung 3).
+
+## Unit 9 — ModelProvenanceCard (área C) · cierra rung 3
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición · **Framework:** ninguno nuevo (+ HashBadge).
+- **Purpose:** procedencia por run (modelo/versión/prompt/config-hash) — principio #8. Compacto→expandible.
+- **Verificación:** test 72/72 (4 nuevos, incl. axe + disclosure) · build OK · eslint 0.
+
+### ✅ Rung 3 COMPLETO (3/3) — EvidenceExportDialog · ApprovalChainStepper · ModelProvenanceCard
+Compliance sube de 2 a 5 componentes (área C).
+
+### Recuento corregido del ladder
+El HTML de diseño resumió "19 unidades" pero rungs 4 y 5 tienen 7 componentes cada uno →
+total real ≈ **29 unidades**. Progreso: **9/29** (rungs 1–3 completos). Restan rung 4 (comercial,
+Recharts), rung 5 (industrial OT, ISA-101), rung 6 (6 correcciones/refactors).
