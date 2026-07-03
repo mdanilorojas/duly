@@ -7,6 +7,8 @@ import {
   flexRender,
   type Table,
   type ColumnDef,
+  type SortingState,
+  type ColumnFiltersState,
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
@@ -22,6 +24,32 @@ export type { Table, ColumnDef, SortingState, ColumnFiltersState } from "@tansta
 // ponytail: no virtualizar tablas chicas — evita el overhead del virtualizador y
 // mantiene los tests deterministas (jsdom no mide layout). Suben a virtual >50 filas.
 const VIRTUAL_THRESHOLD = 50;
+
+/**
+ * Construye una instancia de tabla con estado de sorting + column filters, para
+ * compartirla entre `<DataTable table={t}/>` y `<FilterBar table={t}/>` /
+ * `<SavedViews table={t}/>`. Úsalo cuando necesites toolbar; para una tabla
+ * simple basta con `<DataTable data columns/>` (crea la suya internamente).
+ */
+export function useDataTable<T>(options: {
+  data: T[];
+  columns: ColumnDef<T, unknown>[];
+  getRowId?: (row: T, index: number) => string;
+}): Table<T> {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  return useReactTable<T>({
+    data: options.data,
+    columns: options.columns,
+    getRowId: options.getRowId,
+    state: { sorting, columnFilters },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+  });
+}
 
 export interface DataTableProps<T> extends Omit<React.ComponentProps<"div">, "children"> {
   /** Filas. Ignorado si se pasa `table` ya construida. */

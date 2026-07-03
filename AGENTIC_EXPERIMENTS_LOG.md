@@ -725,3 +725,14 @@ Secuencia separada del loop agentic de arriba. Construye el catálogo del gap an
   - Virtualización se activa >50 filas (`VIRTUAL_THRESHOLD`) — tablas chicas renderizan directo (menos overhead, tests deterministas en jsdom). El caso virtual se ejercita en la story `Virtualized2000Rows`.
   - Lint del paquete completo tiene 8 errores PRE-EXISTENTES en `src/stories/*` (`'Meta' unused`, commit `db4b330`) — NO tocados (fuera de alcance de esta unidad, principio de cambios quirúrgicos).
   - Próximo: Unit 2/19 `FilterBar` (usa el `table?` prop ya expuesto), luego `SavedViews`.
+
+## Unit 2/19 — FilterBar + useDataTable (área D)
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición (toolbar de DataTable)
+- **Framework reusado:** estado de column-filters de `@tanstack/react-table` + primitiva `Input`; `<select>` nativo tokenizado para dropdowns (ponytail: no Radix Select portal para un filtro).
+- **Archivos:** `filter-bar.{tsx,test.tsx,stories.tsx}` + `useDataTable` hook en `data-table.tsx` + export en barrel.
+- **Enablement:** `vitest.config.ts` ahora resuelve el alias `@/*` (como tsup) — necesario para testear componentes que reutilizan primitivas (`@/components/ui/*`). No cambia comportamiento.
+- **Storybook:** `DataTable/V001 FilterBar` (InToolbar — FilterBar dentro del slot toolbar del DataTable, instancia compartida vía useDataTable).
+- **Verificación:** test 38/38 (incl. axe) · build tsup OK · eslint src/data-table 0.
+- **Resultado:** ✅ branch `feat/component-build-ladder`.
+- **Próximo:** Unit 3/19 `SavedViews` + `useSavedViews` (cierra rung 1).
