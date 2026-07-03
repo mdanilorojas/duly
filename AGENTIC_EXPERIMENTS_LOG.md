@@ -617,3 +617,87 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
     & energía) o primera variante financiera de una consola completa (`AuditLogTable` +
     `WhoDidWhatTimeline` + `HumanInterruptQueue` + `RichToolCallCard` ya dan suficiente vocabulario
     para una `ComplianceAgentConsole` compuesta).
+
+---
+
+## Iteración 9 — V001 Execution History + Run Inspector (n8n / proceso empresarial)
+
+- **Fecha:** 2026-07-03T00:00:00Z
+- **Versión:** `ExecutionHistoryTableV001` + `RunInspectorV001` + composición
+  `ExecutionHistoryConsoleV001`
+- **Tipo:** primitives + composition (n8n / proceso empresarial, agnóstico de industria)
+- **Industria:** ninguna en particular — primitive de infraestructura, prioridad #1 del NORTH_STAR
+  tras el reordenamiento de la iteración 8 (área A, 13% de cobertura, la más baja del catálogo).
+- **Storybook:** `Agentic/Execution History/V001 n8n-style Runs` (stories: `MasterDetail`,
+  `StartedOnFailedRun`, `TableOnly`, `InspectorOnly`, `InspectorEmpty`).
+- **Inspiración investigada:** patrón de vista de ejecuciones de n8n (lista de runs con status,
+  modo de disparo — manual/webhook/schedule/error workflow —, duración, reintentos) y su vista de
+  detalle de nodo (panes input/output separados, nodo fallido resaltado). Confirmado en el
+  NORTH_STAR (nota 2026-07-02) que n8n **no** ofrece white-label completo ni en su plan OEM
+  (n8n.io/oem/) — se construyó como reconstrucción propia del vocabulario visual, no como iframe
+  o wrapper de marca ajena. También se reutilizó la gramática de 6 estados de `NodeStatusBadge`
+  (ya existente, iteración 6) en vez de inventar un sistema de estado nuevo para filas de
+  ejecución/nodo.
+- **Razón de producto:** cierra el gap #1 priorizado por `NORTH_STAR.md` tras la iteración 8 —
+  área A (n8n/proceso empresarial) tenía 13% de cobertura con `NodeStatusBadge` como único ✅. Una
+  corporación que evalúa Studio DS para envolver automatización tipo n8n necesita poder listar
+  ejecuciones pasadas (qué corrió, cómo se disparó, cuánto tardó, cuántos reintentos) y auditar
+  una ejecución específica nodo por nodo sin depender del editor/branding de n8n. El patrón
+  master-detail (`ExecutionHistoryConsole`) demuestra el flujo completo: click en "Inspect" abre
+  el detalle read-only con el nodo que falló ya expandido y marcado "Failed here" — principio #1
+  del NORTH_STAR ("todo estado está diseñado") aplicado a un flujo real de troubleshooting.
+- **Componentes creados:**
+  - `packages/ui/src/agentic/execution-history-table.tsx` — `<ExecutionHistoryTable>`: tabla
+    semántica densa con `NodeStatusBadge` por fila, chip de modo de disparo (manual/webhook/
+    schedule/error_handler/retry con icono propio), duración, contador de reintentos y botón
+    "Inspect" accesible (foco visible, `aria-label` descriptivo, `aria-current` en la fila
+    seleccionada) para integrarse con `RunInspector` en un patrón master-detail.
+  - `packages/ui/src/agentic/run-inspector.tsx` — `<RunInspector>`: replay read-only nodo por
+    nodo, reutilizando `NodeStatusBadge`/`nodeStatusConnectorClass` para el conector vertical (el
+    mismo vocabulario de estado que `RunTimeline`, pero en vista de lista vertical con detalle).
+    Cada nodo expone panes "Input"/"Output" separados (estilo n8n) vía `Collapsible`; el nodo con
+    `status="error"` muestra un banner "Failed here" con icono + mensaje, auto-expandido por
+    defecto — no depende solo del color del anillo de estado.
+  - `packages/ui/src/agentic/execution-history-console.tsx` — `<ExecutionHistoryConsole>`:
+    composición master-detail con estado de selección local (`useState`), datos mock exportados
+    (`DEFAULT_EXECUTIONS`, `DEFAULT_EXECUTION_NODES`) cubriendo 6 ejecuciones de distintos
+    workflows (Invoice Reconciliation, Lead Enrichment, Contract Redline Review, Customer
+    Onboarding Sync, Data Warehouse Nightly Sync, Incident Escalation) en los 5 estados de
+    `NodeStatus` y los 5 modos de trigger.
+  - `packages/ui/src/agentic/execution-history-console.stories.tsx` — 5 stories, incluyendo la
+    consola interactiva completa y las dos primitives en aislamiento (`ExecutionHistoryTable` y
+    `RunInspector`, con y sin selección).
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 3 módulos nuevos.
+- **Comandos ejecutados:** contenedor arrancó con `HEAD` detached en `3cfe793` y el ref local de
+  `main` apuntaba a un commit muy antiguo (`9f6398e`, previo a todo el laboratorio agentic) — se
+  corrigió con `git fetch origin main` + `git branch -f main origin/main` + `git checkout main`
+  (origin/main coincidía con el `HEAD` detached, sin pérdida de historia) antes de continuar ·
+  `pnpm install` (faltaba `node_modules`) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/execution-history-table.tsx src/agentic/run-inspector.tsx
+  src/agentic/execution-history-console.tsx src/agentic/execution-history-console.stories.tsx
+  src/agentic/index.ts` (0 errores) · `pnpm --filter @studio/ui test` (26 passed, sin cambios) ·
+  `pnpm exec turbo run build --filter=@studio/ui...` (falló primero por colisión de tipos: la prop
+  `onSelect` de `ExecutionHistoryTableProps` chocaba con el `onSelect: ReactEventHandler` nativo de
+  `HTMLAttributes<HTMLDivElement>` — corregido con `Omit<React.ComponentProps<"div">, "onSelect">`
+  en el `extends`; luego OK) · `pnpm exec turbo run build --filter=@studio/docs...` (Storybook
+  static build OK, chunk nuevo `execution-history-console.stories-*.js` de 29.76 kB visible en el
+  output).
+- **Resultado:** ✅ mergeado a main. `NORTH_STAR.md` actualizado: `ExecutionHistoryTable` pasa de
+  ❌ a 🟡 (sin virtualizar todavía) y `RunInspector` de ❌ a ✅ (sección A); "Prioridad de
+  construcción" reordenada con `AgentConsentCard (Know-Your-Agent)` como nuevo #1.
+- **Notas para revisión humana:**
+  - `ExecutionHistoryTable` no está virtualizada — para historiales de miles de ejecuciones habrá
+    que revisar el ítem "DataTable denso" del NORTH_STAR (table stakes) y generalizar el patrón en
+    vez de reinventarlo por tercera vez (ya lo comparten `AuditLogTable` y `RichToolCallCard`'s
+    `table` block).
+  - El botón "Inspect" es la única forma accesible de seleccionar una fila (el `<tr>` también
+    tiene `onClick` como conveniencia, pero el punto de entrada por teclado/lector de pantalla es
+    el botón) — si se agrega selección por teclado en la fila completa en una futura versión,
+    mantener el mismo patrón de foco visible + `aria-current`.
+  - `RunInspector` es intencionalmente de solo lectura (sin controles de retry) — `RetryControls`
+    queda como fila separada del catálogo (retry-desde-inicio vs desde-nodo-fallido), pendiente,
+    con un anclaje natural al marcador "Failed here" de esta versión.
+  - Próximas versiones sugeridas: `AgentConsentCard` (Know-Your-Agent, nuevo #1 del NORTH_STAR,
+    reutilizando `ConfirmBlock` de `RichToolCallCard` y el evidence pack de `ApprovalGateCard`);
+    `RetryControls` sobre `RunInspector`; segunda industria (petróleo & energía) o primera consola
+    financiera completa combinando los primitives de auditoría/HITL ya construidos.

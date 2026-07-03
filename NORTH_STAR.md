@@ -36,8 +36,8 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 | Componente | Propósito | Estado |
 |---|---|---|
-| ExecutionHistoryTable | Lista virtualizada: status dot, workflow, modo trigger, duración, retry | ❌ |
-| RunInspector | Replay read-only por nodo con input/output y marcador "falló aquí" | ❌ |
+| ExecutionHistoryTable | Lista virtualizada: status dot, workflow, modo trigger, duración, retry | 🟡 (V001, Storybook `Agentic/Execution History/V001 n8n-style Runs` — tabla semántica densa con `NodeStatusBadge`, chip de trigger, reintentos; sin virtualización todavía, ver "DataTable denso") |
+| RunInspector | Replay read-only por nodo con input/output y marcador "falló aquí" | ✅ (V001, mismo Storybook — panes Input/Output por nodo, banner "Failed here" auto-expandido en el nodo que falló) |
 | NodeStatusBadge | success/error/running/waiting/skipped/retrying (anillo dashed animado) | ✅ (V001) |
 | RetryControls | Retry-desde-inicio vs desde-nodo-fallido, contador de intentos | ❌ |
 | CredentialCard/Picker | Credencial: tipo, owner, last-used, compartida-con, health | ❌ |
@@ -165,31 +165,31 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 ## Prioridad de construcción (guía para el loop de 5h)
 
-Reordenado 2026-07-02 (loop de construcción, iteración 8). `Rich Tool-UI` — la prioridad #1
-anterior — ya está construido (V002, `RichToolCallCard`, Storybook `Agentic/Tool Call Card/V002
-Rich Tool-UI`), cerrando la convergencia de 3 vendors (Vercel MCP Apps, Microsoft AG-UI, OpenAI
-ChatKit) sobre el patrón "Controlled Generative UI". Antes de eso el loop ya había cerrado
-`TraceTree`/`TokenCostMeter` (commit `b824186`), `AuditLogTable`/`WhoDidWhatTimeline` (commit
-`08256e9`), `ApprovalGateCard`/`HumanInterruptQueue` (commit `5dd5964`), `NodeStatusBadge`/
-`RunTimeline` (commit `3b39be4`) y `WCAG 2.2 AA` (commit `539e9db`). Con tool-UI enriquecida
-resuelta, `ExecutionHistoryTable + RunInspector` toma el primer lugar — es el ítem de mayor
-apalancamiento restante en el área con menor cobertura (n8n, 13%).
+Reordenado 2026-07-03 (loop de construcción, iteración 9). `ExecutionHistoryTable + RunInspector`
+— la prioridad #1 anterior — ya está construido (V001, Storybook `Agentic/Execution History/V001
+n8n-style Runs`, composición `ExecutionHistoryConsole` master-detail). Antes de eso el loop ya
+había cerrado `Rich Tool-UI` (commit `cabd93a`), `TraceTree`/`TokenCostMeter` (commit `b824186`),
+`AuditLogTable`/`WhoDidWhatTimeline` (commit `08256e9`), `ApprovalGateCard`/`HumanInterruptQueue`
+(commit `5dd5964`), `NodeStatusBadge`/`RunTimeline` (commit `3b39be4`) y `WCAG 2.2 AA` (commit
+`539e9db`). Área A pasa de 13% a 25% de cobertura ponderada (2 filas de 8 con avance, una ✅ y una
+🟡 — `ExecutionHistoryTable` queda 🟡 porque aún no es virtualizada, ver ítem 5 de esta lista).
 
-1. **ExecutionHistoryTable + RunInspector** (nueva prioridad #1) — el wrapper enterprise sobre n8n
-   (recordar: n8n no permite branding propio ni en su plan OEM — construir independiente, no como
-   iframe de marca). Área A sigue en 13% de cobertura salvo `NodeStatusBadge`.
-2. **AgentConsentCard (Know-Your-Agent)** — perfil de agente + alcance + consentimiento explícito
-   antes de una acción sensible; ahora tiene una base natural en `ApprovalGateCard` para
-   reutilizar (evidence pack + evidencia visual de tono/riesgo), y `RichToolCallCard.confirm`
-   aporta el widget de confirmación embebida que puede reutilizar.
-3. **EvidenceExportDialog + ApprovalChainStepper** — siguientes filas de área C ahora que
+1. **AgentConsentCard (Know-Your-Agent)** (nueva prioridad #1) — perfil de agente + alcance +
+   consentimiento explícito antes de una acción sensible; tiene una base natural en
+   `ApprovalGateCard` para reutilizar (evidence pack + evidencia visual de tono/riesgo), y
+   `RichToolCallCard.confirm` aporta el widget de confirmación embebida que puede reutilizar.
+2. **EvidenceExportDialog + ApprovalChainStepper** — siguientes filas de área C ahora que
    `AuditLogTable`/`WhoDidWhatTimeline` sientan el vocabulario visual (actor dual, hash badge,
    tono) que estos dos componentes pueden reutilizar directamente.
+3. **RetryControls + CredentialCard/Picker** — siguientes filas de área A, reutilizando el
+   vocabulario de `NodeStatusBadge`/`ExecutionHistoryTable` ya establecido (retry-desde-inicio vs
+   desde-nodo-fallido puede anclarse directamente al marcador "Failed here" de `RunInspector`).
 4. **GuardrailIndicator + EvalScoreBadge** — `TraceTree` ya expone tono por span (ok/warn/block);
    estos dos ítems reutilizan ese mismo vocabulario para exponer policy checks y regresión de eval
    junto al costo, cerrando más filas del área B.
 5. **DataTable denso + Density modes + CommandPalette** — table stakes ops; `RichToolCallCard`'s
-   `table` block ya sienta un patrón de tabla densa reutilizable como punto de partida.
+   `table` block y `ExecutionHistoryTable` ya sientan un patrón de tabla densa reutilizable como
+   punto de partida — esta es la oportunidad de generalizarlo a un primitive único y virtualizado.
 6. Resto del catálogo, variante por industria (inmobiliaria, petróleo, software, finanzas, salud).
    Nota de investigación: inmobiliaria y petróleo/energía siguen sin patrones de UI de agentes-IA
    verificables en fuentes públicas 2026 — Studio DS puede ser pionero ahí en vez de seguir a
