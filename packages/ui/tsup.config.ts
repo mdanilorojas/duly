@@ -19,6 +19,7 @@ export default defineConfig({
     // Frameworks headless reutilizados — externos, no bundleados en el core del DS.
     /^@tanstack\//,
     /^@xyflow\//,
+    "recharts",
   ],
   esbuildOptions(options) {
     options.alias = { "@": resolve("src") };

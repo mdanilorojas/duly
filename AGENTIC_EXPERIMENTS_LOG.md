@@ -817,3 +817,11 @@ Recharts), rung 5 (industrial OT, ISA-101), rung 6 (6 correcciones/refactors).
 - **Purpose:** valor vs target con barra + tono por umbral; la reusan Forecast (attainment/coverage) y AssetHealthGauge (F). Formatos pct/x/usd.
 - **Verificación:** test 78/78 (6 nuevos, incl. axe + progressbar) · build OK · eslint 0.
 - **Resultado:** ✅ branch. Nueva carpeta `src/commercial/`. Próximo: PipelineWaterfallChart (+ ChartFrame, Recharts).
+
+## Unit 11 — WaterfallChart base + PipelineWaterfallChart (área E)
+
+- **Fecha:** 2026-07-03 · **Tipo:** util pura + composición · **Framework:** Recharts (lazy, externalizado en tsup).
+- **Purpose:** `computeWaterfallBars` (pura, testeada) + `WaterfallChart` (gráfico Recharts aria-hidden + tabla de datos accesible) — base reusada por MRR y OEE. `PipelineWaterfallChart` mapea kinds created/expanded/pushed/slipped/won/lost a tonos.
+- **Patrón:** número formateado con `toLocaleString("en-US")` (determinista; i18n es área D aparte). Chart aria-hidden + `<table>` con `<caption>` como representación AT.
+- **Verificación:** test 84/84 (10 nuevos, incl. cálculo puro + axe) · build OK (recharts external) · eslint 0.
+- **Resultado:** ✅ branch. Rung 4: 2/7. Próximo: ForecastRollupTable (DataTable + subrows).
