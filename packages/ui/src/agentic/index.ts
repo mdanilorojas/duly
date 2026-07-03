@@ -19,3 +19,4 @@ export * from "./rich-tool-call-card.js";
 export * from "./execution-history-table.js";
 export * from "./run-inspector.js";
 export * from "./execution-history-console.js";
+export * from "./agent-consent-card.js";

@@ -701,3 +701,84 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
     reutilizando `ConfirmBlock` de `RichToolCallCard` y el evidence pack de `ApprovalGateCard`);
     `RetryControls` sobre `RunInspector`; segunda industria (petróleo & energía) o primera consola
     financiera completa combinando los primitives de auditoría/HITL ya construidos.
+
+---
+
+## Iteración 10 — V001 Agent Consent Card (Know-Your-Agent)
+
+- **Fecha:** 2026-07-03T05:11:00Z
+- **Versión:** `AgentConsentCardV001`
+- **Tipo:** primitive (agent ops / consola de IA), con mock data de 4 industrias
+- **Industria:** servicios financieros (story interactiva), salud, software, petróleo & energía —
+  4 stories con roster/scope realistas por sector, sin forzar una consola completa por industria
+  todavía (eso queda para próximas iteraciones, ver nota abajo).
+- **Storybook:** `Agentic/Agent Consent/V001 Know Your Agent` (stories: `PendingConsent`
+  interactiva, `ConsentGranted`, `ConsentDeclined`, `ConsentRevoked`, `MobileWidth`).
+- **Inspiración investigada:** patrón fintech "Know Your Agent (KYA)" ya citado en `NORTH_STAR.md`
+  (fila área B, nota 2026-07-02, fuente "Fintech Design Trends 2026", Outcrowd/Medium) — perfil
+  visible del agente + consentimiento explícito por transacción + límites configurables antes de
+  ejecutar. Se contrastó contra el patrón de scope grant tipo OAuth (un solo botón "Allow" para
+  todos los permisos a la vez) y se descartó: el KYA real pide reconocimiento explícito por
+  permiso individual, no un solo click ciego — de ahí el checkbox por ítem de `scope` que habilita
+  "Grant consent" recién cuando todos están marcados.
+- **Razón de producto:** cierra el gap #1 de la "Prioridad de construcción" del NORTH_STAR tras la
+  iteración 9. Antes de esta versión, el catálogo solo cubría la aprobación puntual de una acción
+  ya decidida por el agente (`ApprovalGateCard`) — pero ninguna corporación evaluando agentes de
+  IA puede saltarse el paso previo: ¿qué autoridad tiene este agente en general, quién se la dio,
+  bajo qué límites, y es revocable? `AgentConsentCard` es ese grant de autoridad reusable
+  (perfil + alcance + límites + consentimiento explícito), complementario a `ApprovalGateCard`
+  (evidencia de una ejecución puntual) — no lo reemplaza.
+- **Componentes creados:**
+  - `packages/ui/src/agentic/agent-consent-card.tsx`:
+    - `ConsentStatus` — 4 estados (`pending`/`consented`/`declined`/`revoked`), con
+      `consentStatusConfig` (label/tono/icono) siguiendo el mismo patrón que
+      `approvalStatusConfig` de `ApprovalGateCard` — un estado resuelto nunca desaparece
+      silenciosamente (declined muestra motivo, revoked muestra quién y cuándo).
+    - `<AgentConsentCard>` — header con `AgentCore` (identidad WebGL a 44px, reutilizado de la
+      galería base) + nombre/id/rol/fecha de solicitud; lista de `ConsentScopeItem[]` con
+      `Checkbox` de Radix (ya usado en el design system) por permiso individual — en estados no
+      pendientes, el checkbox se reemplaza por un dot de tono (mismo vocabulario de riesgo que
+      `HumanInterruptQueue`); grid de `ConsentLimit[]` (tope de gasto, vigencia, revocabilidad,
+      modo de aprobación); footer con Decline/Grant consent (pending, "Grant consent" deshabilitado
+      hasta reconocer todos los items) o el registro de resolución + botón Revoke (si
+      `status="consented"` y se pasa `onRevoke`).
+    - Reutiliza `toneChip` de `approval-gate-card.js` y `Tone` de `trace-log.variants.js` — sin
+      vocabulario de color nuevo.
+  - `packages/ui/src/agentic/agent-consent-card.stories.tsx` — 5 stories. Las 4 de industria
+    reutilizan el shader/glow de agentes ya existentes en `NEURAL_AGENTS` (identidad visual
+    conservada) sobreescribiendo solo `id`/`name`/`role` por contexto sectorial, en vez de crear
+    un roster de agentes nuevo por industria en esta iteración — eso queda como semilla para
+    cuando el loop construya una consola completa por sector.
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con el módulo nuevo.
+- **Comandos ejecutados:** `git checkout main` (el contenedor arrancó con `HEAD` detached, 21
+  commits detrás de `origin/main`) + `git pull origin main` (fast-forward limpio, sin conflictos)
+  · `pnpm install` (faltaba `node_modules`) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/agent-consent-card.tsx src/agentic/agent-consent-card.stories.tsx
+  src/agentic/index.ts` (0 errores, sin colores crudos) · `pnpm --filter @studio/ui test` (26
+  passed, sin cambios) · `pnpm exec turbo run build --filter=@studio/ui...` (OK) · `pnpm exec
+  turbo run build --filter=@studio/docs...` (Storybook static build OK, chunk nuevo
+  `agent-consent-card.stories-*.js` de 18.17 kB visible en el output).
+- **Resultado:** ✅ pendiente de commit/push a main. `NORTH_STAR.md` actualizado:
+  `AgentConsentCard (Know-Your-Agent)` pasa de ❌ a ✅ (sección B) y "Prioridad de construcción"
+  reordenada con `EvidenceExportDialog + ApprovalChainStepper` como nuevo #1.
+- **Notas para revisión humana:**
+  - El checkbox-por-permiso es una decisión de producto explícita (KYA real, no un OAuth scope
+    grant genérico) — si en una consola compuesta futura se prefiere un flujo más rápido para
+    alcances de bajo riesgo, considerar hacer el gate condicional al tono más alto del scope (ej.
+    saltar el checkbox individual si todos los items son `info`/`ok`) en vez de exigir siempre
+    reconocimiento ítem por ítem.
+  - Las 4 stories de industria reutilizan `glsl`/`glow` de agentes existentes de `NEURAL_AGENTS`
+    (spread + override de `id`/`name`/`role`) en vez de crear shaders nuevos — es intencional para
+    esta iteración (mock data rica sin inflar el archivo de shaders), pero si una futura consola
+    por industria necesita identidad visual distintiva por sector, valdría la pena un roster de
+    shaders propio como se hizo con `real-estate-agents.ts`.
+  - `AgentConsentCard` no persiste el estado de los checkboxes fuera del componente (state local
+    `useState<Set<string>>`) — en una integración real, el consumidor probablemente quiera
+    controlar ese estado o al menos recibir un callback `onScopeAck` por ítem; se dejó fuera del
+    alcance porque el catálogo no lo pedía explícitamente y la API ya tiene 3 callbacks
+    (`onConsent`/`onDecline`/`onRevoke`).
+  - Próximas versiones sugeridas: `EvidenceExportDialog` + `ApprovalChainStepper` (nuevo #1 del
+    NORTH_STAR, área C, reutilizando el vocabulario de actor/hash/tono de `AuditLogTable`);
+    `RetryControls` sobre `RunInspector`; primer roster de agentes dedicado a una segunda industria
+    (petróleo & energía) o primera consola financiera completa combinando
+    `AgentConsentCard`+`ApprovalGateCard`+`AuditLogTable`+`WhoDidWhatTimeline`.

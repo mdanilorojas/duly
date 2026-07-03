@@ -58,7 +58,7 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | TraceTree / SpanRow | Spans anidados (LLM/tool/agente/retrieval) con duración, tokens y costo por span | ✅ (V001, Storybook `Agentic/Trace Tree` — árbol colapsable con waterfall de tiempo y rollup de costo/tokens por rama) |
 | ApprovalGateCard | Evidence pack: qué/por qué/blast-radius/rollback + approve/reject/escalate + timeout | ✅ (V001, Storybook `Agentic/Approval Gate` — 4 estados de resolución: approved/rejected/escalated/expired, mobile-first) |
 | HumanInterruptQueue | Inbox de runs pausados esperando revisión, ordenado por riesgo/edad; debe funcionar también en mobile (ver nota) | ✅ (V001, Storybook `Agentic/Human Interrupt Queue` — ordena por tono de riesgo y luego edad, filas expandibles a `ApprovalGateCard`) |
-| AgentConsentCard (Know-Your-Agent) | Perfil de agente + alcance + consentimiento explícito antes de una acción sensible | ❌ (nuevo — ver fuente abajo) |
+| AgentConsentCard (Know-Your-Agent) | Perfil de agente + alcance + consentimiento explícito antes de una acción sensible | ✅ (V001, Storybook `Agentic/Agent Consent/V001 Know Your Agent` — perfil con `AgentCore`, alcance con checkbox por permiso, límites configurables, 4 estados de resolución pending/consented/declined/revoked) |
 | RunTimeline | Timeline estilo Temporal con estados vivos (dashed/solid/color) | ✅ (V001, Storybook `Agentic/Run Timeline` — construido sobre la gramática de 6 estados de `NodeStatusBadge`) |
 | TokenCostMeter | Costo por run y agregado (modelo vs tools vs retrieval), umbrales de presupuesto | ✅ (V001, Storybook `Agentic/Token Cost Meter` — desglose por categoría + barra de presupuesto con umbral ok/warn/block) |
 | GuardrailIndicator | Pill passed/warned/blocked, expandible a la política que disparó | ❌ |
@@ -165,35 +165,33 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 ## Prioridad de construcción (guía para el loop de 5h)
 
-Reordenado 2026-07-03 (loop de construcción, iteración 9). `ExecutionHistoryTable + RunInspector`
-— la prioridad #1 anterior — ya está construido (V001, Storybook `Agentic/Execution History/V001
-n8n-style Runs`, composición `ExecutionHistoryConsole` master-detail). Antes de eso el loop ya
-había cerrado `Rich Tool-UI` (commit `cabd93a`), `TraceTree`/`TokenCostMeter` (commit `b824186`),
-`AuditLogTable`/`WhoDidWhatTimeline` (commit `08256e9`), `ApprovalGateCard`/`HumanInterruptQueue`
-(commit `5dd5964`), `NodeStatusBadge`/`RunTimeline` (commit `3b39be4`) y `WCAG 2.2 AA` (commit
-`539e9db`). Área A pasa de 13% a 25% de cobertura ponderada (2 filas de 8 con avance, una ✅ y una
-🟡 — `ExecutionHistoryTable` queda 🟡 porque aún no es virtualizada, ver ítem 5 de esta lista).
+Reordenado 2026-07-03 (loop de construcción, iteración 10). `AgentConsentCard (Know-Your-Agent)`
+— la prioridad #1 anterior — ya está construido (V001, Storybook `Agentic/Agent Consent/V001 Know
+Your Agent`, 4 stories de industria: financial services pending interactivo, healthcare
+consented, software declined, oil & energy revoked). Antes de eso el loop ya había cerrado
+`ExecutionHistoryTable + RunInspector` (commit `717d030`), `Rich Tool-UI` (commit `cabd93a`),
+`TraceTree`/`TokenCostMeter` (commit `b824186`), `AuditLogTable`/`WhoDidWhatTimeline` (commit
+`08256e9`), `ApprovalGateCard`/`HumanInterruptQueue` (commit `5dd5964`), `NodeStatusBadge`/
+`RunTimeline` (commit `3b39be4`) y `WCAG 2.2 AA` (commit `539e9db`). Área B suma su quinto ✅.
 
-1. **AgentConsentCard (Know-Your-Agent)** (nueva prioridad #1) — perfil de agente + alcance +
-   consentimiento explícito antes de una acción sensible; tiene una base natural en
-   `ApprovalGateCard` para reutilizar (evidence pack + evidencia visual de tono/riesgo), y
-   `RichToolCallCard.confirm` aporta el widget de confirmación embebida que puede reutilizar.
-2. **EvidenceExportDialog + ApprovalChainStepper** — siguientes filas de área C ahora que
-   `AuditLogTable`/`WhoDidWhatTimeline` sientan el vocabulario visual (actor dual, hash badge,
-   tono) que estos dos componentes pueden reutilizar directamente.
-3. **RetryControls + CredentialCard/Picker** — siguientes filas de área A, reutilizando el
+1. **EvidenceExportDialog + ApprovalChainStepper** (nueva prioridad #1) — siguientes filas de área
+   C ahora que `AuditLogTable`/`WhoDidWhatTimeline` sientan el vocabulario visual (actor dual,
+   hash badge, tono) que estos dos componentes pueden reutilizar directamente.
+2. **RetryControls + CredentialCard/Picker** — siguientes filas de área A, reutilizando el
    vocabulario de `NodeStatusBadge`/`ExecutionHistoryTable` ya establecido (retry-desde-inicio vs
    desde-nodo-fallido puede anclarse directamente al marcador "Failed here" de `RunInspector`).
-4. **GuardrailIndicator + EvalScoreBadge** — `TraceTree` ya expone tono por span (ok/warn/block);
+3. **GuardrailIndicator + EvalScoreBadge** — `TraceTree` ya expone tono por span (ok/warn/block);
    estos dos ítems reutilizan ese mismo vocabulario para exponer policy checks y regresión de eval
    junto al costo, cerrando más filas del área B.
-5. **DataTable denso + Density modes + CommandPalette** — table stakes ops; `RichToolCallCard`'s
+4. **DataTable denso + Density modes + CommandPalette** — table stakes ops; `RichToolCallCard`'s
    `table` block y `ExecutionHistoryTable` ya sientan un patrón de tabla densa reutilizable como
    punto de partida — esta es la oportunidad de generalizarlo a un primitive único y virtualizado.
-6. Resto del catálogo, variante por industria (inmobiliaria, petróleo, software, finanzas, salud).
+5. Resto del catálogo, variante por industria (inmobiliaria, petróleo, software, finanzas, salud).
    Nota de investigación: inmobiliaria y petróleo/energía siguen sin patrones de UI de agentes-IA
    verificables en fuentes públicas 2026 — Studio DS puede ser pionero ahí en vez de seguir a
-   alguien (ver `VANGUARD_REPORT.md`).
+   alguien (ver `VANGUARD_REPORT.md`). `AgentConsentCard` ya dejó mock data de 4 industrias
+   (financiera, salud, software, petróleo/energía) reutilizable como semilla de rosters de agentes
+   dedicados por industria en próximas versiones.
 
 ## Fuentes de vanguardia (el loop semanal las re-visita)
 
