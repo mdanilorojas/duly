@@ -701,3 +701,27 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
     reutilizando `ConfirmBlock` de `RichToolCallCard` y el evidence pack de `ApprovalGateCard`);
     `RetryControls` sobre `RunInspector`; segunda industria (petróleo & energía) o primera consola
     financiera completa combinando los primitives de auditoría/HITL ya construidos.
+
+---
+
+# Build Ladder §07 (batch design aprobado 2026-07-03)
+
+Secuencia separada del loop agentic de arriba. Construye el catálogo del gap analysis
+(`docs/superpowers/specs/2026-07-03-build-ladder-batch-design.md`) unidad por unidad:
+`test → build → verify → review → commit → log`. Skip+log ante bloqueo.
+
+## Unit 1/19 — DataTable denso virtualizado (área D)
+
+- **Fecha:** 2026-07-03
+- **Tipo:** primitiva (columna vertebral de todas las tablas del DS)
+- **Framework reusado:** `@tanstack/react-table` + `@tanstack/react-virtual` (headless), envuelto en tokens OKLCH.
+- **Archivos:** `packages/ui/src/data-table/{data-table.tsx,data-table.variants.ts,data-table.test.tsx,data-table.stories.tsx,index.ts}` + export en `src/index.ts`.
+- **Storybook:** `DataTable/V001 Dense Virtualized` (Comfortable, Compact, Virtualized2000Rows, Empty).
+- **API:** `<DataTable data columns caption density getRowId rowTone onRowActivate maxHeight emptyState toolbar table? />` + re-export `flexRender`/`createColumnHelper`/`ColumnDef`.
+- **a11y:** `role="grid"` + `aria-activedescendant` (roving sin foco por fila, compatible con virtualización), `aria-rowcount` sobre total real, teclado ↑/↓/Home/End/Enter, foco visible.
+- **Verificación:** `pnpm --filter @studio/ui test` (34/34, incl. axe 0 violaciones en DataTable) · `build` tsup ESM+DTS OK · `eslint src/data-table` 0 errores.
+- **Resultado:** ✅ en branch `feat/component-build-ladder`.
+- **Notas para revisión humana:**
+  - Virtualización se activa >50 filas (`VIRTUAL_THRESHOLD`) — tablas chicas renderizan directo (menos overhead, tests deterministas en jsdom). El caso virtual se ejercita en la story `Virtualized2000Rows`.
+  - Lint del paquete completo tiene 8 errores PRE-EXISTENTES en `src/stories/*` (`'Meta' unused`, commit `db4b330`) — NO tocados (fuera de alcance de esta unidad, principio de cambios quirúrgicos).
+  - Próximo: Unit 2/19 `FilterBar` (usa el `table?` prop ya expuesto), luego `SavedViews`.

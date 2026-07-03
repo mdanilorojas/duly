@@ -25,5 +25,8 @@ export * from "./components/ui/accordion.js";
 export * from "./components/ui/progress.js";
 export * from "./components/ui/skeleton.js";
 
+// data-table — primitiva densa/virtualizada, columna vertebral de todas las tablas
+export * from "./data-table/index.js";
+
 // agentic — AI agent UI experiments
 export * from "./agentic/index.js";
