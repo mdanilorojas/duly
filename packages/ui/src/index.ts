@@ -30,3 +30,6 @@ export * from "./data-table/index.js";
 
 // agentic — AI agent UI experiments
 export * from "./agentic/index.js";
+
+// compliance — auditoría / evidencia (área C)
+export * from "./compliance/index.js";

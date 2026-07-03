@@ -780,3 +780,12 @@ Columna vertebral de tablas lista y exportada. Desbloquea rungs 4/5/6 (Forecast/
 
 ### ✅ Rung 2 COMPLETO (3/3) — AgentTopologyGraph · SwarmControlBar · BudgetCapGovernor
 El DS pasa de observar 1 agente a ver + controlar la flota (topología, control broadcast, presupuesto cruzado). Próximo: Rung 3 — Compliance (EvidenceExportDialog, ApprovalChainStepper, ModelProvenanceCard).
+
+## Unit 7/19 — EvidenceExportDialog (área C) · abre rung 3
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición · **Framework:** Radix `Dialog` (existente) + `HashBadge`.
+- **Purpose:** export firmado (PDF/CSV/JSON) de un rango filtrado con manifiesto de hashes. Botón "nunca desnudo" (qué/cuántos/rango antes de ejecutar); al terminar expone el hash del manifiesto (integridad).
+- **Estados:** idle → generating → done (hash) / error (mensaje accionable). aria-live en el área de estado.
+- **Verificación:** test 63/63 (4 nuevos, incl. export async ok/error + axe sobre document.body por el portal) · build OK · eslint 0.
+- **Nota:** un warning de consola de Radix async aparece en test pero no falla el gate (los 4 tests pasan). `src/compliance/` nueva carpeta + export en `src/index.ts`.
+- **Resultado:** ✅ branch. Próximo: Unit 8/19 `ApprovalChainStepper`.
