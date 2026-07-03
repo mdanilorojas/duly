@@ -78,3 +78,15 @@ Watch-list for the next sync:
   stories match. AgentGallery uses WebGL cores; animation-frame diffs between panels are expected.
 - **JetBrains Mono still unresolved.** var(--font-mono) is not a resolvable custom property and
   no woff2 ships; the font-mono utility class falls back to system monospace on both panels. Accepted.
+
+## Re-sync 2026-07-02 (round 2) — 8 components added, claude.ai now 33
+
+Parallel work pushed 7 new agentic components to main after the first sync; re-synced to close the gap.
+
+- **titleMap needed for 2 components** whose story title's middle segment ≠ export name:
+  - "Agentic/Approval Gate/V001 Evidence Pack" → export `ApprovalGateCard` → `cfg.titleMap {"V001EvidencePack": "ApprovalGateCard"}`
+  - "Agentic/Property Intelligence/V001 Real Estate Console" → export `PropertyIntelligenceConsole` → `{"V001RealEstateConsole": "PropertyIntelligenceConsole"}`
+  Without these they drop as [TITLE_UNMAPPED]. The converter derives the title-key from the LEAF segment when the middle doesn't match an export.
+- **ToolCallCard** (RichToolCallCard export, mapped via title "Tool Call Card") → `cfg.overrides.ToolCallCard.cardMode:"column"` for [GRID_OVERFLOW] (wide result cards).
+- **Grouping quirk:** ApprovalGateCard landed in group `approval-gate` and PropertyIntelligenceConsole in `property-intelligence` (singleton groups derived from their title's 2nd segment), not `agentic`. Functional; cosmetic only. To fold them into `agentic`, would need a group override.
+- All 8 new components graded: every story match (29 stories). No mismatches.

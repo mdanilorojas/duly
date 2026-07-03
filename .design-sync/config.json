@@ -11,10 +11,15 @@
   },
   "cssEntry": "./dist/bundle-with-preflight.css",
   "readmeHeader": ".design-sync/conventions.md",
+  "titleMap": {
+    "V001EvidencePack": "ApprovalGateCard",
+    "V001RealEstateConsole": "PropertyIntelligenceConsole"
+  },
   "overrides": {
     "Accordion": { "cardMode": "column" },
     "Skeleton": { "cardMode": "column" },
     "RadioGroup": { "cardMode": "column" },
-    "Textarea": { "cardMode": "column" }
+    "Textarea": { "cardMode": "column" },
+    "ToolCallCard": { "cardMode": "column" }
   }
 }
