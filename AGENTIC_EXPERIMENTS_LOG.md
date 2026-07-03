@@ -874,3 +874,111 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
     (nuevo #1, área A); `GuardrailIndicator`/`EvalScoreBadge` sobre el vocabulario de tono de
     `TraceTree` (área B); `ModelProvenanceCard`/`RetentionBadge` reutilizando el patrón de
     manifiesto de hashes de esta iteración (área C, cerraría 4 de 10 filas).
+
+---
+
+## Iteración 12 — V001 Retry Controls + Credential Card/Picker
+
+- **Fecha:** 2026-07-03T15:12:49Z
+- **Versión:** `RetryControlsV001` + `CredentialCardV001`/`CredentialPickerV001`
+- **Tipo:** primitive (n8n / proceso empresarial, área A del NORTH_STAR)
+- **Industria:** servicios financieros (Plaid, Stripe Treasury, SWIFT gateway, core banking DB) y
+  salud (Epic FHIR, HL7 webhook, PHI archive) para `CredentialCard`; `RetryControls` usa mock data
+  de proceso general (DocuSign push, payer claims sync) sin forzar industria.
+- **Storybook:** `Agentic/Retry Controls/V001 Start vs Failed Node` (stories: `Standalone`,
+  `MaxRetriesReached`, `AnchoredToFailedHere` — demo interactiva con estado real) y
+  `Agentic/Credential Card/V001 Type Owner Health` (stories: `FinancialServicesRoster`,
+  `HealthcareRoster`, `PickerWithSearch`). `Agentic/Execution History/V001 n8n-style Runs`
+  actualizado: el nodo fallido de `exec_a10f55` (DocuSign push) ahora incluye historial de retry
+  real anclado a su marcador "Failed here".
+- **Inspiración investigada:** vara ya fijada en `NORTH_STAR.md` — principio #1 (todo estado está
+  diseñado: un límite de política de retry nunca debe ser silencioso) y #5 (dualidad de actor:
+  retry automático vs retry manual por un humano, distinguible en el historial). No se reabrió
+  WebSearch esta iteración: el ítem #1 ya estaba especificado con precisión suficiente en el propio
+  NORTH_STAR ("puede anclarse directamente al marcador 'Failed here' de `RunInspector`"), y se
+  priorizó cerrar el gap ya identificado sobre investigación externa redundante.
+- **Razón de producto:** cierra la nueva prioridad #1 del NORTH_STAR tras la iteración 11 (área A,
+  n8n/proceso empresarial, subía de 13% a necesitar sus siguientes 2 filas). `NodeStatusBadge` y
+  `RunInspector` ya habían sentado la gramática de 6 estados y el marcador "Failed here"; faltaba
+  la acción real que un operador ejecuta desde ahí (retry) y la superficie de riesgo de credenciales
+  compartidas que todo workflow depende de (`CredentialCard/Picker`) — ninguno de los dos cubierto
+  por lo ya construido.
+- **Componentes creados:**
+  - `packages/ui/src/agentic/retry-controls.tsx`:
+    - `RetryTrigger` (`manual`/`automatic`) y `RetryAttemptRecord` (attempt, status, trigger,
+      actor?, at) — historial que distingue quién disparó cada intento, reutilizando `toneChip` de
+      `approval-gate-card.js` para el tono de cada fila (success=ok, error=block,
+      retrying=warn+spin).
+    - `<RetryControls>` — dos botones ("Retry from start" / "Retry from failed node", el segundo
+      solo si se pasa `failedNodeTitle`), contador `current/max` siempre visible, aviso explícito
+      "Max retries reached" cuando se alcanza el límite (ambos botones se deshabilitan — un límite
+      de política nunca es silencioso), e historial opcional de intentos. `variant="inline"` quita
+      el marco propio para anclarse dentro de otro componente; `variant="standalone"` (default) es
+      una tarjeta independiente con header.
+  - `packages/ui/src/agentic/run-inspector.tsx` (extendido, no reemplazado):
+    - `RunInspectorNode` gana un campo opcional `retry` (`maxAttempts`, `history`,
+      `onRetryFromStart`, `onRetryFromFailedNode`). Cuando `node.status === "error"` y `node.retry`
+      está presente, `<RetryControls variant="inline">` se renderiza directamente dentro del
+      banner "Failed here" — la integración textual que pedía la nota de diseño del NORTH_STAR, en
+      vez de un componente separado sin relación visual con el nodo que falló.
+  - `packages/ui/src/agentic/execution-history-console.tsx` (extendido): el nodo `n4` de
+    `exec_a10f55` (HTTP Request: Push to DocuSign, `status: "error"`) ahora incluye
+    `attempt: [3, 3]` y un `retry.history` de 3 intentos automáticos — demuestra el caso real
+    "max retries reached" dentro de la consola master-detail ya existente sin necesidad de una
+    story nueva para esa consola.
+  - `packages/ui/src/agentic/credential-card.tsx`:
+    - `CredentialKind` (api_key/oauth/service_account/database/webhook_secret) con icono propio y
+      `CredentialHealth` (valid/expiring/expired/revoked) — salud no binaria: "expiring" con fecha
+      visible evita que un workflow se rompa en producción sin aviso previo.
+    - `<CredentialCard>` — tipo, owner, last-used, "shared with" (conteo + chips de workflow) y
+      scopes opcionales; modo `compact` para uso embebido en el picker (sin marco propio, fila
+      densa). El conteo de "shared with" es deliberadamente visible sin expandir nada — una
+      credencial compartida por 4 workflows es superficie de riesgo que un CISO necesita ver de
+      un vistazo.
+    - `<CredentialPicker>` — listbox accesible (`role="listbox"`/`role="option"`, flechas
+      ↑/↓/Home/End) con filtro de búsqueda por nombre/owner/tipo sobre un `Input` existente, y cada
+      fila reutiliza `CredentialCard` en modo compacto (sin duplicar markup).
+  - `packages/ui/src/agentic/retry-controls.stories.tsx` y
+    `packages/ui/src/agentic/credential-card.stories.tsx` — mock data rica; `retry-controls`
+    incluye una demo interactiva real (`AnchoredToFailedHere`) con `React.useState` que hace crecer
+    el historial en vivo al hacer click en "Retry from failed node".
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 2 módulos nuevos.
+- **Comandos ejecutados:** `git status` + `git checkout main` + `git pull origin main`
+  (fast-forward limpio, 23 commits detrás — el contenedor arrancó con `HEAD` detached) ·
+  `pnpm install` (faltaba `node_modules`) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/retry-controls.tsx src/agentic/retry-controls.stories.tsx
+  src/agentic/credential-card.tsx src/agentic/credential-card.stories.tsx
+  src/agentic/run-inspector.tsx src/agentic/execution-history-console.tsx src/agentic/index.ts`
+  (0 errores, sin colores crudos) · `pnpm --filter @studio/ui test` (26 passed, sin cambios) ·
+  `pnpm exec turbo run build --filter=@studio/ui...` (falló primero: `CredentialPickerProps`
+  colisionaba con el `onSelect` nativo de `HTMLAttributes<HTMLDivElement>` — se corrigió con
+  `Omit<React.ComponentProps<"div">, "onSelect">`; luego OK) · `pnpm exec turbo run build
+  --filter=@studio/docs...` (Storybook static build OK, chunks nuevos
+  `retry-controls.stories-*.js` 6.06 kB, `credential-card.stories-*.js` 14.53 kB, y
+  `execution-history-console.stories-*.js` recompilado a 24.69 kB con el nuevo `retry.history`).
+- **Resultado:** ✅ pendiente de commit/push a main. `NORTH_STAR.md` actualizado: `RetryControls` y
+  `CredentialCard/Picker` pasan de ❌ a ✅ (sección A, área sube de 13% a 38% de cobertura pura, 3
+  ✅ de 8 filas); "Prioridad de construcción" reordenada con `GuardrailIndicator + EvalScoreBadge`
+  (área B) como nuevo #1, y `SubworkflowChip + ErrorWorkflowBanner` añadido como #3 antes de
+  `WorkflowCanvasFrame` (mayor esfuerzo, requiere diseño propio sin depender del editor n8n).
+- **Notas para revisión humana:**
+  - `RetryControls` no valida que `onRetryFromStart`/`onRetryFromFailedNode` incrementen realmente
+    `attempt` — es responsabilidad del padre (ver demo `AnchoredToFailedHere`, que sí lo hace con
+    `useState` local). Una integración real pasaría el nuevo estado por props tras la llamada al
+    backend, no lo derivaría client-side.
+  - El historial de `RetryControls` no tiene límite de alto/scroll interno — si un workflow
+    acumula decenas de reintentos automáticos (ej. rate-limit prolongado), la lista podría crecer
+    mucho; no se agregó `maxHeight` porque el catálogo no lo pedía explícitamente y el patrón de
+    `AuditLogTable`/`maxHeight` ya existe como referencia si se necesita después.
+  - `CredentialPicker` filtra client-side sobre un array en memoria — no pagina ni virtualiza; para
+    una organización con cientos de credenciales esto es candidato directo para el futuro
+    "DataTable denso" (ítem #4 de la prioridad de construcción) generalizado a listboxes también,
+    no solo tablas.
+  - `CredentialCard.scopes` es de solo lectura (no hay editor de permisos) — a propósito, es un
+    primitive de visualización; un editor de scopes viviría en un formulario/dialog aparte que no
+    estaba en el alcance de este ítem del catálogo.
+  - Próximas versiones sugeridas (ver NORTH_STAR reordenado): `GuardrailIndicator`/`EvalScoreBadge`
+    sobre el vocabulario de tono de `TraceTree` (nuevo #1, área B); `ModelProvenanceCard`/
+    `RetentionBadge` reutilizando el patrón de manifiesto de hashes de `EvidenceExportDialog`
+    (área C); `SubworkflowChip`/`ErrorWorkflowBanner` sobre el vocabulario de chip/banner de
+    `RunInspector` (área A, cerraría casi toda el área salvo `WorkflowCanvasFrame`).

@@ -3,6 +3,7 @@ import { ChevronDown, AlertTriangle } from "lucide-react";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { cn } from "@/lib/utils";
 import { NodeStatusBadge, nodeStatusConnectorClass, type NodeStatus } from "./node-status-badge.js";
+import { RetryControls, type RetryAttemptRecord } from "./retry-controls.js";
 
 export interface RunInspectorNode {
   id: string;
@@ -20,6 +21,13 @@ export interface RunInspectorNode {
   output?: Record<string, React.ReactNode>;
   /** Mensaje de error — solo se pinta cuando `status="error"`. */
   error?: string;
+  /** Controles de retry anclados al marcador "Failed here" — solo se pintan cuando `status="error"`. */
+  retry?: {
+    maxAttempts: number;
+    history?: RetryAttemptRecord[];
+    onRetryFromStart?: () => void;
+    onRetryFromFailedNode?: () => void;
+  };
 }
 
 function DataPane({ title, data }: { title: string; data?: Record<string, React.ReactNode> }) {
@@ -78,9 +86,21 @@ function InspectorNodeRow({ node, isLast, defaultOpen }: InspectorNodeRowProps) 
         </div>
 
         {isFailure ? (
-          <div className="mt-2 flex items-start gap-1.5 rounded-md border border-block/40 bg-block/10 px-2.5 py-1.5 text-[11px] font-semibold text-block">
-            <AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-            <span>Failed here{node.error ? ` — ${node.error}` : ""}</span>
+          <div className="mt-2 rounded-md border border-block/40 bg-block/10 px-2.5 py-1.5">
+            <div className="flex items-start gap-1.5 text-[11px] font-semibold text-block">
+              <AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden />
+              <span>Failed here{node.error ? ` — ${node.error}` : ""}</span>
+            </div>
+            {node.retry ? (
+              <RetryControls
+                variant="inline"
+                attempt={[node.attempt?.[0] ?? 1, node.retry.maxAttempts]}
+                failedNodeTitle={node.title}
+                history={node.retry.history}
+                onRetryFromStart={node.retry.onRetryFromStart}
+                onRetryFromFailedNode={node.retry.onRetryFromFailedNode}
+              />
+            ) : null}
           </div>
         ) : null}
 
@@ -120,8 +140,11 @@ export interface RunInspectorProps extends React.ComponentProps<"div"> {
  * `RunInspector` habla el vocabulario de nodos de workflow estilo n8n — cada
  * nodo expone input/output como panes JSON separados, y el nodo que falló
  * lleva un marcador "Failed here" inequívoco y expandido por defecto, sin
- * depender solo del color del anillo de estado. Solo lectura: no hay
- * controles de retry aquí (ver `RetryControls`, pendiente en el catálogo).
+ * depender solo del color del anillo de estado. El resto es de solo
+ * lectura — la única acción disponible es `RetryControls` (retry-desde-
+ * inicio vs desde-nodo-fallido), anclada directamente al marcador "Failed
+ * here" cuando `node.retry` está presente, tal como pedía la nota de diseño
+ * del NORTH_STAR para esta prioridad #1.
  */
 export function RunInspector({
   title = "Run inspector",

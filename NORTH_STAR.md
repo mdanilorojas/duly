@@ -39,8 +39,8 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | ExecutionHistoryTable | Lista virtualizada: status dot, workflow, modo trigger, duración, retry | 🟡 (V001, Storybook `Agentic/Execution History/V001 n8n-style Runs` — tabla semántica densa con `NodeStatusBadge`, chip de trigger, reintentos; sin virtualización todavía, ver "DataTable denso") |
 | RunInspector | Replay read-only por nodo con input/output y marcador "falló aquí" | ✅ (V001, mismo Storybook — panes Input/Output por nodo, banner "Failed here" auto-expandido en el nodo que falló) |
 | NodeStatusBadge | success/error/running/waiting/skipped/retrying (anillo dashed animado) | ✅ (V001) |
-| RetryControls | Retry-desde-inicio vs desde-nodo-fallido, contador de intentos | ❌ |
-| CredentialCard/Picker | Credencial: tipo, owner, last-used, compartida-con, health | ❌ |
+| RetryControls | Retry-desde-inicio vs desde-nodo-fallido, contador de intentos | ✅ (V001, Storybook `Agentic/Retry Controls/V001 Start vs Failed Node` — anclado directamente al marcador "Failed here" de `RunInspector` vía `node.retry`, historial que distingue reintentos automáticos de manuales) |
+| CredentialCard/Picker | Credencial: tipo, owner, last-used, compartida-con, health | ✅ (V001, Storybook `Agentic/Credential Card/V001 Type Owner Health` — salud no binaria valid/expiring/expired/revoked, listbox accesible con filtro por nombre/owner/tipo) |
 | SubworkflowChip | Referencia expandible/deep-link a ejecución hija | ❌ |
 | ErrorWorkflowBanner | "Este fallo se enrutó al error handler X" con cross-link | ❌ |
 | WorkflowCanvasFrame | Contenedor temado para embeber el editor n8n (zoom, fit, read-only) | ❌ |
@@ -165,32 +165,33 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 ## Prioridad de construcción (guía para el loop de 5h)
 
-Reordenado 2026-07-03 (loop de construcción, iteración 11). `EvidenceExportDialog` +
-`ApprovalChainStepper` — la prioridad #1 anterior — ya están construidos (V001, Storybook
-`Agentic/Evidence Export/V001 Signed Manifest` y `Agentic/Approval Chain/V001 Multi-Level
-Sign-Off`), reutilizando el vocabulario visual (actor dual, hash badge, tono) de
-`AuditLogTable`/`WhoDidWhatTimeline`. Área C pasa de 0% a 2 ✅ de 10 filas. Antes de eso el loop ya
-había cerrado `AgentConsentCard (Know-Your-Agent)` (commit `df33b3e`),
-`ExecutionHistoryTable + RunInspector` (commit `717d030`), `Rich Tool-UI` (commit `cabd93a`),
-`TraceTree`/`TokenCostMeter` (commit `b824186`), `AuditLogTable`/`WhoDidWhatTimeline` (commit
-`08256e9`), `ApprovalGateCard`/`HumanInterruptQueue` (commit `5dd5964`), `NodeStatusBadge`/
-`RunTimeline` (commit `3b39be4`) y `WCAG 2.2 AA` (commit `539e9db`).
+Reordenado 2026-07-03 (loop de construcción, iteración 12). `RetryControls` +
+`CredentialCard/Picker` — la prioridad #1 anterior — ya están construidos (V001, Storybook
+`Agentic/Retry Controls/V001 Start vs Failed Node` y `Agentic/Credential Card/V001 Type Owner
+Health`), cerrando 2 filas más de área A sobre el vocabulario ya establecido de
+`NodeStatusBadge`/`RunInspector`/`ApprovalGateCard`. Área A sube de 13% a 38% (3 ✅ de 8 filas).
+Antes de eso el loop ya había cerrado `EvidenceExportDialog`/`ApprovalChainStepper` (commit
+`919ed8b`), `AgentConsentCard (Know-Your-Agent)` (commit `df33b3e`), `ExecutionHistoryTable +
+RunInspector` (commit `717d030`), `Rich Tool-UI` (commit `cabd93a`), `TraceTree`/`TokenCostMeter`
+(commit `b824186`), `AuditLogTable`/`WhoDidWhatTimeline` (commit `08256e9`),
+`ApprovalGateCard`/`HumanInterruptQueue` (commit `5dd5964`), `NodeStatusBadge`/`RunTimeline`
+(commit `3b39be4`) y `WCAG 2.2 AA` (commit `539e9db`).
 
-1. **RetryControls + CredentialCard/Picker** (nueva prioridad #1) — siguientes filas de área A,
-   reutilizando el vocabulario de `NodeStatusBadge`/`ExecutionHistoryTable` ya establecido
-   (retry-desde-inicio vs desde-nodo-fallido puede anclarse directamente al marcador "Failed here"
-   de `RunInspector`).
-2. **GuardrailIndicator + EvalScoreBadge** — `TraceTree` ya expone tono por span (ok/warn/block);
-   estos dos ítems reutilizan ese mismo vocabulario para exponer policy checks y regresión de eval
-   junto al costo, cerrando más filas del área B.
-3. **ModelProvenanceCard + RetentionBadge/ImmutabilityIndicator** — siguientes filas de área C;
+1. **GuardrailIndicator + EvalScoreBadge** (nueva prioridad #1) — `TraceTree` ya expone tono por
+   span (ok/warn/block); estos dos ítems reutilizan ese mismo vocabulario para exponer policy
+   checks y regresión de eval junto al costo, cerrando más filas del área B.
+2. **ModelProvenanceCard + RetentionBadge/ImmutabilityIndicator** — siguientes filas de área C;
    `EvidenceExportDialog` ya sienta el patrón de manifiesto de hashes que `RetentionBadge` puede
    reutilizar para "WORM, retenido 6+ meses" (Art. 19), y `ApprovalChainStepper` ya distingue
    actor humano/agente/sistema, vocabulario directo para el chip modelo/prompt/versión de
    `ModelProvenanceCard` (Art. 12/13).
+3. **SubworkflowChip + ErrorWorkflowBanner** — últimas filas fáciles de área A antes de
+   `WorkflowCanvasFrame` (que requiere diseño propio sin depender del editor n8n, mayor esfuerzo);
+   reutilizan el vocabulario de chip/banner ya presente en `RunInspector`/`ExecutionHistoryTable`.
 4. **DataTable denso + Density modes + CommandPalette** — table stakes ops; `RichToolCallCard`'s
-   `table` block y `ExecutionHistoryTable` ya sientan un patrón de tabla densa reutilizable como
-   punto de partida — esta es la oportunidad de generalizarlo a un primitive único y virtualizado.
+   `table` block, `ExecutionHistoryTable`, `CredentialPicker` y `AuditLogTable` ya sientan un
+   patrón de tabla/lista densa reutilizable como punto de partida — esta es la oportunidad de
+   generalizarlo a un primitive único y virtualizado.
 5. Resto del catálogo, variante por industria (inmobiliaria, petróleo, software, finanzas, salud).
    Nota de investigación: inmobiliaria y petróleo/energía siguen sin patrones de UI de agentes-IA
    verificables en fuentes públicas 2026 — Studio DS puede ser pionero ahí en vez de seguir a

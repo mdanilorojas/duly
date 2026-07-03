@@ -2,6 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { ExecutionHistoryTable, type ExecutionRecord } from "./execution-history-table.js";
 import { RunInspector, type RunInspectorNode } from "./run-inspector.js";
+import type { RetryAttemptRecord } from "./retry-controls.js";
 
 export const DEFAULT_EXECUTIONS: ExecutionRecord[] = [
   {
@@ -53,6 +54,12 @@ export const DEFAULT_EXECUTIONS: ExecutionRecord[] = [
     startedAt: "Jul 3, 14:05",
     duration: "—",
   },
+];
+
+const DOCUSIGN_RETRY_HISTORY: RetryAttemptRecord[] = [
+  { attempt: 1, status: "error", trigger: "automatic", at: "05:59:12" },
+  { attempt: 2, status: "error", trigger: "automatic", at: "05:59:47" },
+  { attempt: 3, status: "error", trigger: "automatic", at: "06:00:52" },
 ];
 
 export const DEFAULT_EXECUTION_NODES: Record<string, RunInspectorNode[]> = {
@@ -137,6 +144,11 @@ export const DEFAULT_EXECUTION_NODES: Record<string, RunInspectorNode[]> = {
       input: { envelope_id: "env_77c1", endpoint: "/envelopes/send" },
       output: { status: "504" },
       error: "504 Gateway Timeout after 3 retries — DocuSign API unreachable.",
+      attempt: [3, 3],
+      retry: {
+        maxAttempts: 3,
+        history: DOCUSIGN_RETRY_HISTORY,
+      },
     },
     { id: "n5", title: "Slack: Notify legal", status: "skipped", nodeType: "n8n-nodes-base.slack", meta: "not reached" },
   ],
