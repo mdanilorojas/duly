@@ -982,3 +982,108 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
     `RetentionBadge` reutilizando el patrón de manifiesto de hashes de `EvidenceExportDialog`
     (área C); `SubworkflowChip`/`ErrorWorkflowBanner` sobre el vocabulario de chip/banner de
     `RunInspector` (área A, cerraría casi toda el área salvo `WorkflowCanvasFrame`).
+
+---
+
+## Iteración 13 — V001 Guardrail Indicator + Eval Score Badge (Agent Ops)
+
+- **Fecha:** 2026-07-03T20:15:00Z
+- **Versión:** `GuardrailIndicatorV001` + `EvalScoreBadgeV001`
+- **Tipo:** primitive × 2, integrado en composition existente (`TraceTree`)
+- **Industria:** general agent ops; la story de integración en `TraceTree`
+  (`WithGuardrailsAndEvalScore`) usa un agente de asesoría financiera (servicios financieros) —
+  guardrails de scope de transferencia y redacción de PII, sin forzar el resto del catálogo a esa
+  industria.
+- **Storybook:** `Agentic/Guardrail Indicator/V001 Policy Checks` (stories: `AllPassed`,
+  `WithWarnings`, `Blocked`, `NoChecksConfigured`, `InlineChipsRow`) · `Agentic/Eval Score
+  Badge/V001 Score vs Threshold` (stories: `PassingWithImprovement`, `Regression`,
+  `NearThreshold`, `NoHistoryYet`, `EvalPanel`) · `Agentic/Trace Tree/V001 Cost-Attributed Spans`
+  gana la story `WithGuardrailsAndEvalScore` (sin modificar las stories existentes).
+- **Inspiración investigada:** no se reabrió WebSearch esta iteración — el ítem #1 de la
+  Prioridad de construcción ya venía completamente especificado en el propio `NORTH_STAR.md`
+  (fila de catálogo + la nota "OpenAI formalizó una guía única 'Guardrails and human review'
+  (input/output/tool guardrails...)" registrada en la iteración de vanguardia del 2026-07-02),
+  y se priorizó cerrar el gap ya identificado con precisión suficiente sobre investigación externa
+  redundante — mismo criterio que la iteración 12.
+- **Razón de producto:** cierra la nueva prioridad #1 del NORTH_STAR tras la iteración 12 (área
+  B, agent ops). `TraceTree` ya exponía tono por span (ok/warn/block) y costo/tokens rollup, pero
+  no tenía forma de mostrar *por qué* un guardrail bloqueó una tool call ni si la calidad de la
+  respuesta (eval score) venía cayendo entre runs — ambos son señales de credibilidad enterprise
+  de primera clase (principio #1, "todo estado está diseñado", y el vocabulario de tono ya
+  establecido no debía reinventarse por componente).
+- **Componentes creados:**
+  - `packages/ui/src/agentic/guardrail-indicator.tsx`:
+    - `GuardrailStatus` (`passed`/`warned`/`blocked`) y `GuardrailCategory`
+      (`input`/`output`/`tool` — vocabulario directo de la guía de OpenAI citada arriba) sobre
+      `GuardrailPolicy { id, name, category, status, rationale }`.
+    - `<GuardrailIndicator>` — pill resumen con tono = **peor** de la lista de políticas (un
+      guardrail bloqueado nunca se diluye entre los que pasaron), construido sobre
+      `Collapsible.Root` (mismo patrón que `TraceTree`/`RunInspector`, no un `Popover` nuevo) que
+      expande a la lista completa con categoría, status y rationale por política.
+    - `<GuardrailChip>` — chip compacto de una sola política sin expandir, para uso denso (fila de
+      chips, o embebido en otro componente); usa `title` nativo para la rationale completa.
+    - Reutiliza `toneChip` exportado de `approval-gate-card.js` (mismo patrón que
+      `retry-controls.tsx` en la iteración 12) en vez de duplicar el mapeo tono→clase.
+  - `packages/ui/src/agentic/eval-score-badge.tsx`:
+    - `scoreTone(score, threshold)` (exportado, reutilizado por `TraceTree`) — `ok` si
+      `score >= threshold`, `warn` si está dentro del 90% del umbral, `block` si cae más abajo;
+      nunca un "malo" binario.
+    - `<EvalScoreSparkline>` — SVG minimalista (sin librería de charts) con línea punteada de
+      umbral y línea de tendencia en `currentColor` tonificado; requiere ≥2 puntos (historial +
+      score actual) o no renderiza nada, en vez de un sparkline plano engañoso con 1 solo dato.
+    - `<EvalScoreBadge>` — score grande + umbral, chip de delta con flecha de regresión (`↓` tono
+      `warn`/`block` según si el score actual ya incumple, `↑` tono `ok`, `–` sin cambio) y el
+      sparkline embebido — ítem explícito del catálogo ("EvalScoreBadge + Sparkline... flechas de
+      regresión").
+  - `packages/ui/src/agentic/trace-tree.tsx` (extendido, no reemplazado): `TraceSpan` gana campos
+    opcionales `guardrails?: GuardrailPolicy[]` y `evalScore?: {name, score, threshold, history?}`.
+    `SpanRow` renderiza, cuando están presentes, una fila compacta de `GuardrailChip`s +
+    un chip de eval score (usando `scoreTone` importado) justo debajo del span — exactamente la
+    integración que pedía la Prioridad de construcción del NORTH_STAR ("reutilizan ese mismo
+    vocabulario para exponer policy checks y regresión de eval junto al costo"), sin tocar el
+    layout de grid ni las stories previas de `TraceTree`.
+  - `packages/ui/src/agentic/guardrail-indicator.stories.tsx` y
+    `packages/ui/src/agentic/eval-score-badge.stories.tsx` — mock data rica (fintech: prompt
+    injection, PII redaction, transaction scope, LLM evals tipo LangSmith: faithfulness,
+    groundedness, answer relevance, PII leakage).
+  - `packages/ui/src/agentic/trace-tree.stories.tsx` — nueva story `WithGuardrailsAndEvalScore`
+    con un run de "Financial Advisory Agent" (spans de LLM con guardrails + eval score,
+    tool call bloqueada por exceder límite de autorización, `await_human_approval` posterior) —
+    semilla de mock data para una futura `ComplianceAgentConsole` de servicios financieros.
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 2 módulos nuevos.
+- **Comandos ejecutados:** `git status` + `git checkout main` + `git pull origin main`
+  (fast-forward limpio, 24 commits detrás — el contenedor arrancó con `HEAD` detached en
+  `7bd2063`) · `pnpm install` (faltaba `node_modules`) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/guardrail-indicator.tsx src/agentic/guardrail-indicator.stories.tsx
+  src/agentic/eval-score-badge.tsx src/agentic/eval-score-badge.stories.tsx
+  src/agentic/trace-tree.tsx src/agentic/trace-tree.stories.tsx src/agentic/index.ts` (0 errores,
+  sin colores crudos) · `pnpm --filter @studio/ui test` (26 passed, sin cambios) · `pnpm exec
+  turbo run build --filter=@studio/ui...` (OK, ESM 210.87 KB, DTS 60.59 KB) · `pnpm exec turbo run
+  build --filter=@studio/docs...` (Storybook static build OK, chunks nuevos
+  `guardrail-indicator-*.js` 5.22 kB, `guardrail-indicator.stories-*.js` 6.34 kB,
+  `eval-score-badge-*.js` 5.75 kB, `eval-score-badge.stories-*.js` 5.49 kB, y
+  `trace-tree.stories-*.js` recompilado a 15.16 kB con la nueva story de integración).
+- **Resultado:** ✅ pendiente de commit/push a main. `NORTH_STAR.md` actualizado:
+  `GuardrailIndicator` y `EvalScoreBadge + Sparkline` pasan de ❌ a ✅ (sección B), la fila de
+  `TraceTree` gana una nota sobre la extensión `guardrails`/`evalScore`; "Prioridad de
+  construcción" reordenada con `ModelProvenanceCard + RetentionBadge/ImmutabilityIndicator` (área
+  C) como nuevo #1 y `AgentHandoffMarker + CheckpointBadge` añadido como #3 (marcadores puntuales
+  sobre timelines ya existentes, bajo esfuerzo).
+- **Notas para revisión humana:**
+  - El `EvalScoreSparkline` es SVG hecho a mano (sin librería de charts) — a propósito, dado que
+    es un trend de ≤10 puntos en 100×28px; si el catálogo pide sparklines más complejos (zoom,
+    tooltips por punto) en el futuro, ese es el momento de evaluar una librería dedicada, no antes.
+  - `GuardrailIndicator` usa `Collapsible` (mismo primitive que `TraceTree`/`RunInspector`) en vez
+    de un `Popover` — mantiene consistencia visual pero significa que el detalle empuja el layout
+    hacia abajo en vez de flotar; aceptable para el caso de uso de tarjeta standalone, a revisar si
+    se embebe en un contexto de espacio vertical muy restringido.
+  - La integración en `TraceTree` es *opcional por span* (no todos los spans tienen guardrails o
+    eval score) — no se agregó a los datos mock de las stories `DocumentIntelligenceRun` ni
+    `NestedResearchSwarm` para no alterar su lectura visual existente; la nueva story
+    `WithGuardrailsAndEvalScore` es el único lugar que demuestra la integración.
+  - Próximas versiones sugeridas (ver NORTH_STAR reordenado): `ModelProvenanceCard`/
+    `RetentionBadge` reutilizando el patrón de manifiesto de hashes de `EvidenceExportDialog`
+    (nuevo #1, área C); `AgentHandoffMarker`/`CheckpointBadge` como marcadores sobre
+    `RunTimeline`/`TraceTree` ya existentes (área B, bajo esfuerzo); el run de "Financial Advisory
+    Agent" de esta iteración es semilla directa de mock data para una futura
+    `ComplianceAgentConsole` de servicios financieros.

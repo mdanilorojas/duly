@@ -55,14 +55,14 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 | Componente | Propósito | Estado |
 |---|---|---|
-| TraceTree / SpanRow | Spans anidados (LLM/tool/agente/retrieval) con duración, tokens y costo por span | ✅ (V001, Storybook `Agentic/Trace Tree` — árbol colapsable con waterfall de tiempo y rollup de costo/tokens por rama) |
+| TraceTree / SpanRow | Spans anidados (LLM/tool/agente/retrieval) con duración, tokens y costo por span | ✅ (V001, Storybook `Agentic/Trace Tree` — árbol colapsable con waterfall de tiempo y rollup de costo/tokens por rama; extendido en iteración 13 con `guardrails`/`evalScore` opcionales por span, chips inline junto al costo) |
 | ApprovalGateCard | Evidence pack: qué/por qué/blast-radius/rollback + approve/reject/escalate + timeout | ✅ (V001, Storybook `Agentic/Approval Gate` — 4 estados de resolución: approved/rejected/escalated/expired, mobile-first) |
 | HumanInterruptQueue | Inbox de runs pausados esperando revisión, ordenado por riesgo/edad; debe funcionar también en mobile (ver nota) | ✅ (V001, Storybook `Agentic/Human Interrupt Queue` — ordena por tono de riesgo y luego edad, filas expandibles a `ApprovalGateCard`) |
 | AgentConsentCard (Know-Your-Agent) | Perfil de agente + alcance + consentimiento explícito antes de una acción sensible | ✅ (V001, Storybook `Agentic/Agent Consent/V001 Know Your Agent` — perfil con `AgentCore`, alcance con checkbox por permiso, límites configurables, 4 estados de resolución pending/consented/declined/revoked) |
 | RunTimeline | Timeline estilo Temporal con estados vivos (dashed/solid/color) | ✅ (V001, Storybook `Agentic/Run Timeline` — construido sobre la gramática de 6 estados de `NodeStatusBadge`) |
 | TokenCostMeter | Costo por run y agregado (modelo vs tools vs retrieval), umbrales de presupuesto | ✅ (V001, Storybook `Agentic/Token Cost Meter` — desglose por categoría + barra de presupuesto con umbral ok/warn/block) |
-| GuardrailIndicator | Pill passed/warned/blocked, expandible a la política que disparó | ❌ |
-| EvalScoreBadge + Sparkline | Score vs umbral, flechas de regresión | ❌ |
+| GuardrailIndicator | Pill passed/warned/blocked, expandible a la política que disparó | ✅ (V001, Storybook `Agentic/Guardrail Indicator/V001 Policy Checks` — pill resumen con tono = peor de la lista, expande a políticas input/output/tool con rationale; `GuardrailChip` para uso inline denso) |
+| EvalScoreBadge + Sparkline | Score vs umbral, flechas de regresión | ✅ (V001, Storybook `Agentic/Eval Score Badge/V001 Score vs Threshold` — score vs umbral con tono ok/warn/block, flecha de regresión vs run anterior y sparkline de tendencia con línea de umbral) |
 | AgentHandoffMarker | Punto visual de transferencia agente↔agente o agente→humano | ❌ |
 | StreamingMessage / ThinkingIndicator | Stream de tokens con chips de tool-call inline | ❌ |
 | Rich Tool-UI (tool-based generative UI) | UI enriquecida por tipo de tool dentro de un tool-call, no solo texto/JSON | ✅ (V002, Storybook `Agentic/Tool Call Card/V002 Rich Tool-UI` — `RichToolCallCard` con 6 tipos de bloque: table/diff/citations/confirm/metrics/code, patrón "Controlled Generative UI") |
@@ -165,29 +165,30 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 ## Prioridad de construcción (guía para el loop de 5h)
 
-Reordenado 2026-07-03 (loop de construcción, iteración 12). `RetryControls` +
-`CredentialCard/Picker` — la prioridad #1 anterior — ya están construidos (V001, Storybook
-`Agentic/Retry Controls/V001 Start vs Failed Node` y `Agentic/Credential Card/V001 Type Owner
-Health`), cerrando 2 filas más de área A sobre el vocabulario ya establecido de
-`NodeStatusBadge`/`RunInspector`/`ApprovalGateCard`. Área A sube de 13% a 38% (3 ✅ de 8 filas).
-Antes de eso el loop ya había cerrado `EvidenceExportDialog`/`ApprovalChainStepper` (commit
+Reordenado 2026-07-03 (loop de construcción, iteración 13). `GuardrailIndicator` +
+`EvalScoreBadge/Sparkline` — la prioridad #1 anterior — ya están construidos (V001, Storybook
+`Agentic/Guardrail Indicator/V001 Policy Checks` y `Agentic/Eval Score Badge/V001 Score vs
+Threshold`), y además se integraron directamente en `TraceTree` (spans ganan `guardrails`/
+`evalScore` opcionales, chips inline junto al costo) — cerrando 2 filas más de área B sobre el
+vocabulario de tono ya establecido. Antes de eso el loop ya había cerrado `RetryControls` +
+`CredentialCard/Picker` (commit `7bd2063`), `EvidenceExportDialog`/`ApprovalChainStepper` (commit
 `919ed8b`), `AgentConsentCard (Know-Your-Agent)` (commit `df33b3e`), `ExecutionHistoryTable +
 RunInspector` (commit `717d030`), `Rich Tool-UI` (commit `cabd93a`), `TraceTree`/`TokenCostMeter`
 (commit `b824186`), `AuditLogTable`/`WhoDidWhatTimeline` (commit `08256e9`),
 `ApprovalGateCard`/`HumanInterruptQueue` (commit `5dd5964`), `NodeStatusBadge`/`RunTimeline`
 (commit `3b39be4`) y `WCAG 2.2 AA` (commit `539e9db`).
 
-1. **GuardrailIndicator + EvalScoreBadge** (nueva prioridad #1) — `TraceTree` ya expone tono por
-   span (ok/warn/block); estos dos ítems reutilizan ese mismo vocabulario para exponer policy
-   checks y regresión de eval junto al costo, cerrando más filas del área B.
-2. **ModelProvenanceCard + RetentionBadge/ImmutabilityIndicator** — siguientes filas de área C;
-   `EvidenceExportDialog` ya sienta el patrón de manifiesto de hashes que `RetentionBadge` puede
-   reutilizar para "WORM, retenido 6+ meses" (Art. 19), y `ApprovalChainStepper` ya distingue
-   actor humano/agente/sistema, vocabulario directo para el chip modelo/prompt/versión de
-   `ModelProvenanceCard` (Art. 12/13).
-3. **SubworkflowChip + ErrorWorkflowBanner** — últimas filas fáciles de área A antes de
+1. **ModelProvenanceCard + RetentionBadge/ImmutabilityIndicator** (nueva prioridad #1) —
+   siguientes filas de área C; `EvidenceExportDialog` ya sienta el patrón de manifiesto de hashes
+   que `RetentionBadge` puede reutilizar para "WORM, retenido 6+ meses" (Art. 19), y
+   `ApprovalChainStepper` ya distingue actor humano/agente/sistema, vocabulario directo para el
+   chip modelo/prompt/versión de `ModelProvenanceCard` (Art. 12/13).
+2. **SubworkflowChip + ErrorWorkflowBanner** — últimas filas fáciles de área A antes de
    `WorkflowCanvasFrame` (que requiere diseño propio sin depender del editor n8n, mayor esfuerzo);
    reutilizan el vocabulario de chip/banner ya presente en `RunInspector`/`ExecutionHistoryTable`.
+3. **AgentHandoffMarker + CheckpointBadge** — filas restantes de área B; ambas son marcadores
+   puntuales sobre timelines/trees ya existentes (`RunTimeline`, `TraceTree`, `ExecutionTimeline`)
+   en vez de componentes nuevos desde cero — bajo esfuerzo, alto cierre de catálogo.
 4. **DataTable denso + Density modes + CommandPalette** — table stakes ops; `RichToolCallCard`'s
    `table` block, `ExecutionHistoryTable`, `CredentialPicker` y `AuditLogTable` ya sientan un
    patrón de tabla/lista densa reutilizable como punto de partida — esta es la oportunidad de
@@ -197,7 +198,9 @@ RunInspector` (commit `717d030`), `Rich Tool-UI` (commit `cabd93a`), `TraceTree`
    verificables en fuentes públicas 2026 — Studio DS puede ser pionero ahí en vez de seguir a
    alguien (ver `VANGUARD_REPORT.md`). `AgentConsentCard` ya dejó mock data de 4 industrias
    (financiera, salud, software, petróleo/energía) reutilizable como semilla de rosters de agentes
-   dedicados por industria en próximas versiones.
+   dedicados por industria en próximas versiones. La nueva story `TraceTree/WithGuardrailsAndEvalScore`
+   (iteración 13) ya modela un agente de asesoría financiera con guardrails de scope/PII — semilla
+   directa para una futura `ComplianceAgentConsole` de servicios financieros.
 
 ## Fuentes de vanguardia (el loop semanal las re-visita)
 

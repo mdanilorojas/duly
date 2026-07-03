@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { TraceTree, type TraceSpan } from "./trace-tree.js";
+import type { GuardrailPolicy } from "./guardrail-indicator.js";
 
 const meta: Meta<typeof TraceTree> = {
   title: "Agentic/Trace Tree/V001 Cost-Attributed Spans",
@@ -204,6 +205,120 @@ export const CollapsedByDefault: S = {
           runId="run_8f21c0"
           spans={documentIntelligenceSpans}
           defaultOpenDepth={0}
+        />
+      </div>
+    </div>
+  ),
+};
+
+const pinjection: GuardrailPolicy = {
+  id: "g-pinj",
+  name: "Prompt injection detection",
+  category: "input",
+  status: "passed",
+  rationale: "No instruction-override patterns found in the user message.",
+};
+
+const piiRedaction: GuardrailPolicy = {
+  id: "g-pii",
+  name: "PII redaction",
+  category: "output",
+  status: "passed",
+  rationale: "Response contains no unmasked account numbers or SSNs.",
+};
+
+const advisoryDisclaimer: GuardrailPolicy = {
+  id: "g-advice",
+  name: "Regulated advice disclaimer",
+  category: "output",
+  status: "warned",
+  rationale: "Response references investment allocation — appended mandatory disclaimer before send.",
+};
+
+const transferScope: GuardrailPolicy = {
+  id: "g-scope",
+  name: "Transaction scope check",
+  category: "tool",
+  status: "blocked",
+  rationale: "transfer_funds() amount ($48,000.00) exceeds the agent's $5,000 authorization limit — routed to human approval.",
+};
+
+// Run de un agente de asesoría financiera (servicios financieros) — cada
+// span de LLM carga guardrails de política y, en el paso de redacción, un
+// eval score de faithfulness con historial — item #1 de la Prioridad de
+// construcción del NORTH_STAR (área B), demostrado sobre el mismo
+// vocabulario de tono que ya usa el waterfall de costo.
+const financialAdvisorySpans: TraceSpan[] = [
+  {
+    id: "fa-root",
+    kind: "agent",
+    name: "Financial Advisory Agent",
+    tone: "warn",
+    startMs: 0,
+    durationMs: 3600,
+    children: [
+      {
+        id: "fa-intake",
+        kind: "llm",
+        name: "claude-sonnet-5 · parse_client_request",
+        tone: "ok",
+        startMs: 80,
+        durationMs: 340,
+        tokens: { input: 1240, output: 180 },
+        costUsd: 0.0071,
+        guardrails: [pinjection],
+      },
+      {
+        id: "fa-draft",
+        kind: "llm",
+        name: "claude-sonnet-5 · draft_portfolio_recommendation",
+        tone: "warn",
+        startMs: 460,
+        durationMs: 1620,
+        tokens: { input: 5200, output: 940 },
+        costUsd: 0.0398,
+        guardrails: [piiRedaction, advisoryDisclaimer],
+        evalScore: {
+          name: "Faithfulness",
+          score: 91,
+          threshold: 85,
+          history: [
+            { runId: "run_1", score: 84 },
+            { runId: "run_2", score: 88 },
+            { runId: "run_3", score: 87 },
+          ],
+        },
+      },
+      {
+        id: "fa-transfer",
+        kind: "tool",
+        name: "transfer_funds(account: 4471, amount: 48000.00)",
+        tone: "block",
+        startMs: 2100,
+        durationMs: 40,
+        guardrails: [transferScope],
+      },
+      {
+        id: "fa-wait",
+        kind: "tool",
+        name: "await_human_approval(transfer over authorization limit)",
+        tone: "review",
+        startMs: 2150,
+        durationMs: 1450,
+      },
+    ],
+  },
+];
+
+export const WithGuardrailsAndEvalScore: S = {
+  render: () => (
+    <div className="min-h-screen bg-bg-base p-12">
+      <div className="mx-auto max-w-[880px]">
+        <TraceTree
+          title="Trace tree"
+          runId="run_a30f18"
+          spans={financialAdvisorySpans}
+          defaultOpenDepth={2}
         />
       </div>
     </div>
