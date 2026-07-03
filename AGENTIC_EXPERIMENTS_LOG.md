@@ -749,3 +749,15 @@ Secuencia separada del loop agentic de arriba. Construye el catálogo del gap an
 
 ### ✅ Rung 1 COMPLETO (3/3) — DataTable · FilterBar · SavedViews
 Columna vertebral de tablas lista y exportada. Desbloquea rungs 4/5/6 (Forecast/Alarm/Registry tables + refactor de AuditLog/ExecHistory). Próximo: Rung 2 — Orquestación (AgentTopologyGraph, SwarmControlBar, BudgetCapGovernor).
+
+## Unit 4/19 — AgentTopologyGraph (área G) · abre rung 2
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición (grafo + roster)
+- **Framework reusado:** `@xyflow/react` (React Flow, lazy) para el canvas; `NodeStatusBadge` en nodos y roster.
+- **Archivos:** `agent-topology-graph.tsx` (roster accesible + Suspense) + `agent-topology-graph.flow.tsx` (canvas RF, default export lazy) + test + stories + export.
+- **a11y:** doble representación — grafo `aria-hidden` (canvas) + roster `role="list"` interactivo (representación accesible/teclado; el canvas nunca es la única forma de operar). Estado por `NodeStatusBadge` (color+forma).
+- **Infra:** tsup `external` ahora incluye `@tanstack/*` y `@xyflow/*` (no bundlear frameworks en el core del DS); vitest.setup mockea `ResizeObserver` (jsdom) para tests de componentes con medición.
+- **Storybook:** `Agentic/Orchestration/V001 Agent Topology Graph` (SupervisorWorkers con edge activo animado, RosterOnly).
+- **Verificación:** test 47/47 (incl. axe) · build tsup ESM+DTS OK (bundle más liviano al externalizar deps) · eslint 0.
+- **Resultado:** ✅ branch `feat/component-build-ladder`.
+- **Nota:** el consumidor importa `@xyflow/react/dist/style.css` una vez (como los estilos del DS) — documentado en la story. Próximo: Unit 5/19 `SwarmControlBar`.

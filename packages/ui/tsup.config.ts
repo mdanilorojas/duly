@@ -16,6 +16,9 @@ export default defineConfig({
     "class-variance-authority",
     "clsx",
     "tailwind-merge",
+    // Frameworks headless reutilizados — externos, no bundleados en el core del DS.
+    /^@tanstack\//,
+    /^@xyflow\//,
   ],
   esbuildOptions(options) {
     options.alias = { "@": resolve("src") };
