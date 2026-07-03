@@ -108,8 +108,8 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 |---|---|---|
 | AuditLogTable | Stream inmutable: actor (humano/agente/sistema), acción, recurso, hash badge | ✅ (V001, Storybook `Agentic/Audit Log Table` — tabla semántica densa, actor con icono+anillo dual, hash badge de inmutabilidad) |
 | WhoDidWhatTimeline | Feed cronológico filtrable con saved-query chips | ✅ (V001, Storybook `Agentic/Who Did What Timeline` — grupos cronológicos + chips de consulta guardada con conteo, autoservicio del auditor) |
-| EvidenceExportDialog | Export firmado (PDF/CSV/JSON) de un rango filtrado con manifiesto de hashes | ❌ |
-| ApprovalChainStepper | Quién aprobó qué, cuándo, en qué orden, con ramas de rechazo | ❌ |
+| EvidenceExportDialog | Export firmado (PDF/CSV/JSON) de un rango filtrado con manifiesto de hashes | ✅ (V001, Storybook `Agentic/Evidence Export/V001 Signed Manifest` — diálogo con selector de formato, preview del manifiesto de hashes vía `HashBadge`, y confirmación con hash del manifiesto firmado) |
+| ApprovalChainStepper | Quién aprobó qué, cuándo, en qué orden, con ramas de rechazo | ✅ (V001, Storybook `Agentic/Approval Chain/V001 Multi-Level Sign-Off` — stepper vertical con actor dual + hash badge por paso, rama punteada para rechazos re-enrutados) |
 | ModelProvenanceCard | Modelo, versión, prompt version, config hash por run | ❌ |
 | RBACMatrixViewer | Grid roles×permisos + "por qué este usuario tiene acceso" | ❌ |
 | DataLineageGraph | Origen→transformación→salida a nivel de campo | ❌ |
@@ -165,24 +165,29 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 ## Prioridad de construcción (guía para el loop de 5h)
 
-Reordenado 2026-07-03 (loop de construcción, iteración 10). `AgentConsentCard (Know-Your-Agent)`
-— la prioridad #1 anterior — ya está construido (V001, Storybook `Agentic/Agent Consent/V001 Know
-Your Agent`, 4 stories de industria: financial services pending interactivo, healthcare
-consented, software declined, oil & energy revoked). Antes de eso el loop ya había cerrado
+Reordenado 2026-07-03 (loop de construcción, iteración 11). `EvidenceExportDialog` +
+`ApprovalChainStepper` — la prioridad #1 anterior — ya están construidos (V001, Storybook
+`Agentic/Evidence Export/V001 Signed Manifest` y `Agentic/Approval Chain/V001 Multi-Level
+Sign-Off`), reutilizando el vocabulario visual (actor dual, hash badge, tono) de
+`AuditLogTable`/`WhoDidWhatTimeline`. Área C pasa de 0% a 2 ✅ de 10 filas. Antes de eso el loop ya
+había cerrado `AgentConsentCard (Know-Your-Agent)` (commit `df33b3e`),
 `ExecutionHistoryTable + RunInspector` (commit `717d030`), `Rich Tool-UI` (commit `cabd93a`),
 `TraceTree`/`TokenCostMeter` (commit `b824186`), `AuditLogTable`/`WhoDidWhatTimeline` (commit
 `08256e9`), `ApprovalGateCard`/`HumanInterruptQueue` (commit `5dd5964`), `NodeStatusBadge`/
-`RunTimeline` (commit `3b39be4`) y `WCAG 2.2 AA` (commit `539e9db`). Área B suma su quinto ✅.
+`RunTimeline` (commit `3b39be4`) y `WCAG 2.2 AA` (commit `539e9db`).
 
-1. **EvidenceExportDialog + ApprovalChainStepper** (nueva prioridad #1) — siguientes filas de área
-   C ahora que `AuditLogTable`/`WhoDidWhatTimeline` sientan el vocabulario visual (actor dual,
-   hash badge, tono) que estos dos componentes pueden reutilizar directamente.
-2. **RetryControls + CredentialCard/Picker** — siguientes filas de área A, reutilizando el
-   vocabulario de `NodeStatusBadge`/`ExecutionHistoryTable` ya establecido (retry-desde-inicio vs
-   desde-nodo-fallido puede anclarse directamente al marcador "Failed here" de `RunInspector`).
-3. **GuardrailIndicator + EvalScoreBadge** — `TraceTree` ya expone tono por span (ok/warn/block);
+1. **RetryControls + CredentialCard/Picker** (nueva prioridad #1) — siguientes filas de área A,
+   reutilizando el vocabulario de `NodeStatusBadge`/`ExecutionHistoryTable` ya establecido
+   (retry-desde-inicio vs desde-nodo-fallido puede anclarse directamente al marcador "Failed here"
+   de `RunInspector`).
+2. **GuardrailIndicator + EvalScoreBadge** — `TraceTree` ya expone tono por span (ok/warn/block);
    estos dos ítems reutilizan ese mismo vocabulario para exponer policy checks y regresión de eval
    junto al costo, cerrando más filas del área B.
+3. **ModelProvenanceCard + RetentionBadge/ImmutabilityIndicator** — siguientes filas de área C;
+   `EvidenceExportDialog` ya sienta el patrón de manifiesto de hashes que `RetentionBadge` puede
+   reutilizar para "WORM, retenido 6+ meses" (Art. 19), y `ApprovalChainStepper` ya distingue
+   actor humano/agente/sistema, vocabulario directo para el chip modelo/prompt/versión de
+   `ModelProvenanceCard` (Art. 12/13).
 4. **DataTable denso + Density modes + CommandPalette** — table stakes ops; `RichToolCallCard`'s
    `table` block y `ExecutionHistoryTable` ya sientan un patrón de tabla densa reutilizable como
    punto de partida — esta es la oportunidad de generalizarlo a un primitive único y virtualizado.

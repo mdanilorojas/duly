@@ -20,3 +20,5 @@ export * from "./execution-history-table.js";
 export * from "./run-inspector.js";
 export * from "./execution-history-console.js";
 export * from "./agent-consent-card.js";
+export * from "./approval-chain-stepper.js";
+export * from "./evidence-export-dialog.js";

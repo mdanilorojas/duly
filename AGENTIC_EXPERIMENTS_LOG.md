@@ -782,3 +782,95 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
     `RetryControls` sobre `RunInspector`; primer roster de agentes dedicado a una segunda industria
     (petróleo & energía) o primera consola financiera completa combinando
     `AgentConsentCard`+`ApprovalGateCard`+`AuditLogTable`+`WhoDidWhatTimeline`.
+
+---
+
+## Iteración 11 — V001 Evidence Export Dialog + Approval Chain Stepper
+
+- **Fecha:** 2026-07-03T10:12:32Z
+- **Versión:** `EvidenceExportDialogV001` + `ApprovalChainStepperV001`
+- **Tipo:** primitive/composition (auditoría/compliance, área C del NORTH_STAR)
+- **Industria:** servicios financieros (wire transfer multi-nivel, export trimestral) y salud
+  (prior authorization, export de acceso HIPAA) — 2 industrias en las stories de cada componente,
+  sin forzar una consola completa todavía.
+- **Storybook:** `Agentic/Evidence Export/V001 Signed Manifest` (stories: `FinancialServicesQuarterlyExport`,
+  `HealthcareAuditExport`, `EmptyRange`) y `Agentic/Approval Chain/V001 Multi-Level Sign-Off`
+  (stories: `WireTransferFullyApproved`, `RejectedThenReroutedThenPending`,
+  `HealthcarePriorAuthPending`, `EmptyChain`).
+- **Inspiración investigada:** contra la vara ya fijada en `NORTH_STAR.md` — principio #3 (todo
+  Approve lleva evidencia), #4 (la inmutabilidad se ve: hash badges, exports firmados) y #6
+  (replay/consulta read-only como core, no afterthought). No se re-investigó código de vanguardia
+  nuevo esta iteración (WebSearch) porque el ítem ya estaba especificado con precisión legal en el
+  propio NORTH_STAR (separación Art. 12/13 vs Art. 19) desde la auditoría semanal previa — se
+  priorizó cerrar el gap #1 ya identificado sobre reabrir investigación externa redundante.
+- **Razón de producto:** cierra la prioridad #1 del NORTH_STAR tras la iteración 10 y saca al área
+  C (auditoría/compliance) de su 0% de cobertura absoluto (el único de los 4 pilares del catálogo
+  sin ningún avance, sosteniendo 3 de los 10 principios de credibilidad enterprise: #3, #4, #10).
+  `AuditLogTable`/`WhoDidWhatTimeline` (iteración anterior a la 10) ya habían sentado el
+  vocabulario de actor dual + hash badge + tono — estos dos componentes son la extensión natural:
+  el auditor necesita tanto *sacar* evidencia del sistema de forma verificable
+  (`EvidenceExportDialog`) como *entender* una cadena de aprobación ya resuelta con sus
+  ramificaciones (`ApprovalChainStepper`), ninguno de los dos cubierto por lo ya construido
+  (`ApprovalGateCard` solo modela una decisión puntual, no una cadena multi-nivel).
+- **Componentes creados:**
+  - `packages/ui/src/agentic/approval-chain-stepper.tsx`:
+    - `ChainStepStatus` (`approved`/`rejected`/`pending`/`skipped`) con `chainStepStatusConfig`
+      siguiendo el mismo patrón de `approvalStatusConfig`/`consentStatusConfig` ya usado en el
+      catálogo — un estado resuelto siempre tiene tono + icono propio, nunca solo texto.
+    - `<ApprovalChainStepper>` — stepper vertical con conector de columna entre pasos; cada paso
+      reutiliza `actorKindConfig`/`HashBadge` de `audit-log-table.tsx` sin vocabulario nuevo. Un
+      "veredicto" de cadena (`chainVerdict`) se deriva de los pasos: "Fully approved" /
+      "Rejected — chain halted" / "Pending — awaiting step N of M". Soporta ramas (`branchFrom`):
+      un paso rechazado puede re-enrutar a un aprobador alternativo, renderizado desplazado con
+      conector punteado propio en vez de forzar una única columna lineal — la cadena real de
+      aprobación multi-nivel no siempre es lineal (ver story `RejectedThenReroutedThenPending`).
+  - `packages/ui/src/agentic/evidence-export-dialog.tsx`:
+    - `<EvidenceExportDialog>` — envuelve `Dialog`/`DialogContent` del design system base con
+      trigger por defecto ("Export evidence"). Dos fases internas (`form` → `done`) con
+      `useState`, reseteadas al cerrar. Fase `form`: resumen de rango + conteo de eventos,
+      selector de formato (PDF/CSV/JSON) sobre `RadioGroup`/`Label` de Radix ya existentes (no se
+      reinventó el patrón de chips de `WhoDidWhatTimeline` porque un `radiogroup` nativo es más
+      correcto semánticamente para una selección mutuamente excluyente en un form), preview del
+      manifiesto reutilizando `HashBadge` (primeros 4 hashes + contador "+N more" si hay más), y
+      nota de "Will be signed by {identity}". Fase `done`: hash del manifiesto firmado completo
+      (hash sintético determinístico derivado de los hashes de entrada — no criptográfico, es
+      mock de demo) en un panel de tono `ok`, con nota de que recomputar el hash debe coincidir o
+      el archivo fue alterado tras la firma.
+  - `packages/ui/src/agentic/approval-chain-stepper.stories.tsx` y
+    `packages/ui/src/agentic/evidence-export-dialog.stories.tsx` — mock data rica de 2 industrias
+    cada uno (financiera + salud).
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 2 módulos nuevos.
+- **Comandos ejecutados:** `git status` + `git checkout main` + `git pull origin main`
+  (fast-forward limpio, 22 commits detrás — el contenedor arrancó con `HEAD` detached) ·
+  `pnpm install` (faltaba `node_modules`) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/approval-chain-stepper.tsx src/agentic/approval-chain-stepper.stories.tsx
+  src/agentic/evidence-export-dialog.tsx src/agentic/evidence-export-dialog.stories.tsx
+  src/agentic/index.ts` (0 errores, sin colores crudos) · `pnpm --filter @studio/ui test` (26
+  passed, sin cambios) · `pnpm exec turbo run build --filter=@studio/ui...` (falló primero por un
+  choque de tipos entre el tipo `icon` de `formatConfig` y `LucideIcon` — se corrigió alineando la
+  firma `aria-hidden?: boolean | "true" | "false"` con el patrón ya usado en el resto del catálogo;
+  luego OK) · `pnpm exec turbo run build --filter=@studio/docs...` (Storybook static build OK,
+  chunks nuevos `approval-chain-stepper.stories-*.js` 12.46 kB y
+  `evidence-export-dialog.stories-*.js` 14.01 kB visibles en el output).
+- **Resultado:** ✅ pendiente de commit/push a main. `NORTH_STAR.md` actualizado:
+  `EvidenceExportDialog` y `ApprovalChainStepper` pasan de ❌ a ✅ (sección C, área sube de 0% a
+  20% de cobertura pura); "Prioridad de construcción" reordenada con
+  `RetryControls + CredentialCard/Picker` (área A) como nuevo #1.
+- **Notas para revisión humana:**
+  - El hash del manifiesto en `EvidenceExportDialog` es sintético (suma hash de caracteres, no
+    SHA-256 real) — es intencional para un mock de Storybook determinístico sin dependencias
+    criptográficas nuevas; una integración real reemplazaría `manifestHash` por un hash calculado
+    server-side y pasado como prop en vez de derivado client-side.
+  - `ApprovalChainStepper` no tiene interactividad (no hay botones de acción) — es intencionalmente
+    de solo lectura/narrativo, complementario a `ApprovalGateCard` (que sí es accionable para una
+    decisión pendiente puntual). Si una consola compuesta futura necesita "aprobar el siguiente
+    paso pendiente desde el stepper", esa acción debería vivir en un componente padre que orqueste
+    ambos, no mezclarse dentro de este primitive.
+  - El selector de formato usa `RadioGroup` nativo de Radix en vez del patrón de chips
+    `aria-pressed` de `WhoDidWhatTimeline` — evaluar en una futura pasada de consistencia si vale
+    la pena unificar ambos patrones de selección exclusiva en un solo primitive reutilizable
+    (candidato para cuando se generalice "DataTable denso" con sus propios controles de filtro).
+  - Próximas versiones sugeridas (ver NORTH_STAR reordenado): `RetryControls` sobre `RunInspector`
+    (nuevo #1, área A); `GuardrailIndicator`/`EvalScoreBadge` sobre el vocabulario de tono de
+    `TraceTree` (área B); `ModelProvenanceCard`/`RetentionBadge` reutilizando el patrón de
+    manifiesto de hashes de esta iteración (área C, cerraría 4 de 10 filas).
