@@ -20,3 +20,4 @@ export * from "./execution-history-table.js";
 export * from "./run-inspector.js";
 export * from "./execution-history-console.js";
 export * from "./agent-topology-graph.js";
+export * from "./swarm-control-bar.js";

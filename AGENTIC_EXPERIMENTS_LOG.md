@@ -761,3 +761,11 @@ Columna vertebral de tablas lista y exportada. Desbloquea rungs 4/5/6 (Forecast/
 - **Verificación:** test 47/47 (incl. axe) · build tsup ESM+DTS OK (bundle más liviano al externalizar deps) · eslint 0.
 - **Resultado:** ✅ branch `feat/component-build-ladder`.
 - **Nota:** el consumidor importa `@xyflow/react/dist/style.css` una vez (como los estilos del DS) — documentado en la story. Próximo: Unit 5/19 `SwarmControlBar`.
+
+## Unit 5/19 — SwarmControlBar (área G)
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición · **Framework:** primitiva `Button` (sin dep nueva).
+- **Purpose:** pausar/reanudar/cancelar el enjambre o cohorte filtrada (broadcast). Cancel destructivo → confirmación inline con blast-radius (cuántos runs).
+- **Estados:** running (Pause+Cancel) / paused (Resume) / stopping (spinner, sin acciones).
+- **Verificación:** test 53/53 total, 6 nuevos (incl. axe + flujo de confirmación) · build OK · eslint 0.
+- **Resultado:** ✅ branch `feat/component-build-ladder`. Próximo: Unit 6/19 `BudgetCapGovernor` (cierra rung 2).
