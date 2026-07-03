@@ -1,0 +1,456 @@
+<title>Studio DS — Batch Design · Build Ladder §07 · 2026-07-03</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#0a0a0e; --elevated:#101116; --s2:#17181e; --s3:#1f2027;
+    --header:#131318; --sunken:#0f1014;
+    --ink:#f0f0f2; --dim:#b4b4be; --faint:#7b8799; --faint-deco:#5a6478;
+    --bd-subtle:#26272e; --bd:#37383f; --bd-strong:#6a6b76;
+    --accent:#23d2d7; --accent-2:#8f9bff;
+    --ok:#39E0A0; --review:#6cb8ff; --warn:#E8961A; --block:#ff6b78;
+    --accent-dim:#0e2b2c;
+    --mono:ui-monospace,"Cascadia Code","JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --maxw:1080px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(60rem 40rem at 82% -10%,rgba(35,210,215,.06),transparent 60%);
+    background-attachment:fixed}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+  code,.mono{font-family:var(--mono);font-size:.88em}
+  h1,h2,h3{text-wrap:balance;line-height:1.18;margin:0}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+
+  header.top{position:sticky;top:0;z-index:40;background:rgba(10,10,14,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd-subtle)}
+  .top .wrap{display:flex;align-items:center;gap:16px;height:54px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13px}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(35,210,215,.16),0 0 14px 2px rgba(35,210,215,.5)}
+  .top nav{margin-left:auto;display:flex;gap:2px;flex-wrap:wrap}
+  .top nav a{font-family:var(--mono);font-size:11.5px;color:var(--dim);padding:6px 9px;border-radius:6px}
+  .top nav a:hover{background:var(--s2);color:var(--ink);text-decoration:none}
+  @media(max-width:760px){.top nav{display:none}}
+
+  .hero{padding:56px 0 30px;border-bottom:1px solid var(--bd-subtle)}
+  .hero h1{font-size:clamp(28px,4.6vw,44px);font-weight:680;letter-spacing:-.02em;margin-top:16px}
+  .hero h1 .g{color:var(--accent)}
+  .hero .lede{margin-top:18px;max-width:66ch;color:var(--dim);font-size:clamp(15px,1.8vw,17px)}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .tag{font-family:var(--mono);font-size:11px;color:var(--dim);border:1px solid var(--bd);background:var(--elevated);padding:5px 10px;border-radius:999px}
+  .tag b{color:var(--ink)}
+
+  section{padding:46px 0;border-bottom:1px solid var(--bd-subtle)}
+  section h2{font-size:clamp(21px,2.8vw,28px);font-weight:640;letter-spacing:-.015em}
+  .sub{color:var(--dim);max-width:72ch;margin-top:12px}
+
+  /* pipeline strip */
+  .pipe{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .pipe .step{flex:1;min-width:120px;background:var(--elevated);border:1px solid var(--bd-subtle);border-radius:10px;padding:11px 12px}
+  .pipe .step .n{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:.05em}
+  .pipe .step .t{font-size:12.5px;color:var(--ink);margin-top:3px;font-weight:560}
+  .pipe .step .d{font-size:11px;color:var(--faint);margin-top:2px}
+
+  /* dep table */
+  .tbl-scroll{overflow-x:auto;margin:18px 0}
+  table.g{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+  table.g th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);font-weight:500;padding:9px 14px 9px 0;border-bottom:1px solid var(--bd)}
+  table.g td{padding:10px 14px 10px 0;border-bottom:1px solid var(--bd-subtle);vertical-align:top;color:var(--dim)}
+  table.g td .cn{font-family:var(--mono);font-size:12px;color:var(--ink)}
+  table.g tr:last-child td{border-bottom:none}
+
+  /* rung */
+  .rung{margin-top:30px}
+  .rung-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;padding-bottom:6px;border-bottom:1px solid var(--bd)}
+  .rung-head .r{font-family:var(--mono);font-size:12px;color:var(--bg);background:var(--accent);padding:3px 9px;border-radius:6px;font-weight:700}
+  .rung-head h3{font-size:19px;font-weight:640;letter-spacing:-.01em}
+  .rung-head .meta{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+  .rung.fnd .r{background:linear-gradient(120deg,var(--accent),var(--accent-2))}
+  .rung.corr .r{background:var(--warn);color:#2a1600}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-top:16px}
+  .card{background:var(--elevated);border:1px solid var(--bd-subtle);border-radius:14px;padding:16px 17px;display:flex;flex-direction:column;gap:9px}
+  .card .ch{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .card .cn{font-family:var(--mono);font-size:14px;color:var(--ink);font-weight:600}
+  .fw{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:2px 7px;border-radius:5px;border:1px solid var(--accent-dim);background:var(--sunken);color:var(--accent)}
+  .fw.none{color:var(--faint);border-color:var(--bd);background:transparent}
+  .card .pp{font-size:13px;color:var(--dim)}
+  .card .api{font-family:var(--mono);font-size:11.5px;color:var(--faint);background:var(--sunken);border:1px solid var(--bd-subtle);border-radius:8px;padding:9px 11px;overflow-x:auto;line-height:1.5;white-space:pre}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}
+  .lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);flex:none;width:56px;padding-top:2px}
+  .chips{display:flex;gap:5px;flex-wrap:wrap}
+  .chip{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:999px;border:1px solid var(--bd);color:var(--dim);background:var(--s2)}
+  .chip.ok{color:var(--ok);border-color:rgba(57,224,160,.35)}
+  .chip.warn{color:var(--warn);border-color:rgba(232,150,26,.35)}
+  .chip.block{color:var(--block);border-color:rgba(255,107,120,.35)}
+  .chip.rev{color:var(--review);border-color:rgba(108,184,255,.35)}
+  .reuse{font-size:12px;color:var(--faint)} .reuse b{color:var(--dim);font-weight:560}
+  .test{font-size:12px;color:var(--dim)} .test::before{content:"test · ";font-family:var(--mono);font-size:10px;color:var(--ok);letter-spacing:.04em}
+
+  .callout{border:1px solid var(--bd);background:var(--s2);border-radius:14px;padding:18px 20px;margin-top:20px}
+  .callout.acc{border-color:rgba(35,210,215,.4);background:linear-gradient(var(--accent-dim),var(--s2))}
+  .callout h4{margin:0 0 8px;font-size:14.5px;font-weight:620} .callout p{margin:6px 0;color:var(--dim);font-size:13px}
+  .callout code{color:var(--accent);background:var(--sunken);padding:1px 5px;border-radius:4px} .k{color:var(--ink);font-weight:600}
+
+  .approve{background:linear-gradient(var(--accent-dim),var(--elevated));border:1px solid rgba(35,210,215,.45);border-radius:16px;padding:28px;margin:34px 0;text-align:center}
+  .approve h3{font-size:19px;font-weight:660;margin-bottom:10px}
+  .approve p{color:var(--dim);max-width:64ch;margin:0 auto 6px;font-size:14px}
+  .approve .cmd{font-family:var(--mono);font-size:13px;color:var(--accent);background:var(--sunken);border:1px solid var(--bd);border-radius:8px;padding:8px 12px;display:inline-block;margin-top:12px}
+  .foot{padding:34px 0 64px;color:var(--faint);font-size:12.5px} .foot code{color:var(--dim)}
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="brand"><span class="dot"></span> studio-ds · batch design</div>
+  <nav>
+    <a href="#loop">Loop</a><a href="#deps">Deps</a>
+    <a href="#r1">1·DataTable</a><a href="#r2">2·Orq</a><a href="#r3">3·Compliance</a>
+    <a href="#r4">4·Comercial</a><a href="#r5">5·Industrial</a><a href="#r6">6·Estándares</a>
+    <a href="#ok">Aprobar</a>
+  </nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div class="eyebrow">Diseño batch · aprobación única · 2026-07-03</div>
+  <h1>Todas las decisiones de diseño de <span class="g">19 unidades</span>, para aprobar una vez y soltar el loop</h1>
+  <p class="lede">Tú elegiste: <b>diseño batch → 1 aprobación → autónomo</b>. Este doc fija framework, API, estados y test de cada componente del ladder §07. Al aprobar, el loop construye unidad por unidad —<code>test→build→verify→review→commit→log</code>— sin más interrupciones. Skip+log si algo no pasa su gate; resumen al final.</p>
+  <div class="meta-row">
+    <span class="tag">Orden: <b>rung 1 → 6</b></span>
+    <span class="tag">Reuse: <b>TanStack · React Flow · Recharts</b></span>
+    <span class="tag">Gate: <b>build + test + axe verde</b></span>
+    <span class="tag">Commit + Storybook por unidad</span>
+  </div>
+</div></div>
+
+<!-- LOOP -->
+<section id="loop"><div class="wrap">
+  <div class="eyebrow">Cómo corre el loop</div>
+  <h2>Un ciclo cerrado por unidad — nada se construye sobre algo a medias</h2>
+  <p class="sub">Cada componente es aditivo (archivo nuevo). Los refactors (rung 6) mantienen la API pública estable; los tests existentes son el guard. El DataTable (rung 1) debe estar mergeado antes de que rung 6 lo reuse.</p>
+  <div class="pipe">
+    <div class="step"><div class="n">01</div><div class="t">Failing test</div><div class="d">TDD · Testing Library + jest-axe</div></div>
+    <div class="step"><div class="n">02</div><div class="t">Implementar</div><div class="d">reuse framework + tokens</div></div>
+    <div class="step"><div class="n">03</div><div class="t">Verify</div><div class="d">build + test + axe verde</div></div>
+    <div class="step"><div class="n">04</div><div class="t">Self-review</div><div class="d">o BLOCKED+log si no pasa</div></div>
+    <div class="step"><div class="n">05</div><div class="t">Commit</div><div class="d">Conventional Commits</div></div>
+    <div class="step"><div class="n">06</div><div class="t">Log → siguiente</div><div class="d">AGENTIC_EXPERIMENTS_LOG.md</div></div>
+  </div>
+</div></section>
+
+<!-- DEPS -->
+<section id="deps"><div class="wrap">
+  <div class="eyebrow">Reutilizar, no inventar</div>
+  <h2>Dependencias nuevas — headless y maduras, envueltas en tu estilo</h2>
+  <p class="sub">Cada lib se envuelve en un componente propio con tokens OKLCH; nunca se expone su API cruda. Charts y grafos con <code>React.lazy</code> para no inflar el bundle base.</p>
+  <div class="tbl-scroll"><table class="g">
+    <tr><th>Dependencia</th><th>Rung</th><th>Uso</th></tr>
+    <tr><td><span class="cn">@tanstack/react-table + react-virtual</span></td><td>1</td><td>DataTable — sorting/filter/virtualización headless</td></tr>
+    <tr><td><span class="cn">@xyflow/react</span> (React Flow)</td><td>2</td><td>AgentTopologyGraph, RelationshipMap</td></tr>
+    <tr><td><span class="cn">recharts</span></td><td>4</td><td>Waterfalls (Pipeline, MRR, OEE), sparklines</td></tr>
+    <tr><td><span class="cn">cmdk · react-aria-components</span></td><td>D (futuro)</td><td>CommandPalette · DateRangePicker</td></tr>
+  </table></div>
+  <div class="callout"><p style="margin:0"><span class="k">Layout:</span> <code>src/data-table/</code> · orquestación en <code>src/agentic/</code> · <code>src/compliance/</code> · <code>src/commercial/</code> · <code>src/industrial/</code>. Cada uno: <code>.tsx · .variants.ts · .stories.tsx · .test.tsx</code> + barrel.</p></div>
+</div></section>
+
+<!-- RUNG 1 -->
+<section id="r1"><div class="wrap">
+  <div class="rung fnd">
+    <div class="rung-head"><span class="r">Rung 1</span><h3>DataTable denso virtualizado — fundamento</h3><span class="meta">desbloquea A/C/E/F/G · corrige 2 bugs</span></div>
+    <div class="cards">
+      <div class="card">
+        <div class="ch"><span class="cn">DataTable&lt;T&gt;</span><span class="fw">TanStack Table + Virtual</span></div>
+        <div class="pp">Tabla densa, virtualizada, accesible y tokenizada. La columna vertebral: toda tabla del DS se compone encima.</div>
+        <div class="api">data: T[]; columns: ColumnDef&lt;T&gt;[]
+density?: "comfortable"|"compact"
+rowTone?: (row)=&gt;Tone
+onRowActivate?: (row)=&gt;void
+maxHeight?; caption: string  // a11y
+toolbar?: ReactNode  // FilterBar+SavedViews</div>
+        <div class="row"><span class="lbl">Estados</span><div class="chips"><span class="chip">loading</span><span class="chip">empty</span><span class="chip rev">row-active</span><span class="chip">compact</span></div></div>
+        <div class="reuse"><b>Reuse:</b> Tone/Density, cn, tokens · row models de TanStack (no reescribe sort/filter)</div>
+        <div class="test">solo monta ~viewport; ↓ mueve aria-rowindex; Enter→activate; density reduce padding; axe 0; empty</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">FilterBar</span><span class="fw none">composición</span></div>
+        <div class="pp">Filtros tipados sobre el estado de columnas de TanStack: text / select / tone.</div>
+        <div class="api">table: Table&lt;T&gt;
+fields: {columnId; kind; options?}[]</div>
+        <div class="reuse"><b>Reuse:</b> Input, Select, Badge existentes</div>
+        <div class="test">filtrar reduce filas; limpiar restaura</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">SavedViews + useSavedViews</span><span class="fw none">localStorage</span></div>
+        <div class="pp">Guardar/restaurar {filters, sorting, density} como vistas nombradas — autoservicio del auditor (principio #10).</div>
+        <div class="api">useSavedViews(key) →
+  {views, save, apply, remove}</div>
+        <div class="reuse"><b>Reuse:</b> saved-query chips de WhoDidWhatTimeline</div>
+        <div class="test">save crea; apply restaura; persiste (mock storage)</div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- RUNG 2 -->
+<section id="r2"><div class="wrap">
+  <div class="rung">
+    <div class="rung-head"><span class="r">Rung 2</span><h3>Orquestación mínima — área G</h3><span class="meta">el DS pasa de ver 1 agente a ver la flota</span></div>
+    <div class="cards">
+      <div class="card">
+        <div class="ch"><span class="cn">AgentTopologyGraph</span><span class="fw">React Flow (lazy)</span></div>
+        <div class="pp">Grafo vivo de la flota: nodos = agentes con estado/costo/tokens, edges = hops activos animados.</div>
+        <div class="api">nodes: {id;label;role;status:NodeStatus;
+  tokens?;costUsd?}[]
+edges; onSelect?; layout?</div>
+        <div class="row"><span class="lbl">Estados</span><div class="chips"><span class="chip ok">running</span><span class="chip block">error</span><span class="chip rev">waiting</span><span class="chip">idle</span></div></div>
+        <div class="reuse"><b>Reuse:</b> NodeStatus (6 estados) + NodeStatusBadge dentro del nodo custom</div>
+        <div class="test">N nodos; click→onSelect; edge activo animado; fallback lista teclado</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">SwarmControlBar</span><span class="fw none">composición</span></div>
+        <div class="pp">Pausar/reanudar/cancelar el enjambre o cohorte filtrada (broadcast).</div>
+        <div class="api">state:"running"|"paused"|"stopping"
+selectionCount?; onPause;onResume;onCancel</div>
+        <div class="row"><span class="lbl">Estados</span><div class="chips"><span class="chip ok">running</span><span class="chip warn">paused</span><span class="chip">stopping</span></div></div>
+        <div class="reuse"><b>Reuse:</b> Button, NodeStatusBadge · cancel = confirm inline (ApprovalGateCard)</div>
+        <div class="test">acciones disparan; cancel confirma; stopping deshabilita</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">BudgetCapGovernor</span><span class="fw none">composición</span></div>
+        <div class="pp">Cap de gasto por agente/workflow con burn-down vs cap y auto-halt visual.</div>
+        <div class="api">caps: {scope;label;spentUsd;capUsd;
+  onBreach?}[]</div>
+        <div class="row"><span class="lbl">Estados</span><div class="chips"><span class="chip ok">ok &lt;70%</span><span class="chip warn">warn</span><span class="chip block">halted ≥100%</span></div></div>
+        <div class="reuse"><b>Reuse:</b> gramática de umbral de TokenCostMeter</div>
+        <div class="test">% y tono correcto; ≥100% halted; cortes en umbrales</div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- RUNG 3 -->
+<section id="r3"><div class="wrap">
+  <div class="rung">
+    <div class="rung-head"><span class="r">Rung 3</span><h3>Cerrar compliance — área C</h3><span class="meta">EU AI Act Art.12/13/19 · SOC2 CC7/CC8</span></div>
+    <div class="cards">
+      <div class="card">
+        <div class="ch"><span class="cn">EvidenceExportDialog</span><span class="fw">Radix Dialog</span></div>
+        <div class="pp">Export firmado (PDF/CSV/JSON) de un rango filtrado con manifiesto de hashes. Botón "nunca desnudo".</div>
+        <div class="api">open;onOpenChange;range;recordCount
+formats?; onExport(fmt,opts):Promise</div>
+        <div class="row"><span class="lbl">Estados</span><div class="chips"><span class="chip">idle</span><span class="chip rev">generating</span><span class="chip ok">done</span><span class="chip block">error</span></div></div>
+        <div class="reuse"><b>Reuse:</b> Dialog, HashBadge, Progress, Button</div>
+        <div class="test">onExport recibe fmt+rango; generating deshabilita; done muestra hash del manifiesto</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">ApprovalChainStepper</span><span class="fw none">composición</span></div>
+        <div class="pp">Quién aprobó qué, cuándo, en qué orden, con ramas de rechazo.</div>
+        <div class="api">steps: {approver;role;decision;
+  at?;note?}[]</div>
+        <div class="row"><span class="lbl">Estados</span><div class="chips"><span class="chip ok">approved</span><span class="chip block">rejected</span><span class="chip">pending</span><span class="chip warn">escalated</span></div></div>
+        <div class="reuse"><b>Reuse:</b> ActorCell + conector de NodeStatus · color+ícono (colorblind-safe)</div>
+        <div class="test">orden N pasos; rechazo corta cadena; pending distinguible sin color</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">ModelProvenanceCard</span><span class="fw none">composición</span></div>
+        <div class="pp">Modelo, versión, prompt version, config hash por run (procedencia sobre magia, #8).</div>
+        <div class="api">model;modelVersion;promptVersion;
+  configHash;temperature?;provider?</div>
+        <div class="row"><span class="lbl">Estados</span><div class="chips"><span class="chip">compacto</span><span class="chip">expandido</span></div></div>
+        <div class="reuse"><b>Reuse:</b> HashBadge, Badge, tokens</div>
+        <div class="test">renderiza campos; configHash truncado con full en title</div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- RUNG 4 -->
+<section id="r4"><div class="wrap">
+  <div class="rung">
+    <div class="rung-head"><span class="r">Rung 4</span><h3>Núcleo comercial — área E</h3><span class="meta">pilar nuevo · Recharts + DataTable</span></div>
+    <div class="cards">
+      <div class="card">
+        <div class="ch"><span class="cn">ForecastRollupTable</span><span class="fw">DataTable</span></div>
+        <div class="pp">Roll-up jerárquico rep→manager→exec: commit/best-case/pipeline con delta submitted-vs-current.</div>
+        <div class="api">rows: {id;owner;level;commit;bestCase;
+  pipeline;closed;quota;children?;delta?}[]</div>
+        <div class="reuse"><b>Reuse:</b> DataTable (getSubRows), ActorCell, RatioGauge · tabular-nums</div>
+        <div class="test">expand→children; delta +ok/−block; totales por nivel</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">RatioGauge</span><span class="fw none">primitiva compartida</span></div>
+        <div class="pp">Medidor de ratio reutilizado por Attainment y Coverage (consolidación notada).</div>
+        <div class="api">value;target;label;
+  format?:"pct"|"x"|"usd";tone?</div>
+        <div class="reuse"><b>Reuse:</b> tokens · lo consumen Forecast, industrial AssetHealthGauge</div>
+        <div class="test">value/target→% y tono; formato x vs pct</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">PipelineWaterfallChart</span><span class="fw">Recharts (lazy)</span></div>
+        <div class="pp">Cambio período-a-período: created/expanded/pushed/slipped/won/lost.</div>
+        <div class="api">segments:{label;delta;kind}[]
+startValue; endValue</div>
+        <div class="reuse"><b>Reuse:</b> crea <b>ChartFrame</b> (contenedor temado común) — lo reusan MRR y OEE</div>
+        <div class="test">Σ deltas = end−start; kinds→tono; tooltip accesible</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">MutualActionPlanBoard</span><span class="fw none">composición</span></div>
+        <div class="pp">Plan de hitos comprador/vendedor con owners, due, dependencias, estado.</div>
+        <div class="api">milestones:{id;title;owner;side;
+  due;status;dependsOn?}[]; onToggle?</div>
+        <div class="row"><span class="lbl">Estados</span><div class="chips"><span class="chip ok">done</span><span class="chip rev">in-progress</span><span class="chip block">blocked</span><span class="chip warn">overdue</span></div></div>
+        <div class="reuse"><b>Reuse:</b> Tone + NodeStatus · dualidad buyer/seller</div>
+        <div class="test">due&lt;now→overdue; toggle; dependencia bloqueada visible</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">RelationshipMap</span><span class="fw">React Flow</span></div>
+        <div class="pp">Org-chart de stakeholders: champion/economic-buyer/blocker, influencia, conexión.</div>
+        <div class="api">people:{id;name;title;role;
+  influence:1-5}[]; links</div>
+        <div class="reuse"><b>Reuse:</b> infra nodo/edge de AgentTopologyGraph · rol color+ícono</div>
+        <div class="test">nodos; blocker=block; fallback lista</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">PricingApprovalMatrix</span><span class="fw none">composición</span></div>
+        <div class="pp">Ruteo de aprobación por umbral de descuento/margen → cadena de aprobador.</div>
+        <div class="api">tiers:{maxDiscountPct;approverRole;
+  slaHours}[]; currentDiscount</div>
+        <div class="reuse"><b>Reuse:</b> DataTable, ApprovalChainStepper, tone chips</div>
+        <div class="test">currentDiscount→tier correcto; sobre umbral warn/block</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">MRRMovementWaterfall</span><span class="fw">Recharts</span></div>
+        <div class="pp">Bridge de MRR: new/expansion/contraction/churn/reactivation.</div>
+        <div class="api">start; movements:{kind;amount}[]</div>
+        <div class="reuse"><b>Reuse:</b> PipelineWaterfallChart como base + ChartFrame</div>
+        <div class="test">movimientos suman a MRR final; churn=block, expansion=ok</div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- RUNG 5 -->
+<section id="r5"><div class="wrap">
+  <div class="rung">
+    <div class="rung-head"><span class="r">Rung 5</span><h3>Núcleo industrial OT — área F</h3><span class="meta">pilar nuevo · disciplina ISA-101</span></div>
+    <div class="callout acc"><p style="margin:0"><span class="k">Regla ISA-101 (toda el área):</span> base grayscale = superficies dark del tema, color saturado SOLO en estado anormal/accionable. Severidad nunca solo por color (color + forma + etiqueta). Encaja nativo con "gastar el accent con moderación".</p></div>
+    <div class="cards">
+      <div class="card">
+        <div class="ch"><span class="cn">AlarmChip / PriorityBadge</span><span class="fw none">primitiva base</span></div>
+        <div class="pp">Indicador prioridad+estado colorblind-safe. Se construye primero — lo reusan Banner y Table.</div>
+        <div class="api">priority:"critical"|"high"|"medium"|"low"
+state:"unack"|"ack"|"rtn"|"shelved"</div>
+        <div class="row"><span class="lbl">Estados</span><div class="chips"><span class="chip block">critical</span><span class="chip warn">high</span><span class="chip rev">medium</span><span class="chip">low</span></div></div>
+        <div class="reuse"><b>Reuse:</b> Tone map · forma por estado</div>
+        <div class="test">cada priority×state; distinguible sin color (forma)</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">AlarmBanner</span><span class="fw none">composición</span></div>
+        <div class="pp">Strip persistente con la alarma no-reconocida de mayor prioridad + conteo + ack (ISA-18.2).</div>
+        <div class="api">topAlarm?; unackCount; onAck()</div>
+        <div class="reuse"><b>Reuse:</b> AlarmChip, Button · 0 alarmas = calmo, sin color</div>
+        <div class="test">muestra mayor prioridad; onAck; 0→estado calmo</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">AlarmSummaryTable</span><span class="fw">DataTable</span></div>
+        <div class="pp">Lista de alarmas activas ordenable por prioridad y tiempo; virtualiza en flood.</div>
+        <div class="api">alarms:Alarm[]; onAck(id); onShelve(id)</div>
+        <div class="reuse"><b>Reuse:</b> DataTable, AlarmChip</div>
+        <div class="test">orden prioridad; ack/shelve por fila; virtualiza 1000 alarmas</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">ProcessValueTile</span><span class="fw none">composición</span></div>
+        <div class="pp">Valor con barra analógica embebida + desviación de setpoint; color solo en límite.</div>
+        <div class="api">label;value;unit;setpoint?;
+  min;max;loLimit?;hiLimit?</div>
+        <div class="row"><span class="lbl">Estados</span><div class="chips"><span class="chip">normal (gris)</span><span class="chip warn">warn</span><span class="chip block">block</span></div></div>
+        <div class="reuse"><b>Reuse:</b> tokens · tabular-nums</div>
+        <div class="test">fuera de hiLimit→block; dentro→sin color; barra posiciona</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">AssetHealthGauge</span><span class="fw">RatioGauge</span></div>
+        <div class="pp">Índice 0–100 con bandas healthy(≥70)/watch(40–69)/critical(&lt;40) + tendencia.</div>
+        <div class="api">value; label; trend?:number</div>
+        <div class="reuse"><b>Reuse:</b> RatioGauge (rung 4)</div>
+        <div class="test">cada banda→tono; trend flecha</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">OEEWaterfall</span><span class="fw">Recharts</span></div>
+        <div class="pp">Waterfall planned→availability→performance→quality→OEE (ISO 22400).</div>
+        <div class="api">plannedTime; losses:{kind;amount}[]</div>
+        <div class="reuse"><b>Reuse:</b> ChartFrame + base de waterfall (rung 4)</div>
+        <div class="test">pérdidas restan a OEE neto; kinds mapean</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">AutonomyModeSwitch</span><span class="fw none">composición</span></div>
+        <div class="pp">Nivel de autonomía por loop/área: Manual→Advisory→Supervised→Full-Auto. La válvula maestra de agencia.</div>
+        <div class="api">value:AutonomyLevel; onChange(level)
+disabledAbove?</div>
+        <div class="reuse"><b>Reuse:</b> segmented/Switch · confirm de ApprovalGateCard</div>
+        <div class="test">onChange; Full-Auto pide confirmación; disabledAbove bloquea</div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- RUNG 6 -->
+<section id="r6"><div class="wrap">
+  <div class="rung corr">
+    <div class="rung-head"><span class="r">Rung 6</span><h3>Adopción de estándares + correcciones</h3><span class="meta">toca código existente · API estable · tests = guard</span></div>
+    <div class="cards">
+      <div class="card">
+        <div class="ch"><span class="cn">DataTable refactor</span><span class="fw">DataTable</span></div>
+        <div class="pp">Re-montar AuditLogTable + ExecutionHistoryTable sobre DataTable. API pública intacta, ahora virtualizan.</div>
+        <div class="reuse"><b>Corrige:</b> bug de no-virtualización · tests existentes pasan antes/después</div>
+        <div class="test">mismos props; suite verde; ahora virtualiza</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">a11y-audit.mjs fix</span><span class="fw none">mecánico</span></div>
+        <div class="pp">ROOT hardcodeado <code>C:/dev/…</code> → ruta relativa (import.meta.url).</div>
+        <div class="reuse"><b>Corrige:</b> bug de portabilidad CI/Linux</div>
+        <div class="test">corre desde cualquier cwd</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">AgentCard → AgentTile</span><span class="fw none">rename</span></div>
+        <div class="pp">Renombrar presentación (colisión con A2A Agent Card) + stub A2AAgentCardViewer. Actualizar barrel+consumidores en el mismo commit.</div>
+        <div class="reuse"><b>Corrige:</b> drift de nombre vs estándar A2A</div>
+        <div class="test">consumidores compilan; export nuevo</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">RichToolCallCard → MCP Apps</span><span class="fw none">aditivo</span></div>
+        <div class="pp">Añadir <code>variant="mcp-app"</code>: render vía iframe sandbox + postMessage (MCP Apps, ratif. 2026-01-26). No rompe el render propio.</div>
+        <div class="reuse"><b>Corrige:</b> drift de estándar de tool-UI</div>
+        <div class="test">variant mcp-app monta iframe; variant propio intacto</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">StreamingMessage (nuevo)</span><span class="fw none">AG-UI</span></div>
+        <div class="pp">Cierra gap B. Conforme a eventos AG-UI (~16 tipados) desde el inicio.</div>
+        <div class="reuse"><b>Estándar:</b> AG-UI (CopilotKit, MS Agent Framework)</div>
+        <div class="test">consume eventos text/tool/state; stream sin layout shift</div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="cn">TraceTree → OTel GenAI</span><span class="fw none">aditivo</span></div>
+        <div class="pp">Mapear spans a atributos <code>gen_ai.*</code> + soportar traceId cross-agent.</div>
+        <div class="reuse"><b>Corrige:</b> drift de estándar de observabilidad</div>
+        <div class="test">spans OTel-conformes; trace multi-agente</div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- APPROVE -->
+<section id="ok"><div class="wrap">
+  <div class="approve">
+    <h3>Una aprobación y suelto el loop</h3>
+    <p>Si estas 19 decisiones te parecen bien, respóndeme <b>"aprobado, arranca"</b> y el loop empieza en <b>rung 1 · DataTable</b> y baja hasta rung 6, unidad por unidad, con commit + Storybook + gate verde en cada una, sin volver a interrumpirte.</p>
+    <p>Si quieres ajustar algo primero (una API, un framework, el orden, quitar una unidad), dímelo y lo corrijo antes de arrancar.</p>
+    <div class="cmd">rung 1 → 2 → 3 → 4 → 5 → 6 · skip+log ante bloqueo · resumen al final</div>
+  </div>
+</div></section>
+
+<footer class="foot"><div class="wrap">
+  <p><span class="eyebrow">Fuente de verdad</span> &nbsp; <code>docs/superpowers/specs/2026-07-03-build-ladder-batch-design.md</code> (este HTML es su companion visual).</p>
+  <p style="color:var(--faint-deco);margin-top:8px">studio-ds · batch design · 2026-07-03 · aprobación única antes del loop autónomo</p>
+</div></footer>

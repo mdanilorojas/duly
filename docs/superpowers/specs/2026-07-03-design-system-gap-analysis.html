@@ -1,0 +1,587 @@
+<title>Studio DS — Análisis de brechas de componentes · 2026-07-03</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* ============================================================
+     Studio DS — Gap Analysis Report
+     Tema: cockpit dark-premium (tokens reales del DS, OKLCH→hex)
+     Compromiso de un solo tema oscuro: es el mundo visual del DS.
+     ============================================================ */
+  :root{
+    --bg:#0a0a0e; --elevated:#101116; --s2:#17181e; --s3:#1f2027;
+    --header:#131318; --sunken:#0f1014;
+    --ink:#f0f0f2; --dim:#b4b4be; --faint:#7b8799; --faint-deco:#5a6478;
+    --bd-subtle:#26272e; --bd:#37383f; --bd-strong:#6a6b76;
+    --accent:#23d2d7; --accent-2:#8f9bff;
+    --ok:#39E0A0; --review:#6cb8ff; --warn:#E8961A; --block:#ff6b78;
+    --ok-dim:#173b30; --warn-dim:#3a2a10; --block-dim:#3a181c; --accent-dim:#0e2b2c;
+    --mono:ui-monospace,"Cascadia Code","JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --maxw:1120px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);font-size:15px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(60rem 40rem at 78% -10%,rgba(35,210,215,.06),transparent 60%),
+                     radial-gradient(50rem 40rem at 0% 0%,rgba(143,155,255,.05),transparent 55%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+
+  code,.mono{font-family:var(--mono);font-size:.88em}
+  h1,h2,h3{text-wrap:balance;line-height:1.18;margin:0}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+
+  /* ---- top bar ---- */
+  header.top{position:sticky;top:0;z-index:40;background:rgba(10,10,14,.82);
+    backdrop-filter:blur(12px);border-bottom:1px solid var(--bd-subtle)}
+  .top .wrap{display:flex;align-items:center;gap:16px;height:56px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13px;letter-spacing:.04em}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 3px rgba(35,210,215,.16),0 0 14px 2px rgba(35,210,215,.5)}
+  .top nav{margin-left:auto;display:flex;gap:2px;flex-wrap:wrap}
+  .top nav a{font-family:var(--mono);font-size:11.5px;color:var(--dim);padding:6px 9px;border-radius:6px;letter-spacing:.02em}
+  .top nav a:hover{background:var(--s2);color:var(--ink);text-decoration:none}
+  @media(max-width:720px){.top nav{display:none}}
+
+  /* ---- hero ---- */
+  .hero{padding:64px 0 34px;border-bottom:1px solid var(--bd-subtle)}
+  .hero .eyebrow{margin-bottom:18px}
+  .hero h1{font-size:clamp(30px,5vw,50px);font-weight:680;letter-spacing:-.02em}
+  .hero h1 .g{color:var(--accent)}
+  .hero .lede{margin-top:20px;max-width:64ch;color:var(--dim);font-size:clamp(16px,2vw,18px)}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+  .tag{font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--dim);
+    border:1px solid var(--bd);background:var(--elevated);padding:5px 10px;border-radius:999px}
+  .tag b{color:var(--ink);font-weight:600}
+  .tag.warnt{border-color:var(--warn);color:var(--warn)}
+
+  /* ---- stat band ---- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--bd-subtle);
+    border:1px solid var(--bd-subtle);border-radius:14px;overflow:hidden;margin:34px 0}
+  @media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:var(--elevated);padding:20px 18px}
+  .stat .n{font-family:var(--mono);font-size:34px;font-weight:600;letter-spacing:-.02em;line-height:1}
+  .stat .n.ok{color:var(--ok)} .stat .n.warn{color:var(--warn)} .stat .n.block{color:var(--block)} .stat .n.acc{color:var(--accent)}
+  .stat .l{margin-top:8px;font-size:12.5px;color:var(--faint);line-height:1.35}
+
+  section{padding:52px 0;border-bottom:1px solid var(--bd-subtle)}
+  section h2{font-size:clamp(22px,3vw,30px);font-weight:640;letter-spacing:-.015em}
+  section > .wrap > .eyebrow{margin-bottom:12px}
+  .sub{color:var(--dim);max-width:70ch;margin-top:14px}
+
+  /* ---- coverage meter ---- */
+  .meter{height:9px;border-radius:999px;background:var(--sunken);overflow:hidden;display:flex;border:1px solid var(--bd-subtle)}
+  .meter i{display:block;height:100%}
+  .meter .mo{background:var(--ok)} .meter .mp{background:var(--warn)} .meter .mm{background:transparent}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:10px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+  /* ---- area cards ---- */
+  .area{background:var(--elevated);border:1px solid var(--bd-subtle);border-radius:16px;
+    padding:22px 22px 8px;margin-top:22px;position:relative;overflow:hidden}
+  .area::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+  .area.new::before{background:linear-gradient(var(--accent),var(--accent-2))}
+  .area.crit::before{background:var(--block)}
+  .area.part::before{background:var(--warn)}
+  .area-head{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .area-head .id{font-family:var(--mono);font-size:12px;color:var(--faint);border:1px solid var(--bd);
+    border-radius:7px;padding:4px 8px;flex:none}
+  .area-head h3{font-size:19px;font-weight:620;letter-spacing:-.01em}
+  .area-head .tot{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--dim);text-align:right;flex:none}
+  .area-head .tot b{color:var(--ok)}
+  .pill-new{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--bg);background:var(--accent);padding:3px 7px;border-radius:5px;font-weight:700}
+  .area .why{color:var(--dim);font-size:13.5px;margin:14px 0 18px;max-width:78ch}
+  .area .why b{color:var(--ink);font-weight:600}
+  .area .meter{margin:14px 0 6px}
+
+  /* ---- component table ---- */
+  .tbl-scroll{overflow-x:auto;margin:6px -22px 18px;padding:0 22px}
+  table.comp{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
+  table.comp th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--faint);font-weight:500;padding:8px 12px 8px 0;border-bottom:1px solid var(--bd)}
+  table.comp td{padding:9px 12px 9px 0;border-bottom:1px solid var(--bd-subtle);vertical-align:top}
+  table.comp tr:last-child td{border-bottom:none}
+  table.comp .cn{font-family:var(--mono);font-size:12.5px;color:var(--ink);white-space:nowrap}
+  table.comp .pp{color:var(--dim)}
+  table.comp .src{color:var(--faint);font-size:11.5px}
+  .st{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;white-space:nowrap}
+  .st::before{content:"";width:8px;height:8px;border-radius:50%;flex:none}
+  .st.ok::before{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+  .st.ok{color:var(--ok)}
+  .st.part::before{background:var(--warn);box-shadow:0 0 8px var(--warn)}
+  .st.part{color:var(--warn)}
+  .st.miss::before{background:var(--faint-deco)}
+  .st.miss{color:var(--faint)}
+  .grp{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-2);
+    padding-top:16px !important}
+
+  /* ---- callout ---- */
+  .callout{border:1px solid var(--bd);background:var(--s2);border-radius:14px;padding:20px 22px;margin-top:22px}
+  .callout.acc{border-color:rgba(35,210,215,.4);background:linear-gradient(var(--accent-dim),var(--s2))}
+  .callout h4{margin:0 0 8px;font-size:15px;font-weight:620;display:flex;gap:9px;align-items:center}
+  .callout p{margin:6px 0;color:var(--dim);font-size:13.5px}
+  .callout code{color:var(--accent);background:var(--sunken);padding:1px 5px;border-radius:4px}
+  .k{color:var(--ink);font-weight:600}
+
+  /* ---- corrections ---- */
+  .fix{display:grid;grid-template-columns:auto 1fr;gap:14px 16px;align-items:start;
+    padding:16px 0;border-bottom:1px solid var(--bd-subtle)}
+  .fix:last-child{border-bottom:none}
+  .fix .sev{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+    padding:4px 8px;border-radius:6px;font-weight:700;white-space:nowrap;height:fit-content}
+  .sev.bug{background:var(--block-dim);color:var(--block);border:1px solid var(--block)}
+  .sev.drift{background:var(--warn-dim);color:var(--warn);border:1px solid var(--warn)}
+  .fix h4{font-size:14px;font-weight:620;margin:0 0 4px}
+  .fix p{margin:0;color:var(--dim);font-size:13px}
+  .fix code{font-family:var(--mono);color:var(--accent);font-size:12px}
+
+  /* ---- flow diagram ---- */
+  .flow{margin-top:26px;overflow-x:auto;padding-bottom:8px}
+  .flow-inner{min-width:880px;display:flex;flex-direction:column;gap:0}
+  .flow-row{display:flex;align-items:stretch;gap:0}
+  .node{flex:1;min-width:120px;background:var(--s2);border:1px solid var(--bd);border-radius:12px;
+    padding:12px 12px 11px;position:relative;display:flex;flex-direction:column;gap:5px}
+  .node.miss{border-style:dashed;border-color:var(--block);background:var(--block-dim)}
+  .node.ok{border-color:rgba(57,224,160,.35)}
+  .node .nl{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint)}
+  .node .nc{font-family:var(--mono);font-size:12px;color:var(--ink);line-height:1.3}
+  .node .ns{font-size:11px;color:var(--dim)}
+  .node.miss .nc{color:var(--block)}
+  .conn{flex:0 0 34px;display:flex;align-items:center;justify-content:center;color:var(--bd-strong);font-size:18px}
+  .flow-branch{display:flex;gap:16px;margin:14px 0 0;padding-left:0}
+  .flow-branch .b{flex:1;border:1px solid var(--bd-subtle);border-radius:12px;padding:12px 14px;background:var(--elevated)}
+  .flow-branch .b .bl{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+  .b.pass .bl{color:var(--ok)} .b.fail .bl{color:var(--warn)}
+  .flow-note{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:14px}
+
+  /* ---- priority list ---- */
+  ol.prio{counter-reset:p;list-style:none;padding:0;margin:22px 0 0;display:flex;flex-direction:column;gap:12px}
+  ol.prio li{counter-increment:p;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:baseline;
+    background:var(--elevated);border:1px solid var(--bd-subtle);border-radius:12px;padding:15px 18px}
+  ol.prio li::before{content:counter(p);font-family:var(--mono);font-size:16px;font-weight:700;color:var(--accent);
+    width:26px;height:26px;display:grid;place-items:center;border:1px solid var(--accent-dim);border-radius:8px;background:var(--sunken)}
+  ol.prio h4{font-size:14.5px;margin:0 0 3px;font-weight:620}
+  ol.prio p{margin:0;color:var(--dim);font-size:13px}
+  ol.prio .cn{font-family:var(--mono);color:var(--accent-2);font-size:12.5px}
+
+  .foot{padding:40px 0 70px;color:var(--faint);font-size:12.5px}
+  .foot .wrap{display:flex;flex-direction:column;gap:8px}
+  .foot code{color:var(--dim)}
+  .approve{background:linear-gradient(var(--accent-dim),var(--elevated));border:1px solid rgba(35,210,215,.4);
+    border-radius:16px;padding:26px;margin-top:30px;text-align:center}
+  .approve h3{font-size:18px;font-weight:640;margin-bottom:8px}
+  .approve p{color:var(--dim);max-width:60ch;margin:0 auto;font-size:14px}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> studio-ds · gap analysis</div>
+    <nav>
+      <a href="#resumen">Resumen</a>
+      <a href="#stack">Stack</a>
+      <a href="#existe">Existe hoy</a>
+      <a href="#areas">Brechas</a>
+      <a href="#flujo">Flujo</a>
+      <a href="#correcciones">Correcciones</a>
+      <a href="#prioridad">Prioridad</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero"><div class="wrap">
+  <div class="eyebrow">Reporte · 2026-07-03 · Solo lectura — nada a ejecutar</div>
+  <h1>Qué le falta a <span class="g">Studio DS</span> para ser un sistema de diseño completo de operación de agentes en la empresa</h1>
+  <p class="lede">Inventario verificado contra el código, contrastado con el estado del arte 2026 (n8n, LangGraph, Microsoft AG-UI, A2A, MCP Apps, ISA-101/18.2, Clari/Gong/Salesforce). El DS es sólido en observabilidad de un agente y parcial en compliance — pero le faltan <b>dos pilares enteros</b> (estrategia comercial e industrial OT) y la capa de <b>orquestación multi-agente</b>.</p>
+  <div class="meta-row">
+    <span class="tag">Stack: <b>shadcn/ui + Radix + Tailwind v4 + CVA</b></span>
+    <span class="tag">React <b>18/19</b> · RSC-ready</span>
+    <span class="tag">Tokens <b>OKLCH</b> · 3 temas</span>
+    <span class="tag warnt">Estado: propuesta — requiere tu aprobación</span>
+  </div>
+</div></div>
+
+<!-- ============ RESUMEN ============ -->
+<section id="resumen"><div class="wrap">
+  <div class="eyebrow">01 · Diagnóstico</div>
+  <h2>Un cockpit de agentes casi completo por dentro, con dos habitaciones sin construir</h2>
+  <p class="sub">Contando el catálogo objetivo ampliado a los seis objetivos que definiste, el sistema cubre hoy ~13% de un DS "súper completo". Lo construido tiene buena calidad (accesible, tokenizado, con Storybook). El hueco no es de calidad — es de <b>alcance</b>: faltan áreas enteras.</p>
+
+  <div class="stats">
+    <div class="stat"><div class="n ok">~17</div><div class="l">componentes agentic construidos + 21 primitivas shadcn</div></div>
+    <div class="stat"><div class="n warn">3</div><div class="l">parciales (ExecutionHistoryTable, theming white-label, EmptyState triad)</div></div>
+    <div class="stat"><div class="n block">~88</div><div class="l">faltantes en el catálogo objetivo de 7 áreas</div></div>
+    <div class="stat"><div class="n acc">~13%</div><div class="l">cobertura del catálogo "súper completo" (~105 comp.)</div></div>
+  </div>
+
+  <div class="callout acc">
+    <h4>La lectura de una frase</h4>
+    <p>Studio DS hoy sabe <span class="k">observar y auditar UN agente corriendo un proceso tipo n8n</span>. Para el objetivo que planteaste necesita además: <span class="k">orquestar un enjambre</span> (topología, control, presupuesto), <span class="k">operar planta industrial real</span> (OT/SCADA, no solo n8n), y <span class="k">soportar la estrategia comercial</span> (forecast, deal rooms, pricing, ROI) — tres capas hoy en cero o casi.</p>
+  </div>
+</div></section>
+
+<!-- ============ STACK ============ -->
+<section id="stack"><div class="wrap">
+  <div class="eyebrow">02 · Verificación de stack</div>
+  <h2>Qué estamos usando (lo verifiqué en el código, no adivinado)</h2>
+  <p class="sub">Preguntaste si usamos "chat 100 / erradics" y que si podíamos mezclar. Respuesta: sí es una mezcla, y ya está montada. Lo que oíste como eso es <b>shadcn/ui + Radix</b>.</p>
+  <div class="callout">
+    <h4>📦 <code>packages/ui/package.json</code> — dependencias reales</h4>
+    <p><span class="k">Radix UI</span> (<code>radix-ui</code>, <code>@radix-ui/react-*</code>) — primitivas headless accesibles.</p>
+    <p><span class="k">shadcn/ui</span> — patrón "copy-owned": <code>class-variance-authority</code> + <code>clsx</code> + <code>tailwind-merge</code> + <code>lucide-react</code> sobre Radix. Las 21 primitivas viven en <code>src/components/ui/*</code>, no como dependencia npm — son tuyas, editables.</p>
+    <p><span class="k">Tailwind v4</span> + tokens <code>@studio/tokens</code> en OKLCH (tema <code>cockpit</code> dark-premium, <code>test</code>, <code>light</code>). React 18/19, RSC-ready, tsup build.</p>
+    <p style="margin-top:12px;color:var(--faint)">Mezclar más librerías (React Aria, Tremor para charts, React Flow para grafos) es viable y <b>recomendable</b> para las áreas nuevas — el patrón shadcn no lo impide. Ver correcciones.</p>
+  </div>
+</div></section>
+
+<!-- ============ EXISTE HOY ============ -->
+<section id="existe"><div class="wrap">
+  <div class="eyebrow">03 · Lo que existe hoy</div>
+  <h2>Inventario construido y verificado</h2>
+  <p class="sub">Presente en <code>packages/ui/src</code> con stories en Storybook, tests (26/26) y build verde. Esto es el activo real sobre el que se reutiliza todo lo demás.</p>
+
+  <div class="area part">
+    <div class="area-head"><span class="id">UI</span><h3>21 primitivas shadcn (copy-owned, tokenizadas)</h3><div class="tot"><b>21</b> ✅</div></div>
+    <p class="why"><code>Button · Badge · Card · Input · Textarea · Label · Select · Checkbox · RadioGroup · Switch · Alert · Avatar · Tooltip · Separator · Dialog · Sheet · DropdownMenu · Tabs · Accordion · Progress · Skeleton</code>. Base accesible (WCAG 2.2 AA, hit-areas 24px) para todo lo agentic.</p>
+  </div>
+
+  <div class="area">
+    <div class="area-head"><span class="id">AG</span><h3>~17 componentes agentic + observabilidad</h3><div class="tot"><b>~17</b> ✅</div></div>
+    <p class="why"><b>Identidad:</b> <code>AgentCore</code> (WebGL neural cores), <code>AgentCard</code>, <code>AgentGallery</code>, <code>AgentMetric</code>, <code>AgentStatusMatrix</code>. <b>Ejecución:</b> <code>NodeStatusBadge</code> (6 estados), <code>RunTimeline</code>, <code>ExecutionTimeline</code>, <code>ExecutionHistoryTable/Console</code>, <code>RunInspector</code> (replay read-only). <b>Observabilidad:</b> <code>TraceTree</code> (costo/tokens por span), <code>TokenCostMeter</code>, <code>TraceLog</code>. <b>Human-in-the-loop:</b> <code>ApprovalGateCard</code> (evidence pack), <code>HumanInterruptQueue</code>. <b>Generative UI:</b> <code>RichToolCallCard</code> (6 tipos de bloque). <b>Compliance:</b> <code>AuditLogTable</code> (hash badge), <code>WhoDidWhatTimeline</code> (saved queries). <b>Industria:</b> <code>PropertyIntelligenceConsole</code> (inmobiliaria).</p>
+    <p class="why" style="color:var(--faint)">Nota: <code>PropertyIntelligenceConsole</code> es la única consola alineada a una industria concreta — prueba que el patrón "consola por industria" funciona, pero es 1 de 5+ industrias objetivo.</p>
+  </div>
+</div></section>
+
+<!-- ============ AREAS / BRECHAS ============ -->
+<section id="areas"><div class="wrap">
+  <div class="eyebrow">04 · Brechas por área</div>
+  <h2>Qué falta, por qué falta</h2>
+  <p class="sub">Siete áreas. A–D ya vivían en <code>NORTH_STAR.md</code> (catálogo vivo del repo); E–G son <b>nuevas</b>, derivadas directamente de tus seis objetivos y de investigación de fuentes 2026. Estado: <span style="color:var(--ok)">✅ existe</span> · <span style="color:var(--warn)">🟡 parcial</span> · <span style="color:var(--faint)">❌ falta</span>.</p>
+
+  <div class="legend" style="margin-top:18px">
+    <span><i class="sw" style="background:var(--ok)"></i> construido</span>
+    <span><i class="sw" style="background:var(--warn)"></i> parcial</span>
+    <span><i class="sw" style="background:var(--faint-deco)"></i> falta</span>
+  </div>
+
+  <!-- AREA A -->
+  <div class="area part">
+    <div class="area-head"><span class="id">A</span><h3>Proceso empresarial / n8n</h3><div class="tot"><b>2</b>✅ · 1🟡 · 5❌ &nbsp;·&nbsp; 8</div></div>
+    <div class="meter"><i class="mo" style="width:25%"></i><i class="mp" style="width:12%"></i><i class="mm" style="width:63%"></i></div>
+    <p class="why"><b>Por qué falta:</b> el laboratorio priorizó observabilidad genérica antes que el vocabulario específico de n8n. Además — dato confirmado 2026 — <b>el plan OEM de n8n no ofrece white-label completo</b>; el editor no se puede re-brandear, así que estos componentes deben ser reconstrucción propia de la vista de ejecución, no un iframe de marca ajena.</p>
+    <div class="tbl-scroll"><table class="comp">
+      <tr><th>Componente</th><th>Propósito</th><th>Estado</th></tr>
+      <tr><td class="cn">ExecutionHistoryTable</td><td class="pp">Lista de runs: status dot, workflow, trigger, duración, retry</td><td><span class="st part">parcial · sin virtualizar</span></td></tr>
+      <tr><td class="cn">RunInspector</td><td class="pp">Replay read-only por nodo con input/output y "falló aquí"</td><td><span class="st ok">construido</span></td></tr>
+      <tr><td class="cn">NodeStatusBadge</td><td class="pp">success/error/running/waiting/skipped/retrying</td><td><span class="st ok">construido</span></td></tr>
+      <tr><td class="cn">RetryControls</td><td class="pp">Retry desde inicio vs desde nodo fallido, contador</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">CredentialCard / Picker</td><td class="pp">Credencial: tipo, owner, last-used, compartida-con, health</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">SubworkflowChip</td><td class="pp">Deep-link expandible a ejecución hija</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">ErrorWorkflowBanner</td><td class="pp">"Este fallo se enrutó al error handler X"</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">WorkflowCanvasFrame</td><td class="pp">Vista de ejecución propia (NO iframe n8n — sin white-label)</td><td><span class="st miss">falta</span></td></tr>
+    </table></div>
+  </div>
+
+  <!-- AREA B -->
+  <div class="area">
+    <div class="area-head"><span class="id">B</span><h3>Agent ops / consola de un agente</h3><div class="tot"><b>9</b>✅ · 6❌ &nbsp;·&nbsp; 15</div></div>
+    <div class="meter"><i class="mo" style="width:60%"></i><i class="mp" style="width:0%"></i><i class="mm" style="width:40%"></i></div>
+    <p class="why"><b>El área más madura.</b> 5 fuentes independientes (OpenAI, Microsoft AG-UI, Codex Remote, fintech KYA, patrón software) convergieron en 2026 en el mismo patrón approval+HITL — ya construido. Lo que falta son señales de política y regresión, y el consentimiento previo (Know-Your-Agent).</p>
+    <div class="tbl-scroll"><table class="comp">
+      <tr><th>Componente</th><th>Propósito</th><th>Estado</th></tr>
+      <tr><td class="cn">TraceTree · ApprovalGateCard · HumanInterruptQueue</td><td class="pp">Spans con costo · evidence pack · inbox de pausas</td><td><span class="st ok">construido</span></td></tr>
+      <tr><td class="cn">RunTimeline · TokenCostMeter · RichToolCallCard</td><td class="pp">Timeline vivo · costo por run · tool-UI generativa</td><td><span class="st ok">construido</span></td></tr>
+      <tr><td class="cn">AgentConsentCard (Know-Your-Agent)</td><td class="pp">Perfil + alcance + consentimiento antes de acción sensible</td><td><span class="st miss">falta · prioridad</span></td></tr>
+      <tr><td class="cn">GuardrailIndicator</td><td class="pp">Pill passed/warned/blocked → política que disparó</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">EvalScoreBadge + Sparkline</td><td class="pp">Score vs umbral, flechas de regresión</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">AgentHandoffMarker</td><td class="pp">Transferencia agente↔agente o agente→humano</td><td><span class="st miss">falta · ver correcciones</span></td></tr>
+      <tr><td class="cn">StreamingMessage / ThinkingIndicator</td><td class="pp">Stream de tokens con tool-calls inline</td><td><span class="st miss">falta · ver correcciones</span></td></tr>
+      <tr><td class="cn">CheckpointBadge</td><td class="pp">"Estado persistido aquí; reanudable"</td><td><span class="st miss">falta</span></td></tr>
+    </table></div>
+  </div>
+
+  <!-- AREA C -->
+  <div class="area part">
+    <div class="area-head"><span class="id">C</span><h3>Auditoría / compliance</h3><div class="tot"><b>2</b>✅ · 8❌ &nbsp;·&nbsp; 10</div></div>
+    <div class="meter"><i class="mo" style="width:20%"></i><i class="mp" style="width:0%"></i><i class="mm" style="width:80%"></i></div>
+    <p class="why"><b>Por qué importa:</b> sostiene 3 de los 10 principios de credibilidad enterprise (inmutabilidad, dualidad de actor, autoservicio del auditor). Marco: EU AI Act Art. 12/13 (logging) y Art. 19 (retención 6m) — <b>son obligaciones distintas, sepáralas</b>; SOC2 CC7/CC8; ISO 42001 + prEN 18286 (el estándar armonizado real, no ISO 42001). El deadline EU AI Act de ago-2026 está en disputa (Digital Omnibus) pero SOC2 lo exige sin fecha límite.</p>
+    <div class="tbl-scroll"><table class="comp">
+      <tr><th>Componente</th><th>Propósito</th><th>Estado</th></tr>
+      <tr><td class="cn">AuditLogTable</td><td class="pp">Stream inmutable: actor dual, acción, recurso, hash badge</td><td><span class="st ok">construido</span></td></tr>
+      <tr><td class="cn">WhoDidWhatTimeline</td><td class="pp">Feed cronológico filtrable con saved-query chips</td><td><span class="st ok">construido</span></td></tr>
+      <tr><td class="cn">EvidenceExportDialog</td><td class="pp">Export firmado (PDF/CSV/JSON) con manifiesto de hashes</td><td><span class="st miss">falta · prioridad</span></td></tr>
+      <tr><td class="cn">ApprovalChainStepper</td><td class="pp">Quién aprobó qué, cuándo, en qué orden, con rechazos</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">ModelProvenanceCard</td><td class="pp">Modelo, versión, prompt version, config hash por run</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">RBACMatrixViewer</td><td class="pp">Grid roles×permisos + "por qué este usuario tiene acceso"</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">DataLineageGraph</td><td class="pp">Origen→transformación→salida a nivel de campo</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">ChangeRecordCard</td><td class="pp">Cambio CC8.1: autor, reviewer, diff, rollback link</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">IncidentView</td><td class="pp">Timeline de incidente: disparador, afectados, remediación</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">RetentionBadge / ImmutabilityIndicator</td><td class="pp">"WORM, retenido 6+ meses" (Art. 19, separado)</td><td><span class="st miss">falta</span></td></tr>
+    </table></div>
+  </div>
+
+  <!-- AREA D -->
+  <div class="area part">
+    <div class="area-head"><span class="id">D</span><h3>Table stakes enterprise</h3><div class="tot"><b>1</b>✅ · 2🟡 · 7❌ &nbsp;·&nbsp; 10</div></div>
+    <div class="meter"><i class="mo" style="width:10%"></i><i class="mp" style="width:20%"></i><i class="mm" style="width:70%"></i></div>
+    <p class="why"><b>Por qué falta:</b> son capacidades transversales que no lucen en un demo pero deciden si "ops" adopta o no la herramienta. El <code>DataTable</code> denso virtualizado es el que más desbloquea (lo reutilizan A, C, E, F).</p>
+    <div class="tbl-scroll"><table class="comp">
+      <tr><th>Capacidad</th><th>Propósito</th><th>Estado</th></tr>
+      <tr><td class="cn">WCAG 2.2 AA</td><td class="pp">focus-not-obscured, targets 24px, alt a drag</td><td><span class="st ok">construido</span></td></tr>
+      <tr><td class="cn">Theming white-label</td><td class="pp">ThemeProvider + tokens OKLCH re-brandeable</td><td><span class="st part">parcial · 3 temas, sin guía</span></td></tr>
+      <tr><td class="cn">EmptyState / ErrorState / Skeleton</td><td class="pp">Estados vacío/error diseñados</td><td><span class="st part">parcial · solo Skeleton</span></td></tr>
+      <tr><td class="cn">DataTable denso</td><td class="pp">Virtualizado, roving tabindex, saved views/FilterBar</td><td><span class="st miss">falta · desbloqueante</span></td></tr>
+      <tr><td class="cn">Density modes</td><td class="pp">comfortable/compact para tablas ops</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">CommandPalette</td><td class="pp">Keyboard-first ops</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">Data-viz tokens</td><td class="pp">Paleta categórica 3:1 sobre dark + sequential + alert</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">DateRangePicker + timezone</td><td class="pp">Rango con zona horaria visible</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">i18n / RTL</td><td class="pp">Propiedades CSS lógicas, dirección tokenizada</td><td><span class="st miss">falta</span></td></tr>
+      <tr><td class="cn">RBAC granular (Custom Roles)</td><td class="pp">Definición de roles con permisos finos por recurso</td><td><span class="st miss">falta</span></td></tr>
+    </table></div>
+  </div>
+
+  <!-- AREA E : NEW -->
+  <div class="area new">
+    <div class="area-head"><span class="id">E</span><h3>Estrategia comercial para grandes empresas <span class="pill-new">Nueva</span></h3><div class="tot"><b>0</b>✅ · 20❌ &nbsp;·&nbsp; 20</div></div>
+    <div class="meter"><i class="mo" style="width:0%"></i><i class="mp" style="width:0%"></i><i class="mm" style="width:100%"></i></div>
+    <p class="why"><b>Por qué falta:</b> es tu 6º objetivo y <b>el DS no tiene ni un componente</b> de esta dimensión — está 100% orientado a ops de agentes. Fuentes 2026: Clari, Gong, Salesforce Lightning, HubSpot Canvas, DealHub/PandaDoc CPQ, digital sales rooms (Dock/Aligned/GetAccept), ChartMogul/Stripe. Patrón definitorio: <b>roll-up de forecast jerárquico</b> (rep→manager→exec) y <b>deal rooms multi-stakeholder</b> (deal enterprise promedio = 11+ personas).</p>
+    <div class="tbl-scroll"><table class="comp">
+      <tr><th>Componente</th><th>Propósito</th><th>Fuente</th></tr>
+      <tr><td class="grp" colspan="3">Pipeline &amp; Forecasting</td></tr>
+      <tr><td class="cn">ForecastRollupTable</td><td class="pp">Grid jerárquico commit/best-case/pipeline con deltas submitted-vs-current</td><td class="src">Clari</td></tr>
+      <tr><td class="cn">PipelineWaterfallChart</td><td class="pp">Cambio período-a-período: created/expanded/pushed/slipped/won/lost</td><td class="src">Clari</td></tr>
+      <tr><td class="cn">PipelineCoverageGauge</td><td class="pp">Ratio de cobertura (pipeline ÷ gap de quota) vs target</td><td class="src">Clari</td></tr>
+      <tr><td class="cn">DealBoard</td><td class="pp">Vista de deals con valor, close date, health/likelihood IA</td><td class="src">Gong</td></tr>
+      <tr><td class="grp" colspan="3">Ejecución de deal</td></tr>
+      <tr><td class="cn">MutualActionPlanBoard / DealRoomTimeline</td><td class="pp">Plan de hitos comprador/vendedor con owners y dependencias</td><td class="src">Dock · Aligned</td></tr>
+      <tr><td class="cn">SequenceCadenceBuilder</td><td class="pp">Secuencia multi-canal (email/call/LinkedIn) con lógica condicional</td><td class="src">Salesloft</td></tr>
+      <tr><td class="cn">DealRiskSignalPanel</td><td class="pp">Riesgos IA: single-threading, inactividad, sin economic buyer</td><td class="src">Gong AI Deal Monitor</td></tr>
+      <tr><td class="cn">OpportunityStagePath</td><td class="pp">Stepper de etapas con exit-criteria y campos gating</td><td class="src">Salesforce SLDS Path</td></tr>
+      <tr><td class="grp" colspan="3">Pricing / CPQ</td></tr>
+      <tr><td class="cn">QuoteLineConfigurator</td><td class="pp">Builder de líneas/bundles con pricebooks y margen en vivo</td><td class="src">DealHub · PandaDoc</td></tr>
+      <tr><td class="cn">PricingApprovalMatrix</td><td class="pp">Ruteo de aprobación por umbral de descuento/margen + audit trail</td><td class="src">DealHub deal-desk</td></tr>
+      <tr><td class="grp" colspan="3">Inteligencia de cuenta</td></tr>
+      <tr><td class="cn">AccountHealthScorecard</td><td class="pp">Score RAG compuesto: uso, engagement, sentiment, riesgo</td><td class="src">Gong</td></tr>
+      <tr><td class="cn">RelationshipMap / BuyingCommitteeOrgChart</td><td class="pp">Org-chart de stakeholders: champion/economic buyer/blocker</td><td class="src">ARPEDIO · Gartner</td></tr>
+      <tr><td class="cn">WhitespaceMatrix</td><td class="pp">Grid productos×unidades: owned vs cross/upsell</td><td class="src">Salesmotion</td></tr>
+      <tr><td class="grp" colspan="3">Estrategia ejecutiva</td></tr>
+      <tr><td class="cn">QBRScorecard</td><td class="pp">KPIs actual-vs-target con RAG, tendencia y flags de excepción</td><td class="src">ClearPoint</td></tr>
+      <tr><td class="cn">TerritoryQuotaPlanner / CapacityCoverageMap</td><td class="pp">Asignación cuentas→territorios→reps con quota y capacidad</td><td class="src">Anaplan · Fullcast</td></tr>
+      <tr><td class="cn">QuotaAttainmentGauge</td><td class="pp">Attainment por rep/equipo con pacing vs tiempo</td><td class="src">Clari</td></tr>
+      <tr><td class="cn">ROICalculatorCard / BusinessCaseBuilder</td><td class="pp">Calculadora de valor: inputs → payback, net gain, business case</td><td class="src">Dock · ROI Selling</td></tr>
+      <tr><td class="grp" colspan="3">Revenue / Billing</td></tr>
+      <tr><td class="cn">MRRMovementWaterfall</td><td class="pp">Bridge de MRR: new/expansion/contraction/churn/reactivation</td><td class="src">ChartMogul</td></tr>
+      <tr><td class="cn">NetRevenueRetentionCohortGrid</td><td class="pp">NRR + heatmap de retención por cohorte</td><td class="src">ChartMogul · Stripe</td></tr>
+      <tr><td class="cn">SubscriptionScheduleTable</td><td class="pp">Schedule de billing: componentes, ramps, proración, next-invoice</td><td class="src">Stripe Billing</td></tr>
+    </table></div>
+    <div class="callout" style="margin:6px 0 14px">
+      <p style="margin:0"><span class="k">Reutilización:</span> <code>QuotaAttainmentGauge</code> + <code>PipelineCoverageGauge</code> comparten un <code>RatioGauge</code>; <code>QBRScorecard</code>/<code>AccountHealthScorecard</code>/<code>MRRMovementWaterfall</code> comparten el set de tokens RAG + trend-delta. No son 20 builds desde cero.</p>
+    </div>
+  </div>
+
+  <!-- AREA F : NEW -->
+  <div class="area new">
+    <div class="area-head"><span class="id">F</span><h3>Automatización industrial real — OT / SCADA <span class="pill-new">Nueva</span></h3><div class="tot"><b>0</b>✅ · 23❌ &nbsp;·&nbsp; 23</div></div>
+    <div class="meter"><i class="mo" style="width:0%"></i><i class="mp" style="width:0%"></i><i class="mm" style="width:100%"></i></div>
+    <p class="why"><b>Por qué falta:</b> el área A cubre automatización de <i>proceso de negocio</i> (n8n), no <b>tecnología operacional</b>. "Automatización de tareas industriales" es planta real: HMI, alarmas, activos, órdenes de trabajo, OEE, seguridad. Estándares: <b>ISA-101</b> (HMI de alto rendimiento — grayscale de base, color solo en anormalidad), <b>ISA-18.2/EEMUA 191</b> (ciclo de 10 estados de alarma), ISA-88 (batch), ISA-95 (jerarquía de activos), IEC 61511 (SIS).</p>
+    <div class="callout acc" style="margin:0 0 16px">
+      <p style="margin:0"><span class="k">Regalo para el tema dark-premium:</span> la convención ISA-101 es que ~90% de la pantalla es gris neutro y el color saturado se reserva <b>solo para estados anormales/accionables</b> — exactamente la disciplina de "gastar el accent con moderación" del DS. El estado normal de planta ES tu paleta de superficies oscuras.</p>
+    </div>
+    <div class="tbl-scroll"><table class="comp">
+      <tr><th>Componente</th><th>Propósito</th><th>Estándar</th></tr>
+      <tr><td class="grp" colspan="3">Monitoreo de proceso / HMI</td></tr>
+      <tr><td class="cn">ProcessValueTile</td><td class="pp">Valor con barra analógica embebida y desviación de setpoint</td><td class="src">ISA-101</td></tr>
+      <tr><td class="cn">TrendChart</td><td class="pp">Series de tiempo multi-pen con bandas de límite/setpoint</td><td class="src">ISA-101 · PI Vision</td></tr>
+      <tr><td class="cn">SetpointControl / Faceplate</td><td class="pp">Entrada acotada con Auto/Manual/Cascade + confirmar</td><td class="src">ISA-101</td></tr>
+      <tr><td class="cn">EquipmentStatusSymbol</td><td class="pp">Símbolo P&amp;ID dinámico (bomba/válvula) running/fault/interlocked</td><td class="src">ISA-5.1</td></tr>
+      <tr><td class="cn">MimicCanvas / SchematicView</td><td class="pp">Mímico de proceso pan/zoom, jerarquía de displays Nivel 1–4</td><td class="src">ISA-101</td></tr>
+      <tr><td class="grp" colspan="3">Gestión de alarmas</td></tr>
+      <tr><td class="cn">AlarmBanner</td><td class="pp">Strip con la alarma no-reconocida de mayor prioridad + ack</td><td class="src">ISA-18.2</td></tr>
+      <tr><td class="cn">AlarmSummaryTable</td><td class="pp">Lista de alarmas activas (prioridad/estado/timestamp/ack)</td><td class="src">ISA-18.2</td></tr>
+      <tr><td class="cn">AlarmShelf</td><td class="pp">Shelving con razón, countdown y max-shelf-time</td><td class="src">ISA-18.2</td></tr>
+      <tr><td class="cn">AlarmJournal</td><td class="pp">Historial que alimenta KPIs EEMUA-191 (rate/flood/chattering)</td><td class="src">EEMUA 191</td></tr>
+      <tr><td class="cn">PriorityBadge / AlarmChip</td><td class="pp">Indicador prioridad+estado colorblind-safe (color+forma)</td><td class="src">ISA-18.2/101</td></tr>
+      <tr><td class="grp" colspan="3">Salud de activos</td></tr>
+      <tr><td class="cn">AssetHealthGauge</td><td class="pp">Índice de salud 0–100 con bandas healthy→watch→critical</td><td class="src">ISO 13374</td></tr>
+      <tr><td class="cn">ConditionTrendCard</td><td class="pp">Micro-trend de vibración/temp/corriente con umbral</td><td class="src">ISO 13379</td></tr>
+      <tr><td class="cn">RULIndicator</td><td class="pp">Vida útil restante / time-to-failure con intervalo de confianza</td><td class="src">PdM · digital twin</td></tr>
+      <tr><td class="grp" colspan="3">Órdenes de trabajo / mantenimiento</td></tr>
+      <tr><td class="cn">WorkOrderCard</td><td class="pp">WO: activo, prioridad, estado, asignado, due, alarma vinculada</td><td class="src">Maximo · Fiix</td></tr>
+      <tr><td class="cn">WorkOrderKanban</td><td class="pp">Board por estado (Requested→In Progress→Complete)</td><td class="src">CMMS/EAM</td></tr>
+      <tr><td class="cn">AssetHierarchyTree</td><td class="pp">Navegador ISA-95: Enterprise→Site→Area→Line→Unit→Asset</td><td class="src">ISA-95 / IEC 62264</td></tr>
+      <tr><td class="grp" colspan="3">Producción / OEE</td></tr>
+      <tr><td class="cn">OEEWaterfall</td><td class="pp">Waterfall planned→availability→performance→quality→OEE</td><td class="src">ISO 22400-2</td></tr>
+      <tr><td class="cn">AndonBoard</td><td class="pp">Grid de estado de línea (running/idle/down/starved/blocked)</td><td class="src">Lean andon · MES</td></tr>
+      <tr><td class="cn">DowntimePareto</td><td class="pp">Pareto de razones de parada con % acumulado</td><td class="src">OEE loss analysis</td></tr>
+      <tr><td class="grp" colspan="3">Seguridad / batch</td></tr>
+      <tr><td class="cn">PermitToWorkCard</td><td class="pp">Permiso/LOTO: aislamientos, firmas, validez, peligros</td><td class="src">OSHA 1910.147</td></tr>
+      <tr><td class="cn">ShiftHandoverLog</td><td class="pp">Log de relevo de turno: issues abiertos, overrides, watch items</td><td class="src">HSE HSG</td></tr>
+      <tr><td class="cn">InterlockStatusPanel</td><td class="pp">Estado SIS / bypass de interlock con razón y expiración</td><td class="src">IEC 61511 / ISA-84</td></tr>
+      <tr><td class="cn">BatchPhaseSequencer</td><td class="pp">Árbol ISA-88: unit procedure→operation→phase, step actual</td><td class="src">ISA-88 (S88)</td></tr>
+    </table></div>
+    <div class="callout" style="margin:6px 0 14px">
+      <p style="margin:0"><span class="k">Puente con lo existente:</span> el <code>AgentApprovalGate</code> industrial (write de setpoint, start/stop de equipo) NO es nuevo — es <code>ApprovalGateCard</code> + <code>AutonomyModeSwitch</code> (Manual→Advisory→Supervised→Full-Auto). Y el audit trail OT reutiliza <code>ExecutionHistoryTable</code>/<code>RunInspector</code> — satisface EU AI Act Art. 14 (supervisión humana de IA de alto riesgo).</p>
+    </div>
+  </div>
+
+  <!-- AREA G : NEW -->
+  <div class="area new">
+    <div class="area-head"><span class="id">G</span><h3>Orquestación multi-agente <span class="pill-new">Nueva</span></h3><div class="tot"><b>0</b>✅ · 19❌ &nbsp;·&nbsp; 19</div></div>
+    <div class="meter"><i class="mo" style="width:0%"></i><i class="mp" style="width:0%"></i><i class="mm" style="width:100%"></i></div>
+    <p class="why"><b>Por qué falta:</b> el DS observa <i>un</i> agente/run muy bien, pero <b>no tiene ninguna vista de flota</b> — ni topología del enjambre, ni jerarquía supervisor→worker, ni flujo A2A, ni plano de control (pausar/cancelar un enjambre, presupuesto cruzado). Es exactamente lo que todo dashboard de orquestación 2026 (Microsoft Conductor, LangGraph Studio, Anthropic multi-agent) pone como canvas principal. Tu objetivo "orquestación de agentes" y "orquestadores" vive aquí.</p>
+    <div class="tbl-scroll"><table class="comp">
+      <tr><th>Componente</th><th>Propósito</th><th>Fuente 2026</th></tr>
+      <tr><td class="grp" colspan="3">Topología &amp; coordinación</td></tr>
+      <tr><td class="cn">AgentTopologyGraph</td><td class="pp">Grafo vivo de la flota, edges animados de hops activos</td><td class="src">MS Conductor · LangGraph Studio</td></tr>
+      <tr><td class="cn">SupervisorOrgMap</td><td class="pp">Org-chart orquestador→sub-agentes con estado por nodo</td><td class="src">Anthropic orchestrator-worker</td></tr>
+      <tr><td class="cn">A2ATaskFlowView</td><td class="pp">Timeline A2A con estados (submitted/working/input-required/…)</td><td class="src">Google A2A · IBM</td></tr>
+      <tr><td class="cn">A2AAgentCardViewer</td><td class="pp">Render de Agent Card A2A (skills, endpoint, auth) para discovery</td><td class="src">A2A spec</td></tr>
+      <tr><td class="cn">SharedStateInspector / BlackboardView</td><td class="pp">Inspeccionar estado compartido que varios agentes leen/escriben</td><td class="src">CopilotKit CoAgents</td></tr>
+      <tr><td class="cn">AGUIEventStreamViewer</td><td class="pp">Inspector del stream de eventos tipados AG-UI (~16 eventos)</td><td class="src">AG-UI · MS Agent Framework</td></tr>
+      <tr><td class="cn">RoutingDecisionCard</td><td class="pp">Por qué el supervisor eligió este worker (confidence, alternativas)</td><td class="src">OpenAI SDK · LangGraph</td></tr>
+      <tr><td class="grp" colspan="3">Plano de control</td></tr>
+      <tr><td class="cn">SwarmControlBar</td><td class="pp">Pause/resume/cancel del enjambre o cohorte filtrada (broadcast)</td><td class="src">Temporal batch signals</td></tr>
+      <tr><td class="cn">ConcurrencyQueueBoard</td><td class="pp">Agentes in-flight, profundidad de cola, rate-limit/backpressure</td><td class="src">n8n · Temporal</td></tr>
+      <tr><td class="cn">BudgetCapGovernor</td><td class="pp">Caps de gasto por agente/workflow con burn-down y auto-halt</td><td class="src">Cordum FinOps · EY</td></tr>
+      <tr><td class="cn">KillSwitchControl</td><td class="pp">Paro de emergencia global / revocar autoridad de todos</td><td class="src">Agent authority gap 2026</td></tr>
+      <tr><td class="grp" colspan="3">Ciclo de vida &amp; registro</td></tr>
+      <tr><td class="cn">AgentRegistryTable</td><td class="pp">System-of-record: owner, versión, capacidades, acceso a datos</td><td class="src">AWS/Google Agent Registry</td></tr>
+      <tr><td class="cn">CapabilityScopeCard / SkillCard</td><td class="pp">Card machine-readable de capacidades/scopes/verificación</td><td class="src">NVIDIA verified skills</td></tr>
+      <tr><td class="cn">VersionRolloutPanel</td><td class="pp">Versión live, canary/traffic split, deprecada</td><td class="src">TrueFoundry · LangSmith</td></tr>
+      <tr><td class="cn">ShadowAgentAlert</td><td class="pp">Detectar agentes locales no gestionados ("agent sprawl")</td><td class="src">MS Agent 365 Registry</td></tr>
+      <tr><td class="grp" colspan="3">Identidad, confianza &amp; interop</td></tr>
+      <tr><td class="cn">AgentIdentityCard / DelegationChainViewer</td><td class="pp">Credenciales + autoridad delegada (subject→actor→purpose) + TTL</td><td class="src">Strata agentic identity</td></tr>
+      <tr><td class="cn">CrossAgentTraceWaterfall</td><td class="pp">Trace distribuido multi-agente con spans OTel GenAI</td><td class="src">OTel GenAI conventions</td></tr>
+      <tr><td class="cn">MCPServerHealthPanel / ToolRegistryView</td><td class="pp">MCP servers/tools conectados por agente: salud, scopes</td><td class="src">MCP Registry</td></tr>
+      <tr><td class="cn">MCPAppsWidgetFrame</td><td class="pp">Frame sandbox que renderiza UI de MCP servers (postMessage/JSON-RPC)</td><td class="src">MCP Apps (ratif. 2026-01-26)</td></tr>
+      <tr><td class="cn">ElicitationPromptCard</td><td class="pp">Pedido tipado de input/credencial a mitad de run (≠ approve/reject)</td><td class="src">MCP elicitation</td></tr>
+    </table></div>
+  </div>
+</div></section>
+
+<!-- ============ FLUJO ============ -->
+<section id="flujo"><div class="wrap">
+  <div class="eyebrow">05 · Mapa de flujo</div>
+  <h2>Cómo una corporación arma una consola con Studio DS — y dónde se rompe hoy</h2>
+  <p class="sub">Recorrido de un operador/agente desde que entra a la consola hasta el cierre auditable. En verde lo que el DS ya soporta; en rojo punteado lo que hoy <b>obliga a construir a mano</b> porque falta el componente.</p>
+
+  <div class="flow"><div class="flow-inner">
+    <div class="flow-row">
+      <div class="node ok"><span class="nl">Entrada</span><span class="nc">AgentGallery</span><span class="ns">Descubre e identifica agentes ✅</span></div>
+      <div class="conn">→</div>
+      <div class="node miss"><span class="nl">Orquestar</span><span class="nc">AgentTopologyGraph</span><span class="ns">Ver el enjambre — FALTA</span></div>
+      <div class="conn">→</div>
+      <div class="node ok"><span class="nl">Ejecutar</span><span class="nc">RunTimeline</span><span class="ns">Proceso paso a paso ✅</span></div>
+      <div class="conn">→</div>
+      <div class="node miss"><span class="nl">Guardrail</span><span class="nc">GuardrailIndicator</span><span class="ns">¿Pasa política? — FALTA</span></div>
+    </div>
+
+    <div class="flow-branch">
+      <div class="b pass">
+        <div class="bl">✓ Guardrail pasa</div>
+        <div class="node ok" style="border:none;background:transparent;padding:0"><span class="nc">TokenCostMeter ✅ → BudgetCapGovernor ❌</span><span class="ns">Ejecuta; costo visible por run, pero sin cap cruzado de presupuesto (el enjambre puede sobregirar antes de que el meter actualice).</span></div>
+      </div>
+      <div class="b fail">
+        <div class="bl">✕ Guardrail bloquea → humano</div>
+        <div class="node ok" style="border:none;background:transparent;padding:0"><span class="nc">HumanInterruptQueue ✅ → ApprovalGateCard ✅</span><span class="ns">Runs pausados entran a la cola; el humano aprueba/rechaza con evidence pack. Esta rama SÍ está construida.</span></div>
+      </div>
+    </div>
+
+    <div class="flow-row" style="margin-top:14px">
+      <div class="node ok"><span class="nl">Registrar</span><span class="nc">AuditLogTable</span><span class="ns">Log inmutable con hash ✅</span></div>
+      <div class="conn">→</div>
+      <div class="node miss"><span class="nl">Exportar</span><span class="nc">EvidenceExportDialog</span><span class="ns">Evidencia firmada — FALTA</span></div>
+      <div class="conn">→</div>
+      <div class="node miss"><span class="nl">Industrial</span><span class="nc">AlarmBanner / OEEWaterfall</span><span class="ns">Si es planta OT — FALTA</span></div>
+      <div class="conn">→</div>
+      <div class="node miss"><span class="nl">Comercial</span><span class="nc">ForecastRollupTable</span><span class="ns">Si el objetivo es venta — FALTA</span></div>
+    </div>
+  </div></div>
+
+  <p class="flow-note">Lectura: el <b>camino feliz de un agente + HITL + auditoría básica funciona hoy</b>. Se rompe en (1) ver/controlar el enjambre, (2) presupuesto cruzado, (3) exportar evidencia, (4) cualquier salida industrial-OT o comercial. Esos 4 quiebres son las áreas G, C, F, E.</p>
+</div></section>
+
+<!-- ============ CORRECCIONES ============ -->
+<section id="correcciones"><div class="wrap">
+  <div class="eyebrow">06 · Qué correcciones necesita lo que existe</div>
+  <h2>Correcciones — no todo faltante es nuevo; algo construido ya arrastra deuda</h2>
+  <p class="sub">Dos clases: <span style="color:var(--block)">bugs verificados en el código</span> y <span style="color:var(--warn)">drift de estándar</span> (nombres/patrones que 2026 ya estandarizó y el DS aún no adopta).</p>
+
+  <div style="margin-top:20px">
+    <div class="fix">
+      <span class="sev bug">Bug · verificado</span>
+      <div><h4>Ruta absoluta de Windows hardcodeada en el auditor a11y</h4>
+      <p><code>scripts/a11y-audit.mjs:7</code> → <code>const ROOT = 'C:/dev/Enterprise Design System'</code>. No portable a CI ni Linux; el "76 stories, 0 violaciones" no es re-verificable automáticamente. <b>Corrección:</b> ruta relativa al repo (<code>process.cwd()</code> / <code>import.meta.url</code>).</p></div>
+    </div>
+    <div class="fix">
+      <span class="sev bug">Bug · verificado</span>
+      <div><h4>Ninguna tabla está virtualizada</h4>
+      <p><code>audit-log-table.tsx:105</code> comenta "no virtualizada todavía"; igual <code>ExecutionHistoryTable</code>. Renderizan todas las filas — no escala a volúmenes enterprise (miles de runs/eventos). <b>Corrección:</b> extraer un <code>DataTable</code> denso virtualizado (área D) y montar ambas encima. Desbloquea A, C, E, F.</p></div>
+    </div>
+    <div class="fix">
+      <span class="sev drift">Drift · nombre</span>
+      <div><h4>"AgentCard" colisiona con el estándar A2A</h4>
+      <p>En 2026 "Agent Card" = documento A2A de discovery (skills/endpoint/auth en <code>/.well-known</code>), no una tarjeta visual. <b>Corrección:</b> renombrar la presentación a <code>AgentTile</code> y añadir un <code>A2AAgentCardViewer</code> real (área G).</p></div>
+    </div>
+    <div class="fix">
+      <span class="sev drift">Drift · estándar</span>
+      <div><h4>RichToolCallCard debería renderizar vía MCP Apps</h4>
+      <p>MCP-UI + OpenAI Apps SDK se fusionaron en <b>MCP Apps</b> (ratificado 2026-01-26; soportado por ChatGPT, Claude, VS Code). <b>Corrección:</b> re-fundar el render sobre iframe sandbox + postMessage de MCP Apps, no un renderer propio.</p></div>
+    </div>
+    <div class="fix">
+      <span class="sev drift">Drift · estándar</span>
+      <div><h4>StreamingMessage debe conformar AG-UI</h4>
+      <p>El transporte agente→frontend estándar es AG-UI (~16 eventos tipados; CopilotKit, MS Agent Framework, LangGraph, CrewAI). <b>Corrección:</b> emitir/consumir eventos AG-UI en vez de streaming bespoke.</p></div>
+    </div>
+    <div class="fix">
+      <span class="sev drift">Drift · estándar</span>
+      <div><h4>TraceTree: adoptar OTel GenAI e ir cross-agent</h4>
+      <p>El estándar 2026 es OpenTelemetry GenAI (<code>gen_ai.*</code>: spans de agent/team/task/artifact/memory). <b>Corrección:</b> hacer los spans OTel-conformes y soportar traces distribuidos multi-agente (ver <code>CrossAgentTraceWaterfall</code>).</p></div>
+    </div>
+    <div class="fix">
+      <span class="sev drift">Drift · modelo</span>
+      <div><h4>AgentHandoffMarker y CheckpointBadge están sub-modelados</h4>
+      <p><code>AgentHandoffMarker</code>: un marcador no captura el ciclo A2A (submitted/working/input-required/completed/canceled/failed) — parear con <code>A2ATaskFlowView</code>. <code>CheckpointBadge</code>: distinguir "checkpoint" (snapshot LangGraph) de "durable execution" (Temporal) para que ops no asuma reanudación crash-safe.</p></div>
+    </div>
+    <div class="fix">
+      <span class="sev drift">Drift · FinOps</span>
+      <div><h4>TokenCostMeter es solo per-run</h4>
+      <p>Correcto pero incompleto: 2026 exige enforcement de presupuesto cruzado — un prompt puede fan-out exponencial y sobregirar antes de que el meter per-run actualice. <b>Corrección:</b> alimentarlo a <code>BudgetCapGovernor</code> (área G).</p></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ============ PRIORIDAD ============ -->
+<section id="prioridad"><div class="wrap">
+  <div class="eyebrow">07 · Recomendación (no ejecutar aún)</div>
+  <h2>Si aprobaras, este sería el orden — máximo desbloqueo por build</h2>
+  <p class="sub">Ordenado por ROI: cuánto reutiliza lo existente × cuántas áreas desbloquea × credibilidad enterprise. Es recomendación, no ejecución.</p>
+  <ol class="prio">
+    <li><div><h4>DataTable denso virtualizado <span style="color:var(--faint)">(área D · corrige 2 bugs)</span></h4><p>Primitiva única que resuelve la falta de virtualización y la reutilizan <span class="cn">A, C, E, F</span>. Mayor efecto palanca de todo el catálogo.</p></div></li>
+    <li><div><h4>Capa de orquestación mínima <span style="color:var(--faint)">(área G)</span></h4><p><span class="cn">AgentTopologyGraph + SwarmControlBar + BudgetCapGovernor</span> — cierra el hueco más grande de tu objetivo "orquestación", sobre React Flow. Sin esto el DS solo ve un agente.</p></div></li>
+    <li><div><h4>Cerrar compliance <span style="color:var(--faint)">(área C)</span></h4><p><span class="cn">EvidenceExportDialog + ApprovalChainStepper + ModelProvenanceCard</span> reutilizan actor-dual/hash de <span class="cn">AuditLogTable</span>. Sostiene la credibilidad ante auditor (EU AI Act, SOC2).</p></div></li>
+    <li><div><h4>Núcleo comercial <span style="color:var(--faint)">(área E — pilar nuevo)</span></h4><p><span class="cn">ForecastRollupTable · PipelineWaterfallChart · MutualActionPlanBoard · RelationshipMap · PricingApprovalMatrix · MRRMovementWaterfall</span>: los 6 que definen la dimensión comercial, sin equivalente en dashboard genérico.</p></div></li>
+    <li><div><h4>Núcleo industrial OT <span style="color:var(--faint)">(área F — pilar nuevo)</span></h4><p><span class="cn">AlarmBanner · AlarmSummaryTable · ProcessValueTile · AssetHealthGauge · OEEWaterfall · AutonomyModeSwitch</span> con disciplina ISA-101 grayscale — encaja natural en el tema dark.</p></div></li>
+    <li><div><h4>Adopción de estándares en lo existente <span style="color:var(--faint)">(correcciones)</span></h4><p>MCP Apps en <span class="cn">RichToolCallCard</span>, AG-UI en streaming, OTel GenAI en <span class="cn">TraceTree</span>, renombrar <span class="cn">AgentCard→AgentTile</span>. Deuda que crece si se pospone.</p></div></li>
+  </ol>
+
+  <div class="approve">
+    <h3>⛔ Nada ejecutado. Este documento es solo diagnóstico.</h3>
+    <p>Revisa las áreas E, F y G (los pilares nuevos) y las correcciones. Cuando apruebes — o ajustes alcance/prioridad — recién ahí paso a un plan de construcción. Dime qué áreas entran y en qué orden.</p>
+  </div>
+</div></section>
+
+<footer class="foot"><div class="wrap">
+  <div class="eyebrow">Fuentes &amp; método</div>
+  <p><b>Código verificado:</b> <code>packages/ui/src</code> (index.ts, agentic/, components/ui/), <code>packages/tokens</code>, <code>ds-bundle/components</code>, <code>scripts/a11y-audit.mjs</code>, <code>NORTH_STAR.md</code>, <code>VANGUARD_REPORT.md</code>.</p>
+  <p><b>Estado del arte 2026:</b> n8n · Temporal · LangGraph/LangSmith · OpenAI Agents SDK/AgentKit · Anthropic managed agents · Microsoft Conductor/AG-UI · Google A2A · MCP Apps &amp; elicitation · OTel GenAI · Clari · Gong · Salesforce SLDS · DealHub/PandaDoc · Dock/Aligned · ChartMogul/Stripe · ISA-101/18.2/88/95 · EEMUA 191 · IEC 61511 · EU AI Act Art. 12/13/14/19 · SOC2 CC7/CC8 · ISO 42001 + prEN 18286 · WCAG 2.2 AA.</p>
+  <p style="color:var(--faint-deco);margin-top:10px">studio-ds · gap analysis · 2026-07-03 · documento de revisión, no de ejecución</p>
+</div></footer>
