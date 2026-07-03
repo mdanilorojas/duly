@@ -769,3 +769,14 @@ Columna vertebral de tablas lista y exportada. Desbloquea rungs 4/5/6 (Forecast/
 - **Estados:** running (Pause+Cancel) / paused (Resume) / stopping (spinner, sin acciones).
 - **Verificación:** test 53/53 total, 6 nuevos (incl. axe + flujo de confirmación) · build OK · eslint 0.
 - **Resultado:** ✅ branch `feat/component-build-ladder`. Próximo: Unit 6/19 `BudgetCapGovernor` (cierra rung 2).
+
+## Unit 6/19 — BudgetCapGovernor (área G) · cierra rung 2
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición · **Framework:** ninguno nuevo (barras + umbral).
+- **Purpose:** topes de gasto por agente/workflow con burn-down vs cap y auto-halt (onBreach) al 100%. Reusa la gramática ok/warn/block.
+- **a11y:** cada barra es `role="progressbar"` con valuemin/max/now.
+- **Verificación:** test 59/59 (6 nuevos, incl. axe + onBreach) · build OK · eslint 0.
+- **Resultado:** ✅ branch `feat/component-build-ladder`.
+
+### ✅ Rung 2 COMPLETO (3/3) — AgentTopologyGraph · SwarmControlBar · BudgetCapGovernor
+El DS pasa de observar 1 agente a ver + controlar la flota (topología, control broadcast, presupuesto cruzado). Próximo: Rung 3 — Compliance (EvidenceExportDialog, ApprovalChainStepper, ModelProvenanceCard).
