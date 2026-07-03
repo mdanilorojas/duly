@@ -810,3 +810,10 @@ Compliance sube de 2 a 5 componentes (área C).
 El HTML de diseño resumió "19 unidades" pero rungs 4 y 5 tienen 7 componentes cada uno →
 total real ≈ **29 unidades**. Progreso: **9/29** (rungs 1–3 completos). Restan rung 4 (comercial,
 Recharts), rung 5 (industrial OT, ISA-101), rung 6 (6 correcciones/refactors).
+
+## Unit 10 — RatioGauge (área E, primitiva compartida) · abre rung 4
+
+- **Fecha:** 2026-07-03 · **Tipo:** primitiva · **Framework:** ninguno nuevo.
+- **Purpose:** valor vs target con barra + tono por umbral; la reusan Forecast (attainment/coverage) y AssetHealthGauge (F). Formatos pct/x/usd.
+- **Verificación:** test 78/78 (6 nuevos, incl. axe + progressbar) · build OK · eslint 0.
+- **Resultado:** ✅ branch. Nueva carpeta `src/commercial/`. Próximo: PipelineWaterfallChart (+ ChartFrame, Recharts).

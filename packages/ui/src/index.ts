@@ -33,3 +33,6 @@ export * from "./agentic/index.js";
 
 // compliance — auditoría / evidencia (área C)
 export * from "./compliance/index.js";
+
+// commercial — estrategia comercial enterprise (área E)
+export * from "./commercial/index.js";
