@@ -789,3 +789,10 @@ El DS pasa de observar 1 agente a ver + controlar la flota (topología, control 
 - **Verificación:** test 63/63 (4 nuevos, incl. export async ok/error + axe sobre document.body por el portal) · build OK · eslint 0.
 - **Nota:** un warning de consola de Radix async aparece en test pero no falla el gate (los 4 tests pasan). `src/compliance/` nueva carpeta + export en `src/index.ts`.
 - **Resultado:** ✅ branch. Próximo: Unit 8/19 `ApprovalChainStepper`.
+
+## Unit 8/19 — ApprovalChainStepper (área C)
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición · **Framework:** ninguno nuevo.
+- **Purpose:** quién aprobó qué, cuándo, en qué orden, con rama de rechazo. Un rechazo corta la cadena (pasos posteriores "no alcanzados"). Decisión = ícono+color+etiqueta (colorblind-safe).
+- **Verificación:** test 68/68 (5 nuevos, incl. axe + corte de cadena) · build OK · eslint 0.
+- **Resultado:** ✅ branch. Próximo: Unit 9/19 `ModelProvenanceCard` (cierra rung 3).
