@@ -25,3 +25,4 @@ export * from "./budget-cap-governor.js";
 export * from "./a2a-agent-card-viewer.js";
 export * from "./otel-trace-adapter.js";
 export * from "./streaming-message.js";
+export * from "./mcp-apps-widget-frame.js";

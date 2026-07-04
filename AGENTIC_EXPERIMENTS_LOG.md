@@ -960,3 +960,17 @@ Los 4 restantes NO son mecánicos — son adopción de estándares externos 2026
 - **Purpose:** cierra el gap `StreamingMessage` (área B). `reduceAgUiEvents` (pura) reduce el stream de eventos AG-UI a {texto, thinking, toolCalls, done}; el componente renderiza texto incremental + indicador de thinking + chips de tool-call inline, aria-live=polite en streaming.
 - **Verificación:** test 151/151 (7 nuevos: reducer + componente + axe) · build OK · eslint 0. Stories Streaming/Finished.
 - **Resultado:** ✅ branch. Rung 6: 4/6. Próximo: RichToolCallCard→MCP Apps (mcp-ui real).
+
+## Unit 28 — MCPAppsWidgetFrame / MCP Apps (rung 6, paquete real)
+
+- **Fecha:** 2026-07-04 · **Tipo:** host wrapper + integración real.
+- **Paquetes reales:** `@mcp-ui/client` (AppRenderer, sandbox postMessage/JSON-RPC) + `@modelcontextprotocol/sdk`. Externalizados en tsup.
+- **Purpose:** host temado del `AppRenderer` real de MCP Apps (ratificado 2026-01-26): monta el recurso de UI de un tool en iframe sandbox. Es el primitive por el que RichToolCallCard debe montar sus app-blocks (sandbox estándar, no renderer bespoke). AppRenderer diferido; frame aporta contenedor + carga accesible. `sandbox.url` (proxy) lo provee el consumidor.
+- **Verificación:** test 155/155 (4 nuevos, incl. axe) · build OK (dts typecheck contra los tipos reales de @mcp-ui) · eslint 0.
+- **Resultado:** ✅ branch.
+
+### ✅ Rung 6 COMPLETO (5 hechos + 1 skip deliberado)
+a11y-audit fix · AgentTile+A2AAgentCardViewer · TraceTree→OTel · StreamingMessage/AG-UI · MCP Apps. **Skip deliberado (acordado con usuario):** refactor DataTable de AuditLog/ExecHistory — tradeoff (tabla semántica mejor que grid virtualizado para logs exportables), no un bug.
+
+## 🏁 BUILD LADDER §07 COMPLETO — 28 units + 2 bugfixes
+Rungs 1–6 todos cerrados. Suite 155/155 verde, build tsup ESM+DTS OK, axe 0 violaciones en todas las stories nuevas. Todo en branch `feat/component-build-ladder`, un commit por unidad. Paquetes 2026 reales integrados: TanStack, React Flow, Recharts, @opentelemetry, @ag-ui/core, @mcp-ui/client. Pendiente: decisión de merge a main.

@@ -22,6 +22,8 @@ export default defineConfig({
     "recharts",
     /^@opentelemetry\//,
     /^@ag-ui\//,
+    /^@mcp-ui\//,
+    /^@modelcontextprotocol\//,
   ],
   esbuildOptions(options) {
     options.alias = { "@": resolve("src") };
