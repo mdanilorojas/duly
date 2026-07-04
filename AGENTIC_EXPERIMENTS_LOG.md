@@ -840,3 +840,11 @@ Recharts), rung 5 (industrial OT, ISA-101), rung 6 (6 correcciones/refactors).
 - **Diseño:** aplana el árbol según estado expandido y lo alimenta a DataTable (chevron+indent en la col Owner); reusa la columna vertebral en vez de reimplementar tabla.
 - **Verificación:** test 90/90 (4 nuevos, incl. expand + attainment + axe) · build OK · eslint 0.
 - **Resultado:** ✅ branch. Rung 4: 4/7. Próximo: MutualActionPlanBoard.
+
+## Unit 14 — MutualActionPlanBoard (área E)
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición · **Framework:** ninguno nuevo.
+- **Purpose:** plan de hitos comprador/vendedor (digital sales room) con dueño/fecha/dependencias/estado; detecta vencidos y bloqueos; dualidad buyer/seller; estado colorblind-safe.
+- **Nota:** `now` inyectable para test determinista (evita Date.now).
+- **Verificación:** test 95/95 (5 nuevos, incl. overdue + toggle + axe) · build OK (fix tipo de icono lucide) · eslint 0.
+- **Resultado:** ✅ branch. Rung 4: 5/7. Próximo: RelationshipMap.
