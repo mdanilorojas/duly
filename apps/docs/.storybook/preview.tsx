@@ -41,17 +41,26 @@ const preview: Preview = {
           type: "desktop",
         },
       },
-      defaultViewport: "mobile375",
+      defaultViewport: "desktop1440",
     },
   },
   decorators: [
-    (Story, ctx) => (
-      <div data-theme={ctx.globals.theme} style={{ background: "var(--bg-base)", padding: 24 }}>
-        <div style={{ width: "100%", maxWidth: 580, margin: "0 auto" }}>
-          <Story />
+    (Story, ctx) => {
+      // Las stories fullscreen (tablas, consolas, grafos, charts) gestionan su
+      // propio ancho — no las capamos a 580; solo las de componente suelto.
+      const fullscreen = ctx.parameters?.layout === "fullscreen";
+      return (
+        <div data-theme={ctx.globals.theme} style={{ background: "var(--bg-base)", padding: fullscreen ? 0 : 24 }}>
+          {fullscreen ? (
+            <Story />
+          ) : (
+            <div style={{ width: "100%", maxWidth: 580, margin: "0 auto" }}>
+              <Story />
+            </div>
+          )}
         </div>
-      </div>
-    ),
+      );
+    },
   ],
 };
 
