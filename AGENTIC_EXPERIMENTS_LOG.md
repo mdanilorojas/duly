@@ -952,3 +952,11 @@ Los 4 restantes NO son mecánicos — son adopción de estándares externos 2026
 - **Purpose:** `otelSpansToTraceSpans` mapea spans conformes a OTel GenAI (operation.name→SpanKind, usage tokens, cost custom, status error→tono) al árbol de `TraceTree`; soporta traza distribuida cross-agent por parentSpanId/traceId.
 - **Verificación:** test 144/144 (4 nuevos, cálculo puro) · build OK · eslint 0. Story `From OpenTelemetry gen_ai spans`.
 - **Resultado:** ✅ branch. Rung 6: 3/6. Próximo: StreamingMessage/AG-UI (paquete real).
+
+## Unit 27 — StreamingMessage / AG-UI (rung 6, paquete real)
+
+- **Fecha:** 2026-07-04 · **Tipo:** reducer + componente + integración real.
+- **Paquete real:** `@ag-ui/core` v0.0.57 — `EventType` enum real (TEXT_MESSAGE_CONTENT, TOOL_CALL_*, THINKING_*, RUN_FINISHED…). Externalizado en tsup.
+- **Purpose:** cierra el gap `StreamingMessage` (área B). `reduceAgUiEvents` (pura) reduce el stream de eventos AG-UI a {texto, thinking, toolCalls, done}; el componente renderiza texto incremental + indicador de thinking + chips de tool-call inline, aria-live=polite en streaming.
+- **Verificación:** test 151/151 (7 nuevos: reducer + componente + axe) · build OK · eslint 0. Stories Streaming/Finished.
+- **Resultado:** ✅ branch. Rung 6: 4/6. Próximo: RichToolCallCard→MCP Apps (mcp-ui real).

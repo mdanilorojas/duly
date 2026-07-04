@@ -21,6 +21,7 @@ export default defineConfig({
     /^@xyflow\//,
     "recharts",
     /^@opentelemetry\//,
+    /^@ag-ui\//,
   ],
   esbuildOptions(options) {
     options.alias = { "@": resolve("src") };

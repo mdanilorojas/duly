@@ -43,6 +43,7 @@
     "lint": "eslint src --max-warnings 0"
   },
   "dependencies": {
+    "@ag-ui/core": "^0.0.57",
     "@opentelemetry/api": "^1.9.1",
     "@opentelemetry/semantic-conventions": "^1.41.1",
     "@radix-ui/react-collapsible": "^1.1.0",
