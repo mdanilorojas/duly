@@ -1087,3 +1087,99 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
     `RunTimeline`/`TraceTree` ya existentes (área B, bajo esfuerzo); el run de "Financial Advisory
     Agent" de esta iteración es semilla directa de mock data para una futura
     `ComplianceAgentConsole` de servicios financieros.
+
+---
+
+## Iteración 14 — V001 Model Provenance Card + Retention Badge/Immutability Indicator (Auditoría/compliance)
+
+- **Fecha:** 2026-07-04T18:30:00Z
+- **Versión:** `ModelProvenanceCardV001` + `RetentionBadgeV001`/`ImmutabilityIndicatorV001`
+- **Tipo:** primitive × 3 (`ModelProvenanceCard`, `ModelProvenanceChip`, `RetentionBadge` +
+  `ImmutabilityIndicator`), área C (auditoría/compliance)
+- **Industria:** general (área C, auditoría/compliance) con semillas por industria en las stories:
+  salud (resumen clínico de alta, cardiología), servicios financieros (asesoría de portafolio con
+  drift de config no anunciado), software/tech (draft de comentario de review de PR, primer run
+  sin config previo que comparar).
+- **Storybook:** `Agentic/Model Provenance/V001 Model, Prompt, Config Hash` (stories:
+  `UnchangedConfig`, `ConfigDrift`, `NoPriorRunToCompare`, `InlineChipOnOutput`) ·
+  `Agentic/Retention Badge/V001 WORM & Immutability` (stories: `ProtectedWithinWindow`,
+  `EligibleForDeletion`, `LegalHoldIndefinite`, `CompactBadgeRow`).
+- **Inspiración investigada:** no se reabrió WebSearch esta iteración — la fila de catálogo y su
+  base legal (EU AI Act Art. 12/13 para procedencia de modelo, Art. 19 para retención) ya estaban
+  completamente especificadas en `NORTH_STAR.md` desde la vanguardia del 2026-07-02, incluyendo la
+  distinción explícita entre ambos artículos que el propio documento pide preservar. Se priorizó
+  cerrar el gap ya identificado con precisión suficiente sobre investigación externa redundante —
+  mismo criterio que las iteraciones 12 y 13.
+- **Razón de producto:** cierra la nueva prioridad #1 del NORTH_STAR (área C, auditoría/
+  compliance), que llevaba 0% de cobertura absoluta hasta la iteración 11 y aún tenía estas 2 filas
+  pendientes tras `AuditLogTable`/`WhoDidWhatTimeline`/`EvidenceExportDialog`/
+  `ApprovalChainStepper`. Sostiene directamente el principio #8 ("procedencia sobre magia: chips de
+  modelo/prompt/versión en cada output de IA") y el #4 ("la inmutabilidad se ve") — ambos sin
+  ningún componente dedicado hasta ahora, solo mencionados de pasada en otros componentes.
+- **Componentes creados:**
+  - `packages/ui/src/agentic/model-provenance-card.tsx`:
+    - `ModelProvenance { provider, model, modelVersion, promptVersion, promptLabel?, configHash,
+      params?, generatedAt, previousConfigHash? }` — separa deliberadamente "qué produjo el
+      output" (esta tarjeta) de "cuánto tiempo se conserva ese registro" (`RetentionBadge`, Art. 19
+      vs Art. 12/13).
+    - `<ModelProvenanceCard>` — chips de modelo (ícono `Cpu`) y prompt version (ícono
+      `ScrollText`) con la misma jerarquía visual que un `GuardrailChip`, chips de parámetros de
+      sampling opcionales (temp/top_p/max_tokens/seed), `HashBadge` de config reutilizado de
+      `AuditLogTable`, y un chip de **drift explícito**: `driftVerdict()` compara `configHash` con
+      `previousConfigHash` del mismo prompt — tono `ok` si no cambió, `warn` si cambió, y no se
+      muestra nada si no hay run anterior con qué comparar (evita un falso "sin cambios" en el
+      primer run).
+    - `<ModelProvenanceChip>` — versión inline compacta para el caso de uso literal del principio
+      #8 ("chip en cada output de IA", no solo en un panel dedicado): pensado para el footer de un
+      mensaje de chat, una fila de `TraceTree` o una celda de tabla; `title` nativo expone
+      modelo/versión/prompt/config completos.
+  - `packages/ui/src/agentic/retention-badge.tsx`:
+    - `RetentionRegime` (`worm`/`mutable`/`legal-hold`) y `RetentionStatus`
+      (`protected`/`eligible-for-deletion`/`hold`) sobre `RetentionRecord { recordId, regime,
+      status, retainedSince, minRetentionLabel, legalBasis, eligibleLabel?, progressPct?, hash? }`.
+    - `retentionStatusConfig` — `protected` tono `ok` (`LockKeyhole`), `eligible-for-deletion` tono
+      `warn` (`Archive`, es una acción disponible, no un fallo), `hold` tono `review` (`Gavel`,
+      indefinido por diseño — una obligación activa que pesa sobre WORM, no un estado "malo").
+    - `<RetentionBadge>` — pill compacto "WORM · 180 days minimum" para uso denso en filas de
+      tabla (ej. una columna de retención en `AuditLogTable`).
+    - `<ImmutabilityIndicator>` — detalle expandible sobre el mismo `Collapsible.Root` que
+      `GuardrailIndicator` (sin introducir un primitive nuevo): base legal, fecha de retención,
+      barra de progreso de la ventana mínima (solo si `status === "protected"`), y `HashBadge` del
+      registro retenido.
+  - `packages/ui/src/agentic/model-provenance-card.stories.tsx` y
+    `packages/ui/src/agentic/retention-badge.stories.tsx` — mock data rica por industria (ver
+    arriba); nota de lint: los identificadores de run/PR en las stories se escribieron sin `#`
+    (ej. "Run 4471", "PR 3021") porque la regla `no-restricted-syntax` de colores crudos
+    (`/#[0-9a-fA-F]{3,8}\b/`) hace falso-positivo con literales de string que empiezan con `#`
+    seguidos de 3-8 dígitos hexadecimales válidos — no es un color, pero el regex no lo distingue.
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 2 módulos nuevos.
+- **Comandos ejecutados:** `git status` + `git checkout main` + `git pull origin main` (fast-forward
+  limpio, 25 commits detrás — el contenedor arrancó con `HEAD` detached en `e31b822`) ·
+  `pnpm install` (faltaba `node_modules`) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/model-provenance-card.tsx src/agentic/model-provenance-card.stories.tsx
+  src/agentic/retention-badge.tsx src/agentic/retention-badge.stories.tsx src/agentic/index.ts` (2
+  errores de falso-positivo de color crudo por `#4471`/`#3021` en stories, corregidos quitando el
+  `#`; 0 errores tras el fix) · `pnpm --filter @studio/ui test` (26 passed, sin cambios) · `pnpm
+  exec turbo run build --filter=@studio/ui...` (OK, ESM 223.96 KB, DTS 65.60 KB) · `pnpm exec turbo
+  run build --filter=@studio/docs...` (Storybook static build OK, chunks nuevos
+  `model-provenance-card.stories-*.js` 10.76 kB, `retention-badge.stories-*.js` 11.55 kB).
+- **Resultado:** ✅ pendiente de commit/push a main. `NORTH_STAR.md` actualizado:
+  `ModelProvenanceCard` y `RetentionBadge/ImmutabilityIndicator` pasan de ❌ a ✅ (sección C, que
+  llega así a cobertura completa de sus 4 primeras filas); "Prioridad de construcción" reordenada
+  con `SubworkflowChip + ErrorWorkflowBanner` (área A) como nuevo #1 y `RBACMatrixViewer` añadido
+  como #3 (reutiliza el vocabulario de provider/modelo de `ModelProvenanceCard` y de actor de
+  `ApprovalChainStepper`).
+- **Notas para revisión humana:**
+  - El drift de config (`driftVerdict`) es una comparación de igualdad de string simple entre
+    `configHash` y `previousConfigHash` — no hay lógica de "qué cambió específicamente" (ej. un
+    diff de parámetros); si el catálogo pide eso a futuro, es una extensión natural de este mismo
+    componente, no uno nuevo.
+  - `RetentionBadge`/`ImmutabilityIndicator` reciben `status` y `progressPct` ya calculados por el
+    caller en vez de derivarlos de fechas en tiempo real — decisión deliberada para mantener el
+    componente puro/presentacional y las stories determinísticas, consistente con cómo
+    `EvalScoreBadge`/`AuditEvent` reciben tono ya explícito en vez de que el componente calcule
+    contra la fecha actual.
+  - Con esta iteración, área C (auditoría/compliance) del NORTH_STAR llega a 4 de 10 filas en ✅
+    (`AuditLogTable`, `WhoDidWhatTimeline`, `EvidenceExportDialog`, `ApprovalChainStepper`) más
+    estas 2 nuevas — 6 de 10 — dejando `RBACMatrixViewer`, `DataLineageGraph`, `ChangeRecordCard` e
+    `IncidentView` como las últimas 4 filas pendientes del área.

@@ -110,12 +110,12 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | WhoDidWhatTimeline | Feed cronológico filtrable con saved-query chips | ✅ (V001, Storybook `Agentic/Who Did What Timeline` — grupos cronológicos + chips de consulta guardada con conteo, autoservicio del auditor) |
 | EvidenceExportDialog | Export firmado (PDF/CSV/JSON) de un rango filtrado con manifiesto de hashes | ✅ (V001, Storybook `Agentic/Evidence Export/V001 Signed Manifest` — diálogo con selector de formato, preview del manifiesto de hashes vía `HashBadge`, y confirmación con hash del manifiesto firmado) |
 | ApprovalChainStepper | Quién aprobó qué, cuándo, en qué orden, con ramas de rechazo | ✅ (V001, Storybook `Agentic/Approval Chain/V001 Multi-Level Sign-Off` — stepper vertical con actor dual + hash badge por paso, rama punteada para rechazos re-enrutados) |
-| ModelProvenanceCard | Modelo, versión, prompt version, config hash por run | ❌ |
+| ModelProvenanceCard | Modelo, versión, prompt version, config hash por run | ✅ (V001, Storybook `Agentic/Model Provenance/V001 Model, Prompt, Config Hash` — chips de modelo y prompt version con la misma jerarquía visual que un guardrail, `HashBadge` de config reutilizado de `EvidenceExportDialog`/`AuditLogTable`, chip de drift explícito cuando el config hash cambia entre runs del mismo prompt; `ModelProvenanceChip` inline para el principio #8, "chip en cada output de IA") |
 | RBACMatrixViewer | Grid roles×permisos + "por qué este usuario tiene acceso" | ❌ |
 | DataLineageGraph | Origen→transformación→salida a nivel de campo | ❌ |
 | ChangeRecordCard | Cambio CC8.1: autor, reviewer, diff, rollback link | ❌ |
 | IncidentView | Timeline de incidente: run disparador, recursos afectados, remediación | ❌ |
-| RetentionBadge / ImmutabilityIndicator | Señal de confianza "WORM, retenido 6+ meses" | ❌ |
+| RetentionBadge / ImmutabilityIndicator | Señal de confianza "WORM, retenido 6+ meses" | ✅ (V001, Storybook `Agentic/Retention Badge/V001 WORM & Immutability` — `RetentionBadge` pill compacto (protected/eligible-for-deletion/hold) + `ImmutabilityIndicator` expandible con base legal, progreso de ventana mínima y hash del registro; separado explícitamente de `AuditLogTable`/`ModelProvenanceCard` (Art. 12/13) como obligación distinta (Art. 19)) |
 
 > **Señal regulatoria crítica (2026-07-02) — EU AI Act:** el "Digital Omnibus on AI" fue aprobado
 > por el Parlamento Europeo (16-jun-2026) y recibió luz verde final del Consejo (29-jun-2026),
@@ -165,30 +165,31 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 ## Prioridad de construcción (guía para el loop de 5h)
 
-Reordenado 2026-07-03 (loop de construcción, iteración 13). `GuardrailIndicator` +
-`EvalScoreBadge/Sparkline` — la prioridad #1 anterior — ya están construidos (V001, Storybook
-`Agentic/Guardrail Indicator/V001 Policy Checks` y `Agentic/Eval Score Badge/V001 Score vs
-Threshold`), y además se integraron directamente en `TraceTree` (spans ganan `guardrails`/
-`evalScore` opcionales, chips inline junto al costo) — cerrando 2 filas más de área B sobre el
-vocabulario de tono ya establecido. Antes de eso el loop ya había cerrado `RetryControls` +
-`CredentialCard/Picker` (commit `7bd2063`), `EvidenceExportDialog`/`ApprovalChainStepper` (commit
-`919ed8b`), `AgentConsentCard (Know-Your-Agent)` (commit `df33b3e`), `ExecutionHistoryTable +
-RunInspector` (commit `717d030`), `Rich Tool-UI` (commit `cabd93a`), `TraceTree`/`TokenCostMeter`
-(commit `b824186`), `AuditLogTable`/`WhoDidWhatTimeline` (commit `08256e9`),
-`ApprovalGateCard`/`HumanInterruptQueue` (commit `5dd5964`), `NodeStatusBadge`/`RunTimeline`
-(commit `3b39be4`) y `WCAG 2.2 AA` (commit `539e9db`).
+Reordenado 2026-07-04 (loop de construcción, iteración 14). `ModelProvenanceCard` +
+`RetentionBadge/ImmutabilityIndicator` — la prioridad #1 anterior — ya están construidos (V001,
+Storybook `Agentic/Model Provenance/V001 Model, Prompt, Config Hash` y `Agentic/Retention
+Badge/V001 WORM & Immutability`) — cierra las 2 filas restantes de área C sobre el patrón de
+manifiesto de hashes de `EvidenceExportDialog` y el vocabulario de actor dual de
+`ApprovalChainStepper`. Antes de eso el loop ya había cerrado `GuardrailIndicator`/
+`EvalScoreBadge` (commit `e31b822`), `RetryControls` + `CredentialCard/Picker` (commit `7bd2063`),
+`EvidenceExportDialog`/`ApprovalChainStepper` (commit `919ed8b`), `AgentConsentCard (Know-Your-
+Agent)` (commit `df33b3e`), `ExecutionHistoryTable + RunInspector` (commit `717d030`), `Rich
+Tool-UI` (commit `cabd93a`), `TraceTree`/`TokenCostMeter` (commit `b824186`), `AuditLogTable`/
+`WhoDidWhatTimeline` (commit `08256e9`), `ApprovalGateCard`/`HumanInterruptQueue` (commit
+`5dd5964`), `NodeStatusBadge`/`RunTimeline` (commit `3b39be4`) y `WCAG 2.2 AA` (commit `539e9db`).
 
-1. **ModelProvenanceCard + RetentionBadge/ImmutabilityIndicator** (nueva prioridad #1) —
-   siguientes filas de área C; `EvidenceExportDialog` ya sienta el patrón de manifiesto de hashes
-   que `RetentionBadge` puede reutilizar para "WORM, retenido 6+ meses" (Art. 19), y
-   `ApprovalChainStepper` ya distingue actor humano/agente/sistema, vocabulario directo para el
-   chip modelo/prompt/versión de `ModelProvenanceCard` (Art. 12/13).
-2. **SubworkflowChip + ErrorWorkflowBanner** — últimas filas fáciles de área A antes de
-   `WorkflowCanvasFrame` (que requiere diseño propio sin depender del editor n8n, mayor esfuerzo);
-   reutilizan el vocabulario de chip/banner ya presente en `RunInspector`/`ExecutionHistoryTable`.
-3. **AgentHandoffMarker + CheckpointBadge** — filas restantes de área B; ambas son marcadores
+1. **SubworkflowChip + ErrorWorkflowBanner** (nueva prioridad #1) — últimas filas fáciles de área A
+   antes de `WorkflowCanvasFrame` (que requiere diseño propio sin depender del editor n8n, mayor
+   esfuerzo); reutilizan el vocabulario de chip/banner ya presente en `RunInspector`/
+   `ExecutionHistoryTable`. Área A sigue en 13% de cobertura — la más rezagada tras el cierre de
+   área C esta iteración.
+2. **AgentHandoffMarker + CheckpointBadge** — filas restantes de área B; ambas son marcadores
    puntuales sobre timelines/trees ya existentes (`RunTimeline`, `TraceTree`, `ExecutionTimeline`)
    en vez de componentes nuevos desde cero — bajo esfuerzo, alto cierre de catálogo.
+3. **RBACMatrixViewer** — área C: `ModelProvenanceCard` ya distingue provider/modelo con chips
+   propios y `ApprovalChainStepper` ya tiene el vocabulario de actor humano/agente/sistema; base
+   directa para "por qué este usuario tiene acceso" (grid roles×permisos), y Temporal Cloud ya
+   lanzó "Custom Roles" como referencia de patrón (ver tabla D).
 4. **DataTable denso + Density modes + CommandPalette** — table stakes ops; `RichToolCallCard`'s
    `table` block, `ExecutionHistoryTable`, `CredentialPicker` y `AuditLogTable` ya sientan un
    patrón de tabla/lista densa reutilizable como punto de partida — esta es la oportunidad de
@@ -198,9 +199,10 @@ RunInspector` (commit `717d030`), `Rich Tool-UI` (commit `cabd93a`), `TraceTree`
    verificables en fuentes públicas 2026 — Studio DS puede ser pionero ahí en vez de seguir a
    alguien (ver `VANGUARD_REPORT.md`). `AgentConsentCard` ya dejó mock data de 4 industrias
    (financiera, salud, software, petróleo/energía) reutilizable como semilla de rosters de agentes
-   dedicados por industria en próximas versiones. La nueva story `TraceTree/WithGuardrailsAndEvalScore`
-   (iteración 13) ya modela un agente de asesoría financiera con guardrails de scope/PII — semilla
-   directa para una futura `ComplianceAgentConsole` de servicios financieros.
+   dedicados por industria en próximas versiones. La nueva story `ModelProvenanceCard/
+   ConfigDrift` (iteración 14) modela un agente de asesoría financiera (Opus 4.8) y
+   `UnchangedConfig` modela un agente de resumen clínico (salud) — semillas directas para
+   `ComplianceAgentConsole` (finanzas) y un panel de explicabilidad clínica (salud).
 
 ## Fuentes de vanguardia (el loop semanal las re-visita)
 
