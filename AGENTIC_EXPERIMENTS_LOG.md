@@ -944,3 +944,11 @@ Pilar industrial OT (área F, ISA-101/18.2/22400) construido — de 0 a 7. Progr
 Los 4 restantes NO son mecánicos — son adopción de estándares externos 2026 o un tradeoff:
 - **DataTable refactor de AuditLog/ExecHistory:** tradeoff real (grid virtualizado vs `<table>` semántica). Para logs exportables, la tabla semántica es *mejor*; virtualizar solo gana a miles de filas. No es un bug claro → recomendación: NO refactorizar salvo que se quiera una consola ops de alto volumen.
 - **RichToolCallCard→MCP Apps · StreamingMessage/AG-UI · TraceTree→OTel:** requieren los paquetes/protocolos reales (MCP Apps iframe bridge, eventos AG-UI, OTel GenAI). Hacerlos "bien" (sin inventar) necesita esas deps reales — pendiente de decisión del usuario sobre profundidad.
+
+## Unit 26 — TraceTree → OpenTelemetry GenAI (rung 6, paquete real)
+
+- **Fecha:** 2026-07-04 · **Tipo:** adapter + integración real.
+- **Paquete real:** `@opentelemetry/api` + `@opentelemetry/semantic-conventions` (constantes `gen_ai.*` reales de `/incubating`, no strings inventados). Externalizado en tsup.
+- **Purpose:** `otelSpansToTraceSpans` mapea spans conformes a OTel GenAI (operation.name→SpanKind, usage tokens, cost custom, status error→tono) al árbol de `TraceTree`; soporta traza distribuida cross-agent por parentSpanId/traceId.
+- **Verificación:** test 144/144 (4 nuevos, cálculo puro) · build OK · eslint 0. Story `From OpenTelemetry gen_ai spans`.
+- **Resultado:** ✅ branch. Rung 6: 3/6. Próximo: StreamingMessage/AG-UI (paquete real).

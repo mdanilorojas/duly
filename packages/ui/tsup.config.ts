@@ -20,6 +20,7 @@ export default defineConfig({
     /^@tanstack\//,
     /^@xyflow\//,
     "recharts",
+    /^@opentelemetry\//,
   ],
   esbuildOptions(options) {
     options.alias = { "@": resolve("src") };
