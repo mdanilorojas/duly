@@ -932,3 +932,15 @@ Pilar industrial OT (área F, ISA-101/18.2/22400) construido — de 0 a 7. Progr
 - **Fix:** `ROOT` hardcodeado `C:/dev/Enterprise Design System` → derivado de `import.meta.url` (`resolve(dirname(fileURLToPath), '..')`). Portable a CI/Linux.
 - **Verificación:** `node --check` OK (el run completo requiere playwright + storybook-static, fuera de este entorno).
 - **Resultado:** ✅ branch. Rung 6: 1/6. Próximo: refactor DataTable de AuditLogTable/ExecutionHistoryTable.
+
+## Unit 25 — AgentTile alias + A2AAgentCardViewer (rung 6, corrección de nomenclatura)
+
+- **Fecha:** 2026-07-03 · **Tipo:** corrección + componente nuevo.
+- **Fix:** "AgentCard" colisiona con el A2A Agent Card (doc de discovery 2026). Añadido `AgentTile` como alias no-breaking (AgentCard se conserva) + `A2AAgentCardViewer` real (skills/endpoint/auth/modalidades para discovery/trust).
+- **Verificación:** test 140/140 (3 nuevos, incl. axe) · build OK · eslint 0.
+- **Resultado:** ✅ branch. Rung 6: 2/6.
+
+### Checkpoint sobre rung 6 restante (4 ítems)
+Los 4 restantes NO son mecánicos — son adopción de estándares externos 2026 o un tradeoff:
+- **DataTable refactor de AuditLog/ExecHistory:** tradeoff real (grid virtualizado vs `<table>` semántica). Para logs exportables, la tabla semántica es *mejor*; virtualizar solo gana a miles de filas. No es un bug claro → recomendación: NO refactorizar salvo que se quiera una consola ops de alto volumen.
+- **RichToolCallCard→MCP Apps · StreamingMessage/AG-UI · TraceTree→OTel:** requieren los paquetes/protocolos reales (MCP Apps iframe bridge, eventos AG-UI, OTel GenAI). Hacerlos "bien" (sin inventar) necesita esas deps reales — pendiente de decisión del usuario sobre profundidad.

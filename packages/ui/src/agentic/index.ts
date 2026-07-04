@@ -22,3 +22,4 @@ export * from "./execution-history-console.js";
 export * from "./agent-topology-graph.js";
 export * from "./swarm-control-bar.js";
 export * from "./budget-cap-governor.js";
+export * from "./a2a-agent-card-viewer.js";

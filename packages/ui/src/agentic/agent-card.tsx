@@ -48,3 +48,12 @@ export function AgentCard({
     </div>
   );
 }
+
+/**
+ * Alias preferido de `AgentCard`. Corrección de nomenclatura: en 2026 "Agent
+ * Card" denota el documento de discovery del protocolo A2A (ver
+ * `A2AAgentCardViewer`), no una tarjeta de presentación. Esta es la tarjeta de
+ * PRESENTACIÓN; usa `AgentTile`. `AgentCard` se conserva por retrocompatibilidad.
+ */
+export const AgentTile = AgentCard;
+export type AgentTileProps = AgentCardProps;
