@@ -848,3 +848,11 @@ Recharts), rung 5 (industrial OT, ISA-101), rung 6 (6 correcciones/refactors).
 - **Nota:** `now` inyectable para test determinista (evita Date.now).
 - **Verificación:** test 95/95 (5 nuevos, incl. overdue + toggle + axe) · build OK (fix tipo de icono lucide) · eslint 0.
 - **Resultado:** ✅ branch. Rung 4: 5/7. Próximo: RelationshipMap.
+
+## Unit 15 — RelationshipMap (área E)
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición (grafo + roster) · **Framework:** React Flow (lazy, reuso del patrón de AgentTopologyGraph).
+- **Purpose:** org-chart del comité de compra (champion/economic-buyer/blocker), influencia, conexiones. Grafo aria-hidden + roster role=list accesible.
+- **Fix a11y:** `role="img"` en el indicador de influencia (aria-label prohibido en span sin role).
+- **Verificación:** test 99/99 (4 nuevos, incl. axe) · build OK · eslint 0.
+- **Resultado:** ✅ branch. Rung 4: 6/7. Próximo: PricingApprovalMatrix (cierra rung 4).
