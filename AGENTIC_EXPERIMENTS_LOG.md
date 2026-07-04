@@ -856,3 +856,12 @@ Recharts), rung 5 (industrial OT, ISA-101), rung 6 (6 correcciones/refactors).
 - **Fix a11y:** `role="img"` en el indicador de influencia (aria-label prohibido en span sin role).
 - **Verificación:** test 99/99 (4 nuevos, incl. axe) · build OK · eslint 0.
 - **Resultado:** ✅ branch. Rung 4: 6/7. Próximo: PricingApprovalMatrix (cierra rung 4).
+
+## Unit 16 — PricingApprovalMatrix (área E) · cierra rung 4
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición · **Framework:** ninguno nuevo.
+- **Purpose:** gobernanza de deal-desk: enruta un descuento al aprobador por umbral; resalta el tier activo; excepción si excede política.
+- **Verificación:** test 103/103 (4 nuevos, incl. tier activo + excepción + axe) · build OK · eslint 0.
+
+### ✅ Rung 4 COMPLETO (7/7) — RatioGauge · PipelineWaterfall · MRRWaterfall · ForecastRollupTable · MutualActionPlanBoard · RelationshipMap · PricingApprovalMatrix
+Pilar comercial (área E) construido — de 0 a 7 componentes. Progreso: 16/29. Restan rung 5 (industrial OT) y rung 6 (refactors).
