@@ -832,3 +832,11 @@ Recharts), rung 5 (industrial OT, ISA-101), rung 6 (6 correcciones/refactors).
 - **Purpose:** bridge de MRR (new/expansion/reactivation/contraction/churn). Reusa la base waterfall.
 - **Verificación:** test 86/86 (2 nuevos, incl. axe) · build OK · eslint 0.
 - **Resultado:** ✅ branch. Rung 4: 3/7 (RatioGauge, Pipeline, MRR). Restan Forecast, MutualActionPlan, RelationshipMap, PricingApprovalMatrix.
+
+## Unit 13 — ForecastRollupTable (área E)
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición sobre DataTable · **Framework:** DataTable (reuso).
+- **Purpose:** roll-up jerárquico rep→manager→exec (commit/best-case/pipeline/delta), filas expandibles, attainment por fila con tono de umbral.
+- **Diseño:** aplana el árbol según estado expandido y lo alimenta a DataTable (chevron+indent en la col Owner); reusa la columna vertebral en vez de reimplementar tabla.
+- **Verificación:** test 90/90 (4 nuevos, incl. expand + attainment + axe) · build OK · eslint 0.
+- **Resultado:** ✅ branch. Rung 4: 4/7. Próximo: MutualActionPlanBoard.
