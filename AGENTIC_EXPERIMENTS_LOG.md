@@ -873,3 +873,10 @@ Pilar comercial (área E) construido — de 0 a 7 componentes. Progreso: 16/29. 
 - **Fix:** el anillo (borde + spin) pasa a ser un overlay `aria-hidden` (`absolute inset-0`); el icono y el contador quedan estáticos encima. Propaga a RunTimeline (usa NodeStatusBadge).
 - **Regresión:** `node-status-badge.test.tsx` — el contador no tiene ancestro con `animate-spin`; el spin vive en overlay aria-hidden.
 - **Verificación:** test 106/106 · build OK · eslint 0.
+
+## Unit 17 — AlarmChip/PriorityBadge (área F) · abre rung 5
+
+- **Fecha:** 2026-07-03 · **Tipo:** primitiva base · **Framework:** ninguno nuevo.
+- **Purpose:** prioridad×estado de alarma (ISA-18.2) colorblind-safe (color+forma+etiqueta). Base de AlarmBanner y AlarmSummaryTable. unack sólido / ack outline / shelved punteado.
+- **Verificación:** test 110/110 (4 nuevos, incl. axe) · build OK · eslint 0.
+- **Resultado:** ✅ branch. Nueva carpeta `src/industrial/`. Rung 5: 1/7. Próximo: AlarmBanner.

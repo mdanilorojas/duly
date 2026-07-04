@@ -36,3 +36,6 @@ export * from "./compliance/index.js";
 
 // commercial — estrategia comercial enterprise (área E)
 export * from "./commercial/index.js";
+
+// industrial — operación OT / SCADA (área F, ISA-101/18.2)
+export * from "./industrial/index.js";
