@@ -909,3 +909,10 @@ Pilar comercial (área E) construido — de 0 a 7 componentes. Progreso: 16/29. 
 - **Purpose:** índice de salud 0–100 con bandas healthy/watch/critical + tendencia.
 - **Verificación:** test 130/130 (6 nuevos, incl. 3 bandas + trend + axe) · build OK · eslint 0.
 - **Resultado:** ✅ branch. Rung 5: 5/7. Próximo: OEEWaterfall (reusa WaterfallChart).
+
+## Unit 22 — OEEWaterfall (área F, ISO 22400)
+
+- **Fecha:** 2026-07-03 · **Tipo:** wrapper de WaterfallChart · **Framework:** Recharts (heredado).
+- **Purpose:** de tiempo planificado a productivo neto restando pérdidas availability/performance/quality. Muestra dónde se pierde producción.
+- **Verificación:** test 132/132 (2 nuevos, incl. axe) · build OK · eslint 0.
+- **Resultado:** ✅ branch. Rung 5: 6/7. Próximo: AutonomyModeSwitch (cierra rung 5).
