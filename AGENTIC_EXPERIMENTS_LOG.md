@@ -1183,3 +1183,102 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
     (`AuditLogTable`, `WhoDidWhatTimeline`, `EvidenceExportDialog`, `ApprovalChainStepper`) más
     estas 2 nuevas — 6 de 10 — dejando `RBACMatrixViewer`, `DataLineageGraph`, `ChangeRecordCard` e
     `IncidentView` como las últimas 4 filas pendientes del área.
+
+---
+
+## Iteración 15 — V001 Subworkflow Chip + Error Workflow Banner (n8n / proceso empresarial)
+
+- **Fecha:** 2026-07-04T19:15:00Z
+- **Versión:** `SubworkflowChipV001` + `ErrorWorkflowBannerV001`
+- **Tipo:** primitive × 2, área A (n8n / proceso empresarial)
+- **Industria:** general (área A) con semillas por industria en las stories: software/tech
+  (Vendor Compliance Check, Global Error Handler), petróleo/energía (Wellhead Pressure Escalation,
+  HSE Incident Response), servicios financieros (AML Sanctions Screening, Compliance Escalation).
+- **Storybook:** `Agentic/Subworkflow Chip/V001 Child Execution Reference` (stories: `Success`,
+  `Running`, `Failed`, `NoSummary`, `InlineOnNodeRow`) · `Agentic/Error Workflow Banner/V001
+  Routed to Handler` (stories: `Handled`, `HandlerRunning`, `HandlerAlsoFailed`,
+  `WithoutFailedNodeTitle`, `OnFailedRunInspector`) · `Agentic/Execution History/V001 n8n-style
+  Runs` extendido (`MasterDetail` ahora demuestra ambos deep-links wireados end-to-end).
+- **Inspiración investigada:** no se reabrió WebSearch esta iteración — ambas filas ya estaban
+  completamente especificadas en la "Prioridad de construcción" del NORTH_STAR desde la
+  iteración 14 (`SubworkflowChip + ErrorWorkflowBanner` como nueva prioridad #1, reutilizando el
+  vocabulario de chip/banner ya presente en `RunInspector`/`ExecutionHistoryTable`). Se priorizó
+  cerrar el gap ya identificado con precisión suficiente sobre investigación externa redundante —
+  mismo criterio que las iteraciones 12-14.
+- **Razón de producto:** cierra las 2 últimas filas fáciles de área A (n8n/proceso empresarial)
+  antes de `WorkflowCanvasFrame` (que requiere diseño propio sin depender del editor n8n, mayor
+  esfuerzo — n8n confirmó que no ofrece white-label ni en su plan OEM). Área A pasa de 5/8 (63%,
+  con `ExecutionHistoryTable` en 🟡) a tener solo `WorkflowCanvasFrame` pendiente. Ambos
+  componentes sostienen el principio #6 del NORTH_STAR ("replay read-only de cualquier run pasado
+  es interacción core") extendiéndolo a runs relacionados (padre↔hijo, fallo↔handler) en vez de
+  solo al run seleccionado.
+- **Componentes creados:**
+  - `packages/ui/src/agentic/subworkflow-chip.tsx`:
+    - `SubworkflowRef { executionId, workflowName, status, summary?, onOpen? }` sobre
+      `NodeStatus` ya existente (reutiliza la gramática de 6 estados de `NodeStatusBadge`, no
+      introduce una segunda paleta para "referencia a otra ejecución").
+    - `<SubworkflowChip>` — dos affordances deliberadamente distintas: el botón principal
+      (workflow name + ícono `Workflow` + `ArrowUpRight`) es un deep-link real (`onOpen`); el
+      caret solo expande un `summary` inline sobre `Collapsible.Root` (mismo primitive que
+      `RunInspector`/`GuardrailIndicator`) sin navegar — el operador puede confirmar "¿qué corrió
+      ahí?" sin perder el contexto del run padre.
+  - `packages/ui/src/agentic/error-workflow-banner.tsx`:
+    - `ErrorHandlerRef { executionId, workflowName, status, failedNodeTitle?, onOpen? }`.
+    - `<ErrorWorkflowBanner>` — tono `warn` deliberado (no `block`): el fallo ya fue capturado y
+      ruteado a un manejador, es una remediación en curso, no una alarma sin resolver — misma
+      distinción que ya hace `RetryControls` entre el marcador "Failed here" (block) y el propio
+      control de reintento. Ícono `Route`, `NodeStatusBadge` inline del handler (que puede estar
+      `running` o incluso `error` — un fallo enrutado no garantiza resolución) y cross-link.
+  - `packages/ui/src/agentic/run-inspector.tsx` — extendido, no reemplazado:
+    - `RunInspectorNode.subworkflow?: SubworkflowRef` — pinta un `SubworkflowChip` inline debajo
+      del título de un nodo tipo "Execute Workflow".
+    - `RunInspectorProps.errorHandler?: ErrorHandlerRef` — pinta un `ErrorWorkflowBanner` al tope
+      del panel cuando el fallo del run fue enrutado a otro workflow.
+  - `packages/ui/src/agentic/execution-history-table.tsx` — `ExecutionRecord.errorHandler?:
+    ErrorHandlerRef` (dato puro, mismo patrón que `attempt`/`triggerMode`).
+  - `packages/ui/src/agentic/execution-history-console.tsx` — wiring real, no solo visual: 2
+    ejecuciones mock nuevas (`exec_9931aa` Vendor Compliance Check, `exec_5e01f0` Global Error
+    Handler), un nodo `n4b` "Execute Workflow" en `exec_8f21a0` con `subworkflow` apuntando a
+    `exec_9931aa`, y `errorHandler` en `exec_a10f55` apuntando a `exec_5e01f0`. El componente
+    inyecta `onOpen` genéricamente sobre cualquier nodo/ejecución con estas referencias
+    (`setSelectedId` sobre el `executionId` de destino) — el mock data queda declarativo/puro y la
+    interactividad vive en el nivel de consola, igual que `onSelect` ya wireaba las filas de
+    `ExecutionHistoryTable`.
+  - `packages/ui/src/agentic/subworkflow-chip.stories.tsx` y
+    `packages/ui/src/agentic/error-workflow-banner.stories.tsx` — mock data rica por industria (ver
+    arriba) más una story `InlineOnNodeRow`/`OnFailedRunInspector` que muestra el caso de uso real
+    (no un componente flotante suelto) y referencia la demo integrada en
+    `Agentic/Execution History/V001 n8n-style Runs`.
+  - `packages/ui/src/agentic/execution-history-console.stories.tsx` — nota de `MasterDetail`
+    actualizada para señalar los 2 deep-links nuevos.
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 2 módulos nuevos.
+- **Comandos ejecutados:** `git status` + `git checkout main` + `git fetch origin main` + `git
+  merge --ff-only origin/main` (el contenedor arrancó con `HEAD` detached en `33c583c` y la rama
+  local `main` desactualizada 26 commits — resuelto con fast-forward limpio, sin conflictos) ·
+  `pnpm install` (faltaba `node_modules`) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/subworkflow-chip.tsx src/agentic/subworkflow-chip.stories.tsx
+  src/agentic/error-workflow-banner.tsx src/agentic/error-workflow-banner.stories.tsx
+  src/agentic/run-inspector.tsx src/agentic/execution-history-table.tsx
+  src/agentic/execution-history-console.tsx src/agentic/execution-history-console.stories.tsx
+  src/agentic/index.ts` (0 errores) · `pnpm --filter @studio/ui test` (26 passed, sin cambios) ·
+  `pnpm exec turbo run build --filter=@studio/ui...` (OK, ESM 232.41 KB, DTS 69.03 KB) · `pnpm exec
+  turbo run build --filter=@studio/docs...` (Storybook static build OK, chunks nuevos
+  `subworkflow-chip-*.js` 3.13 kB, `subworkflow-chip.stories-*.js` 5.67 kB,
+  `error-workflow-banner-*.js` 2.47 kB, `error-workflow-banner.stories-*.js` 5.95 kB,
+  `execution-history-console.stories-*.js` recompilado a 30.49 kB).
+- **Resultado:** ✅ pendiente de commit/push a main. `NORTH_STAR.md` actualizado: `SubworkflowChip`
+  y `ErrorWorkflowBanner` pasan de ❌ a ✅ (área A); "Prioridad de construcción" reordenada con
+  `AgentHandoffMarker + CheckpointBadge` (área B) como nuevo #1 y `WorkflowCanvasFrame` bajado a
+  #4 (única fila restante de área A, mayor esfuerzo).
+- **Notas para revisión humana:**
+  - El deep-link entre ejecuciones vive completamente dentro de `ExecutionHistoryConsole` en esta
+    demo (navega vía `setSelectedId`, todo en la misma tabla mock) — en una integración real el
+    `executionId` de destino podría vivir en otro workflow/proyecto y `onOpen` tendría que navegar
+    a otra vista/ruta en vez de solo cambiar la selección local; el contrato del componente
+    (`onOpen: () => void`) ya soporta ambos casos sin cambios.
+  - `ErrorWorkflowBanner` no valida que `handler.status` sea coherente con "ya resuelto" — a
+    propósito: la story `HandlerAlsoFailed` documenta que un fallo enrutado puede terminar en otro
+    fallo, y el componente no debe implicar una garantía de resolución que no tiene.
+  - Con esta iteración, área A (n8n/proceso empresarial) del NORTH_STAR llega a 5 de 8 filas en ✅
+    más `ExecutionHistoryTable` en 🟡 (falta virtualización) — solo `WorkflowCanvasFrame` queda
+    completamente sin empezar.

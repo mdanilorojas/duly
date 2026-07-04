@@ -4,6 +4,8 @@ import * as Collapsible from "@radix-ui/react-collapsible";
 import { cn } from "@/lib/utils";
 import { NodeStatusBadge, nodeStatusConnectorClass, type NodeStatus } from "./node-status-badge.js";
 import { RetryControls, type RetryAttemptRecord } from "./retry-controls.js";
+import { SubworkflowChip, type SubworkflowRef } from "./subworkflow-chip.js";
+import { ErrorWorkflowBanner, type ErrorHandlerRef } from "./error-workflow-banner.js";
 
 export interface RunInspectorNode {
   id: string;
@@ -28,6 +30,8 @@ export interface RunInspectorNode {
     onRetryFromStart?: () => void;
     onRetryFromFailedNode?: () => void;
   };
+  /** Referencia a la ejecución hija — solo en nodos tipo "Execute Workflow". */
+  subworkflow?: SubworkflowRef;
 }
 
 function DataPane({ title, data }: { title: string; data?: Record<string, React.ReactNode> }) {
@@ -85,6 +89,12 @@ function InspectorNodeRow({ node, isLast, defaultOpen }: InspectorNodeRowProps) 
           ) : null}
         </div>
 
+        {node.subworkflow ? (
+          <div className="mt-2">
+            <SubworkflowChip subworkflow={node.subworkflow} />
+          </div>
+        ) : null}
+
         {isFailure ? (
           <div className="mt-2 rounded-md border border-block/40 bg-block/10 px-2.5 py-1.5">
             <div className="flex items-start gap-1.5 text-[11px] font-semibold text-block">
@@ -130,6 +140,8 @@ export interface RunInspectorProps extends React.ComponentProps<"div"> {
   hint?: string;
   nodes: RunInspectorNode[];
   emptyLabel?: string;
+  /** Se pinta cuando el fallo de este run fue enrutado a un workflow de error handling. */
+  errorHandler?: ErrorHandlerRef;
 }
 
 /**
@@ -144,13 +156,17 @@ export interface RunInspectorProps extends React.ComponentProps<"div"> {
  * lectura — la única acción disponible es `RetryControls` (retry-desde-
  * inicio vs desde-nodo-fallido), anclada directamente al marcador "Failed
  * here" cuando `node.retry` está presente, tal como pedía la nota de diseño
- * del NORTH_STAR para esta prioridad #1.
+ * del NORTH_STAR para esta prioridad #1. Extendido con dos filas más de área
+ * A: `node.subworkflow` pinta un `SubworkflowChip` inline en un nodo tipo
+ * "Execute Workflow"; `errorHandler` pinta un `ErrorWorkflowBanner` cuando el
+ * fallo de este run fue enrutado a otro workflow de error handling.
  */
 export function RunInspector({
   title = "Run inspector",
   hint,
   nodes,
   emptyLabel = "Select an execution to inspect its nodes.",
+  errorHandler,
   className,
   ...props
 }: RunInspectorProps) {
@@ -168,6 +184,12 @@ export function RunInspector({
           {hint ? <span className="min-w-0 truncate font-mono text-[11px] text-dim">{hint}</span> : null}
         </span>
       </div>
+
+      {errorHandler ? (
+        <div className="px-4 pt-4">
+          <ErrorWorkflowBanner handler={errorHandler} />
+        </div>
+      ) : null}
 
       {nodes.length === 0 ? (
         <div className="px-4 py-10 text-center text-xs text-dim">{emptyLabel}</div>

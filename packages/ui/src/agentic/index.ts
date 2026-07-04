@@ -28,3 +28,5 @@ export * from "./guardrail-indicator.js";
 export * from "./eval-score-badge.js";
 export * from "./model-provenance-card.js";
 export * from "./retention-badge.js";
+export * from "./subworkflow-chip.js";
+export * from "./error-workflow-banner.js";

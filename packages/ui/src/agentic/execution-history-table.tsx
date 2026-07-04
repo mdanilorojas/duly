@@ -2,6 +2,7 @@ import * as React from "react";
 import { MousePointerClick, Webhook, Timer, ShieldAlert, RotateCcw, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NodeStatusBadge, type NodeStatus } from "./node-status-badge.js";
+import type { ErrorHandlerRef } from "./error-workflow-banner.js";
 
 export type TriggerMode = "manual" | "webhook" | "schedule" | "error_handler" | "retry";
 
@@ -30,6 +31,8 @@ export interface ExecutionRecord {
   duration: string;
   /** Intentos [actual, máx] — se omite si nunca hubo retry. */
   attempt?: [current: number, max: number];
+  /** Presente cuando el fallo de esta ejecución fue enrutado a un workflow de error handling. `onOpen` normalmente se wirea en el consumidor (ver `ExecutionHistoryConsole`). */
+  errorHandler?: ErrorHandlerRef;
 }
 
 function TriggerChip({ mode }: { mode: TriggerMode }) {

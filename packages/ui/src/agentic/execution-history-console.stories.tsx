@@ -30,7 +30,11 @@ export const MasterDetail: S = {
           derecha. n8n no ofrece white-label completo ni en su plan OEM (n8n.io/oem/, confirmado
           2026-07-02) — esta consola es una reconstrucción propia de la vista de ejecuciones, no un
           iframe de marca ajena. El nodo `exec_a10f55` (Contract Redline Review) abre con el marcador
-          "Failed here" ya expandido por defecto.
+          "Failed here" ya expandido por defecto. `exec_8f21a0` (Invoice Reconciliation) tiene un
+          nodo "Execute Workflow" con un `SubworkflowChip` — click en el nombre del workflow para
+          saltar a la ejecución hija `exec_9931aa`. `exec_a10f55` además muestra un
+          `ErrorWorkflowBanner` que enlaza a `exec_5e01f0` (Global Error Handler) que capturó su
+          fallo.
         </p>
       </div>
     </div>

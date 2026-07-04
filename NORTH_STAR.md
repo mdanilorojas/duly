@@ -41,8 +41,8 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | NodeStatusBadge | success/error/running/waiting/skipped/retrying (anillo dashed animado) | ✅ (V001) |
 | RetryControls | Retry-desde-inicio vs desde-nodo-fallido, contador de intentos | ✅ (V001, Storybook `Agentic/Retry Controls/V001 Start vs Failed Node` — anclado directamente al marcador "Failed here" de `RunInspector` vía `node.retry`, historial que distingue reintentos automáticos de manuales) |
 | CredentialCard/Picker | Credencial: tipo, owner, last-used, compartida-con, health | ✅ (V001, Storybook `Agentic/Credential Card/V001 Type Owner Health` — salud no binaria valid/expiring/expired/revoked, listbox accesible con filtro por nombre/owner/tipo) |
-| SubworkflowChip | Referencia expandible/deep-link a ejecución hija | ❌ |
-| ErrorWorkflowBanner | "Este fallo se enrutó al error handler X" con cross-link | ❌ |
+| SubworkflowChip | Referencia expandible/deep-link a ejecución hija | ✅ (V001, Storybook `Agentic/Subworkflow Chip/V001 Child Execution Reference` — pill con `NodeStatusBadge` + botón deep-link + caret que expande un resumen inline sin navegar; wireado en `RunInspector` vía `node.subworkflow` sobre un nodo "Execute Workflow", con demo integrada en `ExecutionHistoryConsole` saltando de `exec_8f21a0` a `exec_9931aa`) |
+| ErrorWorkflowBanner | "Este fallo se enrutó al error handler X" con cross-link | ✅ (V001, Storybook `Agentic/Error Workflow Banner/V001 Routed to Handler` — banner tono `warn` (no `block`: el fallo ya fue capturado y ruteado) con `NodeStatusBadge` del handler + cross-link; wireado como `RunInspector.errorHandler`, con demo integrada saltando de `exec_a10f55` a `exec_5e01f0`) |
 | WorkflowCanvasFrame | Contenedor temado para embeber el editor n8n (zoom, fit, read-only) | ❌ |
 
 > **Nota 2026-07-02**: n8n confirma que su plan OEM **no ofrece white-label completo** — el
@@ -165,35 +165,36 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 ## Prioridad de construcción (guía para el loop de 5h)
 
-Reordenado 2026-07-04 (loop de construcción, iteración 14). `ModelProvenanceCard` +
-`RetentionBadge/ImmutabilityIndicator` — la prioridad #1 anterior — ya están construidos (V001,
-Storybook `Agentic/Model Provenance/V001 Model, Prompt, Config Hash` y `Agentic/Retention
-Badge/V001 WORM & Immutability`) — cierra las 2 filas restantes de área C sobre el patrón de
-manifiesto de hashes de `EvidenceExportDialog` y el vocabulario de actor dual de
-`ApprovalChainStepper`. Antes de eso el loop ya había cerrado `GuardrailIndicator`/
-`EvalScoreBadge` (commit `e31b822`), `RetryControls` + `CredentialCard/Picker` (commit `7bd2063`),
+Reordenado 2026-07-04 (loop de construcción, iteración 15). `SubworkflowChip` +
+`ErrorWorkflowBanner` — la prioridad #1 anterior — ya están construidos (V001, Storybook
+`Agentic/Subworkflow Chip/V001 Child Execution Reference` y `Agentic/Error Workflow Banner/V001
+Routed to Handler`) — cierran las 2 últimas filas fáciles de área A antes de `WorkflowCanvasFrame`,
+wireados como deep-links reales dentro de `ExecutionHistoryConsole` (`exec_8f21a0` → `exec_9931aa`
+vía chip, `exec_a10f55` → `exec_5e01f0` vía banner). Antes de eso el loop ya había cerrado
+`ModelProvenanceCard`/`RetentionBadge` (commit `33c583c`), `GuardrailIndicator`/`EvalScoreBadge`
+(commit `e31b822`), `RetryControls` + `CredentialCard/Picker` (commit `7bd2063`),
 `EvidenceExportDialog`/`ApprovalChainStepper` (commit `919ed8b`), `AgentConsentCard (Know-Your-
 Agent)` (commit `df33b3e`), `ExecutionHistoryTable + RunInspector` (commit `717d030`), `Rich
 Tool-UI` (commit `cabd93a`), `TraceTree`/`TokenCostMeter` (commit `b824186`), `AuditLogTable`/
 `WhoDidWhatTimeline` (commit `08256e9`), `ApprovalGateCard`/`HumanInterruptQueue` (commit
 `5dd5964`), `NodeStatusBadge`/`RunTimeline` (commit `3b39be4`) y `WCAG 2.2 AA` (commit `539e9db`).
 
-1. **SubworkflowChip + ErrorWorkflowBanner** (nueva prioridad #1) — últimas filas fáciles de área A
-   antes de `WorkflowCanvasFrame` (que requiere diseño propio sin depender del editor n8n, mayor
-   esfuerzo); reutilizan el vocabulario de chip/banner ya presente en `RunInspector`/
-   `ExecutionHistoryTable`. Área A sigue en 13% de cobertura — la más rezagada tras el cierre de
-   área C esta iteración.
-2. **AgentHandoffMarker + CheckpointBadge** — filas restantes de área B; ambas son marcadores
-   puntuales sobre timelines/trees ya existentes (`RunTimeline`, `TraceTree`, `ExecutionTimeline`)
-   en vez de componentes nuevos desde cero — bajo esfuerzo, alto cierre de catálogo.
-3. **RBACMatrixViewer** — área C: `ModelProvenanceCard` ya distingue provider/modelo con chips
+1. **AgentHandoffMarker + CheckpointBadge** (nueva prioridad #1) — filas restantes de área B; ambas
+   son marcadores puntuales sobre timelines/trees ya existentes (`RunTimeline`, `TraceTree`,
+   `ExecutionTimeline`) en vez de componentes nuevos desde cero — bajo esfuerzo, alto cierre de
+   catálogo. Área A queda en 63% (5 de 8) tras esta iteración, dejando solo
+   `WorkflowCanvasFrame` (mayor esfuerzo, diseño propio) pendiente.
+2. **RBACMatrixViewer** — área C: `ModelProvenanceCard` ya distingue provider/modelo con chips
    propios y `ApprovalChainStepper` ya tiene el vocabulario de actor humano/agente/sistema; base
    directa para "por qué este usuario tiene acceso" (grid roles×permisos), y Temporal Cloud ya
    lanzó "Custom Roles" como referencia de patrón (ver tabla D).
-4. **DataTable denso + Density modes + CommandPalette** — table stakes ops; `RichToolCallCard`'s
+3. **DataTable denso + Density modes + CommandPalette** — table stakes ops; `RichToolCallCard`'s
    `table` block, `ExecutionHistoryTable`, `CredentialPicker` y `AuditLogTable` ya sientan un
    patrón de tabla/lista densa reutilizable como punto de partida — esta es la oportunidad de
    generalizarlo a un primitive único y virtualizado.
+4. **WorkflowCanvasFrame** — última fila de área A; requiere diseño propio de la vista de
+   ejecución (n8n no ofrece white-label ni en su plan OEM) — mayor esfuerzo que el resto del
+   catálogo restante, por eso baja en la lista pese a cerrar el área por completo.
 5. Resto del catálogo, variante por industria (inmobiliaria, petróleo, software, finanzas, salud).
    Nota de investigación: inmobiliaria y petróleo/energía siguen sin patrones de UI de agentes-IA
    verificables en fuentes públicas 2026 — Studio DS puede ser pionero ahí en vez de seguir a
