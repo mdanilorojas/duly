@@ -880,3 +880,11 @@ Pilar comercial (área E) construido — de 0 a 7 componentes. Progreso: 16/29. 
 - **Purpose:** prioridad×estado de alarma (ISA-18.2) colorblind-safe (color+forma+etiqueta). Base de AlarmBanner y AlarmSummaryTable. unack sólido / ack outline / shelved punteado.
 - **Verificación:** test 110/110 (4 nuevos, incl. axe) · build OK · eslint 0.
 - **Resultado:** ✅ branch. Nueva carpeta `src/industrial/`. Rung 5: 1/7. Próximo: AlarmBanner.
+
+## Unit 18 — AlarmBanner (área F)
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición · **Framework:** ninguno nuevo (+ AlarmChip).
+- **Purpose:** strip persistente con la alarma no-reconocida de mayor prioridad + conteo + reconocer (ISA-18.2). Calmo/grises cuando 0 alarmas (ISA-101). role=alert activo / role=status calmo.
+- **Nota:** color de texto por prioridad vía map estático (no template dinámico — Tailwind static extraction).
+- **Verificación:** test 114/114 (4 nuevos, incl. axe) · build OK · eslint 0.
+- **Resultado:** ✅ branch. Rung 5: 2/7. Próximo: AlarmSummaryTable (DataTable + AlarmChip).
