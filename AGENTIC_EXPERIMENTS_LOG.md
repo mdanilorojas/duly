@@ -902,3 +902,10 @@ Pilar comercial (área E) construido — de 0 a 7 componentes. Progreso: 16/29. 
 - **Purpose:** valor de proceso + barra analógica con setpoint y bandas de límite. ISA-101: grises en normal, color+etiqueta "fuera de límite" solo al salir de lo/hi.
 - **Verificación:** test 124/124 (5 nuevos, incl. breach hi/lo + axe) · build OK · eslint 0.
 - **Resultado:** ✅ branch. Rung 5: 4/7. Próximo: AssetHealthGauge (reusa RatioGauge).
+
+## Unit 21 — AssetHealthGauge (área F)
+
+- **Fecha:** 2026-07-03 · **Tipo:** wrapper de RatioGauge · **Framework:** RatioGauge (reuso cross-área E→F).
+- **Purpose:** índice de salud 0–100 con bandas healthy/watch/critical + tendencia.
+- **Verificación:** test 130/130 (6 nuevos, incl. 3 bandas + trend + axe) · build OK · eslint 0.
+- **Resultado:** ✅ branch. Rung 5: 5/7. Próximo: OEEWaterfall (reusa WaterfallChart).
