@@ -925,3 +925,10 @@ Pilar comercial (área E) construido — de 0 a 7 componentes. Progreso: 16/29. 
 
 ### ✅ Rung 5 COMPLETO (7/7) — AlarmChip · AlarmBanner · AlarmSummaryTable · ProcessValueTile · AssetHealthGauge · OEEWaterfall · AutonomyModeSwitch
 Pilar industrial OT (área F, ISA-101/18.2/22400) construido — de 0 a 7. Progreso: 23/29. Resta rung 6 (6 refactors/correcciones).
+
+## Unit 24 — fix a11y-audit.mjs ruta portable (rung 6, corrección)
+
+- **Fecha:** 2026-07-03 · **Tipo:** bugfix mecánico.
+- **Fix:** `ROOT` hardcodeado `C:/dev/Enterprise Design System` → derivado de `import.meta.url` (`resolve(dirname(fileURLToPath), '..')`). Portable a CI/Linux.
+- **Verificación:** `node --check` OK (el run completo requiere playwright + storybook-static, fuera de este entorno).
+- **Resultado:** ✅ branch. Rung 6: 1/6. Próximo: refactor DataTable de AuditLogTable/ExecutionHistoryTable.

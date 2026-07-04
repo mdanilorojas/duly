@@ -2,9 +2,12 @@
 import { chromium } from 'playwright';
 import { readFileSync, writeFileSync } from 'fs';
 import { createServer } from 'http';
-import { extname, join } from 'path';
+import { extname, join, resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const ROOT = 'C:/dev/Enterprise Design System';
+// Raíz del repo derivada de la ubicación del script (scripts/..) — portable a
+// CI/Linux; antes estaba hardcodeada a una ruta absoluta de Windows.
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const AXE = readFileSync(`${ROOT}/node_modules/.pnpm/axe-core@4.9.1/node_modules/axe-core/axe.min.js`, 'utf8');
 const index = JSON.parse(readFileSync(`${ROOT}/apps/docs/storybook-static/index.json`, 'utf8'));
 const ids = Object.values(index.entries).filter(e => e.type === 'story').map(e => e.id);
