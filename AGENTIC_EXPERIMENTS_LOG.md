@@ -895,3 +895,10 @@ Pilar comercial (área E) construido — de 0 a 7 componentes. Progreso: 16/29. 
 - **Purpose:** lista de alarmas activas ordenada por prioridad/tiempo (triage ISA-18.2), reconocer/shelve por fila; virtualiza en flood. `sortAlarms` pura y testeada.
 - **Verificación:** test 119/119 (5 nuevos, incl. orden + ack + virtualización flood 60 + axe) · build OK · eslint 0.
 - **Resultado:** ✅ branch. Rung 5: 3/7. Próximo: ProcessValueTile.
+
+## Unit 20 — ProcessValueTile (área F, ISA-101)
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición · **Framework:** ninguno nuevo.
+- **Purpose:** valor de proceso + barra analógica con setpoint y bandas de límite. ISA-101: grises en normal, color+etiqueta "fuera de límite" solo al salir de lo/hi.
+- **Verificación:** test 124/124 (5 nuevos, incl. breach hi/lo + axe) · build OK · eslint 0.
+- **Resultado:** ✅ branch. Rung 5: 4/7. Próximo: AssetHealthGauge (reusa RatioGauge).
