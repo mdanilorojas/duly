@@ -916,3 +916,12 @@ Pilar comercial (área E) construido — de 0 a 7 componentes. Progreso: 16/29. 
 - **Purpose:** de tiempo planificado a productivo neto restando pérdidas availability/performance/quality. Muestra dónde se pierde producción.
 - **Verificación:** test 132/132 (2 nuevos, incl. axe) · build OK · eslint 0.
 - **Resultado:** ✅ branch. Rung 5: 6/7. Próximo: AutonomyModeSwitch (cierra rung 5).
+
+## Unit 23 — AutonomyModeSwitch (área F) · cierra rung 5
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición · **Framework:** Button (reuso).
+- **Purpose:** nivel de autonomía Manual→Advisory→Supervised→Full-auto; subir pide confirmación (sensible), bajar inmediato; disabledAbove topa el máximo.
+- **Verificación:** test 137/137 (5 nuevos, incl. confirmación de subida + disabledAbove + axe) · build OK · eslint 0.
+
+### ✅ Rung 5 COMPLETO (7/7) — AlarmChip · AlarmBanner · AlarmSummaryTable · ProcessValueTile · AssetHealthGauge · OEEWaterfall · AutonomyModeSwitch
+Pilar industrial OT (área F, ISA-101/18.2/22400) construido — de 0 a 7. Progreso: 23/29. Resta rung 6 (6 refactors/correcciones).
