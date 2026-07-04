@@ -888,3 +888,10 @@ Pilar comercial (área E) construido — de 0 a 7 componentes. Progreso: 16/29. 
 - **Nota:** color de texto por prioridad vía map estático (no template dinámico — Tailwind static extraction).
 - **Verificación:** test 114/114 (4 nuevos, incl. axe) · build OK · eslint 0.
 - **Resultado:** ✅ branch. Rung 5: 2/7. Próximo: AlarmSummaryTable (DataTable + AlarmChip).
+
+## Unit 19 — AlarmSummaryTable (área F)
+
+- **Fecha:** 2026-07-03 · **Tipo:** composición sobre DataTable · **Framework:** DataTable + AlarmChip.
+- **Purpose:** lista de alarmas activas ordenada por prioridad/tiempo (triage ISA-18.2), reconocer/shelve por fila; virtualiza en flood. `sortAlarms` pura y testeada.
+- **Verificación:** test 119/119 (5 nuevos, incl. orden + ack + virtualización flood 60 + axe) · build OK · eslint 0.
+- **Resultado:** ✅ branch. Rung 5: 3/7. Próximo: ProcessValueTile.
