@@ -113,10 +113,12 @@ export function NodeStatusBadge({
         className={cn(
           "relative inline-flex shrink-0 items-center justify-center rounded-full bg-surface-2",
           sizeRing[size],
-          cfg.ring,
         )}
       >
-        <Icon className={cn(sizeIcon[size], cfg.iconTone)} aria-hidden />
+        {/* El anillo (borde + posible animación de giro) va como overlay para que
+            el icono y el contador de intentos NO roten con el spin del anillo. */}
+        <span aria-hidden className={cn("absolute inset-0 rounded-full", cfg.ring)} />
+        <Icon className={cn("relative", sizeIcon[size], cfg.iconTone)} aria-hidden />
         {showAttempt ? (
           <span
             aria-hidden

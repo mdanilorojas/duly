@@ -865,3 +865,11 @@ Recharts), rung 5 (industrial OT, ISA-101), rung 6 (6 correcciones/refactors).
 
 ### ✅ Rung 4 COMPLETO (7/7) — RatioGauge · PipelineWaterfall · MRRWaterfall · ForecastRollupTable · MutualActionPlanBoard · RelationshipMap · PricingApprovalMatrix
 Pilar comercial (área E) construido — de 0 a 7 componentes. Progreso: 16/29. Restan rung 5 (industrial OT) y rung 6 (refactors).
+
+## Fix — NodeStatusBadge: el contador de reintentos rotaba con el anillo
+
+- **Fecha:** 2026-07-03 · **Tipo:** bugfix (reportado por usuario, screenshot).
+- **Síntoma:** en estado `retrying`/`running` el contador "2/3" salía rotado/invertido porque estaba dentro del span con `motion-safe:animate-spin`.
+- **Fix:** el anillo (borde + spin) pasa a ser un overlay `aria-hidden` (`absolute inset-0`); el icono y el contador quedan estáticos encima. Propaga a RunTimeline (usa NodeStatusBadge).
+- **Regresión:** `node-status-badge.test.tsx` — el contador no tiene ancestro con `animate-spin`; el spin vive en overlay aria-hidden.
+- **Verificación:** test 106/106 · build OK · eslint 0.
