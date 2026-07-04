@@ -39,10 +39,10 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | ExecutionHistoryTable | Lista virtualizada: status dot, workflow, modo trigger, duración, retry | 🟡 (V001, Storybook `Agentic/Execution History/V001 n8n-style Runs` — tabla semántica densa con `NodeStatusBadge`, chip de trigger, reintentos; sin virtualización todavía, ver "DataTable denso") |
 | RunInspector | Replay read-only por nodo con input/output y marcador "falló aquí" | ✅ (V001, mismo Storybook — panes Input/Output por nodo, banner "Failed here" auto-expandido en el nodo que falló) |
 | NodeStatusBadge | success/error/running/waiting/skipped/retrying (anillo dashed animado) | ✅ (V001) |
-| RetryControls | Retry-desde-inicio vs desde-nodo-fallido, contador de intentos | ❌ |
-| CredentialCard/Picker | Credencial: tipo, owner, last-used, compartida-con, health | ❌ |
-| SubworkflowChip | Referencia expandible/deep-link a ejecución hija | ❌ |
-| ErrorWorkflowBanner | "Este fallo se enrutó al error handler X" con cross-link | ❌ |
+| RetryControls | Retry-desde-inicio vs desde-nodo-fallido, contador de intentos | ✅ (V001, Storybook `Agentic/Retry Controls/V001 Start vs Failed Node` — anclado directamente al marcador "Failed here" de `RunInspector` vía `node.retry`, historial que distingue reintentos automáticos de manuales) |
+| CredentialCard/Picker | Credencial: tipo, owner, last-used, compartida-con, health | ✅ (V001, Storybook `Agentic/Credential Card/V001 Type Owner Health` — salud no binaria valid/expiring/expired/revoked, listbox accesible con filtro por nombre/owner/tipo) |
+| SubworkflowChip | Referencia expandible/deep-link a ejecución hija | ✅ (V001, Storybook `Agentic/Subworkflow Chip/V001 Child Execution Reference` — pill con `NodeStatusBadge` + botón deep-link + caret que expande un resumen inline sin navegar; wireado en `RunInspector` vía `node.subworkflow` sobre un nodo "Execute Workflow", con demo integrada en `ExecutionHistoryConsole` saltando de `exec_8f21a0` a `exec_9931aa`) |
+| ErrorWorkflowBanner | "Este fallo se enrutó al error handler X" con cross-link | ✅ (V001, Storybook `Agentic/Error Workflow Banner/V001 Routed to Handler` — banner tono `warn` (no `block`: el fallo ya fue capturado y ruteado) con `NodeStatusBadge` del handler + cross-link; wireado como `RunInspector.errorHandler`, con demo integrada saltando de `exec_a10f55` a `exec_5e01f0`) |
 | WorkflowCanvasFrame | Contenedor temado para embeber el editor n8n (zoom, fit, read-only) | ❌ |
 
 > **Nota 2026-07-02**: n8n confirma que su plan OEM **no ofrece white-label completo** — el
@@ -55,14 +55,14 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 | Componente | Propósito | Estado |
 |---|---|---|
-| TraceTree / SpanRow | Spans anidados (LLM/tool/agente/retrieval) con duración, tokens y costo por span | ✅ (V001, Storybook `Agentic/Trace Tree` — árbol colapsable con waterfall de tiempo y rollup de costo/tokens por rama) |
+| TraceTree / SpanRow | Spans anidados (LLM/tool/agente/retrieval) con duración, tokens y costo por span | ✅ (V001, Storybook `Agentic/Trace Tree` — árbol colapsable con waterfall de tiempo y rollup de costo/tokens por rama; extendido en iteración 13 con `guardrails`/`evalScore` opcionales por span, chips inline junto al costo) |
 | ApprovalGateCard | Evidence pack: qué/por qué/blast-radius/rollback + approve/reject/escalate + timeout | ✅ (V001, Storybook `Agentic/Approval Gate` — 4 estados de resolución: approved/rejected/escalated/expired, mobile-first) |
 | HumanInterruptQueue | Inbox de runs pausados esperando revisión, ordenado por riesgo/edad; debe funcionar también en mobile (ver nota) | ✅ (V001, Storybook `Agentic/Human Interrupt Queue` — ordena por tono de riesgo y luego edad, filas expandibles a `ApprovalGateCard`) |
-| AgentConsentCard (Know-Your-Agent) | Perfil de agente + alcance + consentimiento explícito antes de una acción sensible | ❌ (nuevo — ver fuente abajo) |
+| AgentConsentCard (Know-Your-Agent) | Perfil de agente + alcance + consentimiento explícito antes de una acción sensible | ✅ (V001, Storybook `Agentic/Agent Consent/V001 Know Your Agent` — perfil con `AgentCore`, alcance con checkbox por permiso, límites configurables, 4 estados de resolución pending/consented/declined/revoked) |
 | RunTimeline | Timeline estilo Temporal con estados vivos (dashed/solid/color) | ✅ (V001, Storybook `Agentic/Run Timeline` — construido sobre la gramática de 6 estados de `NodeStatusBadge`) |
 | TokenCostMeter | Costo por run y agregado (modelo vs tools vs retrieval), umbrales de presupuesto | ✅ (V001, Storybook `Agentic/Token Cost Meter` — desglose por categoría + barra de presupuesto con umbral ok/warn/block) |
-| GuardrailIndicator | Pill passed/warned/blocked, expandible a la política que disparó | ❌ |
-| EvalScoreBadge + Sparkline | Score vs umbral, flechas de regresión | ❌ |
+| GuardrailIndicator | Pill passed/warned/blocked, expandible a la política que disparó | ✅ (V001, Storybook `Agentic/Guardrail Indicator/V001 Policy Checks` — pill resumen con tono = peor de la lista, expande a políticas input/output/tool con rationale; `GuardrailChip` para uso inline denso) |
+| EvalScoreBadge + Sparkline | Score vs umbral, flechas de regresión | ✅ (V001, Storybook `Agentic/Eval Score Badge/V001 Score vs Threshold` — score vs umbral con tono ok/warn/block, flecha de regresión vs run anterior y sparkline de tendencia con línea de umbral) |
 | AgentHandoffMarker | Punto visual de transferencia agente↔agente o agente→humano | ❌ |
 | StreamingMessage / ThinkingIndicator | Stream de tokens con chips de tool-call inline | ❌ |
 | Rich Tool-UI (tool-based generative UI) | UI enriquecida por tipo de tool dentro de un tool-call, no solo texto/JSON | ✅ (V002, Storybook `Agentic/Tool Call Card/V002 Rich Tool-UI` — `RichToolCallCard` con 6 tipos de bloque: table/diff/citations/confirm/metrics/code, patrón "Controlled Generative UI") |
@@ -108,14 +108,14 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 |---|---|---|
 | AuditLogTable | Stream inmutable: actor (humano/agente/sistema), acción, recurso, hash badge | ✅ (V001, Storybook `Agentic/Audit Log Table` — tabla semántica densa, actor con icono+anillo dual, hash badge de inmutabilidad) |
 | WhoDidWhatTimeline | Feed cronológico filtrable con saved-query chips | ✅ (V001, Storybook `Agentic/Who Did What Timeline` — grupos cronológicos + chips de consulta guardada con conteo, autoservicio del auditor) |
-| EvidenceExportDialog | Export firmado (PDF/CSV/JSON) de un rango filtrado con manifiesto de hashes | ❌ |
-| ApprovalChainStepper | Quién aprobó qué, cuándo, en qué orden, con ramas de rechazo | ❌ |
-| ModelProvenanceCard | Modelo, versión, prompt version, config hash por run | ❌ |
+| EvidenceExportDialog | Export firmado (PDF/CSV/JSON) de un rango filtrado con manifiesto de hashes | ✅ (V001, Storybook `Agentic/Evidence Export/V001 Signed Manifest` — diálogo con selector de formato, preview del manifiesto de hashes vía `HashBadge`, y confirmación con hash del manifiesto firmado) |
+| ApprovalChainStepper | Quién aprobó qué, cuándo, en qué orden, con ramas de rechazo | ✅ (V001, Storybook `Agentic/Approval Chain/V001 Multi-Level Sign-Off` — stepper vertical con actor dual + hash badge por paso, rama punteada para rechazos re-enrutados) |
+| ModelProvenanceCard | Modelo, versión, prompt version, config hash por run | ✅ (V001, Storybook `Agentic/Model Provenance/V001 Model, Prompt, Config Hash` — chips de modelo y prompt version con la misma jerarquía visual que un guardrail, `HashBadge` de config reutilizado de `EvidenceExportDialog`/`AuditLogTable`, chip de drift explícito cuando el config hash cambia entre runs del mismo prompt; `ModelProvenanceChip` inline para el principio #8, "chip en cada output de IA") |
 | RBACMatrixViewer | Grid roles×permisos + "por qué este usuario tiene acceso" | ❌ |
 | DataLineageGraph | Origen→transformación→salida a nivel de campo | ❌ |
 | ChangeRecordCard | Cambio CC8.1: autor, reviewer, diff, rollback link | ❌ |
 | IncidentView | Timeline de incidente: run disparador, recursos afectados, remediación | ❌ |
-| RetentionBadge / ImmutabilityIndicator | Señal de confianza "WORM, retenido 6+ meses" | ❌ |
+| RetentionBadge / ImmutabilityIndicator | Señal de confianza "WORM, retenido 6+ meses" | ✅ (V001, Storybook `Agentic/Retention Badge/V001 WORM & Immutability` — `RetentionBadge` pill compacto (protected/eligible-for-deletion/hold) + `ImmutabilityIndicator` expandible con base legal, progreso de ventana mínima y hash del registro; separado explícitamente de `AuditLogTable`/`ModelProvenanceCard` (Art. 12/13) como obligación distinta (Art. 19)) |
 
 > **Señal regulatoria crítica (2026-07-02) — EU AI Act:** el "Digital Omnibus on AI" fue aprobado
 > por el Parlamento Europeo (16-jun-2026) y recibió luz verde final del Consejo (29-jun-2026),
@@ -165,35 +165,45 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 ## Prioridad de construcción (guía para el loop de 5h)
 
-Reordenado 2026-07-03 (loop de construcción, iteración 9). `ExecutionHistoryTable + RunInspector`
-— la prioridad #1 anterior — ya está construido (V001, Storybook `Agentic/Execution History/V001
-n8n-style Runs`, composición `ExecutionHistoryConsole` master-detail). Antes de eso el loop ya
-había cerrado `Rich Tool-UI` (commit `cabd93a`), `TraceTree`/`TokenCostMeter` (commit `b824186`),
-`AuditLogTable`/`WhoDidWhatTimeline` (commit `08256e9`), `ApprovalGateCard`/`HumanInterruptQueue`
-(commit `5dd5964`), `NodeStatusBadge`/`RunTimeline` (commit `3b39be4`) y `WCAG 2.2 AA` (commit
-`539e9db`). Área A pasa de 13% a 25% de cobertura ponderada (2 filas de 8 con avance, una ✅ y una
-🟡 — `ExecutionHistoryTable` queda 🟡 porque aún no es virtualizada, ver ítem 5 de esta lista).
+Reordenado 2026-07-04 (loop de construcción, iteración 15). `SubworkflowChip` +
+`ErrorWorkflowBanner` — la prioridad #1 anterior — ya están construidos (V001, Storybook
+`Agentic/Subworkflow Chip/V001 Child Execution Reference` y `Agentic/Error Workflow Banner/V001
+Routed to Handler`) — cierran las 2 últimas filas fáciles de área A antes de `WorkflowCanvasFrame`,
+wireados como deep-links reales dentro de `ExecutionHistoryConsole` (`exec_8f21a0` → `exec_9931aa`
+vía chip, `exec_a10f55` → `exec_5e01f0` vía banner). Antes de eso el loop ya había cerrado
+`ModelProvenanceCard`/`RetentionBadge` (commit `33c583c`), `GuardrailIndicator`/`EvalScoreBadge`
+(commit `e31b822`), `RetryControls` + `CredentialCard/Picker` (commit `7bd2063`),
+`EvidenceExportDialog`/`ApprovalChainStepper` (commit `919ed8b`), `AgentConsentCard (Know-Your-
+Agent)` (commit `df33b3e`), `ExecutionHistoryTable + RunInspector` (commit `717d030`), `Rich
+Tool-UI` (commit `cabd93a`), `TraceTree`/`TokenCostMeter` (commit `b824186`), `AuditLogTable`/
+`WhoDidWhatTimeline` (commit `08256e9`), `ApprovalGateCard`/`HumanInterruptQueue` (commit
+`5dd5964`), `NodeStatusBadge`/`RunTimeline` (commit `3b39be4`) y `WCAG 2.2 AA` (commit `539e9db`).
 
-1. **AgentConsentCard (Know-Your-Agent)** (nueva prioridad #1) — perfil de agente + alcance +
-   consentimiento explícito antes de una acción sensible; tiene una base natural en
-   `ApprovalGateCard` para reutilizar (evidence pack + evidencia visual de tono/riesgo), y
-   `RichToolCallCard.confirm` aporta el widget de confirmación embebida que puede reutilizar.
-2. **EvidenceExportDialog + ApprovalChainStepper** — siguientes filas de área C ahora que
-   `AuditLogTable`/`WhoDidWhatTimeline` sientan el vocabulario visual (actor dual, hash badge,
-   tono) que estos dos componentes pueden reutilizar directamente.
-3. **RetryControls + CredentialCard/Picker** — siguientes filas de área A, reutilizando el
-   vocabulario de `NodeStatusBadge`/`ExecutionHistoryTable` ya establecido (retry-desde-inicio vs
-   desde-nodo-fallido puede anclarse directamente al marcador "Failed here" de `RunInspector`).
-4. **GuardrailIndicator + EvalScoreBadge** — `TraceTree` ya expone tono por span (ok/warn/block);
-   estos dos ítems reutilizan ese mismo vocabulario para exponer policy checks y regresión de eval
-   junto al costo, cerrando más filas del área B.
-5. **DataTable denso + Density modes + CommandPalette** — table stakes ops; `RichToolCallCard`'s
-   `table` block y `ExecutionHistoryTable` ya sientan un patrón de tabla densa reutilizable como
-   punto de partida — esta es la oportunidad de generalizarlo a un primitive único y virtualizado.
-6. Resto del catálogo, variante por industria (inmobiliaria, petróleo, software, finanzas, salud).
+1. **AgentHandoffMarker + CheckpointBadge** (nueva prioridad #1) — filas restantes de área B; ambas
+   son marcadores puntuales sobre timelines/trees ya existentes (`RunTimeline`, `TraceTree`,
+   `ExecutionTimeline`) en vez de componentes nuevos desde cero — bajo esfuerzo, alto cierre de
+   catálogo. Área A queda en 63% (5 de 8) tras esta iteración, dejando solo
+   `WorkflowCanvasFrame` (mayor esfuerzo, diseño propio) pendiente.
+2. **RBACMatrixViewer** — área C: `ModelProvenanceCard` ya distingue provider/modelo con chips
+   propios y `ApprovalChainStepper` ya tiene el vocabulario de actor humano/agente/sistema; base
+   directa para "por qué este usuario tiene acceso" (grid roles×permisos), y Temporal Cloud ya
+   lanzó "Custom Roles" como referencia de patrón (ver tabla D).
+3. **DataTable denso + Density modes + CommandPalette** — table stakes ops; `RichToolCallCard`'s
+   `table` block, `ExecutionHistoryTable`, `CredentialPicker` y `AuditLogTable` ya sientan un
+   patrón de tabla/lista densa reutilizable como punto de partida — esta es la oportunidad de
+   generalizarlo a un primitive único y virtualizado.
+4. **WorkflowCanvasFrame** — última fila de área A; requiere diseño propio de la vista de
+   ejecución (n8n no ofrece white-label ni en su plan OEM) — mayor esfuerzo que el resto del
+   catálogo restante, por eso baja en la lista pese a cerrar el área por completo.
+5. Resto del catálogo, variante por industria (inmobiliaria, petróleo, software, finanzas, salud).
    Nota de investigación: inmobiliaria y petróleo/energía siguen sin patrones de UI de agentes-IA
    verificables en fuentes públicas 2026 — Studio DS puede ser pionero ahí en vez de seguir a
-   alguien (ver `VANGUARD_REPORT.md`).
+   alguien (ver `VANGUARD_REPORT.md`). `AgentConsentCard` ya dejó mock data de 4 industrias
+   (financiera, salud, software, petróleo/energía) reutilizable como semilla de rosters de agentes
+   dedicados por industria en próximas versiones. La nueva story `ModelProvenanceCard/
+   ConfigDrift` (iteración 14) modela un agente de asesoría financiera (Opus 4.8) y
+   `UnchangedConfig` modela un agente de resumen clínico (salud) — semillas directas para
+   `ComplianceAgentConsole` (finanzas) y un panel de explicabilidad clínica (salud).
 
 ## Fuentes de vanguardia (el loop semanal las re-visita)
 

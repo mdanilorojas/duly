@@ -2,6 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { ExecutionHistoryTable, type ExecutionRecord } from "./execution-history-table.js";
 import { RunInspector, type RunInspectorNode } from "./run-inspector.js";
+import type { RetryAttemptRecord } from "./retry-controls.js";
 
 export const DEFAULT_EXECUTIONS: ExecutionRecord[] = [
   {
@@ -27,6 +28,14 @@ export const DEFAULT_EXECUTIONS: ExecutionRecord[] = [
     triggerMode: "schedule",
     startedAt: "Jul 3, 06:00",
     duration: "8.1s",
+    // El Error Trigger de "Global Error Handler" (exec_5e01f0) capturó este
+    // fallo — `onOpen` se agrega genéricamente en `ExecutionHistoryConsole`.
+    errorHandler: {
+      executionId: "exec_5e01f0",
+      workflowName: "Global Error Handler",
+      status: "success",
+      failedNodeTitle: "HTTP Request: Push to DocuSign",
+    },
   },
   {
     id: "exec_c98b12",
@@ -53,6 +62,28 @@ export const DEFAULT_EXECUTIONS: ExecutionRecord[] = [
     startedAt: "Jul 3, 14:05",
     duration: "—",
   },
+  {
+    id: "exec_9931aa",
+    workflowName: "Vendor Compliance Check",
+    status: "success",
+    triggerMode: "manual",
+    startedAt: "Jul 3, 09:12",
+    duration: "1.1s",
+  },
+  {
+    id: "exec_5e01f0",
+    workflowName: "Global Error Handler",
+    status: "success",
+    triggerMode: "error_handler",
+    startedAt: "Jul 3, 06:00",
+    duration: "640ms",
+  },
+];
+
+const DOCUSIGN_RETRY_HISTORY: RetryAttemptRecord[] = [
+  { attempt: 1, status: "error", trigger: "automatic", at: "05:59:12" },
+  { attempt: 2, status: "error", trigger: "automatic", at: "05:59:47" },
+  { attempt: 3, status: "error", trigger: "automatic", at: "06:00:52" },
 ];
 
 export const DEFAULT_EXECUTION_NODES: Record<string, RunInspectorNode[]> = {
@@ -84,6 +115,22 @@ export const DEFAULT_EXECUTION_NODES: Record<string, RunInspectorNode[]> = {
       meta: "4ms",
       input: { amount_usd: "42,500", threshold: "10,000" },
       output: { branch: "true" },
+    },
+    {
+      id: "n4b",
+      title: "Execute Workflow: Vendor compliance check",
+      status: "success",
+      nodeType: "n8n-nodes-base.executeWorkflow",
+      meta: "1.1s",
+      input: { vendor: "Acme Supply Co.", workflow_id: "wf_vendor_compliance" },
+      output: { verdict: "clear" },
+      // Ejecución hija — `onOpen` se agrega genéricamente en `ExecutionHistoryConsole`.
+      subworkflow: {
+        executionId: "exec_9931aa",
+        workflowName: "Vendor Compliance Check",
+        status: "success",
+        summary: "3 nodes · 1.1s",
+      },
     },
     {
       id: "n5",
@@ -137,6 +184,11 @@ export const DEFAULT_EXECUTION_NODES: Record<string, RunInspectorNode[]> = {
       input: { envelope_id: "env_77c1", endpoint: "/envelopes/send" },
       output: { status: "504" },
       error: "504 Gateway Timeout after 3 retries — DocuSign API unreachable.",
+      attempt: [3, 3],
+      retry: {
+        maxAttempts: 3,
+        history: DOCUSIGN_RETRY_HISTORY,
+      },
     },
     { id: "n5", title: "Slack: Notify legal", status: "skipped", nodeType: "n8n-nodes-base.slack", meta: "not reached" },
   ],
@@ -173,6 +225,64 @@ export const DEFAULT_EXECUTION_NODES: Record<string, RunInspectorNode[]> = {
     { id: "n2", title: "Function: Classify severity", status: "success", nodeType: "n8n-nodes-base.function", meta: "22ms" },
     { id: "n3", title: "Human Approval: Page on-call?", status: "waiting", nodeType: "n8n-nodes-base.wait", meta: "awaiting response" },
   ],
+  // Ejecución hija de "Execute Workflow: Vendor compliance check" (n4b de
+  // exec_8f21a0) — llega aquí navegando el `SubworkflowChip`.
+  exec_9931aa: [
+    {
+      id: "n1",
+      title: "Execute Workflow Trigger",
+      status: "success",
+      nodeType: "n8n-nodes-base.executeWorkflowTrigger",
+      meta: "T+00.0s",
+      input: { parent_execution: "exec_8f21a0", vendor: "Acme Supply Co." },
+    },
+    {
+      id: "n2",
+      title: "HTTP Request: Check sanctions list",
+      status: "success",
+      nodeType: "n8n-nodes-base.httpRequest",
+      meta: "340ms",
+      input: { vendor: "Acme Supply Co." },
+      output: { flagged: "false" },
+    },
+    {
+      id: "n3",
+      title: "Set: Compliance verdict",
+      status: "success",
+      nodeType: "n8n-nodes-base.set",
+      meta: "6ms",
+      output: { verdict: "clear" },
+    },
+  ],
+  // Disparada por el Error Trigger de "Contract Redline Review" (exec_a10f55)
+  // — llega aquí navegando el `ErrorWorkflowBanner`.
+  exec_5e01f0: [
+    {
+      id: "n1",
+      title: "Error Trigger",
+      status: "success",
+      nodeType: "n8n-nodes-base.errorTrigger",
+      meta: "T+00.0s",
+      input: { source_workflow: "Contract Redline Review", failed_node: "HTTP Request: Push to DocuSign" },
+    },
+    {
+      id: "n2",
+      title: "Slack: Notify legal ops",
+      status: "success",
+      nodeType: "n8n-nodes-base.slack",
+      meta: "212ms",
+      input: { channel: "#legal-ops" },
+      output: { message_ts: "1751558.640" },
+    },
+    {
+      id: "n3",
+      title: "Postgres: Log incident",
+      status: "success",
+      nodeType: "n8n-nodes-base.postgres",
+      meta: "58ms",
+      output: { incident_id: "INC-3092" },
+    },
+  ],
 };
 
 export interface ExecutionHistoryConsoleProps extends React.ComponentProps<"div"> {
@@ -204,7 +314,18 @@ export function ExecutionHistoryConsole({
 }: ExecutionHistoryConsoleProps) {
   const [selectedId, setSelectedId] = React.useState(initialSelectedId ?? executions[0]?.id);
   const selected = executions.find((e) => e.id === selectedId);
-  const nodes = selectedId ? nodesByExecution[selectedId] ?? [] : [];
+  const rawNodes = selectedId ? nodesByExecution[selectedId] ?? [] : [];
+  // `SubworkflowChip`/`ErrorWorkflowBanner` son deep-links a otra fila de esta
+  // misma consola — el mock data solo lleva el `executionId` de destino, y el
+  // `onOpen` se agrega aquí, genérico para cualquier nodo/ejecución.
+  const nodes = rawNodes.map((node) =>
+    node.subworkflow
+      ? { ...node, subworkflow: { ...node.subworkflow, onOpen: () => setSelectedId(node.subworkflow!.executionId) } }
+      : node,
+  );
+  const errorHandler = selected?.errorHandler
+    ? { ...selected.errorHandler, onOpen: () => setSelectedId(selected.errorHandler!.executionId) }
+    : undefined;
 
   return (
     <div className={cn("w-full space-y-4", className)} {...props}>
@@ -222,6 +343,7 @@ export function ExecutionHistoryConsole({
           title="Run inspector"
           hint={selected ? `${selected.id} · ${selected.workflowName}` : undefined}
           nodes={nodes}
+          errorHandler={errorHandler}
         />
       </div>
     </div>

@@ -3,6 +3,9 @@ import { ChevronDown, AlertTriangle } from "lucide-react";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { cn } from "@/lib/utils";
 import { NodeStatusBadge, nodeStatusConnectorClass, type NodeStatus } from "./node-status-badge.js";
+import { RetryControls, type RetryAttemptRecord } from "./retry-controls.js";
+import { SubworkflowChip, type SubworkflowRef } from "./subworkflow-chip.js";
+import { ErrorWorkflowBanner, type ErrorHandlerRef } from "./error-workflow-banner.js";
 
 export interface RunInspectorNode {
   id: string;
@@ -20,6 +23,15 @@ export interface RunInspectorNode {
   output?: Record<string, React.ReactNode>;
   /** Mensaje de error — solo se pinta cuando `status="error"`. */
   error?: string;
+  /** Controles de retry anclados al marcador "Failed here" — solo se pintan cuando `status="error"`. */
+  retry?: {
+    maxAttempts: number;
+    history?: RetryAttemptRecord[];
+    onRetryFromStart?: () => void;
+    onRetryFromFailedNode?: () => void;
+  };
+  /** Referencia a la ejecución hija — solo en nodos tipo "Execute Workflow". */
+  subworkflow?: SubworkflowRef;
 }
 
 function DataPane({ title, data }: { title: string; data?: Record<string, React.ReactNode> }) {
@@ -77,10 +89,28 @@ function InspectorNodeRow({ node, isLast, defaultOpen }: InspectorNodeRowProps) 
           ) : null}
         </div>
 
+        {node.subworkflow ? (
+          <div className="mt-2">
+            <SubworkflowChip subworkflow={node.subworkflow} />
+          </div>
+        ) : null}
+
         {isFailure ? (
-          <div className="mt-2 flex items-start gap-1.5 rounded-md border border-block/40 bg-block/10 px-2.5 py-1.5 text-[11px] font-semibold text-block">
-            <AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-            <span>Failed here{node.error ? ` — ${node.error}` : ""}</span>
+          <div className="mt-2 rounded-md border border-block/40 bg-block/10 px-2.5 py-1.5">
+            <div className="flex items-start gap-1.5 text-[11px] font-semibold text-block">
+              <AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden />
+              <span>Failed here{node.error ? ` — ${node.error}` : ""}</span>
+            </div>
+            {node.retry ? (
+              <RetryControls
+                variant="inline"
+                attempt={[node.attempt?.[0] ?? 1, node.retry.maxAttempts]}
+                failedNodeTitle={node.title}
+                history={node.retry.history}
+                onRetryFromStart={node.retry.onRetryFromStart}
+                onRetryFromFailedNode={node.retry.onRetryFromFailedNode}
+              />
+            ) : null}
           </div>
         ) : null}
 
@@ -110,6 +140,8 @@ export interface RunInspectorProps extends React.ComponentProps<"div"> {
   hint?: string;
   nodes: RunInspectorNode[];
   emptyLabel?: string;
+  /** Se pinta cuando el fallo de este run fue enrutado a un workflow de error handling. */
+  errorHandler?: ErrorHandlerRef;
 }
 
 /**
@@ -120,14 +152,21 @@ export interface RunInspectorProps extends React.ComponentProps<"div"> {
  * `RunInspector` habla el vocabulario de nodos de workflow estilo n8n — cada
  * nodo expone input/output como panes JSON separados, y el nodo que falló
  * lleva un marcador "Failed here" inequívoco y expandido por defecto, sin
- * depender solo del color del anillo de estado. Solo lectura: no hay
- * controles de retry aquí (ver `RetryControls`, pendiente en el catálogo).
+ * depender solo del color del anillo de estado. El resto es de solo
+ * lectura — la única acción disponible es `RetryControls` (retry-desde-
+ * inicio vs desde-nodo-fallido), anclada directamente al marcador "Failed
+ * here" cuando `node.retry` está presente, tal como pedía la nota de diseño
+ * del NORTH_STAR para esta prioridad #1. Extendido con dos filas más de área
+ * A: `node.subworkflow` pinta un `SubworkflowChip` inline en un nodo tipo
+ * "Execute Workflow"; `errorHandler` pinta un `ErrorWorkflowBanner` cuando el
+ * fallo de este run fue enrutado a otro workflow de error handling.
  */
 export function RunInspector({
   title = "Run inspector",
   hint,
   nodes,
   emptyLabel = "Select an execution to inspect its nodes.",
+  errorHandler,
   className,
   ...props
 }: RunInspectorProps) {
@@ -145,6 +184,12 @@ export function RunInspector({
           {hint ? <span className="min-w-0 truncate font-mono text-[11px] text-dim">{hint}</span> : null}
         </span>
       </div>
+
+      {errorHandler ? (
+        <div className="px-4 pt-4">
+          <ErrorWorkflowBanner handler={errorHandler} />
+        </div>
+      ) : null}
 
       {nodes.length === 0 ? (
         <div className="px-4 py-10 text-center text-xs text-dim">{emptyLabel}</div>

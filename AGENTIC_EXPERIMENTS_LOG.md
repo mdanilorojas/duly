@@ -974,3 +974,581 @@ a11y-audit fix · AgentTile+A2AAgentCardViewer · TraceTree→OTel · StreamingM
 
 ## 🏁 BUILD LADDER §07 COMPLETO — 28 units + 2 bugfixes
 Rungs 1–6 todos cerrados. Suite 155/155 verde, build tsup ESM+DTS OK, axe 0 violaciones en todas las stories nuevas. Todo en branch `feat/component-build-ladder`, un commit por unidad. Paquetes 2026 reales integrados: TanStack, React Flow, Recharts, @opentelemetry, @ag-ui/core, @mcp-ui/client. Pendiente: decisión de merge a main.
+## Iteración 10 — V001 Agent Consent Card (Know-Your-Agent)
+
+- **Fecha:** 2026-07-03T05:11:00Z
+- **Versión:** `AgentConsentCardV001`
+- **Tipo:** primitive (agent ops / consola de IA), con mock data de 4 industrias
+- **Industria:** servicios financieros (story interactiva), salud, software, petróleo & energía —
+  4 stories con roster/scope realistas por sector, sin forzar una consola completa por industria
+  todavía (eso queda para próximas iteraciones, ver nota abajo).
+- **Storybook:** `Agentic/Agent Consent/V001 Know Your Agent` (stories: `PendingConsent`
+  interactiva, `ConsentGranted`, `ConsentDeclined`, `ConsentRevoked`, `MobileWidth`).
+- **Inspiración investigada:** patrón fintech "Know Your Agent (KYA)" ya citado en `NORTH_STAR.md`
+  (fila área B, nota 2026-07-02, fuente "Fintech Design Trends 2026", Outcrowd/Medium) — perfil
+  visible del agente + consentimiento explícito por transacción + límites configurables antes de
+  ejecutar. Se contrastó contra el patrón de scope grant tipo OAuth (un solo botón "Allow" para
+  todos los permisos a la vez) y se descartó: el KYA real pide reconocimiento explícito por
+  permiso individual, no un solo click ciego — de ahí el checkbox por ítem de `scope` que habilita
+  "Grant consent" recién cuando todos están marcados.
+- **Razón de producto:** cierra el gap #1 de la "Prioridad de construcción" del NORTH_STAR tras la
+  iteración 9. Antes de esta versión, el catálogo solo cubría la aprobación puntual de una acción
+  ya decidida por el agente (`ApprovalGateCard`) — pero ninguna corporación evaluando agentes de
+  IA puede saltarse el paso previo: ¿qué autoridad tiene este agente en general, quién se la dio,
+  bajo qué límites, y es revocable? `AgentConsentCard` es ese grant de autoridad reusable
+  (perfil + alcance + límites + consentimiento explícito), complementario a `ApprovalGateCard`
+  (evidencia de una ejecución puntual) — no lo reemplaza.
+- **Componentes creados:**
+  - `packages/ui/src/agentic/agent-consent-card.tsx`:
+    - `ConsentStatus` — 4 estados (`pending`/`consented`/`declined`/`revoked`), con
+      `consentStatusConfig` (label/tono/icono) siguiendo el mismo patrón que
+      `approvalStatusConfig` de `ApprovalGateCard` — un estado resuelto nunca desaparece
+      silenciosamente (declined muestra motivo, revoked muestra quién y cuándo).
+    - `<AgentConsentCard>` — header con `AgentCore` (identidad WebGL a 44px, reutilizado de la
+      galería base) + nombre/id/rol/fecha de solicitud; lista de `ConsentScopeItem[]` con
+      `Checkbox` de Radix (ya usado en el design system) por permiso individual — en estados no
+      pendientes, el checkbox se reemplaza por un dot de tono (mismo vocabulario de riesgo que
+      `HumanInterruptQueue`); grid de `ConsentLimit[]` (tope de gasto, vigencia, revocabilidad,
+      modo de aprobación); footer con Decline/Grant consent (pending, "Grant consent" deshabilitado
+      hasta reconocer todos los items) o el registro de resolución + botón Revoke (si
+      `status="consented"` y se pasa `onRevoke`).
+    - Reutiliza `toneChip` de `approval-gate-card.js` y `Tone` de `trace-log.variants.js` — sin
+      vocabulario de color nuevo.
+  - `packages/ui/src/agentic/agent-consent-card.stories.tsx` — 5 stories. Las 4 de industria
+    reutilizan el shader/glow de agentes ya existentes en `NEURAL_AGENTS` (identidad visual
+    conservada) sobreescribiendo solo `id`/`name`/`role` por contexto sectorial, en vez de crear
+    un roster de agentes nuevo por industria en esta iteración — eso queda como semilla para
+    cuando el loop construya una consola completa por sector.
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con el módulo nuevo.
+- **Comandos ejecutados:** `git checkout main` (el contenedor arrancó con `HEAD` detached, 21
+  commits detrás de `origin/main`) + `git pull origin main` (fast-forward limpio, sin conflictos)
+  · `pnpm install` (faltaba `node_modules`) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/agent-consent-card.tsx src/agentic/agent-consent-card.stories.tsx
+  src/agentic/index.ts` (0 errores, sin colores crudos) · `pnpm --filter @studio/ui test` (26
+  passed, sin cambios) · `pnpm exec turbo run build --filter=@studio/ui...` (OK) · `pnpm exec
+  turbo run build --filter=@studio/docs...` (Storybook static build OK, chunk nuevo
+  `agent-consent-card.stories-*.js` de 18.17 kB visible en el output).
+- **Resultado:** ✅ pendiente de commit/push a main. `NORTH_STAR.md` actualizado:
+  `AgentConsentCard (Know-Your-Agent)` pasa de ❌ a ✅ (sección B) y "Prioridad de construcción"
+  reordenada con `EvidenceExportDialog + ApprovalChainStepper` como nuevo #1.
+- **Notas para revisión humana:**
+  - El checkbox-por-permiso es una decisión de producto explícita (KYA real, no un OAuth scope
+    grant genérico) — si en una consola compuesta futura se prefiere un flujo más rápido para
+    alcances de bajo riesgo, considerar hacer el gate condicional al tono más alto del scope (ej.
+    saltar el checkbox individual si todos los items son `info`/`ok`) en vez de exigir siempre
+    reconocimiento ítem por ítem.
+  - Las 4 stories de industria reutilizan `glsl`/`glow` de agentes existentes de `NEURAL_AGENTS`
+    (spread + override de `id`/`name`/`role`) en vez de crear shaders nuevos — es intencional para
+    esta iteración (mock data rica sin inflar el archivo de shaders), pero si una futura consola
+    por industria necesita identidad visual distintiva por sector, valdría la pena un roster de
+    shaders propio como se hizo con `real-estate-agents.ts`.
+  - `AgentConsentCard` no persiste el estado de los checkboxes fuera del componente (state local
+    `useState<Set<string>>`) — en una integración real, el consumidor probablemente quiera
+    controlar ese estado o al menos recibir un callback `onScopeAck` por ítem; se dejó fuera del
+    alcance porque el catálogo no lo pedía explícitamente y la API ya tiene 3 callbacks
+    (`onConsent`/`onDecline`/`onRevoke`).
+  - Próximas versiones sugeridas: `EvidenceExportDialog` + `ApprovalChainStepper` (nuevo #1 del
+    NORTH_STAR, área C, reutilizando el vocabulario de actor/hash/tono de `AuditLogTable`);
+    `RetryControls` sobre `RunInspector`; primer roster de agentes dedicado a una segunda industria
+    (petróleo & energía) o primera consola financiera completa combinando
+    `AgentConsentCard`+`ApprovalGateCard`+`AuditLogTable`+`WhoDidWhatTimeline`.
+
+---
+
+## Iteración 11 — V001 Evidence Export Dialog + Approval Chain Stepper
+
+- **Fecha:** 2026-07-03T10:12:32Z
+- **Versión:** `EvidenceExportDialogV001` + `ApprovalChainStepperV001`
+- **Tipo:** primitive/composition (auditoría/compliance, área C del NORTH_STAR)
+- **Industria:** servicios financieros (wire transfer multi-nivel, export trimestral) y salud
+  (prior authorization, export de acceso HIPAA) — 2 industrias en las stories de cada componente,
+  sin forzar una consola completa todavía.
+- **Storybook:** `Agentic/Evidence Export/V001 Signed Manifest` (stories: `FinancialServicesQuarterlyExport`,
+  `HealthcareAuditExport`, `EmptyRange`) y `Agentic/Approval Chain/V001 Multi-Level Sign-Off`
+  (stories: `WireTransferFullyApproved`, `RejectedThenReroutedThenPending`,
+  `HealthcarePriorAuthPending`, `EmptyChain`).
+- **Inspiración investigada:** contra la vara ya fijada en `NORTH_STAR.md` — principio #3 (todo
+  Approve lleva evidencia), #4 (la inmutabilidad se ve: hash badges, exports firmados) y #6
+  (replay/consulta read-only como core, no afterthought). No se re-investigó código de vanguardia
+  nuevo esta iteración (WebSearch) porque el ítem ya estaba especificado con precisión legal en el
+  propio NORTH_STAR (separación Art. 12/13 vs Art. 19) desde la auditoría semanal previa — se
+  priorizó cerrar el gap #1 ya identificado sobre reabrir investigación externa redundante.
+- **Razón de producto:** cierra la prioridad #1 del NORTH_STAR tras la iteración 10 y saca al área
+  C (auditoría/compliance) de su 0% de cobertura absoluto (el único de los 4 pilares del catálogo
+  sin ningún avance, sosteniendo 3 de los 10 principios de credibilidad enterprise: #3, #4, #10).
+  `AuditLogTable`/`WhoDidWhatTimeline` (iteración anterior a la 10) ya habían sentado el
+  vocabulario de actor dual + hash badge + tono — estos dos componentes son la extensión natural:
+  el auditor necesita tanto *sacar* evidencia del sistema de forma verificable
+  (`EvidenceExportDialog`) como *entender* una cadena de aprobación ya resuelta con sus
+  ramificaciones (`ApprovalChainStepper`), ninguno de los dos cubierto por lo ya construido
+  (`ApprovalGateCard` solo modela una decisión puntual, no una cadena multi-nivel).
+- **Componentes creados:**
+  - `packages/ui/src/agentic/approval-chain-stepper.tsx`:
+    - `ChainStepStatus` (`approved`/`rejected`/`pending`/`skipped`) con `chainStepStatusConfig`
+      siguiendo el mismo patrón de `approvalStatusConfig`/`consentStatusConfig` ya usado en el
+      catálogo — un estado resuelto siempre tiene tono + icono propio, nunca solo texto.
+    - `<ApprovalChainStepper>` — stepper vertical con conector de columna entre pasos; cada paso
+      reutiliza `actorKindConfig`/`HashBadge` de `audit-log-table.tsx` sin vocabulario nuevo. Un
+      "veredicto" de cadena (`chainVerdict`) se deriva de los pasos: "Fully approved" /
+      "Rejected — chain halted" / "Pending — awaiting step N of M". Soporta ramas (`branchFrom`):
+      un paso rechazado puede re-enrutar a un aprobador alternativo, renderizado desplazado con
+      conector punteado propio en vez de forzar una única columna lineal — la cadena real de
+      aprobación multi-nivel no siempre es lineal (ver story `RejectedThenReroutedThenPending`).
+  - `packages/ui/src/agentic/evidence-export-dialog.tsx`:
+    - `<EvidenceExportDialog>` — envuelve `Dialog`/`DialogContent` del design system base con
+      trigger por defecto ("Export evidence"). Dos fases internas (`form` → `done`) con
+      `useState`, reseteadas al cerrar. Fase `form`: resumen de rango + conteo de eventos,
+      selector de formato (PDF/CSV/JSON) sobre `RadioGroup`/`Label` de Radix ya existentes (no se
+      reinventó el patrón de chips de `WhoDidWhatTimeline` porque un `radiogroup` nativo es más
+      correcto semánticamente para una selección mutuamente excluyente en un form), preview del
+      manifiesto reutilizando `HashBadge` (primeros 4 hashes + contador "+N more" si hay más), y
+      nota de "Will be signed by {identity}". Fase `done`: hash del manifiesto firmado completo
+      (hash sintético determinístico derivado de los hashes de entrada — no criptográfico, es
+      mock de demo) en un panel de tono `ok`, con nota de que recomputar el hash debe coincidir o
+      el archivo fue alterado tras la firma.
+  - `packages/ui/src/agentic/approval-chain-stepper.stories.tsx` y
+    `packages/ui/src/agentic/evidence-export-dialog.stories.tsx` — mock data rica de 2 industrias
+    cada uno (financiera + salud).
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 2 módulos nuevos.
+- **Comandos ejecutados:** `git status` + `git checkout main` + `git pull origin main`
+  (fast-forward limpio, 22 commits detrás — el contenedor arrancó con `HEAD` detached) ·
+  `pnpm install` (faltaba `node_modules`) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/approval-chain-stepper.tsx src/agentic/approval-chain-stepper.stories.tsx
+  src/agentic/evidence-export-dialog.tsx src/agentic/evidence-export-dialog.stories.tsx
+  src/agentic/index.ts` (0 errores, sin colores crudos) · `pnpm --filter @studio/ui test` (26
+  passed, sin cambios) · `pnpm exec turbo run build --filter=@studio/ui...` (falló primero por un
+  choque de tipos entre el tipo `icon` de `formatConfig` y `LucideIcon` — se corrigió alineando la
+  firma `aria-hidden?: boolean | "true" | "false"` con el patrón ya usado en el resto del catálogo;
+  luego OK) · `pnpm exec turbo run build --filter=@studio/docs...` (Storybook static build OK,
+  chunks nuevos `approval-chain-stepper.stories-*.js` 12.46 kB y
+  `evidence-export-dialog.stories-*.js` 14.01 kB visibles en el output).
+- **Resultado:** ✅ pendiente de commit/push a main. `NORTH_STAR.md` actualizado:
+  `EvidenceExportDialog` y `ApprovalChainStepper` pasan de ❌ a ✅ (sección C, área sube de 0% a
+  20% de cobertura pura); "Prioridad de construcción" reordenada con
+  `RetryControls + CredentialCard/Picker` (área A) como nuevo #1.
+- **Notas para revisión humana:**
+  - El hash del manifiesto en `EvidenceExportDialog` es sintético (suma hash de caracteres, no
+    SHA-256 real) — es intencional para un mock de Storybook determinístico sin dependencias
+    criptográficas nuevas; una integración real reemplazaría `manifestHash` por un hash calculado
+    server-side y pasado como prop en vez de derivado client-side.
+  - `ApprovalChainStepper` no tiene interactividad (no hay botones de acción) — es intencionalmente
+    de solo lectura/narrativo, complementario a `ApprovalGateCard` (que sí es accionable para una
+    decisión pendiente puntual). Si una consola compuesta futura necesita "aprobar el siguiente
+    paso pendiente desde el stepper", esa acción debería vivir en un componente padre que orqueste
+    ambos, no mezclarse dentro de este primitive.
+  - El selector de formato usa `RadioGroup` nativo de Radix en vez del patrón de chips
+    `aria-pressed` de `WhoDidWhatTimeline` — evaluar en una futura pasada de consistencia si vale
+    la pena unificar ambos patrones de selección exclusiva en un solo primitive reutilizable
+    (candidato para cuando se generalice "DataTable denso" con sus propios controles de filtro).
+  - Próximas versiones sugeridas (ver NORTH_STAR reordenado): `RetryControls` sobre `RunInspector`
+    (nuevo #1, área A); `GuardrailIndicator`/`EvalScoreBadge` sobre el vocabulario de tono de
+    `TraceTree` (área B); `ModelProvenanceCard`/`RetentionBadge` reutilizando el patrón de
+    manifiesto de hashes de esta iteración (área C, cerraría 4 de 10 filas).
+
+---
+
+## Iteración 12 — V001 Retry Controls + Credential Card/Picker
+
+- **Fecha:** 2026-07-03T15:12:49Z
+- **Versión:** `RetryControlsV001` + `CredentialCardV001`/`CredentialPickerV001`
+- **Tipo:** primitive (n8n / proceso empresarial, área A del NORTH_STAR)
+- **Industria:** servicios financieros (Plaid, Stripe Treasury, SWIFT gateway, core banking DB) y
+  salud (Epic FHIR, HL7 webhook, PHI archive) para `CredentialCard`; `RetryControls` usa mock data
+  de proceso general (DocuSign push, payer claims sync) sin forzar industria.
+- **Storybook:** `Agentic/Retry Controls/V001 Start vs Failed Node` (stories: `Standalone`,
+  `MaxRetriesReached`, `AnchoredToFailedHere` — demo interactiva con estado real) y
+  `Agentic/Credential Card/V001 Type Owner Health` (stories: `FinancialServicesRoster`,
+  `HealthcareRoster`, `PickerWithSearch`). `Agentic/Execution History/V001 n8n-style Runs`
+  actualizado: el nodo fallido de `exec_a10f55` (DocuSign push) ahora incluye historial de retry
+  real anclado a su marcador "Failed here".
+- **Inspiración investigada:** vara ya fijada en `NORTH_STAR.md` — principio #1 (todo estado está
+  diseñado: un límite de política de retry nunca debe ser silencioso) y #5 (dualidad de actor:
+  retry automático vs retry manual por un humano, distinguible en el historial). No se reabrió
+  WebSearch esta iteración: el ítem #1 ya estaba especificado con precisión suficiente en el propio
+  NORTH_STAR ("puede anclarse directamente al marcador 'Failed here' de `RunInspector`"), y se
+  priorizó cerrar el gap ya identificado sobre investigación externa redundante.
+- **Razón de producto:** cierra la nueva prioridad #1 del NORTH_STAR tras la iteración 11 (área A,
+  n8n/proceso empresarial, subía de 13% a necesitar sus siguientes 2 filas). `NodeStatusBadge` y
+  `RunInspector` ya habían sentado la gramática de 6 estados y el marcador "Failed here"; faltaba
+  la acción real que un operador ejecuta desde ahí (retry) y la superficie de riesgo de credenciales
+  compartidas que todo workflow depende de (`CredentialCard/Picker`) — ninguno de los dos cubierto
+  por lo ya construido.
+- **Componentes creados:**
+  - `packages/ui/src/agentic/retry-controls.tsx`:
+    - `RetryTrigger` (`manual`/`automatic`) y `RetryAttemptRecord` (attempt, status, trigger,
+      actor?, at) — historial que distingue quién disparó cada intento, reutilizando `toneChip` de
+      `approval-gate-card.js` para el tono de cada fila (success=ok, error=block,
+      retrying=warn+spin).
+    - `<RetryControls>` — dos botones ("Retry from start" / "Retry from failed node", el segundo
+      solo si se pasa `failedNodeTitle`), contador `current/max` siempre visible, aviso explícito
+      "Max retries reached" cuando se alcanza el límite (ambos botones se deshabilitan — un límite
+      de política nunca es silencioso), e historial opcional de intentos. `variant="inline"` quita
+      el marco propio para anclarse dentro de otro componente; `variant="standalone"` (default) es
+      una tarjeta independiente con header.
+  - `packages/ui/src/agentic/run-inspector.tsx` (extendido, no reemplazado):
+    - `RunInspectorNode` gana un campo opcional `retry` (`maxAttempts`, `history`,
+      `onRetryFromStart`, `onRetryFromFailedNode`). Cuando `node.status === "error"` y `node.retry`
+      está presente, `<RetryControls variant="inline">` se renderiza directamente dentro del
+      banner "Failed here" — la integración textual que pedía la nota de diseño del NORTH_STAR, en
+      vez de un componente separado sin relación visual con el nodo que falló.
+  - `packages/ui/src/agentic/execution-history-console.tsx` (extendido): el nodo `n4` de
+    `exec_a10f55` (HTTP Request: Push to DocuSign, `status: "error"`) ahora incluye
+    `attempt: [3, 3]` y un `retry.history` de 3 intentos automáticos — demuestra el caso real
+    "max retries reached" dentro de la consola master-detail ya existente sin necesidad de una
+    story nueva para esa consola.
+  - `packages/ui/src/agentic/credential-card.tsx`:
+    - `CredentialKind` (api_key/oauth/service_account/database/webhook_secret) con icono propio y
+      `CredentialHealth` (valid/expiring/expired/revoked) — salud no binaria: "expiring" con fecha
+      visible evita que un workflow se rompa en producción sin aviso previo.
+    - `<CredentialCard>` — tipo, owner, last-used, "shared with" (conteo + chips de workflow) y
+      scopes opcionales; modo `compact` para uso embebido en el picker (sin marco propio, fila
+      densa). El conteo de "shared with" es deliberadamente visible sin expandir nada — una
+      credencial compartida por 4 workflows es superficie de riesgo que un CISO necesita ver de
+      un vistazo.
+    - `<CredentialPicker>` — listbox accesible (`role="listbox"`/`role="option"`, flechas
+      ↑/↓/Home/End) con filtro de búsqueda por nombre/owner/tipo sobre un `Input` existente, y cada
+      fila reutiliza `CredentialCard` en modo compacto (sin duplicar markup).
+  - `packages/ui/src/agentic/retry-controls.stories.tsx` y
+    `packages/ui/src/agentic/credential-card.stories.tsx` — mock data rica; `retry-controls`
+    incluye una demo interactiva real (`AnchoredToFailedHere`) con `React.useState` que hace crecer
+    el historial en vivo al hacer click en "Retry from failed node".
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 2 módulos nuevos.
+- **Comandos ejecutados:** `git status` + `git checkout main` + `git pull origin main`
+  (fast-forward limpio, 23 commits detrás — el contenedor arrancó con `HEAD` detached) ·
+  `pnpm install` (faltaba `node_modules`) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/retry-controls.tsx src/agentic/retry-controls.stories.tsx
+  src/agentic/credential-card.tsx src/agentic/credential-card.stories.tsx
+  src/agentic/run-inspector.tsx src/agentic/execution-history-console.tsx src/agentic/index.ts`
+  (0 errores, sin colores crudos) · `pnpm --filter @studio/ui test` (26 passed, sin cambios) ·
+  `pnpm exec turbo run build --filter=@studio/ui...` (falló primero: `CredentialPickerProps`
+  colisionaba con el `onSelect` nativo de `HTMLAttributes<HTMLDivElement>` — se corrigió con
+  `Omit<React.ComponentProps<"div">, "onSelect">`; luego OK) · `pnpm exec turbo run build
+  --filter=@studio/docs...` (Storybook static build OK, chunks nuevos
+  `retry-controls.stories-*.js` 6.06 kB, `credential-card.stories-*.js` 14.53 kB, y
+  `execution-history-console.stories-*.js` recompilado a 24.69 kB con el nuevo `retry.history`).
+- **Resultado:** ✅ pendiente de commit/push a main. `NORTH_STAR.md` actualizado: `RetryControls` y
+  `CredentialCard/Picker` pasan de ❌ a ✅ (sección A, área sube de 13% a 38% de cobertura pura, 3
+  ✅ de 8 filas); "Prioridad de construcción" reordenada con `GuardrailIndicator + EvalScoreBadge`
+  (área B) como nuevo #1, y `SubworkflowChip + ErrorWorkflowBanner` añadido como #3 antes de
+  `WorkflowCanvasFrame` (mayor esfuerzo, requiere diseño propio sin depender del editor n8n).
+- **Notas para revisión humana:**
+  - `RetryControls` no valida que `onRetryFromStart`/`onRetryFromFailedNode` incrementen realmente
+    `attempt` — es responsabilidad del padre (ver demo `AnchoredToFailedHere`, que sí lo hace con
+    `useState` local). Una integración real pasaría el nuevo estado por props tras la llamada al
+    backend, no lo derivaría client-side.
+  - El historial de `RetryControls` no tiene límite de alto/scroll interno — si un workflow
+    acumula decenas de reintentos automáticos (ej. rate-limit prolongado), la lista podría crecer
+    mucho; no se agregó `maxHeight` porque el catálogo no lo pedía explícitamente y el patrón de
+    `AuditLogTable`/`maxHeight` ya existe como referencia si se necesita después.
+  - `CredentialPicker` filtra client-side sobre un array en memoria — no pagina ni virtualiza; para
+    una organización con cientos de credenciales esto es candidato directo para el futuro
+    "DataTable denso" (ítem #4 de la prioridad de construcción) generalizado a listboxes también,
+    no solo tablas.
+  - `CredentialCard.scopes` es de solo lectura (no hay editor de permisos) — a propósito, es un
+    primitive de visualización; un editor de scopes viviría en un formulario/dialog aparte que no
+    estaba en el alcance de este ítem del catálogo.
+  - Próximas versiones sugeridas (ver NORTH_STAR reordenado): `GuardrailIndicator`/`EvalScoreBadge`
+    sobre el vocabulario de tono de `TraceTree` (nuevo #1, área B); `ModelProvenanceCard`/
+    `RetentionBadge` reutilizando el patrón de manifiesto de hashes de `EvidenceExportDialog`
+    (área C); `SubworkflowChip`/`ErrorWorkflowBanner` sobre el vocabulario de chip/banner de
+    `RunInspector` (área A, cerraría casi toda el área salvo `WorkflowCanvasFrame`).
+
+---
+
+## Iteración 13 — V001 Guardrail Indicator + Eval Score Badge (Agent Ops)
+
+- **Fecha:** 2026-07-03T20:15:00Z
+- **Versión:** `GuardrailIndicatorV001` + `EvalScoreBadgeV001`
+- **Tipo:** primitive × 2, integrado en composition existente (`TraceTree`)
+- **Industria:** general agent ops; la story de integración en `TraceTree`
+  (`WithGuardrailsAndEvalScore`) usa un agente de asesoría financiera (servicios financieros) —
+  guardrails de scope de transferencia y redacción de PII, sin forzar el resto del catálogo a esa
+  industria.
+- **Storybook:** `Agentic/Guardrail Indicator/V001 Policy Checks` (stories: `AllPassed`,
+  `WithWarnings`, `Blocked`, `NoChecksConfigured`, `InlineChipsRow`) · `Agentic/Eval Score
+  Badge/V001 Score vs Threshold` (stories: `PassingWithImprovement`, `Regression`,
+  `NearThreshold`, `NoHistoryYet`, `EvalPanel`) · `Agentic/Trace Tree/V001 Cost-Attributed Spans`
+  gana la story `WithGuardrailsAndEvalScore` (sin modificar las stories existentes).
+- **Inspiración investigada:** no se reabrió WebSearch esta iteración — el ítem #1 de la
+  Prioridad de construcción ya venía completamente especificado en el propio `NORTH_STAR.md`
+  (fila de catálogo + la nota "OpenAI formalizó una guía única 'Guardrails and human review'
+  (input/output/tool guardrails...)" registrada en la iteración de vanguardia del 2026-07-02),
+  y se priorizó cerrar el gap ya identificado con precisión suficiente sobre investigación externa
+  redundante — mismo criterio que la iteración 12.
+- **Razón de producto:** cierra la nueva prioridad #1 del NORTH_STAR tras la iteración 12 (área
+  B, agent ops). `TraceTree` ya exponía tono por span (ok/warn/block) y costo/tokens rollup, pero
+  no tenía forma de mostrar *por qué* un guardrail bloqueó una tool call ni si la calidad de la
+  respuesta (eval score) venía cayendo entre runs — ambos son señales de credibilidad enterprise
+  de primera clase (principio #1, "todo estado está diseñado", y el vocabulario de tono ya
+  establecido no debía reinventarse por componente).
+- **Componentes creados:**
+  - `packages/ui/src/agentic/guardrail-indicator.tsx`:
+    - `GuardrailStatus` (`passed`/`warned`/`blocked`) y `GuardrailCategory`
+      (`input`/`output`/`tool` — vocabulario directo de la guía de OpenAI citada arriba) sobre
+      `GuardrailPolicy { id, name, category, status, rationale }`.
+    - `<GuardrailIndicator>` — pill resumen con tono = **peor** de la lista de políticas (un
+      guardrail bloqueado nunca se diluye entre los que pasaron), construido sobre
+      `Collapsible.Root` (mismo patrón que `TraceTree`/`RunInspector`, no un `Popover` nuevo) que
+      expande a la lista completa con categoría, status y rationale por política.
+    - `<GuardrailChip>` — chip compacto de una sola política sin expandir, para uso denso (fila de
+      chips, o embebido en otro componente); usa `title` nativo para la rationale completa.
+    - Reutiliza `toneChip` exportado de `approval-gate-card.js` (mismo patrón que
+      `retry-controls.tsx` en la iteración 12) en vez de duplicar el mapeo tono→clase.
+  - `packages/ui/src/agentic/eval-score-badge.tsx`:
+    - `scoreTone(score, threshold)` (exportado, reutilizado por `TraceTree`) — `ok` si
+      `score >= threshold`, `warn` si está dentro del 90% del umbral, `block` si cae más abajo;
+      nunca un "malo" binario.
+    - `<EvalScoreSparkline>` — SVG minimalista (sin librería de charts) con línea punteada de
+      umbral y línea de tendencia en `currentColor` tonificado; requiere ≥2 puntos (historial +
+      score actual) o no renderiza nada, en vez de un sparkline plano engañoso con 1 solo dato.
+    - `<EvalScoreBadge>` — score grande + umbral, chip de delta con flecha de regresión (`↓` tono
+      `warn`/`block` según si el score actual ya incumple, `↑` tono `ok`, `–` sin cambio) y el
+      sparkline embebido — ítem explícito del catálogo ("EvalScoreBadge + Sparkline... flechas de
+      regresión").
+  - `packages/ui/src/agentic/trace-tree.tsx` (extendido, no reemplazado): `TraceSpan` gana campos
+    opcionales `guardrails?: GuardrailPolicy[]` y `evalScore?: {name, score, threshold, history?}`.
+    `SpanRow` renderiza, cuando están presentes, una fila compacta de `GuardrailChip`s +
+    un chip de eval score (usando `scoreTone` importado) justo debajo del span — exactamente la
+    integración que pedía la Prioridad de construcción del NORTH_STAR ("reutilizan ese mismo
+    vocabulario para exponer policy checks y regresión de eval junto al costo"), sin tocar el
+    layout de grid ni las stories previas de `TraceTree`.
+  - `packages/ui/src/agentic/guardrail-indicator.stories.tsx` y
+    `packages/ui/src/agentic/eval-score-badge.stories.tsx` — mock data rica (fintech: prompt
+    injection, PII redaction, transaction scope, LLM evals tipo LangSmith: faithfulness,
+    groundedness, answer relevance, PII leakage).
+  - `packages/ui/src/agentic/trace-tree.stories.tsx` — nueva story `WithGuardrailsAndEvalScore`
+    con un run de "Financial Advisory Agent" (spans de LLM con guardrails + eval score,
+    tool call bloqueada por exceder límite de autorización, `await_human_approval` posterior) —
+    semilla de mock data para una futura `ComplianceAgentConsole` de servicios financieros.
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 2 módulos nuevos.
+- **Comandos ejecutados:** `git status` + `git checkout main` + `git pull origin main`
+  (fast-forward limpio, 24 commits detrás — el contenedor arrancó con `HEAD` detached en
+  `7bd2063`) · `pnpm install` (faltaba `node_modules`) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/guardrail-indicator.tsx src/agentic/guardrail-indicator.stories.tsx
+  src/agentic/eval-score-badge.tsx src/agentic/eval-score-badge.stories.tsx
+  src/agentic/trace-tree.tsx src/agentic/trace-tree.stories.tsx src/agentic/index.ts` (0 errores,
+  sin colores crudos) · `pnpm --filter @studio/ui test` (26 passed, sin cambios) · `pnpm exec
+  turbo run build --filter=@studio/ui...` (OK, ESM 210.87 KB, DTS 60.59 KB) · `pnpm exec turbo run
+  build --filter=@studio/docs...` (Storybook static build OK, chunks nuevos
+  `guardrail-indicator-*.js` 5.22 kB, `guardrail-indicator.stories-*.js` 6.34 kB,
+  `eval-score-badge-*.js` 5.75 kB, `eval-score-badge.stories-*.js` 5.49 kB, y
+  `trace-tree.stories-*.js` recompilado a 15.16 kB con la nueva story de integración).
+- **Resultado:** ✅ pendiente de commit/push a main. `NORTH_STAR.md` actualizado:
+  `GuardrailIndicator` y `EvalScoreBadge + Sparkline` pasan de ❌ a ✅ (sección B), la fila de
+  `TraceTree` gana una nota sobre la extensión `guardrails`/`evalScore`; "Prioridad de
+  construcción" reordenada con `ModelProvenanceCard + RetentionBadge/ImmutabilityIndicator` (área
+  C) como nuevo #1 y `AgentHandoffMarker + CheckpointBadge` añadido como #3 (marcadores puntuales
+  sobre timelines ya existentes, bajo esfuerzo).
+- **Notas para revisión humana:**
+  - El `EvalScoreSparkline` es SVG hecho a mano (sin librería de charts) — a propósito, dado que
+    es un trend de ≤10 puntos en 100×28px; si el catálogo pide sparklines más complejos (zoom,
+    tooltips por punto) en el futuro, ese es el momento de evaluar una librería dedicada, no antes.
+  - `GuardrailIndicator` usa `Collapsible` (mismo primitive que `TraceTree`/`RunInspector`) en vez
+    de un `Popover` — mantiene consistencia visual pero significa que el detalle empuja el layout
+    hacia abajo en vez de flotar; aceptable para el caso de uso de tarjeta standalone, a revisar si
+    se embebe en un contexto de espacio vertical muy restringido.
+  - La integración en `TraceTree` es *opcional por span* (no todos los spans tienen guardrails o
+    eval score) — no se agregó a los datos mock de las stories `DocumentIntelligenceRun` ni
+    `NestedResearchSwarm` para no alterar su lectura visual existente; la nueva story
+    `WithGuardrailsAndEvalScore` es el único lugar que demuestra la integración.
+  - Próximas versiones sugeridas (ver NORTH_STAR reordenado): `ModelProvenanceCard`/
+    `RetentionBadge` reutilizando el patrón de manifiesto de hashes de `EvidenceExportDialog`
+    (nuevo #1, área C); `AgentHandoffMarker`/`CheckpointBadge` como marcadores sobre
+    `RunTimeline`/`TraceTree` ya existentes (área B, bajo esfuerzo); el run de "Financial Advisory
+    Agent" de esta iteración es semilla directa de mock data para una futura
+    `ComplianceAgentConsole` de servicios financieros.
+
+---
+
+## Iteración 14 — V001 Model Provenance Card + Retention Badge/Immutability Indicator (Auditoría/compliance)
+
+- **Fecha:** 2026-07-04T18:30:00Z
+- **Versión:** `ModelProvenanceCardV001` + `RetentionBadgeV001`/`ImmutabilityIndicatorV001`
+- **Tipo:** primitive × 3 (`ModelProvenanceCard`, `ModelProvenanceChip`, `RetentionBadge` +
+  `ImmutabilityIndicator`), área C (auditoría/compliance)
+- **Industria:** general (área C, auditoría/compliance) con semillas por industria en las stories:
+  salud (resumen clínico de alta, cardiología), servicios financieros (asesoría de portafolio con
+  drift de config no anunciado), software/tech (draft de comentario de review de PR, primer run
+  sin config previo que comparar).
+- **Storybook:** `Agentic/Model Provenance/V001 Model, Prompt, Config Hash` (stories:
+  `UnchangedConfig`, `ConfigDrift`, `NoPriorRunToCompare`, `InlineChipOnOutput`) ·
+  `Agentic/Retention Badge/V001 WORM & Immutability` (stories: `ProtectedWithinWindow`,
+  `EligibleForDeletion`, `LegalHoldIndefinite`, `CompactBadgeRow`).
+- **Inspiración investigada:** no se reabrió WebSearch esta iteración — la fila de catálogo y su
+  base legal (EU AI Act Art. 12/13 para procedencia de modelo, Art. 19 para retención) ya estaban
+  completamente especificadas en `NORTH_STAR.md` desde la vanguardia del 2026-07-02, incluyendo la
+  distinción explícita entre ambos artículos que el propio documento pide preservar. Se priorizó
+  cerrar el gap ya identificado con precisión suficiente sobre investigación externa redundante —
+  mismo criterio que las iteraciones 12 y 13.
+- **Razón de producto:** cierra la nueva prioridad #1 del NORTH_STAR (área C, auditoría/
+  compliance), que llevaba 0% de cobertura absoluta hasta la iteración 11 y aún tenía estas 2 filas
+  pendientes tras `AuditLogTable`/`WhoDidWhatTimeline`/`EvidenceExportDialog`/
+  `ApprovalChainStepper`. Sostiene directamente el principio #8 ("procedencia sobre magia: chips de
+  modelo/prompt/versión en cada output de IA") y el #4 ("la inmutabilidad se ve") — ambos sin
+  ningún componente dedicado hasta ahora, solo mencionados de pasada en otros componentes.
+- **Componentes creados:**
+  - `packages/ui/src/agentic/model-provenance-card.tsx`:
+    - `ModelProvenance { provider, model, modelVersion, promptVersion, promptLabel?, configHash,
+      params?, generatedAt, previousConfigHash? }` — separa deliberadamente "qué produjo el
+      output" (esta tarjeta) de "cuánto tiempo se conserva ese registro" (`RetentionBadge`, Art. 19
+      vs Art. 12/13).
+    - `<ModelProvenanceCard>` — chips de modelo (ícono `Cpu`) y prompt version (ícono
+      `ScrollText`) con la misma jerarquía visual que un `GuardrailChip`, chips de parámetros de
+      sampling opcionales (temp/top_p/max_tokens/seed), `HashBadge` de config reutilizado de
+      `AuditLogTable`, y un chip de **drift explícito**: `driftVerdict()` compara `configHash` con
+      `previousConfigHash` del mismo prompt — tono `ok` si no cambió, `warn` si cambió, y no se
+      muestra nada si no hay run anterior con qué comparar (evita un falso "sin cambios" en el
+      primer run).
+    - `<ModelProvenanceChip>` — versión inline compacta para el caso de uso literal del principio
+      #8 ("chip en cada output de IA", no solo en un panel dedicado): pensado para el footer de un
+      mensaje de chat, una fila de `TraceTree` o una celda de tabla; `title` nativo expone
+      modelo/versión/prompt/config completos.
+  - `packages/ui/src/agentic/retention-badge.tsx`:
+    - `RetentionRegime` (`worm`/`mutable`/`legal-hold`) y `RetentionStatus`
+      (`protected`/`eligible-for-deletion`/`hold`) sobre `RetentionRecord { recordId, regime,
+      status, retainedSince, minRetentionLabel, legalBasis, eligibleLabel?, progressPct?, hash? }`.
+    - `retentionStatusConfig` — `protected` tono `ok` (`LockKeyhole`), `eligible-for-deletion` tono
+      `warn` (`Archive`, es una acción disponible, no un fallo), `hold` tono `review` (`Gavel`,
+      indefinido por diseño — una obligación activa que pesa sobre WORM, no un estado "malo").
+    - `<RetentionBadge>` — pill compacto "WORM · 180 days minimum" para uso denso en filas de
+      tabla (ej. una columna de retención en `AuditLogTable`).
+    - `<ImmutabilityIndicator>` — detalle expandible sobre el mismo `Collapsible.Root` que
+      `GuardrailIndicator` (sin introducir un primitive nuevo): base legal, fecha de retención,
+      barra de progreso de la ventana mínima (solo si `status === "protected"`), y `HashBadge` del
+      registro retenido.
+  - `packages/ui/src/agentic/model-provenance-card.stories.tsx` y
+    `packages/ui/src/agentic/retention-badge.stories.tsx` — mock data rica por industria (ver
+    arriba); nota de lint: los identificadores de run/PR en las stories se escribieron sin `#`
+    (ej. "Run 4471", "PR 3021") porque la regla `no-restricted-syntax` de colores crudos
+    (`/#[0-9a-fA-F]{3,8}\b/`) hace falso-positivo con literales de string que empiezan con `#`
+    seguidos de 3-8 dígitos hexadecimales válidos — no es un color, pero el regex no lo distingue.
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 2 módulos nuevos.
+- **Comandos ejecutados:** `git status` + `git checkout main` + `git pull origin main` (fast-forward
+  limpio, 25 commits detrás — el contenedor arrancó con `HEAD` detached en `e31b822`) ·
+  `pnpm install` (faltaba `node_modules`) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/model-provenance-card.tsx src/agentic/model-provenance-card.stories.tsx
+  src/agentic/retention-badge.tsx src/agentic/retention-badge.stories.tsx src/agentic/index.ts` (2
+  errores de falso-positivo de color crudo por `#4471`/`#3021` en stories, corregidos quitando el
+  `#`; 0 errores tras el fix) · `pnpm --filter @studio/ui test` (26 passed, sin cambios) · `pnpm
+  exec turbo run build --filter=@studio/ui...` (OK, ESM 223.96 KB, DTS 65.60 KB) · `pnpm exec turbo
+  run build --filter=@studio/docs...` (Storybook static build OK, chunks nuevos
+  `model-provenance-card.stories-*.js` 10.76 kB, `retention-badge.stories-*.js` 11.55 kB).
+- **Resultado:** ✅ pendiente de commit/push a main. `NORTH_STAR.md` actualizado:
+  `ModelProvenanceCard` y `RetentionBadge/ImmutabilityIndicator` pasan de ❌ a ✅ (sección C, que
+  llega así a cobertura completa de sus 4 primeras filas); "Prioridad de construcción" reordenada
+  con `SubworkflowChip + ErrorWorkflowBanner` (área A) como nuevo #1 y `RBACMatrixViewer` añadido
+  como #3 (reutiliza el vocabulario de provider/modelo de `ModelProvenanceCard` y de actor de
+  `ApprovalChainStepper`).
+- **Notas para revisión humana:**
+  - El drift de config (`driftVerdict`) es una comparación de igualdad de string simple entre
+    `configHash` y `previousConfigHash` — no hay lógica de "qué cambió específicamente" (ej. un
+    diff de parámetros); si el catálogo pide eso a futuro, es una extensión natural de este mismo
+    componente, no uno nuevo.
+  - `RetentionBadge`/`ImmutabilityIndicator` reciben `status` y `progressPct` ya calculados por el
+    caller en vez de derivarlos de fechas en tiempo real — decisión deliberada para mantener el
+    componente puro/presentacional y las stories determinísticas, consistente con cómo
+    `EvalScoreBadge`/`AuditEvent` reciben tono ya explícito en vez de que el componente calcule
+    contra la fecha actual.
+  - Con esta iteración, área C (auditoría/compliance) del NORTH_STAR llega a 4 de 10 filas en ✅
+    (`AuditLogTable`, `WhoDidWhatTimeline`, `EvidenceExportDialog`, `ApprovalChainStepper`) más
+    estas 2 nuevas — 6 de 10 — dejando `RBACMatrixViewer`, `DataLineageGraph`, `ChangeRecordCard` e
+    `IncidentView` como las últimas 4 filas pendientes del área.
+
+---
+
+## Iteración 15 — V001 Subworkflow Chip + Error Workflow Banner (n8n / proceso empresarial)
+
+- **Fecha:** 2026-07-04T19:15:00Z
+- **Versión:** `SubworkflowChipV001` + `ErrorWorkflowBannerV001`
+- **Tipo:** primitive × 2, área A (n8n / proceso empresarial)
+- **Industria:** general (área A) con semillas por industria en las stories: software/tech
+  (Vendor Compliance Check, Global Error Handler), petróleo/energía (Wellhead Pressure Escalation,
+  HSE Incident Response), servicios financieros (AML Sanctions Screening, Compliance Escalation).
+- **Storybook:** `Agentic/Subworkflow Chip/V001 Child Execution Reference` (stories: `Success`,
+  `Running`, `Failed`, `NoSummary`, `InlineOnNodeRow`) · `Agentic/Error Workflow Banner/V001
+  Routed to Handler` (stories: `Handled`, `HandlerRunning`, `HandlerAlsoFailed`,
+  `WithoutFailedNodeTitle`, `OnFailedRunInspector`) · `Agentic/Execution History/V001 n8n-style
+  Runs` extendido (`MasterDetail` ahora demuestra ambos deep-links wireados end-to-end).
+- **Inspiración investigada:** no se reabrió WebSearch esta iteración — ambas filas ya estaban
+  completamente especificadas en la "Prioridad de construcción" del NORTH_STAR desde la
+  iteración 14 (`SubworkflowChip + ErrorWorkflowBanner` como nueva prioridad #1, reutilizando el
+  vocabulario de chip/banner ya presente en `RunInspector`/`ExecutionHistoryTable`). Se priorizó
+  cerrar el gap ya identificado con precisión suficiente sobre investigación externa redundante —
+  mismo criterio que las iteraciones 12-14.
+- **Razón de producto:** cierra las 2 últimas filas fáciles de área A (n8n/proceso empresarial)
+  antes de `WorkflowCanvasFrame` (que requiere diseño propio sin depender del editor n8n, mayor
+  esfuerzo — n8n confirmó que no ofrece white-label ni en su plan OEM). Área A pasa de 5/8 (63%,
+  con `ExecutionHistoryTable` en 🟡) a tener solo `WorkflowCanvasFrame` pendiente. Ambos
+  componentes sostienen el principio #6 del NORTH_STAR ("replay read-only de cualquier run pasado
+  es interacción core") extendiéndolo a runs relacionados (padre↔hijo, fallo↔handler) en vez de
+  solo al run seleccionado.
+- **Componentes creados:**
+  - `packages/ui/src/agentic/subworkflow-chip.tsx`:
+    - `SubworkflowRef { executionId, workflowName, status, summary?, onOpen? }` sobre
+      `NodeStatus` ya existente (reutiliza la gramática de 6 estados de `NodeStatusBadge`, no
+      introduce una segunda paleta para "referencia a otra ejecución").
+    - `<SubworkflowChip>` — dos affordances deliberadamente distintas: el botón principal
+      (workflow name + ícono `Workflow` + `ArrowUpRight`) es un deep-link real (`onOpen`); el
+      caret solo expande un `summary` inline sobre `Collapsible.Root` (mismo primitive que
+      `RunInspector`/`GuardrailIndicator`) sin navegar — el operador puede confirmar "¿qué corrió
+      ahí?" sin perder el contexto del run padre.
+  - `packages/ui/src/agentic/error-workflow-banner.tsx`:
+    - `ErrorHandlerRef { executionId, workflowName, status, failedNodeTitle?, onOpen? }`.
+    - `<ErrorWorkflowBanner>` — tono `warn` deliberado (no `block`): el fallo ya fue capturado y
+      ruteado a un manejador, es una remediación en curso, no una alarma sin resolver — misma
+      distinción que ya hace `RetryControls` entre el marcador "Failed here" (block) y el propio
+      control de reintento. Ícono `Route`, `NodeStatusBadge` inline del handler (que puede estar
+      `running` o incluso `error` — un fallo enrutado no garantiza resolución) y cross-link.
+  - `packages/ui/src/agentic/run-inspector.tsx` — extendido, no reemplazado:
+    - `RunInspectorNode.subworkflow?: SubworkflowRef` — pinta un `SubworkflowChip` inline debajo
+      del título de un nodo tipo "Execute Workflow".
+    - `RunInspectorProps.errorHandler?: ErrorHandlerRef` — pinta un `ErrorWorkflowBanner` al tope
+      del panel cuando el fallo del run fue enrutado a otro workflow.
+  - `packages/ui/src/agentic/execution-history-table.tsx` — `ExecutionRecord.errorHandler?:
+    ErrorHandlerRef` (dato puro, mismo patrón que `attempt`/`triggerMode`).
+  - `packages/ui/src/agentic/execution-history-console.tsx` — wiring real, no solo visual: 2
+    ejecuciones mock nuevas (`exec_9931aa` Vendor Compliance Check, `exec_5e01f0` Global Error
+    Handler), un nodo `n4b` "Execute Workflow" en `exec_8f21a0` con `subworkflow` apuntando a
+    `exec_9931aa`, y `errorHandler` en `exec_a10f55` apuntando a `exec_5e01f0`. El componente
+    inyecta `onOpen` genéricamente sobre cualquier nodo/ejecución con estas referencias
+    (`setSelectedId` sobre el `executionId` de destino) — el mock data queda declarativo/puro y la
+    interactividad vive en el nivel de consola, igual que `onSelect` ya wireaba las filas de
+    `ExecutionHistoryTable`.
+  - `packages/ui/src/agentic/subworkflow-chip.stories.tsx` y
+    `packages/ui/src/agentic/error-workflow-banner.stories.tsx` — mock data rica por industria (ver
+    arriba) más una story `InlineOnNodeRow`/`OnFailedRunInspector` que muestra el caso de uso real
+    (no un componente flotante suelto) y referencia la demo integrada en
+    `Agentic/Execution History/V001 n8n-style Runs`.
+  - `packages/ui/src/agentic/execution-history-console.stories.tsx` — nota de `MasterDetail`
+    actualizada para señalar los 2 deep-links nuevos.
+  - `packages/ui/src/agentic/index.ts` — barrel actualizado con los 2 módulos nuevos.
+- **Comandos ejecutados:** `git status` + `git checkout main` + `git fetch origin main` + `git
+  merge --ff-only origin/main` (el contenedor arrancó con `HEAD` detached en `33c583c` y la rama
+  local `main` desactualizada 26 commits — resuelto con fast-forward limpio, sin conflictos) ·
+  `pnpm install` (faltaba `node_modules`) · `pnpm --filter @studio/ui exec eslint
+  src/agentic/subworkflow-chip.tsx src/agentic/subworkflow-chip.stories.tsx
+  src/agentic/error-workflow-banner.tsx src/agentic/error-workflow-banner.stories.tsx
+  src/agentic/run-inspector.tsx src/agentic/execution-history-table.tsx
+  src/agentic/execution-history-console.tsx src/agentic/execution-history-console.stories.tsx
+  src/agentic/index.ts` (0 errores) · `pnpm --filter @studio/ui test` (26 passed, sin cambios) ·
+  `pnpm exec turbo run build --filter=@studio/ui...` (OK, ESM 232.41 KB, DTS 69.03 KB) · `pnpm exec
+  turbo run build --filter=@studio/docs...` (Storybook static build OK, chunks nuevos
+  `subworkflow-chip-*.js` 3.13 kB, `subworkflow-chip.stories-*.js` 5.67 kB,
+  `error-workflow-banner-*.js` 2.47 kB, `error-workflow-banner.stories-*.js` 5.95 kB,
+  `execution-history-console.stories-*.js` recompilado a 30.49 kB).
+- **Resultado:** ✅ pendiente de commit/push a main. `NORTH_STAR.md` actualizado: `SubworkflowChip`
+  y `ErrorWorkflowBanner` pasan de ❌ a ✅ (área A); "Prioridad de construcción" reordenada con
+  `AgentHandoffMarker + CheckpointBadge` (área B) como nuevo #1 y `WorkflowCanvasFrame` bajado a
+  #4 (única fila restante de área A, mayor esfuerzo).
+- **Notas para revisión humana:**
+  - El deep-link entre ejecuciones vive completamente dentro de `ExecutionHistoryConsole` en esta
+    demo (navega vía `setSelectedId`, todo en la misma tabla mock) — en una integración real el
+    `executionId` de destino podría vivir en otro workflow/proyecto y `onOpen` tendría que navegar
+    a otra vista/ruta en vez de solo cambiar la selección local; el contrato del componente
+    (`onOpen: () => void`) ya soporta ambos casos sin cambios.
+  - `ErrorWorkflowBanner` no valida que `handler.status` sea coherente con "ya resuelto" — a
+    propósito: la story `HandlerAlsoFailed` documenta que un fallo enrutado puede terminar en otro
+    fallo, y el componente no debe implicar una garantía de resolución que no tiene.
+  - Con esta iteración, área A (n8n/proceso empresarial) del NORTH_STAR llega a 5 de 8 filas en ✅
+    más `ExecutionHistoryTable` en 🟡 (falta virtualización) — solo `WorkflowCanvasFrame` queda
+    completamente sin empezar.

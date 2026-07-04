@@ -3,6 +3,9 @@ import { Brain, Bot, Wrench, Search, ChevronRight } from "lucide-react";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { cn } from "@/lib/utils";
 import type { Tone } from "../trace-log/trace-log.variants.js";
+import { toneChip } from "./approval-gate-card.js";
+import { GuardrailChip, type GuardrailPolicy } from "./guardrail-indicator.js";
+import { scoreTone, type EvalScoreRun } from "./eval-score-badge.js";
 
 export type SpanKind = "llm" | "tool" | "agent" | "retrieval";
 
@@ -20,6 +23,10 @@ export interface TraceSpan {
   tokens?: { input: number; output: number };
   /** Costo propio del span (no incluye hijos) en USD. */
   costUsd?: number;
+  /** Guardrail checks evaluados en este span (ej. output guardrail tras un LLM call). */
+  guardrails?: GuardrailPolicy[];
+  /** Eval score adjunto a este span (ej. faithfulness tras una llamada RAG). */
+  evalScore?: { name: string; score: number; threshold: number; history?: EvalScoreRun[] };
   children?: TraceSpan[];
 }
 
@@ -74,6 +81,21 @@ function formatCost(usd: number): string {
   return usd < 0.01 ? `$${usd.toFixed(4)}` : `$${usd.toFixed(2)}`;
 }
 
+function EvalScoreChip({ evalScore }: { evalScore: NonNullable<TraceSpan["evalScore"]> }) {
+  const tone = scoreTone(evalScore.score, evalScore.threshold);
+  return (
+    <span
+      title={`${evalScore.name}: ${evalScore.score}/${evalScore.threshold} threshold`}
+      className={cn(
+        "inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide",
+        toneChip[tone],
+      )}
+    >
+      {evalScore.name} {evalScore.score.toFixed(0)}
+    </span>
+  );
+}
+
 interface SpanRowProps {
   span: TraceSpan;
   depth: number;
@@ -94,8 +116,10 @@ function SpanRow({ span, depth, totalDurationMs, defaultOpenDepth }: SpanRowProp
   // sigan siendo clicables/visibles en vez de desaparecer a 0px.
   const leftPct = totalDurationMs > 0 ? (span.startMs / totalDurationMs) * 100 : 0;
   const widthPct = totalDurationMs > 0 ? Math.max((span.durationMs / totalDurationMs) * 100, 2) : 100;
+  const hasBadges = (span.guardrails?.length ?? 0) > 0 || !!span.evalScore;
 
   const row = (
+    <>
     <div
       className="grid grid-cols-[minmax(0,1fr)_120px_72px_88px] items-center gap-3 py-1.5 pr-2 sm:grid-cols-[minmax(0,1fr)_160px_84px_96px]"
       style={{ paddingLeft: `${depth * 18 + 8}px` }}
@@ -147,6 +171,16 @@ function SpanRow({ span, depth, totalDurationMs, defaultOpenDepth }: SpanRowProp
         )}
       </span>
     </div>
+    {hasBadges ? (
+      <div
+        className="flex flex-wrap items-center gap-1.5 pb-1.5"
+        style={{ paddingLeft: `${depth * 18 + 8 + 27}px` }}
+      >
+        {span.guardrails?.map((g) => <GuardrailChip key={g.id} policy={g} />)}
+        {span.evalScore ? <EvalScoreChip evalScore={span.evalScore} /> : null}
+      </div>
+    ) : null}
+    </>
   );
 
   if (!hasChildren) {
@@ -194,6 +228,12 @@ export interface TraceTreeProps extends React.ComponentProps<"div"> {
  * de construcción" del NORTH_STAR: `TraceLog`/`ExecutionTimeline` no anidan
  * spans ni suman costo, y "costo y tokens como UI de primera clase" es el
  * principio #2 de credibilidad enterprise.
+ *
+ * Un span opcionalmente carga `guardrails` (policy checks) y `evalScore`
+ * (score vs umbral) — se renderizan como chips compactos justo debajo del
+ * span, reutilizando `GuardrailChip`/`scoreTone` para exponer policy checks
+ * y regresión de eval en el mismo vocabulario de tono que el costo (nueva
+ * prioridad #1 del NORTH_STAR, área B).
  */
 export function TraceTree({
   title = "Trace",
