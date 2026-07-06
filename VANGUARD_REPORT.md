@@ -2,156 +2,154 @@
 
 > Se sobreescribe cada semana. Historial real vive en `git log -- VANGUARD_REPORT.md`.
 
-**Fecha:** 2026-07-02 · **Generado por:** routine cloud "vanguard check" #1 (primera corrida)
+**Fecha:** 2026-07-06 · **Generado por:** routine cloud "vanguard check" #2
 
 ## Resumen ejecutivo
 
-El repo está sano (tests 26/26, build `@studio/ui` y Storybook OK). Mientras se investigaba esta
-auditoría, el loop de construcción cerró en paralelo dos gaps: `NodeStatusBadge`/`RunTimeline`
-(commit `3b39be4`, gramática de 6 estados con anillos dashed-animados) y `WCAG 2.2 AA` (commit
-`539e9db`, hit-areas 24px + auditoría axe 0 violaciones en 76 stories) — el inventario de este
-reporte ya los refleja como ✅. Aun así, 0 componentes de n8n reales (`NodeStatusBadge` es el
-único ✅ del área) y 0 de auditoría/compliance — las dos áreas que más sostienen la credibilidad
-enterprise siguen casi en blanco. La novedad más importante de fuera del repo es regulatoria: el
-Digital Omnibus de la UE (aprobado por Parlamento y Consejo, aún sin publicar) podría retrasar el
-deadline del EU AI Act de agosto 2026 a diciembre 2027. Segunda novedad relevante: 5 fuentes
-independientes (OpenAI, Microsoft, Codex Remote, fintech, software) convergieron esta semana en el
-mismo patrón — approval/HITL con evidencia — lo que sube `ApprovalGateCard`/`HumanInterruptQueue`
-a prioridad #1 del backlog.
+El repo está sano (155/155 tests, 33 archivos; build `@studio/ui` y Storybook OK). Desde la
+auditoría anterior (2026-07-02), un loop de construcción distinto ejecutó **completo** un ladder
+de 19 unidades (`docs/superpowers/specs/2026-07-03-build-ladder-batch-design.md`, commits
+`c7bba09`…`e87de67`): cerró casi todo el backlog que este reporte señalaba como top-5 la semana
+pasada, y de paso construyó **dos verticales de industria enteras** (comercial/RevOps e
+industrial/petróleo-energía, áreas E y F, nuevas en el catálogo) que no existían ni como filas.
+Cobertura ponderada del catálogo: **75% (antes 19%)** — el salto real de la semana no viene de
+esta auditoría sino del ladder; mi trabajo hoy fue re-verificar el inventario contra el repo real,
+ampliar el catálogo con las áreas nuevas, y encontrar que 2 gaps que el propio loop de construcción
+se había prometido cerrar (`AgentHandoffMarker`/`CheckpointBadge`) siguen sin construir. Afuera del
+repo, la novedad regulatoria más concreta es que el Digital Omnibus de la UE ya tiene luz verde
+política completa de ambas cámaras — solo falta el trámite mecánico de publicación en EUR-Lex.
 
 ## Novedades de la semana (con fuente)
 
-**n8n** — release semanal 2.29.x con "AI Agent v3" como nodo por defecto (n8n docs/GitHub
-releases, 30-jun-2026). Confirmado: el plan OEM **no** ofrece white-label completo — el branding
-n8n permanece visible (n8n.io/oem/).
+**Inventario interno (lo más grande de esta semana, aunque no es "de afuera"):** el ladder §07
+construyó 28 unidades entre el 2026-07-03 y 2026-07-04: `DataTable` denso virtualizado + `FilterBar`
++ `SavedViews` (rung 1, tanstack-table/tanstack-virtual), `AgentTopologyGraph`/`SwarmControlBar`/
+`BudgetCapGovernor` (rung 2, React Flow), `EvidenceExportDialog`/`ApprovalChainStepper`/
+`ModelProvenanceCard` (rung 3, ya reflejados en el reporte anterior pero confirmados aquí),
+7 componentes comerciales (rung 4, recharts) y 7 industriales con disciplina ISA-101 (rung 5),
+más 6 correcciones de estándar (rung 6): `AuditLogTable`/`ExecutionHistoryTable` remontadas sobre
+`DataTable` (ahora sí virtualizan), fix de portabilidad de `a11y-audit.mjs`, rename
+`AgentCard→AgentTile` + `A2AAgentCardViewer` (protocolo A2A), `RichToolCallCard` con modo MCP Apps
+real (`@mcp-ui/client`), `StreamingMessage` nuevo sobre el protocolo AG-UI, y `TraceTree` con
+adaptador OTel GenAI. Todo con tests verdes (155/155) y build limpio verificado hoy.
 
-**Temporal UI** — "Custom Roles" (RBAC granular) en pre-release para Temporal Cloud
-(temporal.io/changelog, 25-jun-2026); ui-server v2.51.1 con mejoras de accesibilidad de teclado en
-el árbol de familia de workflows y legibilidad del event-history timeline.
+**EU AI Act (la novedad regulatoria más concreta):** el Consejo de la UE confirmó por comunicado
+oficial (29-jun-2026) la luz verde final al Digital Omnibus tras la aprobación del Parlamento
+(16-jun-2026) — el texto "se publicará en breve" en el Diario Oficial y entra en vigor al tercer
+día. A esta fecha (2026-07-06) **sigue sin confirmarse la publicación en EUR-Lex**, pero las nuevas
+fechas pasan de "podrían retrasar" a "confirmadas políticamente, solo falta el trámite": Anexo III
+(alto riesgo standalone) 2-ago-2026 → 2-dic-2027; Anexo I (embebido) 2-ago-2027 → 2-ago-2028.
+Novedad no vista la semana pasada: el paquete también recorta el período de gracia de
+watermarking/transparencia de contenido de IA de 6 a 3 meses (nuevo deadline 2-dic-2026) — trabajo
+que `ModelProvenanceChip` ya cubre. Fuentes: [Consilium](https://www.consilium.europa.eu/en/press/press-releases/2026/06/29/artificial-intelligence-council-gives-final-green-light-to-simplify-and-streamline-rules/), [Gibson Dunn](https://www.gibsondunn.com/eu-ai-act-omnibus-agreement-postponed-high-risk-deadlines-and-other-key-changes/), [ComplianceHub.Wiki](https://compliancehub.wiki/eu-digital-omnibus-ai-act-deadline-deferral-annex-iii-2027/).
 
-**LangSmith/LangGraph** — integración "Harbor x LangChain" para evals de agentes de larga duración
-(langchain.com/blog, 30-jun-2026); control de retención de traces por acción, progreso en vivo de
-experimentos, dashboard chart builder + alertas Slack nativas (LangSmith changelog, semanas del
-15 y 20 de junio).
+**SOC2/AICPA:** sin TSC de IA formal (confirma la semana pasada); framework sigue en TSP Section
+100 (2017/2022). Novedad útil: fuentes de auditoría 2026 detallan qué evidencia AI-specific piden
+en la práctica — linaje de modelo, logs de prompt/inferencia con PII redactada, salida de
+monitoreo de drift, y **vendor risk assessment por cada LLM de terceros** (este último sin
+componente en el catálogo — nueva fila `VendorRiskCard`). Fuente:
+[soc2auditors.org](https://soc2auditors.org/insights/soc-2-for-ai-companies/).
 
-**OpenAI** — deprecación de **Agent Builder** (canvas visual de AgentKit) y Evals hosteados, sunset
-30-nov-2026 (OpenAI community, 04-jun-2026) — cambia a qué fuente seguir (Agents SDK + ChatKit).
-Guía formal única "Guardrails and human review" (input/output/tool guardrails + patrón
-`interruptions`/`RunState`). Codex Remote GA: aprobación de acciones de agente desde el móvil
-(openai.com/products/release-notes, jul-2026).
+**WCAG:** sin novedad — el Working Draft de mar-2026 sigue siendo el más reciente (próximo
+esperado ~sep-2026, cada 6 meses); Candidate Recommendation estimado Q4-2027, Recommendation no
+antes de 2028. Sin urgencia.
 
-**Anthropic/Claude** — Claude Managed Agents con eventos `event_start`/`event_delta` para streaming
-incremental (platform.claude.com, 01-jul-2026); Claude Sonnet 5 como modelo agéntico default con
-contexto 1M (30-jun-2026); Claude Code v2.1.198 con hooks `agent_needs_input`/`agent_completed` y
-background agents que auto-commitean/pushean/abren PR.
+**n8n / Temporal / OpenAI / Anthropic / Vercel AI SDK / Microsoft AG-UI / IBM Carbon / Adobe
+Spectrum:** todos revisados, todos sin cambios sustantivos desde el 2026-07-02. n8n reconfirma que
+el OEM no es white-label completo. Temporal Custom Roles sigue en pre-release. OpenAI Agents SDK y
+ChatKit ya están GA (sin novedad de patrón). Claude Sonnet 5 ya en producción (lanzado 30-jun,
+sesión activa de esta misma auditoría corre sobre él); Claude Fable 5/Mythos 5 restaurados
+1-jul-2026 (sin relevancia de UI). Vercel AI SDK solo tuvo parches de bugfix esta semana
+(`ai@7.0.15`, providers). IBM Carbon publicó v11.111.0 (1-jul) — solo íconos/pictogramas + fixes de
+a11y, sin patrón de densidad o data-viz nuevo. React Spectrum sin release en julio aún (último
+18-jun).
 
-**Vercel AI SDK** — AI SDK 7 (25-jun-2026): **MCP Apps** (tools de app en iframe sandboxed vía
-JSON-RPC, separadas de las tools visibles al modelo), streaming con métricas de performance
-(time-to-first-output, timing por tool), tool approvals integrados al streaming, Terminal UI
-experimental, voz en tiempo real agnóstica de proveedor.
-
-**Microsoft** — Agent Framework alcanzó GA 1.0 (abr-2026), adoptó el protocolo **AG-UI** (7
-features: incl. Human-in-the-Loop, Tool-based Generative UI, Shared State) recomendando CopilotKit
-como capa de UI (learn.microsoft.com, verificado 2026-04-09). Build 2026 (jun-2026): "Agent
-Harness", "Hosted Agents", "CodeAct" (-52% latencia).
-
-**IBM Carbon** — v11.109-111.0 (jun/jul-2026): tamaños `xs` en combobox/multiselect/dropdown,
-"contextual layout tokens", tabs verticales condensados. Sin novedades en modos de densidad ni en
-`@carbon/charts` funcionalmente esta semana.
-
-**Adobe Spectrum** — React Spectrum S2 v1.5.0 y React Aria Components v1.19.0 (18-jun-2026):
-`keyboardNavigationBehavior` para ListView/TreeView/GridList, `Popover.getTargetRect`. Release
-anterior (v1.4.0, 28-may) sumó drag-and-drop en tablas y `TableFooter`, relevante para
-`DataTable denso`.
-
-**Regulación (la novedad más importante de la semana):**
-- **EU AI Act**: Digital Omnibus aprobado por Parlamento (16-jun) y Consejo (29-jun-2026), aún sin
-  publicar en EUR-Lex. Retrasaría Anexo III de ago-2026 a dic-2027. Hasta publicación oficial,
-  **ago-2026 sigue vigente legalmente**. Precisión de diseño: retención de logs (6 meses) es
-  Art. 19, no Art. 12.
-- **SOC2/AICPA**: sin TSC formal de IA; ASB solo "considerando" guías (roadmap 26-feb-2026, sin
-  entregable). Se descartó un rumor no verificado de "SOC for AI" — fuente única no confiable.
-- **ISO/IEC 42001**: sin revisión 2026; **no** es el estándar armonizado del EU AI Act — ese rol lo
-  cumple **prEN 18286** (CEN-CENELEC, consulta pública hasta fines de 2026).
-- **WCAG**: 2.2 sigue vigente (ahora también ISO/IEC 40500:2025); no existe "2.3"; WCAG 3.0 solo
-  tiene Working Draft (03-mar-2026), a años de ser Recommendation.
-
-**Patrones por sector** — Software: cola de aprobación con confidence score + ruteo por umbral,
-señalización binaria de confianza. Fintech: "Know Your Agent" (perfil + consentimiento explícito
-por transacción). Salud: panel de explicabilidad clínica con "regla de los 3 segundos" y
-correlación de auditoría con hashes. Petróleo/energía: dashboard dual-audiencia (sala de control
-vs HSE) con bandas de riesgo semáforo (patrón de riesgo en tiempo real, no específicamente
-IA-agente). **Inmobiliaria y petróleo/energía siguen sin patrones de UI de agentes-IA verificables
-en fuentes públicas** — honestamente, ninguna fuente de las buscadas tenía mockups o
-especificaciones concretas, solo descripciones funcionales genéricas.
+**Patrones por sector (hallazgos nuevos esta semana):**
+- **Servicios financieros:** FINRA formalizó a los agentes de IA como categoría de riesgo de
+  supervisión propia, con 4 vectores (acción sin validación humana, scope/autoridad excedida,
+  auditabilidad de cadenas de razonamiento multi-paso, uso indebido de datos sensibles) y recomienda
+  explícitamente **"behavioral baselining"** — desviación automática de un patrón de comportamiento
+  aprendido por agente — como control esperado. Sin componente hoy en el catálogo (nueva fila
+  `AgentAnomalyIndicator`). Fuente: [fin.ai](https://fin.ai/learn/evaluate-ai-agent-compliance-financial-services).
+- **Inmobiliaria:** primer patrón concreto de UI de agentes-IA verificable esta vez (semanas
+  anteriores no encontraron ninguno) — Rex CRM separó en su anuncio 2026 el asistente monolítico en
+  4 roles distintos (AI Admin / AI Prospecting / AI Nurture / AI Manage) en vez de un agente
+  genérico único. Semilla de diseño para evolucionar `AgentGallery`/`AgentTopologyGraph` hacia un
+  roster etiquetado por rol de negocio, no solo por estado técnico.
+- **Salud:** reconfirma "Explainability on Demand" — un caso citado describe cómo mostrar una sola
+  recomendación a la vez + panel de evidencia (en vez de una lista) fue la diferencia entre rechazo
+  y adopción clínica. Sigue sin vertical propia en el catálogo (a diferencia de comercial/industrial
+  ya construidas esta semana) — sigue siendo la oportunidad de pionero más clara.
+- **Petróleo/energía y software:** sin hallazgos nuevos esta semana más allá de lo ya construido
+  (áreas F e implícitamente E).
 
 ## Score de cobertura
 
-Contra el catálogo de 43 ítems de `NORTH_STAR.md` (inventario real verificado con build+test+
-Storybook, incluyendo los 2 cierres de gap del loop de construcción durante esta misma auditoría):
+Contra el catálogo ampliado de `NORTH_STAR.md` — **63 ítems** (antes 43; +14 de las áreas nuevas
+E/F, +2 filas nuevas descubiertas esta semana en B/C, -0 eliminadas), verificado con
+build+test+Storybook reales al momento de esta auditoría:
 
 | Área | ✅ | 🟡 | ❌ | Total | Cobertura (✅) | Cobertura ponderada (✅=1, 🟡=0.5) |
 |---|---|---|---|---|---|---|
-| A. n8n / proceso empresarial | 1 | 0 | 7 | 8 | 13% | 13% |
-| B. Agent ops / consola de IA | 4 | 2 | 9 | 15 | 27% | 33% |
-| C. Auditoría / compliance | 0 | 0 | 10 | 10 | 0% | 0% |
-| D. Table stakes enterprise | 1 | 2 | 7 | 10 | 10% | 20% |
-| **Total** | **6** | **4** | **33** | **43** | **14%** | **19%** |
+| A. n8n / proceso empresarial | 7 | 0 | 1 | 8 | 88% | 88% |
+| B. Agent ops / consola de IA | 18 | 0 | 3 | 21 | 86% | 86% |
+| C. Auditoría / compliance | 6 | 0 | 5 | 11 | 55% | 55% |
+| D. Table stakes enterprise | 2 | 3 | 5 | 10 | 20% | 35% |
+| E. Comercial / RevOps (nueva) | 6 | 0 | 0 | 6 | 100% | 100% |
+| F. Industrial / OT (nueva) | 7 | 0 | 0 | 7 | 100% | 100% |
+| **Total** | **46** | **3** | **14** | **63** | **73%** | **75%** |
 
-Los 6 ✅ (`AgentCore/Card/Gallery`, `AgentMetric/AgentStatusMatrix`, `ExecutionTimeline`,
-`NodeStatusBadge`, `RunTimeline`, `WCAG 2.2 AA`) son todos de los últimos 2 días — 4 del laboratorio
-agentic, 2 cerrados hoy mismo durante esta auditoría. El área C (auditoría/compliance) sigue en
-0% absoluto — es el único de los 4 pilares sin ningún avance, ni parcial, y sostiene 3 de los 10
-principios de credibilidad enterprise (#3, #4, #10).
+El salto de 14%/19% (semana pasada) a 73%/75% es real pero engañoso si se lee como "esta auditoría
+construyó eso" — no lo hizo; un loop de construcción distinto ejecutó un ladder de 19 unidades
+completo en paralelo. El trabajo de esta auditoría fue: (1) verificar cada fila contra el repo real
+en vez de confiar en el `NORTH_STAR.md` previo, (2) agregar las áreas E/F que existían en el repo
+pero no en el catálogo, y (3) encontrar 2 gaps prometidos (`AgentHandoffMarker`/`CheckpointBadge`)
+que en realidad siguen sin construirse.
 
 ## Top 5 gaps priorizados (backlog para el loop de construcción de 5h)
 
-1. **ApprovalGateCard + HumanInterruptQueue** — sube a prioridad #1: 5 fuentes independientes
-   (OpenAI guardrails/approvals, Microsoft AG-UI HITL, Codex Remote mobile approvals, patrón
-   fintech KYA, patrón software de cola de aprobación) convergen esta semana en el mismo patrón.
-   Área con 0 avance hoy. Diseñar mobile-first, no solo desktop ops console.
-2. **AuditLogTable + WhoDidWhatTimeline** — 0% de cobertura en toda el área C. El deadline EU AI
-   Act formal sigue siendo ago-2026 (aunque en disputa vía Digital Omnibus); SOC2 CC7/CC8 lo exige
-   sin fecha límite de todos modos. Separar diseño de `AuditLogTable` (Art. 12/13) de
-   `RetentionBadge` (Art. 19) — son obligaciones legalmente distintas.
-3. **TraceTree con costo por span + TokenCostMeter** — `TraceLog`/`ExecutionTimeline` no anidan
-   spans ni suman costo; observabilidad con dinero visible sigue sin dueño.
-4. **Rich Tool-UI sobre ToolCallCard** — convergencia de 3 vendors esta semana (MCP Apps de
-   Vercel, AG-UI Tool-based Generative UI de Microsoft, widgets de ChatKit de OpenAI). Ya existe
-   base (`ToolCallCard` con key/value); es una extensión, no un componente desde cero — alto ROI.
-5. **ExecutionHistoryTable + RunInspector (wrapper n8n)** — área A en 13% de cobertura, con
-   `NodeStatusBadge` como único ✅. Nota de diseño obligatoria: no asumir white-label del editor
-   n8n (confirmado que no existe ni en plan OEM) — construir independiente.
+1. **AgentHandoffMarker + CheckpointBadge** — arrastrado sin cerrar desde la iteración 15 del loop
+   de construcción; el ladder §07 tomó otro orden de trabajo y nunca las tocó. Son marcadores
+   puntuales sobre `RunTimeline`/`TraceTree`/`ExecutionTimeline` ya existentes — bajo esfuerzo, alto
+   ROI de catálogo, y el gap más viejo sin resolver del documento.
+2. **RBACMatrixViewer** — área C en 55%; `ModelProvenanceCard` y `ApprovalChainStepper` ya dan el
+   vocabulario de actor/provider necesario para "por qué este usuario tiene acceso".
+3. **CommandPalette + Density modes sitewide + DateRangePicker** — con `DataTable` (rung 1) cerrado,
+   es la secuencia natural de table stakes restante; dependencias (`cmdk`, `react-aria-components`)
+   ya decididas en el spec del ladder, solo falta construir. Área D sigue en el punto más bajo del
+   catálogo (20%/35%).
+4. **AgentAnomalyIndicator (Behavioral Deviation Flag)** — nuevo esta semana, fuente FINRA
+   (servicios financieros); reusa vocabulario `Tone`/`NodeStatus` existente, sin framework nuevo.
+5. **VendorRiskCard** — nuevo esta semana, fuente auditores SOC2 2026 (evidencia AI-specific);
+   complementa a `ModelProvenanceCard` a nivel de proveedor en vez de nivel de run.
+
+(`WorkflowCanvasFrame` sigue como única fila de área A sin cerrar, pero se mantiene deliberadamente
+fuera del top 5 — es la de mayor esfuerzo del catálogo completo, sin cambio de análisis esta
+semana. Vertical de salud sigue siendo la oportunidad de pionero de mayor plazo, ver arriba.)
 
 ## Riesgos
 
-- **Regulatorio, baja urgencia inmediata pero vigilar:** el Digital Omnibus de la UE podría
-  retrasar el deadline EU AI Act de ago-2026 a dic-2027 una vez se publique en EUR-Lex. Si el
-  loop de construcción está priorizando `AuditLogTable` por "deadline inminente", esa narrativa ya
-  no es tan sólida — sigue siendo correcto construirlo (SOC2 no tiene fecha límite y exige lo
-  mismo), pero el mensaje de urgencia debe ajustarse. Acción: releer este documento la próxima
-  semana para confirmar si el Omnibus ya se publicó.
-- **Área de auditoría/compliance (C) en 0% absoluto:** de los 4 pilares del catálogo, es el único
-  sin ningún avance ni parcial — y es el que más directamente sostiene "creíble para el auditor"
-  (principios #3, #4, #10). El área n8n al menos tiene `NodeStatusBadge` hoy; compliance no tiene
-  nada. Si el loop de construcción sigue el orden de prioridad de este documento, entra recién en
-  el puesto #2 — vale la pena confirmarlo la próxima semana en vez de que quede relegado otra vez.
-- **`scripts/a11y-audit.mjs` tiene una ruta absoluta de Windows hardcodeada**
-  (`C:/dev/Enterprise Design System`) — no es portable a este contenedor Linux ni a CI. El
-  resultado "76 stories, 0 violaciones" citado en el commit `539e9db` no se pudo re-verificar de
-  forma independiente en este entorno; se acepta como válido porque el commit describe metodología
-  y alcance específicos (SC 2.5.8, criterios verificados por inspección), pero si se quiere que el
-  loop de construcción re-corra este audit automáticamente cada semana, el script necesita rutas
-  relativas al repo. No lo toqué por estar fuera de mi alcance (solo `.md`) — queda para el loop
-  de construcción.
-- **Cobertura ponderada real es 19%, no 14%:** si se reporta solo el % de ✅ puro se subestima el
-  avance (4 ítems están en 🟡, con base reutilizable). Usar la columna ponderada para ver progreso
-  real semana a semana.
-- **Concurrencia con el loop de construcción:** esta auditoría corrió en paralelo al loop de 5h y
-  hubo que resolver un conflicto de merge en `NORTH_STAR.md` (2 commits del loop llegaron durante
-  la investigación). Se resolvió a favor del estado real más nuevo del repo. Si las corridas
-  semanales de vanguardia y el loop de construcción se solapan seguido, vale la pena coordinarlas
-  para evitar conflictos repetidos.
-- **Build/test:** sin riesgos — `pnpm --filter @studio/ui test` (26/26 passed), `turbo build`
-  para `@studio/ui` y `@studio/docs` (Storybook static) ambos verdes al momento de esta auditoría,
-  ya con los commits `3b39be4` y `539e9db` incorporados.
+- **Divergencia entre lo prometido y lo construido:** la iteración 15 de `AGENTIC_EXPERIMENTS_LOG.md`
+  fijó `AgentHandoffMarker + CheckpointBadge` como prioridad #1 explícita; el ladder §07 (aprobado
+  un día antes, 2026-07-03) tomó un orden distinto y las dejó afuera de sus 19 unidades. Ninguno de
+  los dos documentos se contradice — simplemente corrieron en paralelo con prioridades propias — pero
+  vale la pena que la próxima iteración del loop de construcción cierre este par antes de seguir
+  ampliando catálogo hacia gaps nuevos, para no acumular una segunda semana de arrastre.
+- **`AGENTIC_EXPERIMENTS_LOG.md` quedó desactualizado:** el log de iteraciones numeradas se detiene
+  en la iteración 15 (2026-07-04T19:15:00Z); las 13 unidades de commits posteriores (industrial
+  17-23, ladder units 24-28) solo quedaron documentadas en mensajes de commit y en el spec del
+  ladder, no en el log narrativo. No lo edité (fuera de mi alcance — solo toco `.md` de vanguardia),
+  pero si el loop de construcción sigue usando ese archivo como bitácora de iteraciones, vale la
+  pena decidir si el ladder también debe loguear ahí o si el spec + commits son la fuente de verdad
+  a partir de ahora.
+- **Regulatorio, urgencia sin cambio real:** el Digital Omnibus sigue sin publicarse formalmente en
+  EUR-Lex a esta fecha — la brecha entre "luz verde política" y "vigente" persiste igual que la
+  semana pasada, solo con más confianza en el contenido final. Seguir monitoreando antes de tratar
+  ago-2026 como oficialmente derogado.
+- **Cobertura por área sigue muy desigual:** D (table stakes, 20%/35%) es ahora la más rezagada del
+  catálogo, por debajo incluso de C (compliance, 55%) — vale la pena que el loop de construcción no
+  siga apilando verticales de industria nuevas (aunque tienten por alto ROI de "área nueva al 100%")
+  sin antes cerrar D, que sostiene el principio #7 (densidad + keyboard-first) transversalmente.
+- **Build/test:** sin riesgos — `pnpm install` limpio, `pnpm --filter @studio/ui test` (155/155
+  passed, 33 archivos) y `turbo build --filter=@studio/ui...` (ESM 289.39 KB, DTS 95.54 KB) verdes
+  al momento de esta auditoría, con todos los commits del ladder §07 ya incorporados en `main`.
