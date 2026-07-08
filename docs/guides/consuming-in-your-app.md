@@ -1,4 +1,4 @@
-# Consuming Studio DS in your app
+# Consuming Duly in your app
 
 Two complete walkthroughs — one for plain React/Vite apps and one for apps already running Tailwind v4.
 
@@ -11,7 +11,7 @@ This path requires **zero Tailwind configuration**. The precompiled `dist/styles
 ### 1. Install
 
 ```bash
-pnpm add @studio/ui @studio/tokens
+pnpm add @duly/ui @duly/tokens
 ```
 
 ### 2. Import the stylesheet
@@ -19,11 +19,11 @@ pnpm add @studio/ui @studio/tokens
 In your app entry point (e.g. `src/main.tsx`):
 
 ```ts
-import "@studio/ui/styles.css";
+import "@duly/ui/styles.css";
 ```
 
 This single import provides:
-- All Tailwind utility classes used by Studio DS components
+- All Tailwind utility classes used by Duly components
 - The `cockpit` theme variables at `:root` (default, dark)
 - The `light` theme variables under `[data-theme="light"]` (light mode of the default brand)
 - The `test` theme variables under `[data-theme="test"]`
@@ -57,7 +57,7 @@ return <div data-theme={theme}>{/* … */}</div>;
 
 ```tsx
 // src/AgentPanel.tsx
-import { TraceLog } from "@studio/ui";
+import { TraceLog } from "@duly/ui";
 
 export function AgentPanel() {
   return (
@@ -84,7 +84,7 @@ export function AgentPanel() {
 
 ### 5. Fonts (optional)
 
-Studio DS components reference `Geist` (sans-serif), `Manrope` (display), and `JetBrains Mono` (monospace). They fall back gracefully to system fonts if these are not loaded. To load them from Google Fonts, add to your `index.html`:
+Duly components reference `Geist` (sans-serif), `Manrope` (display), and `JetBrains Mono` (monospace). They fall back gracefully to system fonts if these are not loaded. To load them from Google Fonts, add to your `index.html`:
 
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -104,7 +104,7 @@ If your app already runs Tailwind v4, skip `dist/styles.css` (which bundles its 
 ### 1. Install
 
 ```bash
-pnpm add @studio/ui @studio/tokens
+pnpm add @duly/ui @duly/tokens
 ```
 
 ### 2. Configure your CSS entry
@@ -114,20 +114,20 @@ pnpm add @studio/ui @studio/tokens
 @import "tailwindcss";
 
 /* Mapping layer: wires --color-<token> Tailwind utilities to CSS custom properties */
-@import "@studio/tokens/theme.css";
+@import "@duly/tokens/theme.css";
 
 /* Value layers: define the actual --surface-2, --ink, etc. custom property values */
-@import "@studio/tokens/theme-cockpit.css";  /* cockpit theme at :root (default, dark) */
-@import "@studio/tokens/theme-light.css";    /* optional: light theme under [data-theme="light"] */
-@import "@studio/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
+@import "@duly/tokens/theme-cockpit.css";  /* cockpit theme at :root (default, dark) */
+@import "@duly/tokens/theme-light.css";    /* optional: light theme under [data-theme="light"] */
+@import "@duly/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
 
 /* Scan the compiled UI package so Tailwind generates component utility classes */
-@source "../node_modules/@studio/ui/dist/**/*.js";
+@source "../node_modules/@duly/ui/dist/**/*.js";
 ```
 
 > **`theme.css` alone is not enough** — it only maps utility names to CSS variables; it does not define the variable values. You must also import a value layer (`theme-cockpit.css` and/or `theme-test.css`), otherwise color utilities resolve to undefined variables and components render colorless.
 
-> **Do not** also import `@studio/ui/styles.css` — that would pull in a second copy of the Tailwind engine.
+> **Do not** also import `@duly/ui/styles.css` — that would pull in a second copy of the Tailwind engine.
 
 ### 3. Set the theme root
 
@@ -141,7 +141,7 @@ Same as the plain-React path:
 
 ### 4. Use tokens as Tailwind utilities
 
-With `@studio/tokens/theme.css` loaded, every semantic token is available as a Tailwind color utility:
+With `@duly/tokens/theme.css` loaded, every semantic token is available as a Tailwind color utility:
 
 ```tsx
 // bg-surface-2 → background-color: var(--surface-2)
@@ -161,5 +161,5 @@ Same Google Fonts `<link>` as in the plain-React path above.
 ## Common notes
 
 - `data-theme` scopes theme variables to a subtree — you can render multiple themes on the same page by nesting different `data-theme` containers.
-- The optional `@studio/ui/reset.css` provides a lightweight CSS normalization. Import it before `styles.css` if you want it.
+- The optional `@duly/ui/reset.css` provides a lightweight CSS normalization. Import it before `styles.css` if you want it.
 - See [theming.md](./theming.md) for the full semantic token reference and how to add a custom theme.

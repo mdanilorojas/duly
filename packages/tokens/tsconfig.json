@@ -1,1 +1,1 @@
-{ "extends": "@studio/tsconfig/base.json", "include": ["src", "build.ts"] }
+{ "extends": "@duly/tsconfig/base.json", "include": ["src", "build.ts"] }

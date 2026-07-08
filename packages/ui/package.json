@@ -1,5 +1,5 @@
 {
-  "name": "@studio/ui",
+  "name": "@duly/ui",
   "version": "0.0.0",
   "type": "module",
   "description": "React UI components for the Studio design system — accessible, themeable, Tailwind v4, RSC-ready.",
@@ -66,9 +66,9 @@
     "react-dom": "^18.3.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@studio/eslint-config": "workspace:*",
-    "@studio/tokens": "workspace:*",
-    "@studio/tsconfig": "workspace:*",
+    "@duly/eslint-config": "workspace:*",
+    "@duly/tokens": "workspace:*",
+    "@duly/tsconfig": "workspace:*",
     "@tailwindcss/cli": "^4.0.0",
     "@tailwindcss/postcss": "^4.0.0",
     "@testing-library/react": "^16.0.0",

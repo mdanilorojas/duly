@@ -1,5 +1,5 @@
 {
-  "name": "@studio/tokens",
+  "name": "@duly/tokens",
   "version": "0.0.0",
   "type": "module",
   "description": "Design tokens for the Studio design system — themeable CSS variables (hex + oklch) and typed JS token maps.",
@@ -31,8 +31,8 @@
     "lint": "eslint src --max-warnings 0"
   },
   "devDependencies": {
-    "@studio/tsconfig": "workspace:*",
-    "@studio/eslint-config": "workspace:*",
+    "@duly/tsconfig": "workspace:*",
+    "@duly/eslint-config": "workspace:*",
     "eslint": "^9.13.0",
     "tsx": "^4.19.0",
     "vitest": "^2.1.0",

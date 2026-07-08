@@ -1,4 +1,4 @@
-# NORTH STAR — Studio DS: sistema operativo visual para agentes de IA en la empresa
+# NORTH STAR — Duly: sistema operativo visual para agentes de IA en la empresa
 
 > Documento vivo. Define qué significa "increíble para corporaciones" en este design system:
 > interfaces de orquestación de agentes, automatización de procesos con n8n, y auditoría/compliance.
@@ -9,7 +9,7 @@
 ## Visión
 
 Una corporación que implementa agentes de IA (con n8n u orquestación propia) debe poder construir
-con Studio DS una consola que su CISO, su auditor y su operador de proceso encuentren **creíble,
+con Duly una consola que su CISO, su auditor y su operador de proceso encuentren **creíble,
 operable y demostrable** — no un demo bonito. El benchmark: Temporal UI + LangSmith + n8n embed +
 IBM Carbon, con la identidad visual propia (dark premium, neural cores, OKLCH).
 

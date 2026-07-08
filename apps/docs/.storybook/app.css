@@ -1,4 +1,4 @@
 /* Storybook build entry: full Tailwind (incl. preflight) + Studio tokens,
    scanning the UI package source so component utilities are generated. */
-@import "@studio/tokens/css";
+@import "@duly/tokens/css";
 @source "../../../packages/ui/src/**/*.{ts,tsx}";

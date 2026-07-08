@@ -1,4 +1,4 @@
-# Contributing to Studio DS
+# Contributing to Duly
 
 ## Dev setup
 
@@ -23,7 +23,7 @@ What each step does:
 | Step | Command | Description |
 |---|---|---|
 | `tokens` | `pnpm turbo run tokens` | Regenerate CSS and JS from `packages/tokens/src/themes.ts` |
-| `build` | `pnpm turbo run build` | Build `@studio/ui` with tsup + compile Storybook |
+| `build` | `pnpm turbo run build` | Build `@duly/ui` with tsup + compile Storybook |
 | `lint` | `pnpm turbo run lint` | ESLint with zero warnings allowed |
 | `test` | `pnpm turbo run test` | Vitest — 33 token tests + 18 UI tests |
 
@@ -31,24 +31,24 @@ Individual package tasks:
 
 ```bash
 # Token generator only
-pnpm --filter @studio/tokens tokens
+pnpm --filter @duly/tokens tokens
 
 # UI build only
-pnpm --filter @studio/ui build
+pnpm --filter @duly/ui build
 
 # Token tests (contrast gate, LOCKED parity, semantic coverage)
-pnpm --filter @studio/tokens test
+pnpm --filter @duly/tokens test
 
 # UI tests (component rendering + axe accessibility)
-pnpm --filter @studio/ui test
+pnpm --filter @duly/ui test
 
 # Storybook
-pnpm --filter @studio/docs storybook
+pnpm --filter @duly/docs storybook
 ```
 
 ## Release flow
 
-Studio DS uses [Changesets](https://github.com/changesets/changesets) for versioning.
+Duly uses [Changesets](https://github.com/changesets/changesets) for versioning.
 
 **1. Open a changeset** while your branch is open:
 
@@ -69,14 +69,14 @@ This consumes all pending changeset files, bumps `package.json` versions, and up
 **3. Publish:**
 
 ```bash
-pnpm publish -r --filter "@studio/*" --access public
+pnpm publish -r --filter "@duly/*" --access public
 ```
 
 Both packages are scoped public (`"publishConfig": { "access": "public" }`).
 
 ## Token versioning policy
 
-The array `SEMANTIC_KEYS` in `packages/tokens/src/contracts.ts` is the **public contract** of `@studio/tokens`. The `dist/tokens.lock.json` file records the current sorted key list and is committed alongside every token change.
+The array `SEMANTIC_KEYS` in `packages/tokens/src/contracts.ts` is the **public contract** of `@duly/tokens`. The `dist/tokens.lock.json` file records the current sorted key list and is committed alongside every token change.
 
 | Change type | Required bump | Changeset required |
 |---|---|---|

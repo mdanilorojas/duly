@@ -1,11 +1,11 @@
-# @studio/ui
+# @duly/ui
 
 React UI components for the Studio design system — accessible, themeable, RSC-ready. Ships a **precompiled, self-contained `dist/styles.css`** that includes utility classes and theme variable mappings but **no CSS preflight**, so it is safe to drop into any existing app.
 
 ## Install
 
 ```bash
-pnpm add @studio/ui @studio/tokens
+pnpm add @duly/ui @duly/tokens
 ```
 
 ## Minimal setup (works in any app — Tailwind optional)
@@ -13,7 +13,7 @@ pnpm add @studio/ui @studio/tokens
 **1. Import the stylesheet once** (e.g. in your app entry or root layout):
 
 ```ts
-import "@studio/ui/styles.css";
+import "@duly/ui/styles.css";
 ```
 
 **2. Wrap your UI in a theme root:**
@@ -31,7 +31,7 @@ import "@studio/ui/styles.css";
 **3. Use components:**
 
 ```tsx
-import { TraceLog } from "@studio/ui";
+import { TraceLog } from "@duly/ui";
 
 export function AgentPanel() {
   return (
@@ -56,27 +56,27 @@ export function AgentPanel() {
 
 ### Already using Tailwind v4?
 
-Instead of importing `dist/styles.css`, configure your own Tailwind build to include the Studio DS tokens and scan the compiled output:
+Instead of importing `dist/styles.css`, configure your own Tailwind build to include the Duly tokens and scan the compiled output:
 
 ```css
 /* your app's main CSS entry */
 @import "tailwindcss";
-@import "@studio/tokens/theme.css";          /* mapping layer: --color-<token> utilities */
-@import "@studio/tokens/theme-cockpit.css";  /* value layer: cockpit theme at :root (default) */
-@import "@studio/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
-@source "../node_modules/@studio/ui/dist/**/*.js";  /* scan compiled output for utility classes */
+@import "@duly/tokens/theme.css";          /* mapping layer: --color-<token> utilities */
+@import "@duly/tokens/theme-cockpit.css";  /* value layer: cockpit theme at :root (default) */
+@import "@duly/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
+@source "../node_modules/@duly/ui/dist/**/*.js";  /* scan compiled output for utility classes */
 ```
 
 > **`theme.css` alone is not enough** — it only maps utility names to CSS variables; it does not define the variable values. Both the mapping layer (`theme.css`) and a value layer (`theme-cockpit.css` and/or `theme-test.css`) are required, otherwise color utilities resolve to undefined variables and components render colorless.
 
-Then skip the `import "@studio/ui/styles.css"` line — your Tailwind build covers it.
+Then skip the `import "@duly/ui/styles.css"` line — your Tailwind build covers it.
 
 ### Optional CSS reset
 
 To apply a lightweight, opinionated CSS reset (box-sizing, margin/padding normalization):
 
 ```ts
-import "@studio/ui/reset.css";
+import "@duly/ui/reset.css";
 ```
 
 Import this **before** `styles.css`.

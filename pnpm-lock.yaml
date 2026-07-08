@@ -20,7 +20,7 @@ importers:
 
   apps/docs:
     dependencies:
-      '@studio/ui':
+      '@duly/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       react:
@@ -30,6 +30,9 @@ importers:
         specifier: ^18.3.0
         version: 18.3.1(react@18.3.1)
     devDependencies:
+      '@duly/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
       '@storybook/addon-a11y':
         specifier: ^8.3.0
         version: 8.6.18(storybook@8.6.18(prettier@2.8.8))
@@ -42,9 +45,6 @@ importers:
       '@storybook/react-vite':
         specifier: ^8.3.0
         version: 8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@2.8.8)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.62.2)(storybook@8.6.18(prettier@2.8.8))(typescript@5.9.3)(vite@5.4.21(lightningcss@1.32.0))
-      '@studio/tokens':
-        specifier: workspace:*
-        version: link:../../packages/tokens
       '@tailwindcss/postcss':
         specifier: ^4.0.0
         version: 4.3.2
@@ -60,10 +60,10 @@ importers:
 
   examples/minimal-vite:
     dependencies:
-      '@studio/tokens':
+      '@duly/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
-      '@studio/ui':
+      '@duly/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       react:
@@ -100,10 +100,10 @@ importers:
 
   packages/tokens:
     devDependencies:
-      '@studio/eslint-config':
+      '@duly/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@studio/tsconfig':
+      '@duly/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       culori:
@@ -178,13 +178,13 @@ importers:
         specifier: ^2.5.0
         version: 2.6.1
     devDependencies:
-      '@studio/eslint-config':
+      '@duly/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@studio/tokens':
+      '@duly/tokens':
         specifier: workspace:*
         version: link:../tokens
-      '@studio/tsconfig':
+      '@duly/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       '@tailwindcss/cli':

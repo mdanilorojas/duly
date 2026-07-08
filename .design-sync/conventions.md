@@ -1,4 +1,4 @@
-# Studio DS conventions (@studio/ui)
+# Duly conventions (@duly/ui)
 
 ## Theme
 

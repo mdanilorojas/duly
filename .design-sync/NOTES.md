@@ -1,4 +1,4 @@
-# design-sync notes — @studio/ui
+# design-sync notes — @duly/ui
 
 ## CSS: bundle-with-preflight.css
 
@@ -33,7 +33,7 @@ node .ds-sync/resync.mjs \
   --entry packages/ui/dist/index.js
 ```
 
-`--entry` needed because `@studio/ui` is a workspace package, not installed under `node_modules/@studio/ui`. Without it, the driver errors `[NO_DIST]`.
+`--entry` needed because `@duly/ui` is a workspace package, not installed under `node_modules/@duly/ui`. Without it, the driver errors `[NO_DIST]`.
 
 ## [REFERENCE_STALE?] warning
 

@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm exec turbo run build --filter=@studio/docs...",
+  "buildCommand": "pnpm exec turbo run build --filter=@duly/docs...",
   "outputDirectory": "apps/docs/storybook-static",
   "installCommand": "pnpm install"
 }

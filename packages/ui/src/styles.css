@@ -1,19 +1,19 @@
 /*
- * @studio/ui — precompiled, self-contained stylesheet (build entry).
+ * @duly/ui — precompiled, self-contained stylesheet (build entry).
  *
  * Tailwind v4 `theme` + `utilities` layers WITHOUT the `base` (preflight) layer,
  * so consuming apps keep their own element resets untouched. Token color/font
- * namespace (@theme inline) + theme variable values come from @studio/tokens.
+ * namespace (@theme inline) + theme variable values come from @duly/tokens.
  * `@source` scans this package's components so their utility classes are emitted.
  */
 @layer theme, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 
-@import "@studio/tokens/theme.css";
-@import "@studio/tokens/motion.css";
-@import "@studio/tokens/theme-cockpit.css";
-@import "@studio/tokens/theme-test.css";
+@import "@duly/tokens/theme.css";
+@import "@duly/tokens/motion.css";
+@import "@duly/tokens/theme-cockpit.css";
+@import "@duly/tokens/theme-test.css";
 
 @source "./**/*.{ts,tsx}";
 

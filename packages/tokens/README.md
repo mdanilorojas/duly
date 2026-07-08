@@ -1,29 +1,29 @@
-# @studio/tokens
+# @duly/tokens
 
 Design tokens for the Studio design system — OKLCH multi-theme CSS variables (with hex fallbacks for older browsers) and a typed JavaScript token map.
 
 ## Install
 
 ```bash
-pnpm add @studio/tokens
+pnpm add @duly/tokens
 ```
 
 ## CSS exports
 
 Several CSS entry points cover different use cases:
 
-### `@studio/tokens/css` — full standalone bundle
+### `@duly/tokens/css` — full standalone bundle
 
 ```css
-@import "@studio/tokens/css";
+@import "@duly/tokens/css";
 ```
 
 Includes the full Tailwind v4 engine (`@import "tailwindcss"`) plus all theme variable layers. Use this only in apps or tools that **do not** already import Tailwind themselves (e.g. in the design system's own Storybook build). Do not combine with your own `@import "tailwindcss"` or you will get duplicate preflight and utility classes.
 
-### `@studio/tokens/theme.css` — engine-free mapping layer
+### `@duly/tokens/theme.css` — engine-free mapping layer
 
 ```css
-@import "@studio/tokens/theme.css";
+@import "@duly/tokens/theme.css";
 ```
 
 Emits only `@theme inline { … }` — maps `--color-<token>` Tailwind color utilities and `duration-*`/`ease-*` motion utilities to CSS custom property names without pulling in the Tailwind engine or preflight. This file does **not** define the actual token values (`--surface-2`, `--ink`, `--duration-base`, etc.); it only wires utility names to variable names.
@@ -32,28 +32,28 @@ Emits only `@theme inline { … }` — maps `--color-<token>` Tailwind color uti
 
 ```css
 @import "tailwindcss";
-@import "@studio/tokens/theme.css";          /* mapping layer: --color-<token>, duration-*, ease-* utilities */
-@import "@studio/tokens/motion.css";         /* value layer: duration + easing tokens (theme-agnostic) */
-@import "@studio/tokens/theme-cockpit.css";  /* value layer: cockpit theme at :root (default) */
-@import "@studio/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
-@source "../node_modules/@studio/ui/dist/**/*.js";  /* scan compiled output for utility classes */
+@import "@duly/tokens/theme.css";          /* mapping layer: --color-<token>, duration-*, ease-* utilities */
+@import "@duly/tokens/motion.css";         /* value layer: duration + easing tokens (theme-agnostic) */
+@import "@duly/tokens/theme-cockpit.css";  /* value layer: cockpit theme at :root (default) */
+@import "@duly/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
+@source "../node_modules/@duly/ui/dist/**/*.js";  /* scan compiled output for utility classes */
 ```
 
 Without the value layer, color and motion utilities resolve to undefined CSS variables (colorless components, no transitions).
 
-### `@studio/tokens/theme-cockpit.css` / `@studio/tokens/theme-test.css` — per-theme variable sets
+### `@duly/tokens/theme-cockpit.css` / `@duly/tokens/theme-test.css` — per-theme variable sets
 
 ```css
-@import "@studio/tokens/theme-cockpit.css";
-@import "@studio/tokens/theme-test.css";
+@import "@duly/tokens/theme-cockpit.css";
+@import "@duly/tokens/theme-test.css";
 ```
 
 Each file emits the raw `:root` / `[data-theme="<name>"]` CSS custom property blocks with hex + oklch fallback pairs. Use these when you need fine-grained control over which themes are loaded, or for server-side pre-rendering a specific theme.
 
-### `@studio/tokens/motion.css` — duration + easing tokens
+### `@duly/tokens/motion.css` — duration + easing tokens
 
 ```css
-@import "@studio/tokens/motion.css";
+@import "@duly/tokens/motion.css";
 ```
 
 Theme-agnostic (applies at `:root`, no `data-theme` needed). Ships four durations (`--duration-fast` 150ms, `--duration-base` 200ms, `--duration-slow` 300ms, `--duration-slower` 500ms) and two easing curves (`--ease-standard`, `--ease-emphasized`), wired into Tailwind so components can use `duration-base`, `ease-standard`, etc. as utility classes.
@@ -74,7 +74,7 @@ Apply a theme by setting `data-theme` on a container element:
 ## JavaScript token map
 
 ```ts
-import { tokens } from "@studio/tokens";
+import { tokens } from "@duly/tokens";
 
 // tokens.<theme>["<token>"] → hex string
 const surface = tokens.cockpit["surface-2"];   // "#131418"

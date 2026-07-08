@@ -1,5 +1,5 @@
 {
-  "name": "@studio/eslint-config",
+  "name": "@duly/eslint-config",
   "version": "0.0.0",
   "private": true,
   "type": "module",

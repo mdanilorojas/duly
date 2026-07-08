@@ -1,10 +1,10 @@
 {
   "projectId": "d54336f1-f043-42a8-9d22-fd161a4e6046",
-  "pkg": "@studio/ui",
+  "pkg": "@duly/ui",
   "shape": "storybook",
   "storybookConfigDir": "apps/docs/.storybook",
   "storybookStatic": ".design-sync/sb-reference",
-  "buildCmd": "pnpm --filter \"@studio/ui...\" build",
+  "buildCmd": "pnpm --filter \"@duly/ui...\" build",
   "extraEntries": ["../../.design-sync/preview-wrapper.tsx"],
   "provider": {
     "component": "PreviewWrapper"

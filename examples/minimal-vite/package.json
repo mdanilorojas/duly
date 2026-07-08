@@ -1,5 +1,5 @@
 {
-  "name": "@studio/example-minimal",
+  "name": "@duly/example-minimal",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@studio/ui": "workspace:*",
-    "@studio/tokens": "workspace:*",
+    "@duly/ui": "workspace:*",
+    "@duly/tokens": "workspace:*",
     "react": "^18.3.0",
     "react-dom": "^18.3.0"
   },

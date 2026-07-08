@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { TraceLog } from "@studio/ui";
-import { tokens } from "@studio/tokens";
+import { TraceLog } from "@duly/ui";
+import { tokens } from "@duly/tokens";
 
 type Theme = "cockpit" | "test";
 
@@ -20,7 +20,7 @@ export default function App() {
       }}
     >
       <header style={{ marginBottom: "1.5rem", display: "flex", gap: "1rem", alignItems: "center" }}>
-        <h1 style={{ margin: 0, fontSize: "1.25rem" }}>Studio DS — Minimal Vite Consumer</h1>
+        <h1 style={{ margin: 0, fontSize: "1.25rem" }}>Duly — Minimal Vite Consumer</h1>
         <button
           onClick={() => setTheme((t) => (t === "cockpit" ? "test" : "cockpit"))}
           style={{

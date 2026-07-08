@@ -1,5 +1,5 @@
 {
-  "extends": "@studio/tsconfig/base.json",
+  "extends": "@duly/tsconfig/base.json",
   "include": ["src"],
   "compilerOptions": {
     "paths": { "@/*": ["./src/*"] }

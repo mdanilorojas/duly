@@ -1,6 +1,6 @@
 # Theming
 
-Studio DS uses a set of 31 semantic CSS custom properties to express every color decision. All components reference these tokens — never raw hex values — so swapping a theme is a single `data-theme` attribute change.
+Duly uses a set of 31 semantic CSS custom properties to express every color decision. All components reference these tokens — never raw hex values — so swapping a theme is a single `data-theme` attribute change.
 
 ---
 
@@ -123,7 +123,7 @@ To activate a theme, set `data-theme` on any container:
 2. **Run the token generator:**
 
    ```bash
-   pnpm --filter @studio/tokens tokens
+   pnpm --filter @duly/tokens tokens
    ```
 
    This emits `dist/theme-midnight.css`, updates `dist/theme.css`, `dist/index.css`, `dist/tokens.js`, `dist/tokens.d.ts`, and `dist/tokens.lock.json`.
@@ -131,7 +131,7 @@ To activate a theme, set `data-theme` on any container:
 3. **Check the contrast gate.** The build test suite runs WCAG contrast checks for every theme. Run:
 
    ```bash
-   pnpm --filter @studio/tokens test
+   pnpm --filter @duly/tokens test
    ```
 
    All pairs listed in `CONTRAST_PAIRS` (in `src/contracts.ts`) must pass their minimum ratios. Fix any failures before committing.
@@ -152,7 +152,7 @@ The CVD (color vision deficiency) luminance-separation gate that was initially p
 
 ## Token versioning
 
-The set of 31 keys in `SEMANTIC_KEYS` is the **public contract** of `@studio/tokens`. Changes follow semantic versioning:
+The set of 31 keys in `SEMANTIC_KEYS` is the **public contract** of `@duly/tokens`. Changes follow semantic versioning:
 
 - **Add a key** → minor release
 - **Rename or remove a key** → major release

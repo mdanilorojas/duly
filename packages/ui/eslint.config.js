@@ -1,4 +1,4 @@
-import base from "@studio/eslint-config";
+import base from "@duly/eslint-config";
 
 const NO_RAW_COLOR = /#[0-9a-fA-F]{3,8}\b|rgba?\(/;
 
