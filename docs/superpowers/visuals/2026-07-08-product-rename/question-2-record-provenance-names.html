@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rename — vena Record / Provenance</title>
+<style>
+  :root {
+    --bg: oklch(16% 0.015 270);
+    --panel: oklch(20% 0.02 270);
+    --panel-2: oklch(23% 0.025 270);
+    --ink: oklch(93% 0.01 270);
+    --ink-dim: oklch(70% 0.02 270);
+    --ink-faint: oklch(52% 0.02 270);
+    --accent: oklch(78% 0.14 85);
+    --accent-2: oklch(70% 0.12 200);
+    --danger: oklch(65% 0.19 25);
+    --ok: oklch(72% 0.14 155);
+    --border: oklch(30% 0.02 270);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.6 "Segoe UI", system-ui, sans-serif;
+    padding: 3rem 1.5rem 5rem;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  header { margin-bottom: 2.5rem; }
+  header h1 { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.01em; }
+  header p { color: var(--ink-dim); max-width: 62ch; margin-top: .5rem; }
+  .vein-tag {
+    display: inline-block; font-size: .75rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent); border: 1px solid color-mix(in oklch, var(--accent) 40%, transparent);
+    padding: .2rem .7rem; border-radius: 999px; margin-bottom: 1rem;
+  }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 1.25rem; }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
+    padding: 1.75rem; display: flex; flex-direction: column; gap: 1rem;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: attr(data-rank);
+    position: absolute; top: 1rem; right: 1.25rem;
+    font-size: .7rem; letter-spacing: .1em; color: var(--ink-faint);
+  }
+  .wordmark {
+    font-size: 3.2rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1;
+    background: linear-gradient(120deg, var(--ink) 40%, var(--accent) 130%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    padding-bottom: .25rem;
+  }
+  .wordmark .tm { font-size: 1rem; vertical-align: super; color: var(--ink-faint); -webkit-text-fill-color: var(--ink-faint); }
+  .etym { font-size: .85rem; color: var(--accent-2); font-style: italic; }
+  .story { color: var(--ink-dim); font-size: .95rem; }
+  .story strong { color: var(--ink); }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; padding-top: .75rem;
+    border-top: 1px solid var(--border);
+  }
+  .chip {
+    font: 500 .78rem/1 ui-monospace, "Cascadia Code", monospace;
+    background: var(--panel-2); border: 1px solid var(--border);
+    padding: .45rem .7rem; border-radius: 8px; color: var(--ink-dim);
+  }
+  .chip b { color: var(--ink); font-weight: 600; }
+  .risk { font-size: .8rem; padding: .45rem .7rem; border-radius: 8px; line-height: 1.35; }
+  .risk.low  { color: var(--ok); border: 1px solid color-mix(in oklch, var(--ok) 35%, transparent); }
+  .risk.mid  { color: var(--accent); border: 1px solid color-mix(in oklch, var(--accent) 35%, transparent); }
+  .risk.high { color: var(--danger); border: 1px solid color-mix(in oklch, var(--danger) 40%, transparent); }
+  .blocked { opacity: .55; }
+  .blocked .wordmark { text-decoration: line-through; text-decoration-thickness: 3px; text-decoration-color: var(--danger); }
+  .footnote { margin-top: 2.5rem; color: var(--ink-faint); font-size: .85rem; max-width: 70ch; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="vein-tag">Vena elegida · Record / Provenance</div>
+    <h1>El nombre como acta: seis candidatos</h1>
+    <p>Cada uno promete lo mismo que tu producto: <em>pasó, quedó escrito, es demostrable</em>.
+    Renderizados en la estética dark-OKLCH del sistema. Riesgo de colisión = chequeo preliminar, se verifica a fondo con el finalista.</p>
+  </header>
+
+  <div class="grid">
+
+    <div class="card" data-rank="Nº 1 — recomendado">
+      <div class="wordmark">Acta</div>
+      <div class="etym">Latín acta — "las cosas hechas". Acta Diurna: el registro público diario de Roma, el primer ledger estatal de la historia.</div>
+      <p class="story">En la vida corporativa LATAM <strong>toda decisión termina en un acta</strong> — tu CISO y tu auditor entienden el nombre sin explicación. Cada run de agente produce su acta: inmutable, firmada, consultable. 4 letras, funciona igual en español e inglés, y el doble registro (Roma clásica + sala de directorio) le da peso instantáneo.</p>
+      <div class="meta">
+        <span class="chip">acta.auraby.design</span>
+        <span class="chip">@acta/ui · @acta/tokens</span>
+        <span class="risk mid">⚠ Palabra común; "Acta" en journals académicos y el viejo tratado ACTA. En el espacio agent-ops: libre. Marca defendible con apellido ("Acta DS" / "Acta Console").</span>
+      </div>
+    </div>
+
+    <div class="card" data-rank="Nº 2">
+      <div class="wordmark">Tessera</div>
+      <div class="etym">Latín tessera — la ficha romana de identidad que probaba quién eras, Y la tesela que compone un mosaico.</div>
+      <p class="story"><strong>Doble metáfora exacta</strong>: la ficha que certifica identidad/procedencia (auditoría) + la tesela mínima que compone la imagen completa (design tokens → sistema). Ningún otro candidato dice "design system de compliance" con una sola palabra. Suena premium, femenino, mediterráneo.</p>
+      <div class="meta">
+        <span class="chip">tessera.auraby.design</span>
+        <span class="chip">@tessera/ui · @tessera/tokens</span>
+        <span class="risk mid">⚠ Existen proyectos "Tessera" menores (mapping libs, un proyecto Google archivado). Ninguno dominante en design systems.</span>
+      </div>
+    </div>
+
+    <div class="card" data-rank="Nº 3">
+      <div class="wordmark">Signet</div>
+      <div class="etym">El anillo-sello: la marca en cera que hacía un documento oficial, íntegro e inviolable.</div>
+      <p class="story">El sello es <strong>criptografía antes de la criptografía</strong>: prueba de autor, prueba de integridad, evidencia de manipulación. Mapea 1:1 con tus hash badges y exports firmados. Corto, anglosajón, suena a lujo discreto (sastrería, papelería fina).</p>
+      <div class="meta">
+        <span class="chip">signet.auraby.design</span>
+        <span class="chip">@signet/ui · @signet/tokens</span>
+        <span class="risk mid">⚠ Signet Jewelers (retail, otro rubro) y "signet ring" genérico. En dev tooling: despejado a primera vista.</span>
+      </div>
+    </div>
+
+    <div class="card" data-rank="Nº 4">
+      <div class="wordmark">Stele</div>
+      <div class="etym">Griego stēlē — la losa de piedra donde se publicaban las leyes. El Código de Hammurabi es una estela.</div>
+      <p class="story">La ley <strong>grabada en piedra y exhibida en público</strong>: inmutabilidad + transparencia, exactamente tu pitch de compliance. Nombre raro en el buen sentido — nadie más se llama así. Riesgo: pronunciación ambigua (¿"stíli"? ¿"stel"?) y en español "estela" es nombre de persona.</p>
+      <div class="meta">
+        <span class="chip">stele.auraby.design</span>
+        <span class="chip">@stele/ui · @stele/tokens</span>
+        <span class="risk low">✓ Prácticamente sin colisiones en software.</span>
+      </div>
+    </div>
+
+    <div class="card" data-rank="Nº 5">
+      <div class="wordmark">Amber</div>
+      <div class="etym">Ámbar: resina que atrapa un instante y lo preserva idéntico por millones de años.</div>
+      <p class="story">La metáfora de inmutabilidad <strong>más visceral del lote</strong>: el run queda atrapado exacto como ocurrió, visible desde todos los ángulos (tu replay read-only). Cálido contra tu dark premium — contraste interesante. Pero es palabra muy común: AMBER alert, nombres propios, mil productos.</p>
+      <div class="meta">
+        <span class="chip">amber.auraby.design</span>
+        <span class="chip">@amber/ui · @amber/tokens</span>
+        <span class="risk high">⚠ Colisión alta por ubicuidad de la palabra. Difícil de poseer en búsqueda.</span>
+      </div>
+    </div>
+
+    <div class="card blocked" data-rank="Descartado">
+      <div class="wordmark">Vellum</div>
+      <div class="etym">Vitela: el pergamino que sobrevivió imperios.</div>
+      <p class="story">Sería el nombre perfecto… pero <strong>vellum.ai ya existe y es una plataforma de LLM-ops</strong> — tu mismo espacio, tu mismo comprador. Colisión frontal, descartado de oficio.</p>
+      <div class="meta">
+        <span class="chip">vellum.auraby.design</span>
+        <span class="risk high">✕ Bloqueado: Vellum AI (LLM platform) opera en el mismo mercado.</span>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="footnote">Nota: el chequeo de colisiones es preliminar (conocimiento offline). Con el finalista corremos verificación real: npm scope, dominio, búsqueda de marca en el espacio dev-tools/AI-ops.</p>
+</div>
+</body>
+</html>

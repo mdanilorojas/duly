@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rename — finalistas mercado US</title>
+<style>
+  :root {
+    --bg: oklch(16% 0.015 270);
+    --panel: oklch(20% 0.02 270);
+    --panel-2: oklch(23% 0.025 270);
+    --ink: oklch(93% 0.01 270);
+    --ink-dim: oklch(70% 0.02 270);
+    --ink-faint: oklch(52% 0.02 270);
+    --accent: oklch(78% 0.14 85);
+    --accent-2: oklch(70% 0.12 200);
+    --gold: oklch(75% 0.13 80);
+    --ok: oklch(72% 0.14 155);
+    --border: oklch(30% 0.02 270);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.6 "Segoe UI", system-ui, sans-serif; padding: 3rem 1.5rem 5rem; }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  header { margin-bottom: 2.5rem; }
+  header h1 { font-size: 1.6rem; font-weight: 600; }
+  header p { color: var(--ink-dim); max-width: 64ch; margin-top: .5rem; }
+  .vein-tag { display: inline-block; font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); border: 1px solid color-mix(in oklch, var(--gold) 40%, transparent); padding: .2rem .7rem; border-radius: 999px; margin-bottom: 1rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 1.25rem; }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; display: flex; flex-direction: column; gap: 1rem; position: relative; }
+  .card::before { content: attr(data-rank); position: absolute; top: 1rem; right: 1.25rem; font-size: .7rem; letter-spacing: .1em; color: var(--ink-faint); }
+  .card.reco { border-color: color-mix(in oklch, var(--gold) 55%, var(--border)); box-shadow: 0 0 40px -18px var(--gold); }
+  .wordmark { font-size: 3.2rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1; background: linear-gradient(120deg, var(--ink) 40%, var(--gold) 135%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .say { font: 500 .8rem/1 ui-monospace, monospace; color: var(--ink-faint); }
+  .say b { color: var(--ink-dim); }
+  .etym { font-size: .85rem; color: var(--accent-2); font-style: italic; }
+  .story { color: var(--ink-dim); font-size: .95rem; }
+  .story strong { color: var(--ink); }
+  .tagline { font-size: .9rem; color: var(--accent); font-style: italic; }
+  .meta { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; padding-top: .75rem; border-top: 1px solid var(--border); }
+  .chip { font: 500 .78rem/1 ui-monospace, "Cascadia Code", monospace; background: var(--panel-2); border: 1px solid var(--border); padding: .45rem .7rem; border-radius: 8px; color: var(--ink-dim); }
+  .clear { font-size: .8rem; padding: .45rem .7rem; border-radius: 8px; color: var(--ok); border: 1px solid color-mix(in oklch, var(--ok) 35%, transparent); }
+  .note { font-size: .8rem; padding: .45rem .7rem; border-radius: 8px; color: var(--accent); border: 1px solid color-mix(in oklch, var(--accent) 35%, transparent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="vein-tag">Ronda 5 · mercado US · ISO-compliant · pronunciable en español · verificados</div>
+    <h1>Inglés legal-nativo, estilo Vanta/Drata</h1>
+    <p>Palabras que el buyer gringo reconoce de la cultura de auditoría y corte — cortas, brandables, con historia real. Filtradas por pronunciabilidad en español (cayeron Sworn y Hereby).</p>
+  </header>
+
+  <div class="grid">
+
+    <div class="card reco" data-rank="Nº 1 — recomendado">
+      <div class="wordmark">Assay</div>
+      <div class="say">EN: <b>ASS-ay / a-SAY</b> · ES: <b>a-séi</b> (cognado minero: "ensaye")</div>
+      <div class="etym">El assay: la prueba de pureza del oro, practicada por assay offices desde el siglo XIII. La auditoría original — no confías en el metal, lo ensayas.</div>
+      <p class="story"><strong>La marca de assay es la certificación más antigua del mundo</strong>: un punzón oficial que dice "esto fue probado y es lo que dice ser". Eso es exactamente tu producto: cada output de agente, ensayado y marcado. Corto, raro en software (cero colisiones), suena a laboratorio + orfebrería — precisión con lujo. El buyer de compliance US lo conoce de "assay" en pharma/labs también: doble resonancia regulada.</p>
+      <p class="tagline">"Assay — every agent action, tested and hallmarked."</p>
+      <div class="meta">
+        <span class="chip">assay.auraby.design</span>
+        <span class="chip">@assay/ui · @assay/tokens</span>
+        <span class="clear">✓ npm scope libre · web limpio en software (pkg npm = mini-lib de asserts abandonada, coexiste)</span>
+      </div>
+    </div>
+
+    <div class="card" data-rank="Nº 2">
+      <div class="wordmark">Exhibit</div>
+      <div class="say">EN: <b>ex-IB-it</b> · ES: <b>exíbit</b> (cognado: exhibir)</div>
+      <div class="etym">"Exhibit A": la evidencia estrella ante la corte. Y un exhibit también es lo que se muestra en una galería.</div>
+      <p class="story">Doble sentido hecho a medida: <strong>evidencia legal + galería de componentes</strong>. Tu Storybook ES un exhibit; cada trace de agente ES un Exhibit A listo para el auditor. Cultura US pura — cualquier gringo lo decodifica en un frame de Law & Order. Contra: 3 sílabas y la palabra es común en inglés.</p>
+      <p class="tagline">"Exhibit — evidence, on display."</p>
+      <div class="meta">
+        <span class="chip">exhibit.auraby.design</span>
+        <span class="chip">@exhibit/ui · @exhibit/tokens</span>
+        <span class="clear">✓ npm scope libre · web limpio en compliance/devtools</span>
+      </div>
+    </div>
+
+    <div class="card" data-rank="Nº 3">
+      <div class="wordmark">Duly</div>
+      <div class="say">EN: <b>DOO-lee</b> · ES: <b>dúli</b></div>
+      <div class="etym">"Duly noted", "duly authorized", "duly executed" — el adverbio ritual de contratos y actas US: hecho como corresponde, en tiempo y forma.</div>
+      <p class="story">Nombre-guiño: <strong>todo lo que pasa por la consola queda duly noted</strong> — debidamente registrado, debidamente aprobado. 2 sílabas, amable, moderno (suena a startup: Calendly, Grammarly). Contra: existe Duly Health (sistema de salud de Chicago) — otro rubro por completo, pero es marca establecida US.</p>
+      <p class="tagline">"Duly — noted, signed, and on record."</p>
+      <div class="meta">
+        <span class="chip">duly.auraby.design</span>
+        <span class="chip">@duly/ui · @duly/tokens</span>
+        <span class="note">⚠ Duly Health & Care (healthcare Chicago, rubro distinto)</span>
+      </div>
+    </div>
+
+    <div class="card" data-rank="Nº 4">
+      <div class="wordmark">Signoff</div>
+      <div class="say">EN: <b>SIGN-off</b> · ES: <b>sáin-of</b></div>
+      <div class="etym">El sign-off: la firma que cierra el ciclo — QA sign-off, audit sign-off, release sign-off.</div>
+      <p class="story">La palabra que tu ApprovalGateCard produce literalmente: <strong>el sign-off con evidencia</strong>. Todo equipo de software US la usa a diario. Contra: tan operativa que puede leerse como feature, no como marca — y "sign off" también significa despedirse.</p>
+      <p class="tagline">"Signoff — approval, with evidence attached."</p>
+      <div class="meta">
+        <span class="chip">signoff.auraby.design</span>
+        <span class="chip">@signoff/ui · @signoff/tokens</span>
+        <span class="clear">✓ npm scope libre · web limpio (pkg npm = validador de email viejo, coexiste)</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

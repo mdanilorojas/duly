@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rename ronda 2 — verificados npm + web</title>
+<style>
+  :root {
+    --bg: oklch(16% 0.015 270);
+    --panel: oklch(20% 0.02 270);
+    --panel-2: oklch(23% 0.025 270);
+    --ink: oklch(93% 0.01 270);
+    --ink-dim: oklch(70% 0.02 270);
+    --ink-faint: oklch(52% 0.02 270);
+    --accent: oklch(78% 0.14 85);
+    --accent-2: oklch(70% 0.12 200);
+    --wax: oklch(55% 0.19 25);
+    --ok: oklch(72% 0.14 155);
+    --border: oklch(30% 0.02 270);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.6 "Segoe UI", system-ui, sans-serif; padding: 3rem 1.5rem 5rem; }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  header { margin-bottom: 2.5rem; }
+  header h1 { font-size: 1.6rem; font-weight: 600; }
+  header p { color: var(--ink-dim); max-width: 64ch; margin-top: .5rem; }
+  .vein-tag { display: inline-block; font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ok); border: 1px solid color-mix(in oklch, var(--ok) 40%, transparent); padding: .2rem .7rem; border-radius: 999px; margin-bottom: 1rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 1.25rem; }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; display: flex; flex-direction: column; gap: 1rem; position: relative; }
+  .card::before { content: attr(data-rank); position: absolute; top: 1rem; right: 1.25rem; font-size: .7rem; letter-spacing: .1em; color: var(--ink-faint); }
+  .card.reco { border-color: color-mix(in oklch, var(--wax) 55%, var(--border)); box-shadow: 0 0 40px -18px var(--wax); }
+  .wordmark { font-size: 3.2rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1; background: linear-gradient(120deg, var(--ink) 40%, var(--accent) 130%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .card.reco .wordmark { background: linear-gradient(120deg, var(--ink) 30%, var(--wax) 120%); -webkit-background-clip: text; background-clip: text; }
+  .etym { font-size: .85rem; color: var(--accent-2); font-style: italic; }
+  .story { color: var(--ink-dim); font-size: .95rem; }
+  .story strong { color: var(--ink); }
+  .meta { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; padding-top: .75rem; border-top: 1px solid var(--border); }
+  .chip { font: 500 .78rem/1 ui-monospace, "Cascadia Code", monospace; background: var(--panel-2); border: 1px solid var(--border); padding: .45rem .7rem; border-radius: 8px; color: var(--ink-dim); }
+  .clear { font-size: .8rem; padding: .45rem .7rem; border-radius: 8px; color: var(--ok); border: 1px solid color-mix(in oklch, var(--ok) 35%, transparent); }
+  .note { font-size: .8rem; padding: .45rem .7rem; border-radius: 8px; color: var(--accent); border: 1px solid color-mix(in oklch, var(--accent) 35%, transparent); }
+  .carry { margin-top: 3rem; }
+  .carry h2 { font-size: 1.05rem; color: var(--ink-dim); font-weight: 600; margin-bottom: 1rem; }
+  .carry .card { opacity: .8; }
+  .seal { display:inline-block; width: 3.4rem; height: 3.4rem; border-radius: 50%; background: radial-gradient(circle at 35% 30%, oklch(62% 0.2 25), var(--wax) 60%, oklch(40% 0.16 25)); box-shadow: 0 2px 14px -2px var(--wax); position: relative; }
+  .seal::after { content: "L"; position: absolute; inset: 0; display: grid; place-items: center; font: 700 1.4rem/1 Georgia, serif; color: oklch(30% 0.1 25); }
+  .wax-row { display: flex; align-items: center; gap: 1.1rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="vein-tag">Ronda 2 · todos pre-verificados npm + web · 2026-07-08</div>
+    <h1>Cinco nombres nuevos, todos libres</h1>
+    <p>Misma vena (record / provenance), ahora minada del derecho registral LATAM: la cera, la apostilla, el veedor, el testigo, la minuta. Abajo quedan los dos sobrevivientes de la ronda 1 por si prefieres volver.</p>
+  </header>
+
+  <div class="grid">
+
+    <div class="card reco" data-rank="Nº 1 — recomendado">
+      <div class="wax-row"><span class="wordmark">Lacre</span><span class="seal" aria-hidden="true"></span></div>
+      <div class="etym">El lacre: la cera roja que sella el documento. Romper el sello ES la evidencia — tamper-evidence hecha materia, siglos antes del hash.</div>
+      <p class="story">La metáfora más física del lote: <strong>si alguien lo abrió, se ve</strong>. Exactamente tus hash badges, exports firmados e inmutabilidad visible. Estética servida: gota de cera carmesí sobre negro obsidiana — un logo que se diseña solo sobre tu dark premium OKLCH. 2 sílabas, se pronuncia igual en español y portugués, distintivo en inglés.</p>
+      <div class="meta">
+        <span class="chip">lacre.auraby.design</span>
+        <span class="chip">@lacre/ui · @lacre/tokens</span>
+        <span class="clear">✓ npm scope libre · pkg libre · web limpio (solo Lakera, fonética lejana, otro rubro)</span>
+      </div>
+    </div>
+
+    <div class="card" data-rank="Nº 2">
+      <div class="wordmark">Veedor</div>
+      <div class="etym">El veedor: funcionario colonial que inspeccionaba y daba fe. Hoy vive en la "veeduría ciudadana" — auditoría pública andina (Ecuador, Colombia).</div>
+      <p class="story"><strong>El rol humano que tu producto convierte en software</strong>: el que mira, registra y certifica lo que hacen otros — humanos o agentes. Raíz regional real (tu mercado lo reconoce del discurso cívico). Suena a cargo con autoridad, no a app.</p>
+      <div class="meta">
+        <span class="chip">veedor.auraby.design</span>
+        <span class="chip">@veedor/ui · @veedor/tokens</span>
+        <span class="clear">✓ npm libre total · web limpio</span>
+      </div>
+    </div>
+
+    <div class="card" data-rank="Nº 3">
+      <div class="wordmark">Apostilla</div>
+      <div class="etym">La apostilla de La Haya: el certificado que hace un documento válido ante el mundo entero.</div>
+      <p class="story">Todo profesional LATAM ha apostillado algo — <strong>reconocimiento instantáneo</strong> del concepto "certificación de autenticidad con validez universal". Promesa: lo que tu consola registra vale ante cualquier auditor, en cualquier jurisdicción. Contra: 4 sílabas, y en inglés "apostille" es término de nicho.</p>
+      <div class="meta">
+        <span class="chip">apostilla.auraby.design</span>
+        <span class="chip">@apostilla/ui · @apostilla/tokens</span>
+        <span class="clear">✓ npm libre total · web limpio</span>
+      </div>
+    </div>
+
+    <div class="card" data-rank="Nº 4">
+      <div class="wordmark">Testigo</div>
+      <div class="etym">El testigo: quien estuvo presente y puede dar fe. En atletismo, también el objeto que se pasa en la posta.</div>
+      <p class="story"><strong>"El sistema fue testigo de todo"</strong> — pitch de una línea. Cubre la dualidad de actor (humano/agente/sistema) porque el testigo observa a todos por igual. El doble sentido de la posta (relevo humano ⇄ agente) regala una segunda lectura para handoffs y approvals. Contra: palabra muy común — marca más débil que Lacre/Veedor.</p>
+      <div class="meta">
+        <span class="chip">testigo.auraby.design</span>
+        <span class="chip">@testigo/ui · @testigo/tokens</span>
+        <span class="clear">✓ npm libre total · web limpio</span>
+      </div>
+    </div>
+
+    <div class="card" data-rank="Nº 5">
+      <div class="wordmark">Minuta</div>
+      <div class="etym">La minuta: el borrador notarial que precede a la escritura; también el acta breve de una reunión.</div>
+      <p class="story">Corta, familiar, corporativa. Pero es el documento <strong>previo</strong> a la fe pública — semánticamente más débil para prometer inmutabilidad. Incluida por completitud; la descartaría frente a las cuatro de arriba.</p>
+      <div class="meta">
+        <span class="chip">minuta.auraby.design</span>
+        <span class="chip">@minuta/ui · @minuta/tokens</span>
+        <span class="clear">✓ npm libre total · web limpio</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="carry">
+    <h2>Sobrevivientes ronda 1 (siguen disponibles)</h2>
+    <div class="grid">
+      <div class="card" data-rank="R1">
+        <div class="wordmark">Signet</div>
+        <p class="story">Anillo-sello. Limpio salvo roce conceptual con la red de test de Bitcoin.</p>
+        <div class="meta"><span class="chip">signet.auraby.design</span><span class="note">⚠ "signet" = Bitcoin testnet (concepto dev, no marca)</span></div>
+      </div>
+      <div class="card" data-rank="R1">
+        <div class="wordmark">Intaglio</div>
+        <p class="story">Grabado inviolable. Limpio; pronunciación tricky (in-TAL-yo).</p>
+        <div class="meta"><span class="chip">intaglio.auraby.design</span><span class="clear">✓ limpio</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

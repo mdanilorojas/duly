@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spec — Rebrand Studio DS → Duly</title>
+<style>
+  :root {
+    --bg: oklch(16% 0.015 270); --panel: oklch(20% 0.02 270); --panel-2: oklch(23% 0.025 270);
+    --ink: oklch(93% 0.01 270); --ink-dim: oklch(70% 0.02 270); --ink-faint: oklch(52% 0.02 270);
+    --accent: oklch(78% 0.14 85); --ok: oklch(72% 0.14 155); --warn: oklch(70% 0.16 55);
+    --border: oklch(30% 0.02 270);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.6 "Segoe UI", system-ui, sans-serif; padding: 3rem 1.5rem 5rem; }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  h1 { font-size: 1.7rem; font-weight: 700; letter-spacing: -0.01em; }
+  h1 span { color: var(--accent); }
+  h2 { font-size: 1.15rem; font-weight: 600; margin: 2.5rem 0 1rem; color: var(--ink); border-bottom: 1px solid var(--border); padding-bottom: .5rem; }
+  p { color: var(--ink-dim); margin: .6rem 0; max-width: 72ch; }
+  .lede { color: var(--ink-dim); max-width: 72ch; margin-top: .75rem; }
+  code { font: 500 .85em/1 ui-monospace, "Cascadia Code", monospace; background: var(--panel-2); padding: .15em .4em; border-radius: 5px; color: var(--accent); }
+  .badge-row { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: 1rem; }
+  .badge { font: 500 .78rem/1 ui-monospace, monospace; background: var(--panel-2); border: 1px solid var(--border); padding: .4rem .7rem; border-radius: 8px; color: var(--ink-dim); }
+  .flow { display: flex; flex-direction: column; gap: 0; align-items: stretch; margin: 1.5rem 0; }
+  .step { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; display: flex; align-items: center; gap: 1rem; }
+  .step .n { font-weight: 700; color: var(--accent); font-size: 1.1rem; min-width: 1.5rem; }
+  .step .t { font-weight: 600; }
+  .step .d { color: var(--ink-faint); font-size: .88rem; }
+  .arrow { text-align: center; color: var(--ink-faint); font-size: 1.1rem; padding: .25rem 0; }
+  .step.gate { border-color: color-mix(in oklch, var(--warn) 50%, var(--border)); }
+  .step.gate .n { color: var(--warn); }
+  .step.final { border-color: color-mix(in oklch, var(--ok) 50%, var(--border)); }
+  .step.final .n { color: var(--ok); }
+  ul { color: var(--ink-dim); margin: .5rem 0 .5rem 1.4rem; }
+  li { margin: .3rem 0; }
+  li strong { color: var(--ink); }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+  .box { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; }
+  .box h3 { font-size: .95rem; margin-bottom: .6rem; color: var(--ink); }
+  .in h3 { color: var(--ok); }
+  .out h3 { color: var(--ink-faint); }
+  .verify { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; }
+  .verify code { display: block; background: var(--panel-2); padding: .6rem .8rem; border-radius: 8px; margin: .4rem 0; color: var(--ink-dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Studio DS → <span>Duly</span></h1>
+  <p class="lede">Rebrand spec. "Studio DS" already lived in code (<code>@studio/*</code>) but read as generic — this renames the product, its npm scope, GitHub repo, and Vercel project to <strong>Duly</strong>, then deploys to <code>duly.auraby.design</code>.</p>
+  <div class="badge-row">
+    <span class="badge">36 files: @studio → @duly</span>
+    <span class="badge">22 files: "Studio DS" → "Duly"</span>
+    <span class="badge">repo: studio-ds → duly</span>
+    <span class="badge">domain: duly.auraby.design</span>
+  </div>
+
+  <h2>Why Duly</h2>
+  <p>From "duly noted / duly authorized / duly executed" — the ritual adverb of contracts and audit trails. The product's whole pitch is that every agent action is <em>debidamente</em> registered, approved, on record. Pronounces the same in English and Spanish. Checked clean against npm scope, npm package, and web search (only collision: Duly Health & Care, a Chicago healthcare system — different industry, accepted).</p>
+
+  <h2>Process flow</h2>
+  <div class="flow">
+    <div class="step"><div class="n">1</div><div><div class="t">Rename GitHub repo</div><div class="d">studio-ds → duly (gh repo rename) + update local remote URL</div></div></div>
+    <div class="arrow">↓</div>
+    <div class="step"><div class="n">2</div><div><div class="t">Rename Vercel project</div><div class="d">studio-ds → duly via Vercel API — projectId, envs, deploys, domains untouched</div></div></div>
+    <div class="arrow">↓</div>
+    <div class="step"><div class="n">3</div><div><div class="t">Rebrand commit</div><div class="d">@studio/* → @duly/* in 36 files · "Studio DS" → "Duly" in 22 files · regenerate pnpm-lock</div></div></div>
+    <div class="arrow">↓</div>
+    <div class="step gate"><div class="n">⏵</div><div><div class="t">Verification gate</div><div class="d">pnpm turbo run tokens build lint test — must be green before push</div></div></div>
+    <div class="arrow">↓</div>
+    <div class="step"><div class="n">4</div><div><div class="t">Push + deploy</div><div class="d">/adeploy → ensures favicon → push → attach duly.auraby.design</div></div></div>
+    <div class="arrow">↓</div>
+    <div class="step final"><div class="n">✓</div><div><div class="t">Folder rename (last)</div><div class="d">Enterprise Design System → duly. Breaks current session cwd — user reopens session in new path</div></div></div>
+  </div>
+
+  <h2>Scope</h2>
+  <div class="cols">
+    <div class="box in">
+      <h3>In scope</h3>
+      <ul>
+        <li>npm scope rename across all packages</li>
+        <li>Product name strings (README, NORTH_STAR, CONTRIBUTING, Storybook titles)</li>
+        <li>GitHub repo rename</li>
+        <li>Vercel project rename</li>
+        <li>Deploy to duly.auraby.design</li>
+        <li>Local folder rename (final step)</li>
+      </ul>
+    </div>
+    <div class="box out">
+      <h3>Out of scope</h3>
+      <ul>
+        <li>Removing/redirecting old enregla.ec domains (verify none attached)</li>
+        <li>Publishing packages to public npm</li>
+        <li>Visual/token redesign</li>
+        <li>Rewriting past commit history/messages</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Verification</h2>
+  <div class="verify">
+    <code>pnpm turbo run tokens build lint test</code>
+    <code>git grep "@studio" -- "*.json" "*.ts" "*.tsx"   # expect empty</code>
+    <code>git grep "Studio DS"                            # expect empty</code>
+    <code>curl -sI https://duly.auraby.design | head -1   # expect HTTP/2 200</code>
+    <code>gh repo view mdanilorojas/duly                  # expect success</code>
+  </div>
+</div>
+</body>
+</html>
