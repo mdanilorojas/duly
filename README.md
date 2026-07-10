@@ -41,6 +41,7 @@ pnpm install
 
 - [Consuming in your app](docs/guides/consuming-in-your-app.md) — plain-React and Tailwind v4 walkthroughs
 - [Theming](docs/guides/theming.md) — semantic token reference and how to add a new theme
+- [Trust model](docs/guides/trust-model.md) — the six agentic primitives (identity, scope, history, provenance, approval, reversibility) mapped to components
 - [packages/ui](packages/ui/README.md) — `@duly/ui` component API
 - [packages/tokens](packages/tokens/README.md) — `@duly/tokens` CSS and JS API
 - [apps/docs](apps/docs/README.md) — running the Storybook locally

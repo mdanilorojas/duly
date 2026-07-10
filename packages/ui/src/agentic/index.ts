@@ -38,3 +38,6 @@ export * from "./eval-score-badge.js";
 export * from "./retention-badge.js";
 export * from "./subworkflow-chip.js";
 export * from "./error-workflow-banner.js";
+// Modelo de confianza — ejes "origen de datos" y "revocar/revertir"
+export * from "./data-provenance-card.js";
+export * from "./rollback-timeline.js";
