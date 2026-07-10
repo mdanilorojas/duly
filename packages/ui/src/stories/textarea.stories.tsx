@@ -1,5 +1,5 @@
 import React from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { StoryObj } from "@storybook/react";
 import { Textarea } from "../components/ui/textarea.js";
 
 const meta = { title: "Primitives/Textarea" };
