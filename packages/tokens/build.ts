@@ -1,9 +1,12 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { themes, LIGHT_THEMES } from "./src/themes.js";
-import { SEMANTIC_KEYS } from "./src/contracts.js";
+import { SEMANTIC_KEYS, LOCKED, CONTRAST_PAIRS } from "./src/contracts.js";
 import { FONT, MOTION } from "./src/primitives.js";
 
 const DIST = new URL("./dist/", import.meta.url);
+// Clean first: writeFileSync only adds/overwrites, so a renamed/removed theme
+// (or stale key) would otherwise leave orphaned files in the published tarball.
+rmSync(DIST, { recursive: true, force: true });
 mkdirSync(DIST, { recursive: true });
 
 const split = (v: string) => v.split("|"); // [hex, oklch]
@@ -64,14 +67,22 @@ const tokensObj = Object.fromEntries(
 );
 writeFileSync(
   new URL("tokens.js", DIST),
-  `export const tokens = ${JSON.stringify(tokensObj, null, 2)};\n`,
+  `export const tokens = ${JSON.stringify(tokensObj, null, 2)};\n` +
+    // Contrato público (packages/tokens/src/contracts.ts): consumidores pueden
+    // validar o autorizar un tema de marca fuera de este repo sin forkear.
+    `export const semanticKeys = ${JSON.stringify(SEMANTIC_KEYS)};\n` +
+    `export const lockedTokens = ${JSON.stringify([...LOCKED])};\n` +
+    `export const contrastPairs = ${JSON.stringify(CONTRAST_PAIRS)};\n`,
 );
 const themeUnion = Object.keys(themes).map((n) => `"${n}"`).join(" | ");
 const tokenUnion = SEMANTIC_KEYS.map((k) => `"${k}"`).join(" | ");
 writeFileSync(
   new URL("tokens.d.ts", DIST),
   `export type ThemeableToken = ${tokenUnion};\n` +
-    `export declare const tokens: Record<${themeUnion}, Record<ThemeableToken, string>>;\n`,
+    `export declare const tokens: Record<${themeUnion}, Record<ThemeableToken, string>>;\n` +
+    `export declare const semanticKeys: readonly ThemeableToken[];\n` +
+    `export declare const lockedTokens: readonly string[];\n` +
+    `export declare const contrastPairs: readonly [string, string, number][];\n`,
 );
 
 // 6. tokens.lock.json

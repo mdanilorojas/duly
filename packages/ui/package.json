@@ -15,7 +15,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/studio/design-system",
+    "url": "https://github.com/mdanilorojas/duly.git",
     "directory": "packages/ui"
   },
   "module": "./dist/index.js",
@@ -39,6 +39,7 @@
   },
   "scripts": {
     "build": "tsup",
+    "prepublishOnly": "pnpm run build",
     "test": "vitest run",
     "lint": "eslint src --max-warnings 0"
   },

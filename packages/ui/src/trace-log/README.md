@@ -86,8 +86,8 @@ If your app already runs Tailwind v4, skip `dist/styles.css` and instead add the
 @import "tailwindcss";
 @import "@duly/tokens/theme.css";          /* mapping layer: --color-<token> utilities */
 @import "@duly/tokens/theme-cockpit.css";  /* value layer: cockpit theme at :root (default) */
-@import "@duly/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
+@import "@duly/tokens/theme-violet.css";   /* optional: violet theme under [data-theme="violet"] */
 @source "../node_modules/@duly/ui/dist/**/*.js";
 ```
 
-> Always import both the mapping layer (`theme.css`) **and** a value layer (`theme-cockpit.css` / `theme-test.css`). The mapping layer alone does not define the actual `--surface-2`, `--ink`, etc. values — without a value layer, components render colorless.
+> Always import both the mapping layer (`theme.css`) **and** a value layer (`theme-cockpit.css` / `theme-violet.css`). The mapping layer alone does not define the actual `--surface-2`, `--ink`, etc. values — without a value layer, components render colorless.

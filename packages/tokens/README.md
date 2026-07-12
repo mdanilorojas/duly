@@ -35,17 +35,17 @@ Emits only `@theme inline { … }` — maps `--color-<token>` Tailwind color uti
 @import "@duly/tokens/theme.css";          /* mapping layer: --color-<token>, duration-*, ease-* utilities */
 @import "@duly/tokens/motion.css";         /* value layer: duration + easing tokens (theme-agnostic) */
 @import "@duly/tokens/theme-cockpit.css";  /* value layer: cockpit theme at :root (default) */
-@import "@duly/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
+@import "@duly/tokens/theme-violet.css";   /* optional: violet theme under [data-theme="violet"] */
 @source "../node_modules/@duly/ui/dist/**/*.js";  /* scan compiled output for utility classes */
 ```
 
 Without the value layer, color and motion utilities resolve to undefined CSS variables (colorless components, no transitions).
 
-### `@duly/tokens/theme-cockpit.css` / `@duly/tokens/theme-test.css` — per-theme variable sets
+### `@duly/tokens/theme-cockpit.css` / `@duly/tokens/theme-violet.css` — per-theme variable sets
 
 ```css
 @import "@duly/tokens/theme-cockpit.css";
-@import "@duly/tokens/theme-test.css";
+@import "@duly/tokens/theme-violet.css";
 ```
 
 Each file emits the raw `:root` / `[data-theme="<name>"]` CSS custom property blocks with hex + oklch fallback pairs. Use these when you need fine-grained control over which themes are loaded, or for server-side pre-rendering a specific theme.

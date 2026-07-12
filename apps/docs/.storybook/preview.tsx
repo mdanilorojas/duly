@@ -7,7 +7,7 @@ const preview: Preview = {
     theme: {
       defaultValue: "cockpit",
       toolbar: {
-        items: ["cockpit", "light", "test"],
+        items: ["cockpit", "light", "violet"],
         title: "Tema",
       },
     },

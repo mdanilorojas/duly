@@ -119,13 +119,13 @@ pnpm add @duly/ui @duly/tokens
 /* Value layers: define the actual --surface-2, --ink, etc. custom property values */
 @import "@duly/tokens/theme-cockpit.css";  /* cockpit theme at :root (default, dark) */
 @import "@duly/tokens/theme-light.css";    /* optional: light theme under [data-theme="light"] */
-@import "@duly/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
+@import "@duly/tokens/theme-violet.css";   /* optional: violet theme under [data-theme="violet"] */
 
 /* Scan the compiled UI package so Tailwind generates component utility classes */
 @source "../node_modules/@duly/ui/dist/**/*.js";
 ```
 
-> **`theme.css` alone is not enough** — it only maps utility names to CSS variables; it does not define the variable values. You must also import a value layer (`theme-cockpit.css` and/or `theme-test.css`), otherwise color utilities resolve to undefined variables and components render colorless.
+> **`theme.css` alone is not enough** — it only maps utility names to CSS variables; it does not define the variable values. You must also import a value layer (`theme-cockpit.css` and/or `theme-violet.css`), otherwise color utilities resolve to undefined variables and components render colorless.
 
 > **Do not** also import `@duly/ui/styles.css` — that would pull in a second copy of the Tailwind engine.
 

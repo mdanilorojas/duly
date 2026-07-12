@@ -87,7 +87,7 @@ Every call to `pnpm turbo run tokens` regenerates the CSS files in `packages/tok
 
 - `theme-cockpit.css` applies its variables under `:root, [data-theme="cockpit"]` (cockpit is the default theme, so it is always active unless overridden by another `[data-theme]` lower in the tree). It emits `color-scheme: dark`.
 - `theme-light.css` applies its variables only under `[data-theme="light"]` and emits `color-scheme: light` — the light mode of the default brand. Status hues (`ok`, `warn`, …) are LOCKED to the same hue as the dark themes; only their L/C drop so they clear AA contrast on light surfaces.
-- `theme-test.css` applies its variables only under `[data-theme="test"]`.
+- `theme-violet.css` applies its variables only under `[data-theme="violet"]`.
 
 To activate a theme, set `data-theme` on any container:
 
@@ -137,6 +137,33 @@ To activate a theme, set `data-theme` on any container:
    All pairs listed in `CONTRAST_PAIRS` (in `src/contracts.ts`) must pass their minimum ratios. Fix any failures before committing.
 
 4. **Verify in Storybook.** Add `"midnight"` to the toolbar items in `apps/docs/.storybook/preview.tsx` and launch Storybook to visually review the new theme.
+
+---
+
+## Authoring a brand theme outside this repo
+
+You do **not** have to fork Duly or edit `packages/tokens/src/themes.ts` to ship a new brand. The 31-key contract is exported from the published package so you can author and validate a theme entirely from your own app or CSS:
+
+```ts
+import { semanticKeys, lockedTokens, contrastPairs } from "@duly/tokens";
+```
+
+- `semanticKeys` — the 31 keys every theme must set. Write your own `[data-theme="yourbrand"] { --token: value; ... }` block (after importing `@duly/tokens/css` or `theme.css`) with all of them present.
+- `lockedTokens` — the subset (`ok`, `review`, `warn`, `block`, `info`, `ring`) whose **hue** you must not rotate; adjust only lightness/chroma.
+- `contrastPairs` — the `[foreground, background, minRatio]` triples this design system's own CI checks. Run the same check against your hex values with any WCAG contrast function (e.g. `wcagContrast` from [`culori`](https://www.npmjs.com/package/culori)) before shipping:
+
+```ts
+import { wcagContrast } from "culori";
+import { contrastPairs } from "@duly/tokens";
+
+const myTheme = { ink: "#1e1f25", "bg-base": "#fbfcfd", /* …all 31 keys */ };
+for (const [fg, bg, min] of contrastPairs) {
+  const ratio = wcagContrast(myTheme[fg], myTheme[bg]);
+  if (ratio < min) console.warn(`${fg}×${bg} = ${ratio.toFixed(2)}, needs ≥${min}`);
+}
+```
+
+Contributing the theme back to this repo (so it ships as `theme-yourbrand.css` and gets covered by the CI contrast gate) still follows [Adding a new theme](#adding-a-new-theme) above — that path is for themes Duly maintains, not a requirement for every consumer.
 
 ---
 

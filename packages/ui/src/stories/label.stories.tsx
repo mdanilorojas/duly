@@ -1,5 +1,5 @@
 import React from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { StoryObj } from "@storybook/react";
 import { Label } from "../components/ui/label.js";
 import { Input } from "../components/ui/input.js";
 

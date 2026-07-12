@@ -25,7 +25,7 @@ export const themes: Record<string, Record<string, string>> = {
     "glow-seed": "#5fe3e6|oklch(0.88 0.12 192)",
   },
   // Segundo tema: rota brand hue + sube superficies un punto. Status (LOCKED) intactos.
-  test: {
+  violet: {
     "bg-base": "#0a0810|oklch(0.14 0.012 300)", "bg-elevated": "#100d18|oklch(0.18 0.012 300)",
     "surface-2": "#171320|oklch(0.22 0.014 300)", "surface-3": "#1e1929|oklch(0.26 0.016 300)",
     "surface-header": "#130f1b|oklch(0.20 0.012 300)", "surface-sunken": "#0d0a14|oklch(0.16 0.012 300)",

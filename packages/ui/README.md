@@ -63,11 +63,11 @@ Instead of importing `dist/styles.css`, configure your own Tailwind build to inc
 @import "tailwindcss";
 @import "@duly/tokens/theme.css";          /* mapping layer: --color-<token> utilities */
 @import "@duly/tokens/theme-cockpit.css";  /* value layer: cockpit theme at :root (default) */
-@import "@duly/tokens/theme-test.css";     /* optional: test theme under [data-theme="test"] */
+@import "@duly/tokens/theme-violet.css";   /* optional: violet theme under [data-theme="violet"] */
 @source "../node_modules/@duly/ui/dist/**/*.js";  /* scan compiled output for utility classes */
 ```
 
-> **`theme.css` alone is not enough** — it only maps utility names to CSS variables; it does not define the variable values. Both the mapping layer (`theme.css`) and a value layer (`theme-cockpit.css` and/or `theme-test.css`) are required, otherwise color utilities resolve to undefined variables and components render colorless.
+> **`theme.css` alone is not enough** — it only maps utility names to CSS variables; it does not define the variable values. Both the mapping layer (`theme.css`) and a value layer (`theme-cockpit.css` and/or `theme-violet.css`) are required, otherwise color utilities resolve to undefined variables and components render colorless.
 
 Then skip the `import "@duly/ui/styles.css"` line — your Tailwind build covers it.
 

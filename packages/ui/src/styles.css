@@ -13,7 +13,7 @@
 @import "@duly/tokens/theme.css";
 @import "@duly/tokens/motion.css";
 @import "@duly/tokens/theme-cockpit.css";
-@import "@duly/tokens/theme-test.css";
+@import "@duly/tokens/theme-violet.css";
 
 @source "./**/*.{ts,tsx}";
 
