@@ -89,9 +89,18 @@ export function AgentCore({
 
     let raf = 0;
     let current = 0;
+    let visible = true;
     // Desfase pseudo-aleatorio estable por agente para que no sincronicen exacto.
     const seed = agent.id.charCodeAt(0) * 37 + agent.id.charCodeAt(agent.id.length - 1);
     const start = (typeof performance !== "undefined" ? performance.now() : 0) - seed;
+
+    // `schedule` es el único punto que pide el próximo frame — si el core
+    // está fuera de viewport, el loop deja de pedir frames por completo (no
+    // solo se salta el draw); al reentrar, el observer lo reinicia.
+    function schedule() {
+      if (!visible) return;
+      raf = requestAnimationFrame(draw);
+    }
 
     const draw = (nowMs: number) => {
       current += (targetRef.current - current) * 0.1;
@@ -100,19 +109,30 @@ export function AgentCore({
       gl.uniform2f(locRes, canvas.width, canvas.height);
       gl.uniform1f(locAct, current);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      raf = requestAnimationFrame(draw);
+      schedule();
     };
 
+    const observer =
+      typeof IntersectionObserver !== "undefined"
+        ? new IntersectionObserver(([entry]) => {
+            const wasVisible = visible;
+            visible = entry.isIntersecting;
+            if (visible && !wasVisible && !reduced) schedule();
+          })
+        : null;
+    observer?.observe(canvas);
+
     if (reduced) {
-      // Un frame estático: sin loop de animación.
+      // Un frame estático: sin loop de animación, sin necesidad de pausa por viewport.
       current = targetRef.current;
       draw(start);
       cancelAnimationFrame(raf);
     } else {
-      raf = requestAnimationFrame(draw);
+      schedule();
     }
 
     return () => {
+      observer?.disconnect();
       cancelAnimationFrame(raf);
       gl.deleteBuffer(buffer);
       gl.deleteProgram(program);
