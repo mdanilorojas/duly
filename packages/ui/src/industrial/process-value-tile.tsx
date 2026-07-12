@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useCopy } from "@/lib/copy/index.js";
 
 export interface ProcessValueTileProps extends Omit<React.ComponentProps<"div">, "children"> {
   label: string;
@@ -39,6 +40,7 @@ export function ProcessValueTile({
   className,
   ...props
 }: ProcessValueTileProps) {
+  const t = useCopy();
   const breached = (loLimit != null && value < loLimit) || (hiLimit != null && value > hiLimit);
   const valuePct = pctOf(value, min, max);
   const setpointPct = setpoint != null ? pctOf(setpoint, min, max) : null;
@@ -57,7 +59,7 @@ export function ProcessValueTile({
       <div className="flex items-baseline justify-between gap-2">
         <span className="font-mono text-[9.5px] uppercase tracking-wide text-faint">{label}</span>
         {breached ? (
-          <span className="font-mono text-[9px] font-bold uppercase tracking-wide text-block">Fuera de límite</span>
+          <span className="font-mono text-[9px] font-bold uppercase tracking-wide text-block">{t.processValueTile.outOfLimit}</span>
         ) : null}
       </div>
 

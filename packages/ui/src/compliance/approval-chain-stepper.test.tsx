@@ -19,9 +19,9 @@ describe("ApprovalChainStepper", () => {
 
   it("la decisión se comunica con texto, no solo color (colorblind-safe)", () => {
     render(<ApprovalChainStepper steps={steps} />);
-    expect(screen.getByText(/aprobó/i)).toBeDefined();
-    expect(screen.getByText(/rechazó/i)).toBeDefined();
-    expect(screen.getByText(/pendiente/i)).toBeDefined();
+    expect(screen.getByText(/approved/i)).toBeDefined();
+    expect(screen.getByText(/rejected/i)).toBeDefined();
+    expect(screen.getByText(/pending/i)).toBeDefined();
   });
 
   it("un rechazo corta la cadena: los pasos posteriores se marcan como no alcanzados", () => {
@@ -29,7 +29,7 @@ describe("ApprovalChainStepper", () => {
     // VP Sales viene después del rechazo de Deal Desk
     const vp = screen.getByText("VP Sales").closest("li");
     expect(vp).not.toBeNull();
-    expect(within(vp as HTMLElement).getByText(/no alcanzad/i)).toBeDefined();
+    expect(within(vp as HTMLElement).getByText(/not reached/i)).toBeDefined();
   });
 
   it("muestra la nota de rechazo", () => {

@@ -30,7 +30,7 @@ describe("ModelProvenanceCard", () => {
   it("compacto por defecto; expandir revela temperatura y versión de modelo", async () => {
     render(<ModelProvenanceCard {...props} />);
     expect(screen.queryByText(/0\.7/)).toBeNull();
-    await userEvent.click(screen.getByRole("button", { name: /detalles/i }));
+    await userEvent.click(screen.getByRole("button", { name: /details/i }));
     expect(screen.getByText(/0\.7/)).toBeDefined();
     expect(screen.getByText(/2026-06-30/)).toBeDefined();
   });

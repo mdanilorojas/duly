@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Check, Clock } from "lucide-react";
+import { useCopy } from "@/lib/copy/index.js";
 import { DataTable, type ColumnDef } from "../data-table/data-table.js";
 import { AlarmChip, type AlarmPriority, type AlarmState } from "./alarm-chip.js";
 
@@ -41,29 +42,30 @@ export interface AlarmSummaryTableProps extends Omit<React.ComponentProps<"div">
  */
 export function AlarmSummaryTable({
   alarms,
-  caption = "Alarmas activas",
+  caption,
   onAck,
   onShelve,
   className,
   ...props
 }: AlarmSummaryTableProps) {
+  const t = useCopy();
   const sorted = React.useMemo(() => sortAlarms(alarms), [alarms]);
 
   const columns = React.useMemo<ColumnDef<AlarmRow>[]>(
     () => [
       {
         accessorKey: "priority",
-        header: "Prioridad",
+        header: t.alarmSummaryTable.priority,
         enableSorting: false,
         cell: ({ row }) => <AlarmChip priority={row.original.priority} state={row.original.state} />,
       },
       { accessorKey: "tag", header: "Tag" },
-      { accessorKey: "description", header: "Descripción" },
-      { accessorKey: "area", header: "Área", cell: ({ getValue }) => (getValue() as string) ?? "—" },
-      { accessorKey: "timestamp", header: "Hora" },
+      { accessorKey: "description", header: t.alarmSummaryTable.description },
+      { accessorKey: "area", header: t.alarmSummaryTable.area, cell: ({ getValue }) => (getValue() as string) ?? "—" },
+      { accessorKey: "timestamp", header: t.alarmSummaryTable.time },
       {
         id: "actions",
-        header: "Acciones",
+        header: t.alarmSummaryTable.actions,
         enableSorting: false,
         cell: ({ row }) => {
           const a = row.original;
@@ -73,7 +75,7 @@ export function AlarmSummaryTable({
                 <button
                   type="button"
                   onClick={() => onAck(a.id)}
-                  aria-label={`Reconocer ${a.tag}`}
+                  aria-label={t.alarmSummaryTable.acknowledge(a.tag)}
                   className="inline-flex size-6 items-center justify-center rounded border border-border-default text-dim outline-none hover:text-ink focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <Check className="size-3.5" aria-hidden />
@@ -83,7 +85,7 @@ export function AlarmSummaryTable({
                 <button
                   type="button"
                   onClick={() => onShelve(a.id)}
-                  aria-label={`Silenciar ${a.tag}`}
+                  aria-label={t.alarmSummaryTable.shelve(a.tag)}
                   className="inline-flex size-6 items-center justify-center rounded border border-border-default text-dim outline-none hover:text-ink focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <Clock className="size-3.5" aria-hidden />
@@ -94,8 +96,10 @@ export function AlarmSummaryTable({
         },
       },
     ],
-    [onAck, onShelve],
+    [onAck, onShelve, t],
   );
+
+  const resolvedCaption = caption ?? t.alarmSummaryTable.defaultCaption;
 
   return (
     <DataTable
@@ -103,7 +107,7 @@ export function AlarmSummaryTable({
       data={sorted}
       columns={columns}
       getRowId={(a) => a.id}
-      caption={caption}
+      caption={resolvedCaption}
       density="compact"
       rowTone={(a) => (a.priority === "critical" ? "block" : a.priority === "high" ? "warn" : undefined)}
       {...props}

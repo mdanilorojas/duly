@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Bot, Server, User, Hash } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCopy } from "@/lib/copy/index.js";
 import type { Tone } from "../trace-log/trace-log.variants.js";
 import { toneChip } from "./approval-gate-card.js";
 
@@ -110,10 +111,12 @@ export function AuditLogTable({
   title = "Audit log",
   events,
   maxHeight,
-  emptyLabel = "No hay eventos de auditoría en este rango.",
+  emptyLabel,
   className,
   ...props
 }: AuditLogTableProps) {
+  const t = useCopy();
+  const resolvedEmptyLabel = emptyLabel ?? t.auditLogTable.emptyLabel;
   return (
     <div
       className={cn("overflow-hidden rounded-xl border border-border-subtle bg-surface-2", className)}
@@ -125,14 +128,14 @@ export function AuditLogTable({
       </div>
 
       {events.length === 0 ? (
-        <div className="px-4 py-8 text-center text-xs text-dim">{emptyLabel}</div>
+        <div className="px-4 py-8 text-center text-xs text-dim">{resolvedEmptyLabel}</div>
       ) : (
         <div
           className="overflow-x-auto"
           style={maxHeight ? { maxHeight, overflowY: "auto" } : undefined}
         >
           <table className="w-full min-w-[640px] border-collapse text-left">
-            <caption className="sr-only">{title}: registro inmutable de acciones por actor</caption>
+            <caption className="sr-only">{t.auditLogTable.captionSuffix(title)}</caption>
             <thead className="sticky top-0 z-10 bg-surface-header">
               <tr className="border-b border-border-subtle">
                 {["Actor", "Action", "Resource", "Outcome", "Timestamp", "Hash"].map((h) => (

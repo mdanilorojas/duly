@@ -25,7 +25,7 @@ describe("AutonomyModeSwitch", () => {
     render(<AutonomyModeSwitch value="manual" onChange={onChange} />);
     await userEvent.click(screen.getByRole("button", { name: /full-auto/i }));
     expect(onChange).not.toHaveBeenCalled();
-    await userEvent.click(screen.getByRole("button", { name: /confirmar/i }));
+    await userEvent.click(screen.getByRole("button", { name: /confirm/i }));
     expect(onChange).toHaveBeenCalledWith("full-auto");
   });
 

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Search } from "lucide-react";
 import { cn } from "../lib/cn.js";
+import { useCopy } from "../lib/copy/index.js";
 import { Input } from "@/components/ui/input.js";
 import type { Table } from "./data-table.js";
 
@@ -29,6 +30,7 @@ export interface FilterBarProps<T> extends Omit<React.ComponentProps<"div">, "ch
  * `DataTable`. Es el FilterBar del NORTH_STAR (área D, "DataTable denso").
  */
 export function FilterBar<T>({ table, fields, className, ...props }: FilterBarProps<T>) {
+  const t = useCopy();
   return (
     <div role="search" className={cn("flex flex-wrap items-center gap-2", className)} {...props}>
       {fields.map((f) => {
@@ -48,7 +50,7 @@ export function FilterBar<T>({ table, fields, className, ...props }: FilterBarPr
                 "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring",
               )}
             >
-              <option value="">{f.placeholder ?? `Todos`}</option>
+              <option value="">{f.placeholder ?? t.filterBar.allOption}</option>
               {f.options?.map((o) => (
                 <option key={o.value} value={o.value}>
                   {o.label}
@@ -67,7 +69,7 @@ export function FilterBar<T>({ table, fields, className, ...props }: FilterBarPr
             <Input
               type="search"
               aria-label={f.label}
-              placeholder={f.placeholder ?? `Filtrar ${f.label.toLowerCase()}…`}
+              placeholder={f.placeholder ?? t.filterBar.searchPlaceholder(f.label)}
               value={value}
               onChange={(e) => col.setFilterValue(e.target.value || undefined)}
               className="h-8 w-auto max-w-[200px] pl-7 text-[12.5px]"

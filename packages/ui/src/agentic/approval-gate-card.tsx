@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "../components/ui/button.js";
+import { useCopy } from "@/lib/copy/index.js";
 import type { Tone } from "../trace-log/trace-log.variants.js";
 
 /**
@@ -39,18 +40,18 @@ const riskRing: Record<Tone, string> = {
 };
 
 interface StatusConfig {
-  label: string;
   tone: Tone;
-  verb: string;
   icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>;
 }
 
+// label/verb viven en el diccionario de copy (t.approvalStatus) — este mapa
+// solo aporta lo visual (tono + ícono), compartido entre locales.
 export const approvalStatusConfig: Record<ApprovalStatus, StatusConfig> = {
-  pending: { label: "Pending review", tone: "review", verb: "Requested", icon: Clock },
-  approved: { label: "Approved", tone: "ok", verb: "Approved", icon: Check },
-  rejected: { label: "Rejected", tone: "block", verb: "Rejected", icon: X },
-  escalated: { label: "Escalated", tone: "warn", verb: "Escalated", icon: ArrowUpCircle },
-  expired: { label: "Expired — no reviewer", tone: "block", verb: "Expired", icon: Clock },
+  pending: { tone: "review", icon: Clock },
+  approved: { tone: "ok", icon: Check },
+  rejected: { tone: "block", icon: X },
+  escalated: { tone: "warn", icon: ArrowUpCircle },
+  expired: { tone: "block", icon: Clock },
 };
 
 function EvidenceField({
@@ -73,6 +74,7 @@ function EvidenceField({
 }
 
 function StatusChip({ status }: { status: ApprovalStatus }) {
+  const t = useCopy();
   const cfg = approvalStatusConfig[status];
   const Icon = cfg.icon;
   return (
@@ -82,7 +84,7 @@ function StatusChip({ status }: { status: ApprovalStatus }) {
         toneChip[cfg.tone],
       )}
     >
-      <Icon className="size-3" aria-hidden /> {cfg.label}
+      <Icon className="size-3" aria-hidden /> {t.approvalStatus[status].label}
     </span>
   );
 }
@@ -148,11 +150,12 @@ export function ApprovalGateCard({
   className,
   ...props
 }: ApprovalGateCardProps) {
+  const t = useCopy();
   const isPending = status === "pending";
 
   return (
     <article
-      aria-label={`Approval request: ${action} — ${riskLabel}${isPending ? "" : `, ${approvalStatusConfig[status].label}`}`}
+      aria-label={`${t.approvalGateCard.requestAriaLabel(action, riskLabel)}${isPending ? "" : `, ${t.approvalStatus[status].label}`}`}
       className={cn(
         "overflow-hidden rounded-xl border bg-surface-2",
         riskRing[riskTone],
@@ -183,16 +186,16 @@ export function ApprovalGateCard({
         </div>
         {isPending && expiresIn ? (
           <span className="inline-flex shrink-0 items-center gap-1 self-start rounded-full border border-border-subtle bg-bg-elevated px-2 py-1 font-mono text-[10.5px] text-dim">
-            <Clock className="size-3" aria-hidden /> expires in {expiresIn}
+            <Clock className="size-3" aria-hidden /> {t.approvalGateCard.expiresIn(expiresIn)}
           </span>
         ) : null}
       </header>
 
       <dl className="grid grid-cols-1 gap-3 px-4 py-3 sm:grid-cols-2">
-        <EvidenceField icon={FileQuestion} label="What" value={what} />
-        <EvidenceField icon={MessageCircleQuestion} label="Why" value={why} />
-        <EvidenceField icon={Radar} label="Blast radius" value={blastRadius} />
-        <EvidenceField icon={Undo2} label="Rollback" value={rollback} />
+        <EvidenceField icon={FileQuestion} label={t.approvalGateCard.what} value={what} />
+        <EvidenceField icon={MessageCircleQuestion} label={t.approvalGateCard.why} value={why} />
+        <EvidenceField icon={Radar} label={t.approvalGateCard.blastRadius} value={blastRadius} />
+        <EvidenceField icon={Undo2} label={t.approvalGateCard.rollback} value={rollback} />
       </dl>
 
       {isPending ? (
@@ -203,7 +206,7 @@ export function ApprovalGateCard({
             onClick={onEscalate}
             className="w-full border-warn/40 text-warn hover:bg-warn/10 hover:text-warn sm:w-auto"
           >
-            <ArrowUpCircle className="size-3.5" aria-hidden /> Escalate
+            <ArrowUpCircle className="size-3.5" aria-hidden /> {t.common.escalate}
           </Button>
           <Button
             variant="outline"
@@ -211,21 +214,21 @@ export function ApprovalGateCard({
             onClick={onReject}
             className="w-full border-block/40 text-block hover:bg-block/10 hover:text-block sm:w-auto"
           >
-            <X className="size-3.5" aria-hidden /> Reject
+            <X className="size-3.5" aria-hidden /> {t.common.reject}
           </Button>
           <Button
             size="sm"
             onClick={onApprove}
             className="w-full bg-ok text-on-ok hover:bg-ok/90 sm:w-auto"
           >
-            <Check className="size-3.5" aria-hidden /> Approve
+            <Check className="size-3.5" aria-hidden /> {t.common.approve}
           </Button>
         </div>
       ) : (
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border-subtle px-4 py-2.5 font-mono text-[11px] text-dim">
           {decidedBy ? (
             <span>
-              {approvalStatusConfig[status].verb} by {decidedBy}
+              {t.approvalGateCard.decidedBy(t.approvalStatus[status].verb, decidedBy)}
               {decidedAt ? ` · ${decidedAt}` : ""}
             </span>
           ) : null}

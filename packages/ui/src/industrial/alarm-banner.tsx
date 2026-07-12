@@ -2,6 +2,7 @@ import * as React from "react";
 import { BellOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button.js";
+import { useCopy } from "@/lib/copy/index.js";
 import { AlarmChip, type AlarmPriority } from "./alarm-chip.js";
 
 export interface Alarm {
@@ -40,6 +41,7 @@ export interface AlarmBannerProps extends Omit<React.ComponentProps<"div">, "chi
  * color se reserva a lo anormal). Reusa `AlarmChip`.
  */
 export function AlarmBanner({ topAlarm, unackCount, onAck, className, ...props }: AlarmBannerProps) {
+  const t = useCopy();
   const active = topAlarm && unackCount > 0;
 
   if (!active) {
@@ -53,7 +55,7 @@ export function AlarmBanner({ topAlarm, unackCount, onAck, className, ...props }
         {...props}
       >
         <BellOff className="size-4" aria-hidden />
-        Sin alarmas activas
+        {t.alarmBanner.noActive}
       </div>
     );
   }
@@ -77,10 +79,10 @@ export function AlarmBanner({ topAlarm, unackCount, onAck, className, ...props }
         <span className="font-mono text-[10.5px] text-faint tabular-nums">{topAlarm.timestamp}</span>
       ) : null}
       <span className={cn("font-mono text-[11px] font-bold tabular-nums", PRIORITY_TEXT[topAlarm.priority])}>
-        {unackCount} sin reconocer
+        {t.alarmBanner.unacknowledged(unackCount)}
       </span>
       <Button type="button" size="sm" variant="outline" className="h-8" onClick={onAck}>
-        Reconocer
+        {t.common.acknowledge}
       </Button>
     </div>
   );

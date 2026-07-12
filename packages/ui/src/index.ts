@@ -2,6 +2,10 @@ export { cn } from "./lib/cn.js";
 export { TraceLog } from "./trace-log/trace-log.js";
 export type { Tone, Density } from "./trace-log/trace-log.variants.js";
 
+// copy / i18n — contrato inyectable, default inglés sin configuración
+export { CopyProvider, useCopy, useLocale, useFormatCurrency, enCopy, esCopy } from "./lib/copy/index.js";
+export type { CopyDict, Locale } from "./lib/copy/index.js";
+
 // shadcn primitives — copy-owned, token-mapped
 export * from "./components/ui/button.js";
 export * from "./components/ui/badge.js";

@@ -23,14 +23,14 @@ describe("AlarmBanner", () => {
   it("reconocer dispara onAck", async () => {
     const onAck = vi.fn();
     render(<AlarmBanner topAlarm={alarm} unackCount={7} onAck={onAck} />);
-    await userEvent.click(screen.getByRole("button", { name: /reconocer/i }));
+    await userEvent.click(screen.getByRole("button", { name: /acknowledge/i }));
     expect(onAck).toHaveBeenCalled();
   });
 
   it("sin alarmas: estado calmo, sin botón de reconocer (ISA-101 grayscale)", () => {
     render(<AlarmBanner unackCount={0} />);
-    expect(screen.getByText(/sin alarmas/i)).toBeDefined();
-    expect(screen.queryByRole("button", { name: /reconocer/i })).toBeNull();
+    expect(screen.getByText(/no active alarms/i)).toBeDefined();
+    expect(screen.queryByRole("button", { name: /acknowledge/i })).toBeNull();
   });
 
   it("sin violaciones de accesibilidad (axe)", async () => {

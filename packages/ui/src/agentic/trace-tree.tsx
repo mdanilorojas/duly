@@ -2,6 +2,7 @@ import * as React from "react";
 import { Brain, Bot, Wrench, Search, ChevronRight } from "lucide-react";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { cn } from "@/lib/utils";
+import { useFormatCurrency } from "@/lib/copy/index.js";
 import type { Tone } from "../trace-log/trace-log.variants.js";
 import { toneChip } from "./approval-gate-card.js";
 import { GuardrailChip, type GuardrailPolicy } from "./guardrail-indicator.js";
@@ -76,11 +77,6 @@ function formatMs(ms: number): string {
   return ms >= 1000 ? `${(ms / 1000).toFixed(2)}s` : `${Math.round(ms)}ms`;
 }
 
-function formatCost(usd: number): string {
-  if (usd === 0) return "—";
-  return usd < 0.01 ? `$${usd.toFixed(4)}` : `$${usd.toFixed(2)}`;
-}
-
 function EvalScoreChip({ evalScore }: { evalScore: NonNullable<TraceSpan["evalScore"]> }) {
   const tone = scoreTone(evalScore.score, evalScore.threshold);
   return (
@@ -104,6 +100,7 @@ interface SpanRowProps {
 }
 
 function SpanRow({ span, depth, totalDurationMs, defaultOpenDepth }: SpanRowProps) {
+  const fmt = useFormatCurrency();
   const [open, setOpen] = React.useState(depth < defaultOpenDepth);
   const hasChildren = (span.children?.length ?? 0) > 0;
   const Icon = kindIcon[span.kind];
@@ -159,7 +156,7 @@ function SpanRow({ span, depth, totalDurationMs, defaultOpenDepth }: SpanRowProp
       <span className="shrink-0 text-right font-mono text-[11px] text-dim">
         {costUsd > 0 ? (
           <>
-            <span className={hasChildren ? "text-ink" : undefined}>{formatCost(costUsd)}</span>
+            <span className={hasChildren ? "text-ink" : undefined}>{fmt(costUsd)}</span>
             {hasTokens ? (
               <span className="ml-1 hidden text-dim/70 md:inline">
                 {tokensIn.toLocaleString()}→{tokensOut.toLocaleString()}
@@ -243,6 +240,7 @@ export function TraceTree({
   className,
   ...props
 }: TraceTreeProps) {
+  const fmt = useFormatCurrency();
   const totals = React.useMemo(() => {
     let tokensIn = 0;
     let tokensOut = 0;
@@ -267,7 +265,7 @@ export function TraceTree({
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-dim">
           <span>{formatMs(totals.totalDurationMs)} total</span>
-          <span className="text-ink font-semibold">{formatCost(totals.costUsd)}</span>
+          <span className="text-ink font-semibold">{totals.costUsd > 0 ? fmt(totals.costUsd) : "—"}</span>
           <span>{(totals.tokensIn + totals.tokensOut).toLocaleString()} tok</span>
         </div>
       </div>

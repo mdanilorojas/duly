@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useCopy, useFormatCurrency } from "@/lib/copy/index.js";
 import { NodeStatusBadge, type NodeStatus } from "./node-status-badge.js";
 
 export type AgentRole = "orchestrator" | "worker" | "tool" | "human" | (string & {});
@@ -52,12 +53,15 @@ export function AgentTopologyGraph({
   edges,
   onSelect,
   layout = "hierarchy",
-  ariaLabel = "Topología de agentes",
+  ariaLabel,
   graphHeight = 380,
   rosterOnly = false,
   className,
   ...props
 }: AgentTopologyGraphProps) {
+  const t = useCopy();
+  const fmt = useFormatCurrency();
+  const resolvedAriaLabel = ariaLabel ?? t.agentTopologyGraph.defaultAriaLabel;
   const [selected, setSelected] = React.useState<string | null>(null);
   function select(id: string) {
     setSelected(id);
@@ -76,14 +80,14 @@ export function AgentTopologyGraph({
           style={{ height: graphHeight }}
         >
           <React.Suspense
-            fallback={<div className="grid h-full place-items-center text-xs text-faint">Cargando grafo…</div>}
+            fallback={<div className="grid h-full place-items-center text-xs text-faint">{t.agentTopologyGraph.loadingGraph}</div>}
           >
             <LazyFlow nodes={nodes} edges={edges} layout={layout} selected={selected} onSelect={select} />
           </React.Suspense>
         </div>
       ) : null}
 
-      <ul role="list" aria-label={ariaLabel} className="divide-y divide-border-subtle">
+      <ul role="list" aria-label={resolvedAriaLabel} className="divide-y divide-border-subtle">
         {nodes.map((n) => {
           const isSelected = selected === n.id;
           return (
@@ -105,7 +109,7 @@ export function AgentTopologyGraph({
                 {n.tokens != null || n.costUsd != null ? (
                   <span className="shrink-0 text-right font-mono text-[10.5px] tabular-nums text-dim">
                     {n.tokens != null ? <span className="block">{n.tokens.toLocaleString()} tok</span> : null}
-                    {n.costUsd != null ? <span className="block text-faint">${n.costUsd.toFixed(2)}</span> : null}
+                    {n.costUsd != null ? <span className="block text-faint">{fmt(n.costUsd)}</span> : null}
                   </span>
                 ) : null}
               </button>

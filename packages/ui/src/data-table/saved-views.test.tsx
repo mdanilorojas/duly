@@ -81,8 +81,8 @@ describe("SavedViews component", () => {
 
   it("guardar crea un chip con el nombre dado", async () => {
     render(<Comp storage={makeStorage()} />);
-    await userEvent.type(screen.getByLabelText(/nombre de la vista/i), "Ventas Q3");
-    await userEvent.click(screen.getByRole("button", { name: /guardar vista/i }));
+    await userEvent.type(screen.getByLabelText(/view name/i), "Ventas Q3");
+    await userEvent.click(screen.getByRole("button", { name: /save view/i }));
     // nombre exacto (string, no regex) para no chocar con "Eliminar vista Ventas Q3"
     expect(screen.getByRole("button", { name: "Ventas Q3" })).toBeDefined();
   });

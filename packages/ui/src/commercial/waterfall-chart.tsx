@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useCopy } from "@/lib/copy/index.js";
 import type { Tone } from "../trace-log/trace-log.variants.js";
 
 export interface WaterfallSegment {
@@ -85,6 +86,7 @@ export function WaterfallChart({
   className,
   ...props
 }: WaterfallChartProps) {
+  const t = useCopy();
   const { bars } = computeWaterfallBars(startValue, segments);
   const fmt = (n: number) => `${valuePrefix}${Math.abs(n).toLocaleString("en-US")}${valueSuffix}`;
   const signed = (n: number) => `${n >= 0 ? "+" : "−"}${fmt(n)}`;
@@ -100,7 +102,7 @@ export function WaterfallChart({
 
       <div aria-hidden className="px-2 pt-3" style={{ height }}>
         <React.Suspense
-          fallback={<div className="grid h-full place-items-center text-xs text-faint">Cargando gráfico…</div>}
+          fallback={<div className="grid h-full place-items-center text-xs text-faint">{t.common.loading}</div>}
         >
           <LazyRecharts bars={bars} valuePrefix={valuePrefix} valueSuffix={valueSuffix} />
         </React.Suspense>

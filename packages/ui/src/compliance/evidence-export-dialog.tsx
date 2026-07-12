@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog.js";
 import { Button } from "@/components/ui/button.js";
 import { HashBadge } from "@/agentic/audit-log-table.js";
+import { useCopy } from "@/lib/copy/index.js";
 
 export type ExportFormat = "pdf" | "csv" | "json";
 
@@ -48,6 +49,7 @@ export function EvidenceExportDialog({
   formats = ["pdf", "csv", "json"],
   onExport,
 }: EvidenceExportDialogProps) {
+  const t = useCopy();
   const [status, setStatus] = React.useState<Status>("idle");
   const [result, setResult] = React.useState<ExportResult | null>(null);
   const [error, setError] = React.useState<string | null>(null);
@@ -69,6 +71,7 @@ export function EvidenceExportDialog({
       setResult(r);
       setStatus("done");
     } catch (e) {
+      // TODO(i18n): fallback error copy
       setError(e instanceof Error ? e.message : "No se pudo generar el export.");
       setStatus("error");
     }
@@ -80,12 +83,10 @@ export function EvidenceExportDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ShieldCheck className="size-4 text-accent" aria-hidden />
-            Exportar evidencia firmada
+            {t.evidenceExportDialog.title}
           </DialogTitle>
           <DialogDescription>
-            Exportarás <span className="font-semibold text-ink">{recordCount.toLocaleString()}</span> registros
-            del rango <span className="font-semibold text-ink">{range}</span> con un manifiesto de hashes que
-            certifica su integridad.
+            {t.evidenceExportDialog.description(recordCount.toLocaleString(), range)}
           </DialogDescription>
         </DialogHeader>
 
@@ -104,7 +105,7 @@ export function EvidenceExportDialog({
           {status === "generating" ? (
             <div className="flex items-center gap-2 text-[13px] text-dim">
               <Loader2 className="size-4 animate-spin text-accent motion-reduce:animate-none" aria-hidden />
-              Generando export firmado…
+              {t.evidenceExportDialog.generating}
             </div>
           ) : null}
 
@@ -112,15 +113,15 @@ export function EvidenceExportDialog({
             <div className="flex flex-col gap-2">
               <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-ok">
                 <ShieldCheck className="size-4" aria-hidden />
-                Export listo — íntegro
+                {t.evidenceExportDialog.ready}
               </span>
               <div className="flex items-center gap-2 text-[12px] text-dim">
-                <span className="text-faint">Manifiesto:</span>
+                <span className="text-faint">{t.evidenceExportDialog.manifest}</span>
                 <HashBadge hash={result.manifestHash} />
               </div>
               {result.url ? (
                 <a href={result.url} className="text-[12.5px] text-accent underline-offset-2 hover:underline">
-                  Descargar archivo
+                  {t.evidenceExportDialog.download}
                 </a>
               ) : null}
             </div>
@@ -129,7 +130,7 @@ export function EvidenceExportDialog({
           {status === "error" ? (
             <div className="flex items-start gap-2 rounded-md border border-block/40 bg-block/10 px-3 py-2 text-[12.5px] text-block">
               <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
-              <span>{error} — reintenta o revisa la configuración de firma.</span>
+              <span>{error} {t.evidenceExportDialog.errorSuffix}</span>
             </div>
           ) : null}
         </div>
@@ -137,7 +138,7 @@ export function EvidenceExportDialog({
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="ghost" size="sm">
-              Cerrar
+              {t.evidenceExportDialog.close}
             </Button>
           </DialogClose>
         </DialogFooter>

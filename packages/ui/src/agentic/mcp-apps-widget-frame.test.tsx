@@ -16,7 +16,7 @@ describe("MCPAppsWidgetFrame", () => {
 
   it("muestra estado de carga mientras el renderer se carga en diferido", () => {
     render(<MCPAppsWidgetFrame toolName="x" sandbox={sandbox} />);
-    expect(screen.getByText(/cargando app/i)).toBeDefined();
+    expect(screen.getByText(/loading/i)).toBeDefined();
   });
 
   it("respeta un label explícito", () => {

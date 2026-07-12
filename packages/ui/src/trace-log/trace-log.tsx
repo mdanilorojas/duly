@@ -3,9 +3,9 @@ import { Info, CheckCircle2, Eye, AlertTriangle, OctagonX, ChevronDown } from "l
 import * as Collapsible from "@radix-ui/react-collapsible";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { cn } from "../lib/cn.js";
+import { useCopy } from "../lib/copy/index.js";
 import { DensityContext, StreamingContext } from "./trace-log.context.js";
 import { bodyVariants, rowVariants, toneText, type Density, type Tone } from "./trace-log.variants.js";
-import { toneLabel } from "./copy.js";
 
 // Public API — streaming is a Root-level concern; Body reads it via StreamingContext.
 export interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -126,6 +126,7 @@ interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
 // Unknown tones degrade to "info" so Icon is never undefined (avoids React crash).
 const Row = React.forwardRef<HTMLDivElement, RowProps>(
   ({ tone = "info", agent, step, timestamp, className, children, ...rest }, ref) => {
+    const copy = useCopy();
     const t: Tone = (tone in toneIcon) ? tone : "info";
     const Icon = toneIcon[t];
     const meta = timestamp ?? step ?? "";
@@ -135,7 +136,7 @@ const Row = React.forwardRef<HTMLDivElement, RowProps>(
           {/* Tono "info" es gris (L 0.61) y no llega a 4.5:1 sobre surface-2 — texto en text-dim. */}
           <span className={cn("flex min-w-0 items-center gap-1.5 font-bold", t === "info" ? "text-dim" : toneText[t])}>
             <Icon className="size-3 shrink-0" aria-hidden />
-            <span className="sr-only">{toneLabel[t]}: </span>
+            <span className="sr-only">{copy.tone[t]}: </span>
             <span className="break-words">{agent}</span>
           </span>
           {meta ? <span className="shrink-0">{meta}</span> : null}

@@ -29,7 +29,7 @@ describe("AlarmSummaryTable", () => {
   it("reconocer una fila dispara onAck con su id", async () => {
     const onAck = vi.fn();
     render(<AlarmSummaryTable alarms={alarms} caption="Alarmas" onAck={onAck} />);
-    await userEvent.click(screen.getByRole("button", { name: /reconocer PT-101/i }));
+    await userEvent.click(screen.getByRole("button", { name: /acknowledge PT-101/i }));
     expect(onAck).toHaveBeenCalledWith("a2");
   });
 

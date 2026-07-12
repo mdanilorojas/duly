@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useCopy } from "@/lib/copy/index.js";
 import type { Tone } from "../trace-log/trace-log.variants.js";
 
 export type StakeholderRole = "champion" | "economic-buyer" | "blocker" | "influencer" | "user";
@@ -59,12 +60,14 @@ export function RelationshipMap({
   people,
   links,
   onSelect,
-  ariaLabel = "Mapa de relaciones",
+  ariaLabel,
   graphHeight = 360,
   rosterOnly = false,
   className,
   ...props
 }: RelationshipMapProps) {
+  const t = useCopy();
+  const resolvedAriaLabel = ariaLabel ?? t.relationshipMap.defaultAriaLabel;
   const [selected, setSelected] = React.useState<string | null>(null);
   function select(id: string) {
     setSelected(id);
@@ -78,13 +81,13 @@ export function RelationshipMap({
     >
       {!rosterOnly ? (
         <div aria-hidden className="relative border-b border-border-subtle bg-surface-sunken" style={{ height: graphHeight }}>
-          <React.Suspense fallback={<div className="grid h-full place-items-center text-xs text-faint">Cargando mapa…</div>}>
+          <React.Suspense fallback={<div className="grid h-full place-items-center text-xs text-faint">{t.common.loading}</div>}>
             <LazyFlow people={people} links={links} selected={selected} onSelect={select} />
           </React.Suspense>
         </div>
       ) : null}
 
-      <ul role="list" aria-label={ariaLabel} className="divide-y divide-border-subtle">
+      <ul role="list" aria-label={resolvedAriaLabel} className="divide-y divide-border-subtle">
         {people.map((p) => {
           const meta = ROLE_META[p.role];
           const isSelected = selected === p.id;

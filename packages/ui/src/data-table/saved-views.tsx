@@ -1,6 +1,7 @@
 import * as React from "react";
 import { X, Bookmark } from "lucide-react";
 import { cn } from "../lib/cn.js";
+import { useCopy } from "../lib/copy/index.js";
 import { Input } from "@/components/ui/input.js";
 import { Button } from "@/components/ui/button.js";
 import type { Table, SortingState, ColumnFiltersState } from "./data-table.js";
@@ -128,6 +129,7 @@ export function SavedViews<T>({
   className,
   ...props
 }: SavedViewsProps<T>) {
+  const t = useCopy();
   const { views, activeId, save, apply, remove } = useSavedViews({
     table,
     storageKey,
@@ -148,8 +150,8 @@ export function SavedViews<T>({
     <div className={cn("flex flex-wrap items-center gap-2", className)} {...props}>
       <div className="flex items-center gap-1.5">
         <Input
-          aria-label="Nombre de la vista"
-          placeholder="Nombre de vista…"
+          aria-label={t.savedViews.nameLabel}
+          placeholder={t.savedViews.namePlaceholder}
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => {
@@ -162,12 +164,12 @@ export function SavedViews<T>({
         />
         <Button type="button" size="sm" variant="outline" onClick={onSave} className="h-8">
           <Bookmark className="size-3.5" aria-hidden />
-          Guardar vista
+          {t.savedViews.save}
         </Button>
       </div>
 
       {views.length > 0 ? (
-        <ul className="flex flex-wrap items-center gap-1.5" aria-label="Vistas guardadas">
+        <ul className="flex flex-wrap items-center gap-1.5" aria-label={t.savedViews.savedViewsLabel}>
           {views.map((v) => {
             const isActive = v.id === activeId;
             return (
@@ -188,7 +190,7 @@ export function SavedViews<T>({
                 <button
                   type="button"
                   onClick={() => remove(v.id)}
-                  aria-label={`Eliminar vista ${v.name}`}
+                  aria-label={t.savedViews.remove(v.name)}
                   className="inline-flex items-center rounded-r-md border border-l-0 border-border-subtle bg-surface-2 px-1.5 text-faint outline-none hover:text-block focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <X className="size-3" aria-hidden />

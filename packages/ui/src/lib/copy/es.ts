@@ -1,0 +1,151 @@
+import type { CopyDict } from "./types.js";
+
+export const esCopy = {
+  common: {
+    approve: "Aprobar",
+    reject: "Rechazar",
+    escalate: "Escalar",
+    acknowledge: "Reconocer",
+    loading: "Cargando…",
+  },
+  tone: {
+    info: "info",
+    ok: "ok",
+    review: "revisar",
+    warn: "advertencia",
+    block: "bloqueo",
+  },
+  nodeStatus: {
+    success: "Exitoso",
+    error: "Falló",
+    running: "En curso",
+    waiting: "En espera",
+    retrying: "Reintentando",
+    skipped: "Omitido",
+  },
+  nodeStatusBadge: {
+    retryAttempt: (statusLabel: string, current: number, max: number) =>
+      `${statusLabel}, intento ${current} de ${max}`,
+    legendHint: {
+      success: "sólido",
+      running: "punteado animado",
+      retrying: "punteado animado, rojo",
+      waiting: "punteado, pulso lento",
+      error: "sólido, rojo",
+      skipped: "punteado fino, apagado",
+    },
+  },
+  approvalStatus: {
+    pending: { label: "Pendiente de revisión", verb: "Solicitado" },
+    approved: { label: "Aprobado", verb: "Aprobado" },
+    rejected: { label: "Rechazado", verb: "Rechazado" },
+    escalated: { label: "Escalado", verb: "Escalado" },
+    expired: { label: "Expirado — sin revisor", verb: "Expiró" },
+  },
+  approvalGateCard: {
+    requestAriaLabel: (action: string, riskLabel: string) => `Solicitud de aprobación: ${action} — ${riskLabel}`,
+    expiresIn: (time: string) => `expira en ${time}`,
+    what: "Qué",
+    why: "Por qué",
+    blastRadius: "Alcance del impacto",
+    rollback: "Reversión",
+    decidedBy: (verb: string, by: string) => `${verb} por ${by}`,
+  },
+  humanInterruptQueue: {
+    title: "Cola de revisión humana",
+    empty: "No hay acciones esperando revisión.",
+    pending: "pendientes",
+    critical: "críticas",
+    expiresIn: (t: string) => `expira ${t}`,
+  },
+  tokenCostMeter: {
+    title: "Costo",
+    budgetSuffix: (b: string) => `de ${b} de presupuesto`,
+    budgetUsed: "Presupuesto usado",
+    costBreakdown: "Desglose de costo",
+  },
+  alarmBanner: {
+    noActive: "Sin alarmas activas",
+    unacknowledged: (n: number) => `${n} sin reconocer`,
+  },
+  streamingMessage: {
+    thinking: "Pensando…",
+  },
+  dataTable: {
+    empty: "No hay datos.",
+  },
+  filterBar: {
+    allOption: "Todos",
+    searchPlaceholder: (label: string) => `Filtrar ${label.toLowerCase()}…`,
+  },
+  savedViews: {
+    nameLabel: "Nombre de la vista",
+    namePlaceholder: "Nombre de vista…",
+    save: "Guardar vista",
+    savedViewsLabel: "Vistas guardadas",
+    remove: (name: string) => `Eliminar vista ${name}`,
+  },
+  agentTopologyGraph: {
+    defaultAriaLabel: "Topología de agentes",
+    loadingGraph: "Cargando grafo…",
+  },
+  relationshipMap: {
+    defaultAriaLabel: "Mapa de relaciones",
+  },
+  auditLogTable: {
+    emptyLabel: "No hay eventos de auditoría en este rango.",
+    captionSuffix: (title: string) => `${title}: registro inmutable de acciones por actor`,
+  },
+  whoDidWhatTimeline: {
+    emptyLabel: "No hay actividad para esta consulta guardada.",
+  },
+  approvalChainStepper: {
+    approved: "Aprobó",
+    rejected: "Rechazó",
+    pending: "Pendiente",
+    escalated: "Escaló",
+    unreached: "no alcanzada",
+  },
+  alarmSummaryTable: {
+    priority: "Prioridad",
+    description: "Descripción",
+    area: "Área",
+    time: "Hora",
+    actions: "Acciones",
+    acknowledge: (tag: string) => `Reconocer ${tag}`,
+    shelve: (tag: string) => `Silenciar ${tag}`,
+    defaultCaption: "Alarmas activas",
+  },
+  processValueTile: {
+    outOfLimit: "Fuera de límite",
+  },
+  oeeWaterfall: {
+    title: "OEE — pérdidas de producción",
+  },
+  autonomyModeSwitch: {
+    levelGroupLabel: "Nivel de autonomía",
+    confirmRaise: (levelLabel: string) => `¿Subir autonomía a ${levelLabel}?`,
+    confirm: "Confirmar",
+    cancel: "Cancelar",
+  },
+  evidenceExportDialog: {
+    title: "Exportar evidencia firmada",
+    description: (recordCount: string, range: string) =>
+      `Exportarás ${recordCount} registros del rango ${range} con un manifiesto de hashes que certifica su integridad.`,
+    generating: "Generando export firmado…",
+    ready: "Export listo — íntegro",
+    errorSuffix: "— reintenta o revisa la configuración de firma.",
+    manifest: "Manifiesto:",
+    download: "Descargar archivo",
+    close: "Cerrar",
+  },
+  modelProvenanceCard: {
+    model: "Modelo",
+    modelVersion: "Versión de modelo",
+    provider: "Proveedor",
+    promptVersion: "Versión de prompt",
+    temperature: "Temperatura",
+    configHash: "Config hash",
+    details: "Detalles",
+  },
+} satisfies CopyDict;

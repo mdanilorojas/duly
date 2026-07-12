@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Check, X, Play, Clock, RotateCw, MinusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCopy } from "@/lib/copy/index.js";
 
 /**
  * Los 6 estados de nodo de ejecución del catálogo NORTH_STAR (sección A:
@@ -19,7 +20,6 @@ interface StatusConfig {
   iconTone: string;
   chip: string;
   connector: string;
-  defaultLabel: string;
 }
 
 const STATUS: Record<NodeStatus, StatusConfig> = {
@@ -29,7 +29,6 @@ const STATUS: Record<NodeStatus, StatusConfig> = {
     iconTone: "text-ok",
     chip: "bg-ok/15 text-ok",
     connector: "border-t-2 border-solid border-ok/45",
-    defaultLabel: "Success",
   },
   error: {
     icon: X,
@@ -37,7 +36,6 @@ const STATUS: Record<NodeStatus, StatusConfig> = {
     iconTone: "text-block",
     chip: "bg-block/15 text-block",
     connector: "border-t-2 border-solid border-block/45",
-    defaultLabel: "Failed",
   },
   running: {
     icon: Play,
@@ -45,7 +43,6 @@ const STATUS: Record<NodeStatus, StatusConfig> = {
     iconTone: "text-info",
     chip: "bg-info/15 text-info",
     connector: "border-t-2 border-dashed border-info/40 motion-safe:animate-pulse",
-    defaultLabel: "Running",
   },
   waiting: {
     icon: Clock,
@@ -53,14 +50,12 @@ const STATUS: Record<NodeStatus, StatusConfig> = {
     iconTone: "text-review",
     chip: "bg-review/15 text-review",
     connector: "border-t-2 border-dashed border-review/35",
-    defaultLabel: "Waiting",
   },
   retrying: {
     icon: RotateCw,
     ring: "border-2 border-dashed border-block/70 motion-safe:animate-spin",
     iconTone: "text-block",
     chip: "bg-block/15 text-block",
-    defaultLabel: "Retrying",
     connector: "border-t-2 border-dashed border-block/45 motion-safe:animate-pulse",
   },
   skipped: {
@@ -69,7 +64,6 @@ const STATUS: Record<NodeStatus, StatusConfig> = {
     iconTone: "text-faint",
     chip: "bg-surface-3 text-faint",
     connector: "border-t-2 border-dotted border-faint-deco/35",
-    defaultLabel: "Skipped",
   },
 };
 
@@ -100,16 +94,19 @@ export function NodeStatusBadge({
   className,
   ...props
 }: NodeStatusBadgeProps) {
+  const t = useCopy();
   const cfg = STATUS[status];
   const Icon = cfg.icon;
   const showAttempt = status === "retrying" && attempt;
-  const a11yLabel = label ?? cfg.defaultLabel;
+  const a11yLabel = label ?? t.nodeStatus[status];
 
   return (
     <div className={cn("inline-flex items-center gap-2", className)} {...props}>
       <span
         role="status"
-        aria-label={showAttempt ? `${a11yLabel}, intento ${attempt[0]} de ${attempt[1]}` : a11yLabel}
+        aria-label={
+          showAttempt ? t.nodeStatusBadge.retryAttempt(a11yLabel, attempt[0], attempt[1]) : a11yLabel
+        }
         className={cn(
           "relative inline-flex shrink-0 items-center justify-center rounded-full bg-surface-2",
           sizeRing[size],
@@ -143,20 +140,12 @@ export function nodeStatusConnectorClass(status: NodeStatus): string {
 
 const LEGEND_ORDER: NodeStatus[] = ["success", "running", "retrying", "waiting", "error", "skipped"];
 
-const LEGEND_HINT: Record<NodeStatus, string> = {
-  success: "sólido",
-  running: "punteado animado",
-  retrying: "punteado animado, rojo",
-  waiting: "punteado, pulso lento",
-  error: "sólido, rojo",
-  skipped: "punteado fino, apagado",
-};
-
 /**
  * Leyenda de la gramática de 6 estados — para demostrar en revisión que cada
  * estado tiene un trazo distinto, no solo un color (principio NORTH_STAR #1).
  */
 export function NodeStatusLegend({ className, ...props }: React.ComponentProps<"div">) {
+  const t = useCopy();
   return (
     <div
       className={cn(
@@ -169,8 +158,8 @@ export function NodeStatusLegend({ className, ...props }: React.ComponentProps<"
         <div key={status} className="flex items-center gap-2">
           <NodeStatusBadge status={status} size="sm" attempt={status === "retrying" ? [2, 3] : undefined} />
           <div className="leading-tight">
-            <div className="text-[11px] font-semibold text-ink">{STATUS[status].defaultLabel}</div>
-            <div className="font-mono text-[9px] text-dim">{LEGEND_HINT[status]}</div>
+            <div className="text-[11px] font-semibold text-ink">{t.nodeStatus[status]}</div>
+            <div className="font-mono text-[9px] text-dim">{t.nodeStatusBadge.legendHint[status]}</div>
           </div>
         </div>
       ))}

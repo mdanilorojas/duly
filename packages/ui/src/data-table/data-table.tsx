@@ -13,6 +13,7 @@ import {
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 import { cn } from "../lib/cn.js";
+import { useCopy } from "../lib/copy/index.js";
 import type { Tone, Density } from "../trace-log/trace-log.variants.js";
 import { cellPad, ROW_HEIGHT, toneBorder } from "./data-table.variants.js";
 
@@ -101,6 +102,7 @@ export function DataTable<T>({
   className,
   ...props
 }: DataTableProps<T>) {
+  const t = useCopy();
   const internalTable = useReactTable<T>({
     data: data ?? [],
     columns: columns ?? [],
@@ -274,7 +276,7 @@ export function DataTable<T>({
         >
           {rows.length === 0 ? (
             <div className="px-4 py-10 text-center text-xs text-dim">
-              {emptyState ?? "No hay datos."}
+              {emptyState ?? t.dataTable.empty}
             </div>
           ) : virtualize ? (
             <div style={{ height: rowVirtualizer.getTotalSize(), position: "relative", width: "100%" }}>

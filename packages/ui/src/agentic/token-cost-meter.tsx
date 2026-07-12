@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useCopy, useFormatCurrency } from "@/lib/copy/index.js";
 import type { Tone } from "../trace-log/trace-log.variants.js";
 
 export interface CostBreakdownItem {
@@ -25,10 +26,6 @@ const toneText: Record<Tone, string> = {
   block: "text-block",
 };
 
-function formatCost(usd: number): string {
-  return usd < 0.01 && usd > 0 ? `$${usd.toFixed(4)}` : `$${usd.toFixed(2)}`;
-}
-
 export interface TokenCostMeterProps extends React.ComponentProps<"div"> {
   title?: string;
   /** Costo total del run/periodo agregado — si se omite, se suma `breakdown`. */
@@ -49,7 +46,7 @@ export interface TokenCostMeterProps extends React.ComponentProps<"div"> {
  * a un `TraceTree` como resumen agregado del mismo run.
  */
 export function TokenCostMeter({
-  title = "Cost",
+  title,
   totalCostUsd,
   budgetUsd,
   breakdown,
@@ -58,6 +55,9 @@ export function TokenCostMeter({
   className,
   ...props
 }: TokenCostMeterProps) {
+  const t = useCopy();
+  const fmt = useFormatCurrency();
+  const resolvedTitle = title ?? t.tokenCostMeter.title;
   const total = totalCostUsd ?? breakdown.reduce((sum, item) => sum + item.costUsd, 0);
   const budgetPct = budgetUsd && budgetUsd > 0 ? Math.min((total / budgetUsd) * 100, 100) : null;
   const budgetTone: Tone = budgetUsd
@@ -71,7 +71,7 @@ export function TokenCostMeter({
   return (
     <div className={cn("overflow-hidden rounded-xl border border-border-subtle bg-surface-2", className)} {...props}>
       <div className="flex flex-col gap-1 border-b border-border-subtle bg-surface-header px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between">
-        <span className="text-[11px] font-extrabold uppercase tracking-wide text-dim">{title}</span>
+        <span className="text-[11px] font-extrabold uppercase tracking-wide text-dim">{resolvedTitle}</span>
         {typeof tokensIn === "number" || typeof tokensOut === "number" ? (
           <span className="font-mono text-[11px] text-dim">
             {(tokensIn ?? 0).toLocaleString()} in → {(tokensOut ?? 0).toLocaleString()} out
@@ -81,10 +81,10 @@ export function TokenCostMeter({
 
       <div className="px-4 py-3.5">
         <div className="flex items-baseline gap-2">
-          <span className="font-mono text-2xl font-extrabold text-ink">{formatCost(total)}</span>
+          <span className="font-mono text-2xl font-extrabold text-ink">{fmt(total)}</span>
           {budgetUsd ? (
             <span className="font-mono text-[11px] text-dim">
-              of {formatCost(budgetUsd)} budget
+              {t.tokenCostMeter.budgetSuffix(fmt(budgetUsd))}
             </span>
           ) : null}
         </div>
@@ -92,8 +92,8 @@ export function TokenCostMeter({
         {breakdown.length > 0 ? (
           <div
             role="img"
-            aria-label={`Cost breakdown: ${breakdown
-              .map((item) => `${item.label} ${formatCost(item.costUsd)}`)
+            aria-label={`${t.tokenCostMeter.costBreakdown}: ${breakdown
+              .map((item) => `${item.label} ${fmt(item.costUsd)}`)
               .join(", ")}`}
             className="mt-3 flex h-2.5 w-full overflow-hidden rounded-full bg-bg-elevated"
           >
@@ -117,7 +117,7 @@ export function TokenCostMeter({
                 <span aria-hidden className={cn("size-2 shrink-0 rounded-full", toneBar[item.tone])} />
                 <dt className="font-mono text-[10.5px] uppercase tracking-wide text-dim">{item.label}</dt>
                 <dd className={cn("font-mono text-[10.5px] font-semibold", toneText[item.tone])}>
-                  {formatCost(item.costUsd)}
+                  {fmt(item.costUsd)}
                 </dd>
               </div>
             ))}
@@ -127,7 +127,7 @@ export function TokenCostMeter({
         {budgetPct !== null ? (
           <div className="mt-3.5 border-t border-border-subtle pt-3">
             <div className="mb-1 flex items-center justify-between font-mono text-[10.5px] text-dim">
-              <span className="uppercase tracking-wide">Budget used</span>
+              <span className="uppercase tracking-wide">{t.tokenCostMeter.budgetUsed}</span>
               <span className={cn("font-semibold", toneText[budgetTone])}>{Math.round(budgetPct)}%</span>
             </div>
             <div
@@ -135,7 +135,7 @@ export function TokenCostMeter({
               aria-valuenow={Math.round(budgetPct)}
               aria-valuemin={0}
               aria-valuemax={100}
-              aria-label="Budget used"
+              aria-label={t.tokenCostMeter.budgetUsed}
               className="h-1.5 w-full overflow-hidden rounded-full bg-bg-elevated"
             >
               <span

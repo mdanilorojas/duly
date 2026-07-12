@@ -2,6 +2,7 @@ import * as React from "react";
 import { ChevronDown } from "lucide-react";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { cn } from "@/lib/utils";
+import { useCopy } from "@/lib/copy/index.js";
 import type { Tone } from "../trace-log/trace-log.variants.js";
 import {
   ApprovalGateCard,
@@ -52,6 +53,7 @@ function QueueRow({
   onReject?: (id: string) => void;
   onEscalate?: (id: string) => void;
 }) {
+  const t = useCopy();
   const [open, setOpen] = React.useState(false);
   const status = item.status ?? "pending";
   const isPending = status === "pending";
@@ -68,7 +70,7 @@ function QueueRow({
           <span aria-hidden className={cn("size-2.5 shrink-0 rounded-full", dotTone[item.riskTone])} />
           <span className="min-w-0 flex-1">
             <span className="sr-only">
-              {item.riskLabel}, {approvalStatusConfig[status].label}.{" "}
+              {item.riskLabel}, {t.approvalStatus[status].label}.{" "}
             </span>
             <span className="block truncate text-[13px] font-medium text-ink">{item.action}</span>
             <span className="flex flex-wrap items-center gap-x-2 font-mono text-[10px] uppercase tracking-wide text-dim">
@@ -78,8 +80,8 @@ function QueueRow({
             </span>
           </span>
           {isPending && item.expiresIn ? (
-            <span className="hidden shrink-0 font-mono text-[10px] text-dim sm:inline">
-              expires {item.expiresIn}
+            <span className="shrink-0 font-mono text-[10px] text-dim">
+              {t.humanInterruptQueue.expiresIn(item.expiresIn)}
             </span>
           ) : (
             <span
@@ -88,7 +90,7 @@ function QueueRow({
                 toneChip[approvalStatusConfig[status].tone],
               )}
             >
-              {approvalStatusConfig[status].label}
+              {t.approvalStatus[status].label}
             </span>
           )}
           <ChevronDown
@@ -146,15 +148,18 @@ export interface HumanInterruptQueueProps extends React.ComponentProps<"div"> {
  * pantallas anchas.
  */
 export function HumanInterruptQueue({
-  title = "Human review queue",
+  title,
   items,
   onApprove,
   onReject,
   onEscalate,
-  emptyLabel = "No hay acciones esperando revisión.",
+  emptyLabel,
   className,
   ...props
 }: HumanInterruptQueueProps) {
+  const t = useCopy();
+  const resolvedTitle = title ?? t.humanInterruptQueue.title;
+  const resolvedEmptyLabel = emptyLabel ?? t.humanInterruptQueue.empty;
   const sorted = React.useMemo(
     () =>
       [...items].sort((a, b) => {
@@ -177,14 +182,15 @@ export function HumanInterruptQueue({
       {...props}
     >
       <div className="flex flex-col gap-1 border-b border-border-subtle bg-surface-header px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between">
-        <span className="text-[11px] font-extrabold uppercase tracking-wide text-dim">{title}</span>
+        <span className="text-[11px] font-extrabold uppercase tracking-wide text-dim">{resolvedTitle}</span>
         <span className="font-mono text-[11px] text-dim">
-          {pendingCount} pending{criticalCount > 0 ? ` · ${criticalCount} critical` : ""}
+          {pendingCount} {t.humanInterruptQueue.pending}
+          {criticalCount > 0 ? ` · ${criticalCount} ${t.humanInterruptQueue.critical}` : ""}
         </span>
       </div>
 
       {sorted.length === 0 ? (
-        <div className="px-4 py-8 text-center text-xs text-dim">{emptyLabel}</div>
+        <div className="px-4 py-8 text-center text-xs text-dim">{resolvedEmptyLabel}</div>
       ) : (
         <ol className="divide-y divide-border-subtle">
           {sorted.map((item) => (

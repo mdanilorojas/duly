@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useCopy } from "@/lib/copy/index.js";
 import { WaterfallChart, type WaterfallSegment } from "../commercial/waterfall-chart.js";
 import type { Tone } from "../trace-log/trace-log.variants.js";
 
@@ -30,18 +31,20 @@ export interface OEEWaterfallProps
  * se pierde producción, no solo el número. Wrapper de `WaterfallChart`.
  */
 export function OEEWaterfall({
-  title = "OEE — pérdidas de producción",
+  title,
   plannedMinutes,
   losses,
   valueSuffix = " min",
   ...props
 }: OEEWaterfallProps) {
+  const t = useCopy();
+  const resolvedTitle = title ?? t.oeeWaterfall.title;
   const segments: WaterfallSegment[] = losses.map((l) => ({
     label: l.label,
     delta: -Math.abs(l.minutes),
     tone: KIND_TONE[l.kind],
   }));
   return (
-    <WaterfallChart title={title} startValue={plannedMinutes} segments={segments} valueSuffix={valueSuffix} {...props} />
+    <WaterfallChart title={resolvedTitle} startValue={plannedMinutes} segments={segments} valueSuffix={valueSuffix} {...props} />
   );
 }

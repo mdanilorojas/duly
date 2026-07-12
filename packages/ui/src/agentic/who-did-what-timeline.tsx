@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useCopy } from "@/lib/copy/index.js";
 import { actorKindConfig, outcomeLabel, HashBadge, type AuditEvent } from "./audit-log-table.js";
 import { toneChip } from "./approval-gate-card.js";
 
@@ -42,10 +43,12 @@ export function WhoDidWhatTimeline({
   title = "Who did what",
   groups,
   savedQueries = [],
-  emptyLabel = "No hay actividad para esta consulta guardada.",
+  emptyLabel,
   className,
   ...props
 }: WhoDidWhatTimelineProps) {
+  const t = useCopy();
+  const resolvedEmptyLabel = emptyLabel ?? t.whoDidWhatTimeline.emptyLabel;
   const [activeQueryId, setActiveQueryId] = React.useState<string | null>(null);
   const activeQuery = savedQueries.find((q) => q.id === activeQueryId) ?? null;
 
@@ -112,7 +115,7 @@ export function WhoDidWhatTimeline({
       </div>
 
       {totalVisible === 0 ? (
-        <div className="px-4 py-8 text-center text-xs text-dim">{emptyLabel}</div>
+        <div className="px-4 py-8 text-center text-xs text-dim">{resolvedEmptyLabel}</div>
       ) : (
         <div className="max-h-[520px] overflow-y-auto px-4 py-3">
           {filteredGroups.map((group) => (

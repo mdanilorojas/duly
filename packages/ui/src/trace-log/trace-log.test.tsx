@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { TraceLog } from "./trace-log.js";
-import { toneLabel } from "./copy.js";
+import { enCopy } from "../lib/copy/index.js";
 
 describe("TraceLog Root/Header/Body", () => {
   it("renderiza title + hint y aplica role=log", () => {
@@ -55,7 +55,7 @@ describe("TraceLog.Row", () => {
     expect(row.getAttribute("data-tone")).toBe("block");
     expect(row.className).toContain("border-block");
     // label textual del tone presente para lectores de pantalla, scoped to .sr-only
-    expect(screen.getByText(/bloqueo/, { selector: ".sr-only" })).toBeDefined();
+    expect(screen.getByText(new RegExp(enCopy.tone.block), { selector: ".sr-only" })).toBeDefined();
     expect(screen.getByText("VALIDATE")).toBeDefined();
     expect(screen.getByText("142099").tagName).toBe("CODE");
   });
@@ -70,9 +70,9 @@ describe("TraceLog.Row", () => {
           </TraceLog.Body>
         </TraceLog.Root>,
       );
-      // (a) toneLabel text present inside .sr-only
+      // (a) copy.tone text present inside .sr-only (default locale: English)
       expect(
-        screen.getByText(new RegExp(toneLabel[tone]), { selector: ".sr-only" }),
+        screen.getByText(new RegExp(enCopy.tone[tone]), { selector: ".sr-only" }),
       ).toBeDefined();
       // (b) row element has border-{tone} class
       const row = document.querySelector("[data-tone]")!;

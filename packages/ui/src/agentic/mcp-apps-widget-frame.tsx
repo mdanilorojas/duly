@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useCopy } from "@/lib/copy/index.js";
 import type { SandboxConfig } from "@mcp-ui/client";
 
 export type { SandboxConfig };
@@ -39,6 +40,7 @@ export function MCPAppsWidgetFrame({
   className,
   ...props
 }: MCPAppsWidgetFrameProps) {
+  const t = useCopy();
   return (
     <div
       role="group"
@@ -49,7 +51,7 @@ export function MCPAppsWidgetFrame({
       <React.Suspense
         fallback={
           <div style={{ height }} className="grid place-items-center text-xs text-faint">
-            Cargando app…
+            {t.common.loading}
           </div>
         }
       >

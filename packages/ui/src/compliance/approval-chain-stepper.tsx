@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Check, X, Clock, ArrowUpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCopy } from "@/lib/copy/index.js";
 
 export type ApprovalDecision = "approved" | "rejected" | "pending" | "escalated";
 
@@ -14,17 +15,16 @@ export interface ApprovalStep {
 }
 
 interface DecisionConfig {
-  label: string;
   icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>;
   ring: string;
   text: string;
 }
 
 const DECISION: Record<ApprovalDecision, DecisionConfig> = {
-  approved: { label: "Aprobó", icon: Check, ring: "border-ok/70 text-ok", text: "text-ok" },
-  rejected: { label: "Rechazó", icon: X, ring: "border-block/70 text-block", text: "text-block" },
-  pending: { label: "Pendiente", icon: Clock, ring: "border-review/60 text-review", text: "text-review" },
-  escalated: { label: "Escaló", icon: ArrowUpCircle, ring: "border-warn/70 text-warn", text: "text-warn" },
+  approved: { icon: Check, ring: "border-ok/70 text-ok", text: "text-ok" },
+  rejected: { icon: X, ring: "border-block/70 text-block", text: "text-block" },
+  pending: { icon: Clock, ring: "border-review/60 text-review", text: "text-review" },
+  escalated: { icon: ArrowUpCircle, ring: "border-warn/70 text-warn", text: "text-warn" },
 };
 
 export interface ApprovalChainStepperProps extends Omit<React.ComponentProps<"ol">, "children"> {
@@ -39,6 +39,7 @@ export interface ApprovalChainStepperProps extends Omit<React.ComponentProps<"ol
  * el vocabulario Tone y el patrón de conector vertical del DS.
  */
 export function ApprovalChainStepper({ steps, className, ...props }: ApprovalChainStepperProps) {
+  const t = useCopy();
   const rejectedIndex = steps.findIndex((s) => s.decision === "rejected");
 
   return (
@@ -78,10 +79,14 @@ export function ApprovalChainStepper({ steps, className, ...props }: ApprovalCha
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <span className="text-[13px] font-medium text-ink">{step.approver}</span>
                 <span className="font-mono text-[9.5px] uppercase tracking-wide text-faint">{step.role}</span>
-                <span className={cn("font-mono text-[11px] font-semibold", cfg.text)}>· {cfg.label}</span>
+                <span className={cn("font-mono text-[11px] font-semibold", cfg.text)}>
+                  · {t.approvalChainStepper[step.decision]}
+                </span>
                 {step.at ? <span className="font-mono text-[10.5px] text-faint">{step.at}</span> : null}
                 {unreached ? (
-                  <span className="font-mono text-[9.5px] uppercase tracking-wide text-faint">(no alcanzada)</span>
+                  <span className="font-mono text-[9.5px] uppercase tracking-wide text-faint">
+                    ({t.approvalChainStepper.unreached})
+                  </span>
                 ) : null}
               </div>
               {step.note ? <p className="mt-1 text-[12px] text-dim">{step.note}</p> : null}

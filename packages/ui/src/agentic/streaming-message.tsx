@@ -2,6 +2,7 @@ import * as React from "react";
 import { Wrench, Loader2, Check } from "lucide-react";
 import { EventType } from "@ag-ui/core";
 import { cn } from "@/lib/utils";
+import { useCopy } from "@/lib/copy/index.js";
 
 /**
  * Evento del protocolo AG-UI (subset consumido por la UI). El `type` es el
@@ -122,6 +123,7 @@ export interface StreamingMessageProps extends Omit<React.ComponentProps<"div">,
  * streaming (patrón de `TraceLog`).
  */
 export function StreamingMessage({ events, streaming = false, className, ...props }: StreamingMessageProps) {
+  const t = useCopy();
   const view = React.useMemo(() => reduceAgUiEvents(events), [events]);
   const showCaret = streaming && !view.done;
 
@@ -135,7 +137,7 @@ export function StreamingMessage({ events, streaming = false, className, ...prop
       {view.thinking ? (
         <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-faint">
           <Loader2 className="size-3 animate-spin motion-reduce:animate-none" aria-hidden />
-          Pensando…
+          {t.streamingMessage.thinking}
         </span>
       ) : null}
 

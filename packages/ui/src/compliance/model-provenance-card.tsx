@@ -2,6 +2,7 @@ import * as React from "react";
 import { Cpu, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HashBadge } from "@/agentic/audit-log-table.js";
+import { useCopy } from "@/lib/copy/index.js";
 
 export interface ModelProvenanceCardProps extends Omit<React.ComponentProps<"div">, "children"> {
   model: string;
@@ -40,6 +41,7 @@ export function ModelProvenanceCard({
   className,
   ...props
 }: ModelProvenanceCardProps) {
+  const t = useCopy();
   const [expanded, setExpanded] = React.useState(defaultExpanded);
   const bodyId = React.useId();
 
@@ -67,7 +69,7 @@ export function ModelProvenanceCard({
           aria-controls={bodyId}
           className="ml-auto inline-flex items-center gap-1 rounded font-mono text-[10.5px] text-faint outline-none hover:text-ink focus-visible:ring-2 focus-visible:ring-ring"
         >
-          Detalles
+          {t.modelProvenanceCard.details}
           <ChevronDown className={cn("size-3.5 transition-transform", expanded && "rotate-180")} aria-hidden />
         </button>
       </div>
@@ -77,12 +79,14 @@ export function ModelProvenanceCard({
           id={bodyId}
           className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 border-t border-border-subtle pt-3 text-[11.5px]"
         >
-          <Row label="Modelo" value={model} />
-          {modelVersion ? <Row label="Versión de modelo" value={modelVersion} /> : null}
-          {provider ? <Row label="Proveedor" value={provider} /> : null}
-          {promptVersion ? <Row label="Versión de prompt" value={promptVersion} /> : null}
-          {temperature != null ? <Row label="Temperatura" value={String(temperature)} /> : null}
-          <Row label="Config hash" value={configHash} mono />
+          <Row label={t.modelProvenanceCard.model} value={model} />
+          {modelVersion ? <Row label={t.modelProvenanceCard.modelVersion} value={modelVersion} /> : null}
+          {provider ? <Row label={t.modelProvenanceCard.provider} value={provider} /> : null}
+          {promptVersion ? <Row label={t.modelProvenanceCard.promptVersion} value={promptVersion} /> : null}
+          {temperature != null ? (
+            <Row label={t.modelProvenanceCard.temperature} value={String(temperature)} />
+          ) : null}
+          <Row label={t.modelProvenanceCard.configHash} value={configHash} mono />
         </dl>
       ) : null}
     </div>
