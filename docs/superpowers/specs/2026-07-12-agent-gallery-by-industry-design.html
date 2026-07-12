@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Gallery por industria — diseño</title>
+<style>
+  :root {
+    --bg: #050506;
+    --surface: #101013;
+    --surface-2: #16161a;
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.18);
+    --ink: #f2f2f4;
+    --dim: #9a9aa3;
+    --faint: #6b6b74;
+    --mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --legal: #d4af37;
+    --petroleum: #ff6b00;
+    --software: #00c2d1;
+    --industrial: #eab308;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    padding: 3rem 2rem 6rem;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  header { margin-bottom: 3rem; }
+  h1 { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 0.4rem; }
+  .kicker { font-family: var(--mono); font-size: 0.75rem; color: var(--faint); text-transform: uppercase; letter-spacing: 0.08em; }
+  h2 { font-size: 1.15rem; font-weight: 700; margin: 3rem 0 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); }
+  p { color: var(--dim); }
+  code { font-family: var(--mono); background: var(--surface-2); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.85em; color: var(--ink); }
+  .pill { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.2rem 0.6rem; border-radius: 999px; border: 1px solid; }
+
+  /* Before/after comparison */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+  @media (max-width: 760px) { .compare { grid-template-columns: 1fr; } }
+  .compare-col { border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; background: var(--surface); }
+  .compare-label { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--faint); margin-bottom: 1rem; }
+  .flat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.4rem; }
+  .swatch { aspect-ratio: 1; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--border); }
+  .sector-block { margin-bottom: 0.9rem; }
+  .sector-block:last-child { margin-bottom: 0; }
+  .sector-block-label { font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem; }
+  .sector-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .sector-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.3rem; }
+  .sector-grid .swatch { border-radius: 6px; }
+
+  /* Flow diagram */
+  .flow { display: flex; flex-direction: column; gap: 0; margin: 1.5rem 0; }
+  .flow-step { display: flex; align-items: stretch; gap: 1rem; }
+  .flow-node { flex: 1; border: 1px solid var(--border); background: var(--surface); border-radius: 10px; padding: 1rem 1.2rem; }
+  .flow-node.branch-head { border-color: var(--border-strong); }
+  .flow-node .title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem; }
+  .flow-node .desc { font-size: 0.85rem; color: var(--dim); }
+  .flow-arrow { display: flex; align-items: center; justify-content: center; color: var(--faint); font-size: 1.3rem; padding: 0.3rem 0; }
+  .branches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin: 0.5rem 0; }
+  @media (max-width: 760px) { .branches { grid-template-columns: 1fr 1fr; } }
+  .branch { border-radius: 10px; padding: 0.9rem; border: 1px solid var(--border); background: var(--surface); text-align: center; }
+  .branch .name { font-weight: 700; font-size: 0.85rem; margin-bottom: 0.2rem; }
+  .branch .count { font-family: var(--mono); font-size: 0.7rem; color: var(--faint); }
+  .converge { text-align: center; color: var(--faint); font-size: 1.3rem; margin: 0.3rem 0; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1rem 0; }
+  th, td { text-align: left; padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--border); }
+  th { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--faint); }
+  .tag-new { color: #6ee7b7; }
+  .tag-reused { color: #93c5fd; }
+
+  .callout { border: 1px solid var(--border); border-left: 3px solid var(--border-strong); background: var(--surface); border-radius: 8px; padding: 1rem 1.2rem; margin: 1rem 0; font-size: 0.9rem; }
+  .callout .label { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; color: var(--faint); margin-bottom: 0.3rem; }
+  ul { color: var(--dim); padding-left: 1.2rem; }
+  li { margin-bottom: 0.4rem; }
+  li code { color: var(--ink); }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f7f7f8; --surface: #ffffff; --surface-2: #f0f0f2;
+      --border: rgba(0,0,0,0.08); --border-strong: rgba(0,0,0,0.18);
+      --ink: #17171a; --dim: #55555e; --faint: #8a8a92;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Duly DS · Spec · 2026-07-12</div>
+    <h1>Agent Gallery por industria</h1>
+    <p>De 10 agentes sin clasificar a 24 agentes en 4 sectores operativos, cada uno con su propia página en Storybook.</p>
+  </header>
+
+  <h2>Antes → después</h2>
+  <div class="compare">
+    <div class="compare-col">
+      <div class="compare-label">Hoy — vista plana</div>
+      <div class="flat-grid">
+        <div class="swatch"></div><div class="swatch"></div><div class="swatch"></div><div class="swatch"></div><div class="swatch"></div>
+        <div class="swatch"></div><div class="swatch"></div><div class="swatch"></div><div class="swatch"></div><div class="swatch"></div>
+      </div>
+      <p style="margin-top:0.8rem; font-size:0.85rem;">10 Neural Cores, un solo grid, sin agrupar. Default de <code>AgentGallery</code>.</p>
+    </div>
+    <div class="compare-col">
+      <div class="compare-label">Después — 4 páginas por sector</div>
+      <div class="sector-block">
+        <div class="sector-block-label" style="color:var(--legal)"><span class="sector-dot" style="background:var(--legal)"></span>Legal & Compliance</div>
+        <div class="sector-grid">
+          <div class="swatch" style="border-color:var(--legal)"></div><div class="swatch" style="border-color:var(--legal)"></div><div class="swatch" style="border-color:var(--legal)"></div><div class="swatch" style="border-color:var(--legal)"></div><div class="swatch" style="border-color:var(--legal)"></div><div class="swatch" style="border-color:var(--legal)"></div>
+        </div>
+      </div>
+      <div class="sector-block">
+        <div class="sector-block-label" style="color:var(--petroleum)"><span class="sector-dot" style="background:var(--petroleum)"></span>Petróleo & Energía</div>
+        <div class="sector-grid">
+          <div class="swatch" style="border-color:var(--petroleum)"></div><div class="swatch" style="border-color:var(--petroleum)"></div><div class="swatch" style="border-color:var(--petroleum)"></div><div class="swatch" style="border-color:var(--petroleum)"></div><div class="swatch" style="border-color:var(--petroleum)"></div><div class="swatch" style="border-color:var(--petroleum)"></div>
+        </div>
+      </div>
+      <div class="sector-block">
+        <div class="sector-block-label" style="color:var(--software)"><span class="sector-dot" style="background:var(--software)"></span>Software & Redes</div>
+        <div class="sector-grid">
+          <div class="swatch" style="border-color:var(--software)"></div><div class="swatch" style="border-color:var(--software)"></div><div class="swatch" style="border-color:var(--software)"></div><div class="swatch" style="border-color:var(--software)"></div><div class="swatch" style="border-color:var(--software)"></div><div class="swatch" style="border-color:var(--software)"></div>
+        </div>
+      </div>
+      <div class="sector-block">
+        <div class="sector-block-label" style="color:var(--industrial)"><span class="sector-dot" style="background:var(--industrial)"></span>Industrial & Logística</div>
+        <div class="sector-grid">
+          <div class="swatch" style="border-color:var(--industrial)"></div><div class="swatch" style="border-color:var(--industrial)"></div><div class="swatch" style="border-color:var(--industrial)"></div><div class="swatch" style="border-color:var(--industrial)"></div><div class="swatch" style="border-color:var(--industrial)"></div><div class="swatch" style="border-color:var(--industrial)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Flujo de usuario — cómo se navega</h2>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-node branch-head" style="flex:1">
+        <div class="title">1 · Abre Storybook</div>
+        <div class="desc">Sidebar → <code>Agentic / Agent Gallery / V002 By Industry</code></div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-step">
+      <div class="flow-node branch-head">
+        <div class="title">2 · Elige un sector (una story = una página)</div>
+        <div class="desc">4 opciones en el sidebar, ninguna vista "todos juntos"</div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="branches">
+      <div class="branch" style="border-color:var(--legal)"><div class="name" style="color:var(--legal)">Legal &amp; Compliance</div><div class="count">6 agentes</div></div>
+      <div class="branch" style="border-color:var(--petroleum)"><div class="name" style="color:var(--petroleum)">Petróleo &amp; Energía</div><div class="count">6 agentes</div></div>
+      <div class="branch" style="border-color:var(--software)"><div class="name" style="color:var(--software)">Software &amp; Redes</div><div class="count">6 agentes</div></div>
+      <div class="branch" style="border-color:var(--industrial)"><div class="name" style="color:var(--industrial)">Industrial &amp; Logística</div><div class="count">6 agentes</div></div>
+    </div>
+    <div class="converge">↓ (cualquiera de las 4 lleva al mismo siguiente paso)</div>
+    <div class="flow-step">
+      <div class="flow-node branch-head">
+        <div class="title">3 · Ve la galería de ese sector</div>
+        <div class="desc"><code>AgentGallery</code> renderiza sus 6 tarjetas — cada una con su core WebGL en reposo</div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-step">
+      <div class="flow-node">
+        <div class="title">4 · Hover / focus sobre una tarjeta</div>
+        <div class="desc">El core sube actividad (más brillo/velocidad del shader) — sale del contexto WebGL compartido, no rompe con 6 tarjetas simultáneas</div>
+      </div>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="label">Camino sin salida / error</div>
+    Si el navegador no soporta WebGL o el contexto compartido falla al crearse, <b>todas</b> las tarjetas de la story caen al mismo fallback: un glow radial estático vía CSS (ya existe hoy, se preserva). Con <code>prefers-reduced-motion</code>, un solo frame fijo en vez de loop animado — también ya existe, se preserva.
+  </div>
+
+  <h2>Qué se porta — 24 agentes en 4 archivos</h2>
+  <table>
+    <thead><tr><th>Sector</th><th>Archivo</th><th>Reusados (renombrados)</th><th>Nuevos</th></tr></thead>
+    <tbody>
+      <tr><td style="color:var(--legal)">Legal</td><td><code>legal-agents.ts</code></td><td class="tag-reused">—</td><td class="tag-new">6 (LX-11…EQ-16)</td></tr>
+      <tr><td style="color:var(--petroleum)">Petróleo</td><td><code>petroleum-agents.ts</code></td><td class="tag-reused">IG-02, VD-05→Abyssal Extract, EC-10→Seismic Resonator</td><td class="tag-new">3 (LS-17, FC-18, FS-19)</td></tr>
+      <tr><td style="color:var(--software)">Software</td><td><code>software-agents.ts</code></td><td class="tag-reused">AE-01, NX-03, CP-04, AX-09</td><td class="tag-new">2 (QM-20, HW-21)</td></tr>
+      <tr><td style="color:var(--industrial)">Industrial</td><td><code>industrial-agents.ts</code></td><td class="tag-reused">SY-06→Grid Optimizer, GA-07→Bio-Synthesizer, TH-08→Logistics Weaver</td><td class="tag-new">3 (AT-22, TF-23, KG-24)</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.85rem;">Ningún shader se pierde: <code>NEURAL_AGENTS</code> (los 10 originales) queda intacto en <code>neural-agents.ts</code> — sigue prestando shaders por índice a demos ajenos (<code>agent-consent-card.stories.tsx</code>). Solo deja de ser el default de <code>AgentGallery</code>.</p>
+
+  <h2>Arreglo de fondo — contexto WebGL compartido</h2>
+  <p>El navegador tiene un techo de ~16 contextos WebGL vivos. Hoy cada tarjeta crea el suyo. Con 6 por página no se nota, pero es un límite real del primitivo <code>AgentCore</code>. Se soluciona con un <b>singleton a nivel de módulo</b> (no un Context de React — cero props nuevas, cero wrapper exigido a nadie):</p>
+  <ul>
+    <li>Un solo canvas WebGL "maestro", offscreen, creado la primera vez que monta un <code>AgentCore</code>.</li>
+    <li>Cada tarjeta pinta en su propio canvas <b>2D</b> visible, proyectando el maestro vía <code>drawImage</code> cada frame.</li>
+    <li>Un solo <code>requestAnimationFrame</code> compartido recorre todas las tarjetas activas.</li>
+    <li>El pausado por <code>IntersectionObserver</code> (agregado hoy mismo en la auditoría) se conserva igual.</li>
+    <li>API pública de <code>AgentCore</code> sin cambios — ningún consumidor se entera.</li>
+  </ul>
+
+  <div class="callout">
+    <div class="label">Fuera de alcance (explícito)</div>
+    Vista combinada "todos los sectores juntos" · badge de sector en la tarjeta · archivo de metadata de color/tono por sector · Real Estate como 5to sector (Property Intelligence Console sigue separada) · paleta categórica nueva en <code>@duly/tokens</code>. Nada de esto fue pedido — se agrega después si hace falta, sin romper este diseño.
+  </div>
+</div>
+</body>
+</html>
