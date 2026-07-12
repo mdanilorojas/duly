@@ -7,6 +7,8 @@ export const esCopy = {
     escalate: "Escalar",
     acknowledge: "Reconocer",
     loading: "Cargando…",
+    confirm: "Confirmar",
+    cancel: "Cancelar",
   },
   tone: {
     info: "info",
@@ -50,6 +52,7 @@ export const esCopy = {
     blastRadius: "Alcance del impacto",
     rollback: "Reversión",
     decidedBy: (verb: string, by: string) => `${verb} por ${by}`,
+    confirmApprove: (action: string) => `¿Aprobar "${action}"? No se puede deshacer.`,
   },
   humanInterruptQueue: {
     title: "Cola de revisión humana",
@@ -138,6 +141,9 @@ export const esCopy = {
     manifest: "Manifiesto:",
     download: "Descargar archivo",
     close: "Cerrar",
+  },
+  errorState: {
+    defaultTitle: "Ocurrió un error.",
   },
   modelProvenanceCard: {
     model: "Modelo",

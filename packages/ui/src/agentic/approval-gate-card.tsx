@@ -115,9 +115,9 @@ export interface ApprovalGateCardProps extends Omit<React.ComponentProps<"articl
   decidedAt?: string;
   /** Nota de resolución, ej. motivo de rechazo. */
   reason?: string;
-  onApprove?: () => void;
-  onReject?: () => void;
-  onEscalate?: () => void;
+  onApprove?: () => void | Promise<void>;
+  onReject?: () => void | Promise<void>;
+  onEscalate?: () => void | Promise<void>;
 }
 
 /**
@@ -152,6 +152,28 @@ export function ApprovalGateCard({
 }: ApprovalGateCardProps) {
   const t = useCopy();
   const isPending = status === "pending";
+  const [pendingAction, setPendingAction] = React.useState<"approve" | "reject" | "escalate" | null>(null);
+  const [confirmingApprove, setConfirmingApprove] = React.useState(false);
+  const isBusy = pendingAction !== null;
+
+  async function run(action: "approve" | "reject" | "escalate", fn?: () => void | Promise<void>) {
+    if (!fn || isBusy) return;
+    setPendingAction(action);
+    try {
+      await fn();
+    } finally {
+      setPendingAction(null);
+      if (action === "approve") setConfirmingApprove(false);
+    }
+  }
+
+  function handleApproveClick() {
+    if (riskTone === "block" && !confirmingApprove) {
+      setConfirmingApprove(true);
+      return;
+    }
+    void run("approve", onApprove);
+  }
 
   return (
     <article
@@ -199,31 +221,67 @@ export function ApprovalGateCard({
       </dl>
 
       {isPending ? (
-        <div className="flex flex-col gap-2 border-t border-border-subtle px-4 py-3 sm:flex-row sm:justify-end">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onEscalate}
-            className="w-full border-warn/40 text-warn hover:bg-warn/10 hover:text-warn sm:w-auto"
-          >
-            <ArrowUpCircle className="size-3.5" aria-hidden /> {t.common.escalate}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onReject}
-            className="w-full border-block/40 text-block hover:bg-block/10 hover:text-block sm:w-auto"
-          >
-            <X className="size-3.5" aria-hidden /> {t.common.reject}
-          </Button>
-          <Button
-            size="sm"
-            onClick={onApprove}
-            className="w-full bg-ok text-on-ok hover:bg-ok/90 sm:w-auto"
-          >
-            <Check className="size-3.5" aria-hidden /> {t.common.approve}
-          </Button>
-        </div>
+        confirmingApprove ? (
+          <div className="flex flex-wrap items-center gap-2 border-t border-warn/40 bg-warn/10 px-4 py-3">
+            <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-semibold text-warn">
+              <ShieldAlert className="size-3.5" aria-hidden />
+              {t.approvalGateCard.confirmApprove(action)}
+            </span>
+            <div className="ms-auto flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={isBusy}
+                onClick={() => setConfirmingApprove(false)}
+              >
+                {t.common.cancel}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                loading={pendingAction === "approve"}
+                disabled={isBusy}
+                onClick={() => void run("approve", onApprove)}
+                className="bg-ok text-on-ok hover:bg-ok/90"
+              >
+                <Check className="size-3.5" aria-hidden /> {t.common.approve}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2 border-t border-border-subtle px-4 py-3 sm:flex-row sm:justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              loading={pendingAction === "escalate"}
+              disabled={isBusy}
+              onClick={() => void run("escalate", onEscalate)}
+              className="w-full border-warn/40 text-warn hover:bg-warn/10 hover:text-warn sm:w-auto"
+            >
+              <ArrowUpCircle className="size-3.5" aria-hidden /> {t.common.escalate}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              loading={pendingAction === "reject"}
+              disabled={isBusy}
+              onClick={() => void run("reject", onReject)}
+              className="w-full border-block/40 text-block hover:bg-block/10 hover:text-block sm:w-auto"
+            >
+              <X className="size-3.5" aria-hidden /> {t.common.reject}
+            </Button>
+            <Button
+              size="sm"
+              loading={pendingAction === "approve"}
+              disabled={isBusy}
+              onClick={handleApproveClick}
+              className="w-full bg-ok text-on-ok hover:bg-ok/90 sm:w-auto"
+            >
+              <Check className="size-3.5" aria-hidden /> {t.common.approve}
+            </Button>
+          </div>
+        )
       ) : (
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border-subtle px-4 py-2.5 font-mono text-[11px] text-dim">
           {decidedBy ? (

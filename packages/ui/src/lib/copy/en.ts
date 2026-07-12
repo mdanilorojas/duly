@@ -10,6 +10,8 @@ export const enCopy = {
     escalate: "Escalate",
     acknowledge: "Acknowledge",
     loading: "Loading…",
+    confirm: "Confirm",
+    cancel: "Cancel",
   },
   tone: {
     info: "info",
@@ -53,6 +55,7 @@ export const enCopy = {
     blastRadius: "Blast radius",
     rollback: "Rollback",
     decidedBy: (verb: string, by: string) => `${verb} by ${by}`,
+    confirmApprove: (action: string) => `Approve "${action}"? This can't be undone.`,
   },
   humanInterruptQueue: {
     title: "Human review queue",
@@ -141,6 +144,9 @@ export const enCopy = {
     manifest: "Manifest:",
     download: "Download file",
     close: "Close",
+  },
+  errorState: {
+    defaultTitle: "Something went wrong.",
   },
   modelProvenanceCard: {
     model: "Model",

@@ -54,7 +54,7 @@ export interface ExecutionHistoryTableProps extends Omit<React.ComponentProps<"d
   /** Se dispara al elegir "Inspect" en una fila. */
   onSelect?: (id: string) => void;
   maxHeight?: number;
-  emptyLabel?: string;
+  emptyLabel?: React.ReactNode;
 }
 
 /**
@@ -112,7 +112,6 @@ export function ExecutionHistoryTable({
                 return (
                   <tr
                     key={run.id}
-                    aria-selected={selected}
                     className={cn(
                       "hover:bg-surface-3/40",
                       selected && "bg-surface-3/70 outline outline-1 -outline-offset-1 outline-ring/50",
