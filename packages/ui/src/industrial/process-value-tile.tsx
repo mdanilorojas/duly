@@ -57,9 +57,9 @@ export function ProcessValueTile({
       {...props}
     >
       <div className="flex items-baseline justify-between gap-2">
-        <span className="font-mono text-[9.5px] uppercase tracking-wide text-faint">{label}</span>
+        <span className="font-mono text-[10px] uppercase tracking-wide text-faint">{label}</span>
         {breached ? (
-          <span className="font-mono text-[9px] font-bold uppercase tracking-wide text-block">{t.processValueTile.outOfLimit}</span>
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wide text-block">{t.processValueTile.outOfLimit}</span>
         ) : null}
       </div>
 
@@ -83,7 +83,7 @@ export function ProcessValueTile({
         ) : null}
       </div>
 
-      <div className="flex justify-between font-mono text-[9px] text-faint tabular-nums">
+      <div className="flex justify-between font-mono text-[10px] text-faint tabular-nums">
         <span>{min}</span>
         {setpoint != null ? <span className="text-accent">SP {setpoint}</span> : null}
         <span>{max}</span>

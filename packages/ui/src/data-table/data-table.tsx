@@ -248,14 +248,14 @@ export function DataTable<T>({
                 aria-sort={sortDir === "asc" ? "ascending" : sortDir === "desc" ? "descending" : "none"}
                 className={cn(
                   cellPad({ density }),
-                  "flex items-center font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim",
+                  "flex items-center font-mono text-[10px] font-bold uppercase tracking-wide text-dim",
                 )}
               >
                 {canSort && !header.isPlaceholder ? (
                   <button
                     type="button"
                     onClick={header.column.getToggleSortingHandler()}
-                    className="inline-flex items-center gap-1 rounded outline-none hover:text-ink focus-visible:ring-2 focus-visible:ring-ring"
+                    className="inline-flex min-h-6 items-center gap-1 rounded outline-none hover:text-ink focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     {content}
                     <SortIcon className="size-3 opacity-60" aria-hidden />

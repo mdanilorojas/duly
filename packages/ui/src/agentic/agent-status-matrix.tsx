@@ -70,13 +70,13 @@ export function AgentStatusMatrix({ items, className, ...props }: AgentStatusMat
             className={cn("size-[22px] shrink-0 rounded-[7px]", swatchBg[item.tone])}
           />
           <div className="min-w-0">
-            <div className="font-mono text-[8.5px] uppercase tracking-wide text-dim">
+            <div className="font-mono text-[10px] uppercase tracking-wide text-dim">
               {item.code}
             </div>
             <div className="truncate text-[12.5px] font-semibold leading-tight text-ink">
               {item.label}
             </div>
-            <div className={cn("mt-0.5 font-mono text-[9.5px]", swatchText[item.tone])}>
+            <div className={cn("mt-0.5 font-mono text-[10px]", swatchText[item.tone])}>
               {item.tone}
             </div>
           </div>

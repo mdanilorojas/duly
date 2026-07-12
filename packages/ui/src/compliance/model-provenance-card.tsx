@@ -96,7 +96,7 @@ export function ModelProvenanceCard({
 function Row({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <>
-      <dt className="font-mono text-[9.5px] uppercase tracking-wide text-faint">{label}</dt>
+      <dt className="font-mono text-[10px] uppercase tracking-wide text-faint">{label}</dt>
       <dd className={cn("min-w-0 break-words text-dim", mono && "font-mono text-[11px]")}>{value}</dd>
     </>
   );

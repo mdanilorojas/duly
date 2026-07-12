@@ -104,7 +104,7 @@ export function AgentTopologyGraph({
                 <NodeStatusBadge status={n.status} size="sm" />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[12.5px] font-medium text-ink">{n.label}</span>
-                  <span className="block font-mono text-[9.5px] uppercase tracking-wide text-faint">{n.role}</span>
+                  <span className="block font-mono text-[10px] uppercase tracking-wide text-faint">{n.role}</span>
                 </span>
                 {n.tokens != null || n.costUsd != null ? (
                   <span className="shrink-0 text-end font-mono text-[10.5px] tabular-nums text-dim">

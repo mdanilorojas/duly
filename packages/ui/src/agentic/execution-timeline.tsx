@@ -102,16 +102,16 @@ export function RunStep({
 
       <div className="min-w-0 flex-1 pt-0.5">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <span className="font-mono text-[8.5px] font-bold uppercase tracking-wide text-dim">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wide text-dim">
             {kindLabel[kind]}
           </span>
-          <span className="font-mono text-[8.5px] uppercase tracking-wide text-dim">
+          <span className="font-mono text-[10px] uppercase tracking-wide text-dim">
             {agent}
           </span>
           <span className="ml-auto flex items-center gap-2 font-mono text-[10px] text-dim">
             {timestamp}
             {duration ? (
-              <span className={cn("rounded px-1.5 py-0.5 text-[9.5px] font-semibold", toneChip[tone])}>
+              <span className={cn("rounded px-1.5 py-0.5 text-[10px] font-semibold", toneChip[tone])}>
                 {duration}
               </span>
             ) : null}

@@ -58,12 +58,12 @@ export function RunTimeline({ title, hint, nodes, className, ...props }: RunTime
                 <div className="min-w-0">
                   <div className="truncate text-[11px] font-semibold leading-tight text-ink">{node.title}</div>
                   {node.owner ? (
-                    <div className="mt-0.5 truncate font-mono text-[8.5px] uppercase tracking-wide text-dim">
+                    <div className="mt-0.5 truncate font-mono text-[10px] uppercase tracking-wide text-dim">
                       {node.owner}
                     </div>
                   ) : null}
                   {node.meta ? (
-                    <div className="mt-0.5 font-mono text-[9.5px] text-dim">{node.meta}</div>
+                    <div className="mt-0.5 font-mono text-[10px] text-dim">{node.meta}</div>
                   ) : null}
                 </div>
               </div>

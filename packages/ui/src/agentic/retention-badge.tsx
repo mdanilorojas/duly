@@ -116,7 +116,7 @@ export function ImmutabilityIndicator({
           <Icon className="size-3" aria-hidden />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim">{title}</span>
+          <span className="block font-mono text-[10px] font-bold uppercase tracking-wide text-dim">{title}</span>
           <span className="block text-[12px] font-medium text-ink">
             {retentionRegimeLabel[record.regime]} · {cfg.label}
           </span>
@@ -130,11 +130,11 @@ export function ImmutabilityIndicator({
         <div className="flex flex-col gap-3 border-t border-border-subtle px-3.5 py-3">
           <dl className="grid grid-cols-2 gap-x-3 gap-y-2">
             <div>
-              <dt className="font-mono text-[9px] font-bold uppercase tracking-wide text-dim">Retained since</dt>
+              <dt className="font-mono text-[10px] font-bold uppercase tracking-wide text-dim">Retained since</dt>
               <dd className="mt-0.5 text-[12px] text-ink">{record.retainedSince}</dd>
             </div>
             <div>
-              <dt className="font-mono text-[9px] font-bold uppercase tracking-wide text-dim">
+              <dt className="font-mono text-[10px] font-bold uppercase tracking-wide text-dim">
                 {record.status === "hold" ? "Eligible" : "Minimum window"}
               </dt>
               <dd className="mt-0.5 text-[12px] text-ink">
@@ -142,12 +142,12 @@ export function ImmutabilityIndicator({
               </dd>
             </div>
             <div className="col-span-2">
-              <dt className="font-mono text-[9px] font-bold uppercase tracking-wide text-dim">Legal basis</dt>
+              <dt className="font-mono text-[10px] font-bold uppercase tracking-wide text-dim">Legal basis</dt>
               <dd className="mt-0.5 text-[12px] text-ink">{record.legalBasis}</dd>
             </div>
             {record.eligibleLabel ? (
               <div className="col-span-2">
-                <dt className="font-mono text-[9px] font-bold uppercase tracking-wide text-dim">
+                <dt className="font-mono text-[10px] font-bold uppercase tracking-wide text-dim">
                   Deletion eligible
                 </dt>
                 <dd className="mt-0.5 text-[12px] text-ink">{record.eligibleLabel}</dd>
@@ -179,7 +179,7 @@ export function ImmutabilityIndicator({
 
           {record.hash ? (
             <div className="flex items-center gap-1.5 border-t border-border-subtle pt-3">
-              <span className="font-mono text-[9px] font-bold uppercase tracking-wide text-dim">Record hash</span>
+              <span className="font-mono text-[10px] font-bold uppercase tracking-wide text-dim">Record hash</span>
               <HashBadge hash={record.hash} />
             </div>
           ) : null}

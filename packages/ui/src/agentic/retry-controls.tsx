@@ -102,7 +102,7 @@ export function RetryControls({
         <div className="flex items-center justify-between border-b border-border-subtle bg-surface-header px-4 py-2.5">
           <span className="text-[11px] font-extrabold uppercase tracking-wide text-dim">Retry controls</span>
           <span
-            className="rounded px-1.5 py-0.5 font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim ring-1 ring-border-subtle"
+            className="rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-dim ring-1 ring-border-subtle"
             aria-label={`Attempt ${current} of ${max}`}
           >
             {current}/{max} attempts
@@ -135,7 +135,7 @@ export function RetryControls({
           ) : null}
           {variant === "inline" ? (
             <span
-              className="rounded px-1.5 py-0.5 font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim ring-1 ring-border-subtle sm:ml-auto"
+              className="rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-dim ring-1 ring-border-subtle sm:ml-auto"
               aria-label={`Attempt ${current} of ${max}`}
             >
               {current}/{max} attempts
@@ -151,7 +151,7 @@ export function RetryControls({
 
         {history.length > 0 ? (
           <div className="mt-3 border-t border-border-subtle pt-2">
-            <div className="mb-1 font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim">History</div>
+            <div className="mb-1 font-mono text-[10px] font-bold uppercase tracking-wide text-dim">History</div>
             <ol className="divide-y divide-border-subtle">
               {history.map((record) => (
                 <AttemptHistoryRow key={record.attempt} record={record} />

@@ -94,7 +94,7 @@ export const InlineOnNodeRow: S = {
         <div className="font-mono text-[13px] font-medium text-ink">
           Execute Workflow: Vendor compliance check
         </div>
-        <div className="mt-1 font-mono text-[9.5px] text-dim">n8n-nodes-base.executeWorkflow</div>
+        <div className="mt-1 font-mono text-[10px] text-dim">n8n-nodes-base.executeWorkflow</div>
         <div className="mt-2">
           <SubworkflowChip subworkflow={cleared} />
         </div>

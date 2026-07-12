@@ -38,7 +38,7 @@ function DataPane({ title, data }: { title: string; data?: Record<string, React.
   const entries = data ? Object.entries(data) : [];
   return (
     <div className="min-w-0 overflow-hidden rounded-lg border border-border-subtle bg-bg-elevated">
-      <div className="border-b border-border-subtle bg-surface-header px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-wide text-dim">
+      <div className="border-b border-border-subtle bg-surface-header px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wide text-dim">
         {title}
       </div>
       {entries.length === 0 ? (
@@ -82,7 +82,7 @@ function InspectorNodeRow({ node, isLast, defaultOpen }: InspectorNodeRowProps) 
         <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <span className="font-mono text-[13px] font-medium leading-snug text-ink">{node.title}</span>
           {node.nodeType ? (
-            <span className="font-mono text-[9.5px] text-dim">{node.nodeType}</span>
+            <span className="font-mono text-[10px] text-dim">{node.nodeType}</span>
           ) : null}
           {node.meta ? (
             <span className="ms-auto font-mono text-[10px] text-dim">{node.meta}</span>
@@ -178,7 +178,7 @@ export function RunInspector({
       <div className="flex flex-col gap-1 border-b border-border-subtle bg-surface-header px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between">
         <span className="text-[11px] font-extrabold uppercase tracking-wide text-dim">{title}</span>
         <span className="flex items-center gap-2">
-          <span className="rounded px-1.5 py-0.5 font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim ring-1 ring-border-subtle">
+          <span className="rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-dim ring-1 ring-border-subtle">
             read-only
           </span>
           {hint ? <span className="min-w-0 truncate font-mono text-[11px] text-dim">{hint}</span> : null}

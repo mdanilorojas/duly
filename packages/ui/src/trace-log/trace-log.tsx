@@ -132,7 +132,7 @@ const Row = React.forwardRef<HTMLDivElement, RowProps>(
     const meta = timestamp ?? step ?? "";
     return (
       <div ref={ref} data-tone={t} className={cn(rowVariants({ tone: t }), "min-w-0", className)} {...rest}>
-        <div className="flex flex-wrap items-center justify-between gap-x-2 font-mono text-[8.5px] uppercase tracking-wide text-dim">
+        <div className="flex flex-wrap items-center justify-between gap-x-2 font-mono text-[10px] uppercase tracking-wide text-dim">
           {/* Tono "info" es gris (L 0.61) y no llega a 4.5:1 sobre surface-2 — texto en text-dim. */}
           <span className={cn("flex min-w-0 items-center gap-1.5 font-bold", t === "info" ? "text-dim" : toneText[t])}>
             <Icon className="size-3 shrink-0" aria-hidden />

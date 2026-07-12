@@ -127,7 +127,7 @@ export function AgentConsentCard({
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <span className="truncate text-sm font-semibold text-ink">{agent.name}</span>
-              <span className="rounded bg-surface-3/60 px-1.5 py-0.5 font-mono text-[9.5px] tracking-wider text-dim">
+              <span className="rounded bg-surface-3/60 px-1.5 py-0.5 font-mono text-[10px] tracking-wider text-dim">
                 {agent.id}
               </span>
             </div>
@@ -148,7 +148,7 @@ export function AgentConsentCard({
       </header>
 
       <div className="border-b border-border-subtle px-4 py-3">
-        <h4 className="mb-2 flex items-center gap-1.5 font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim">
+        <h4 className="mb-2 flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wide text-dim">
           <ScrollText className="size-3" aria-hidden /> Requested scope
         </h4>
         <ul className="space-y-2">
@@ -187,7 +187,7 @@ export function AgentConsentCard({
                 </label>
                 <span
                   className={cn(
-                    "shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide",
+                    "shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide",
                     toneChip[item.riskTone],
                   )}
                 >
@@ -205,7 +205,7 @@ export function AgentConsentCard({
             key={limit.label}
             className="min-w-0 rounded-lg border border-border-subtle bg-bg-elevated px-2.5 py-2"
           >
-            <dt className="font-mono text-[9px] font-bold uppercase tracking-wide text-dim">{limit.label}</dt>
+            <dt className="font-mono text-[10px] font-bold uppercase tracking-wide text-dim">{limit.label}</dt>
             <dd className="mt-0.5 truncate text-[12px] font-semibold text-ink">{limit.value}</dd>
           </div>
         ))}

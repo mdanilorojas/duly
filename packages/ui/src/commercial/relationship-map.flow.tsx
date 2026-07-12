@@ -36,7 +36,7 @@ function StakeholderNode({ data }: NodeProps) {
     <div className={cn("min-w-[128px] rounded-lg border-2 bg-surface-2 px-3 py-2 shadow-sm", d.selected ? "border-accent" : BORDER[meta.tone])}>
       <Handle type="target" position={Position.Top} className="!size-1.5 !border-0 !bg-border-strong" />
       <div className="text-[11px] font-medium text-ink">{d.name}</div>
-      <div className="font-mono text-[8px] uppercase tracking-wide text-faint">{meta.label}</div>
+      <div className="font-mono text-[10px] uppercase tracking-wide text-faint">{meta.label}</div>
       <Handle type="source" position={Position.Bottom} className="!size-1.5 !border-0 !bg-border-strong" />
     </div>
   );

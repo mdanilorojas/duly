@@ -36,7 +36,7 @@ function AgentFlowNode({ data }: NodeProps) {
         <NodeStatusBadge status={d.status} size="sm" />
         <div className="leading-tight">
           <div className="text-[11px] font-medium text-ink">{d.label}</div>
-          <div className="font-mono text-[8px] uppercase tracking-wide text-faint">{d.role}</div>
+          <div className="font-mono text-[10px] uppercase tracking-wide text-faint">{d.role}</div>
         </div>
       </div>
       <Handle type="source" position={Position.Bottom} className="!size-1.5 !border-0 !bg-border-strong" />

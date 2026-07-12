@@ -117,7 +117,7 @@ export function WaterfallChart({
                 <th
                   key={h}
                   scope="col"
-                  className="px-3 py-1.5 font-mono text-[9.5px] font-bold uppercase tracking-wide text-faint"
+                  className="px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wide text-faint"
                 >
                   {h}
                 </th>

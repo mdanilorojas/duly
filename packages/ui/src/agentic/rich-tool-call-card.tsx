@@ -60,7 +60,7 @@ function TableBlock({ columns, rows, caption }: Extract<ToolResultBlock, { kind:
               <th
                 key={col}
                 scope="col"
-                className="whitespace-nowrap px-2.5 py-1.5 text-start font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim"
+                className="whitespace-nowrap px-2.5 py-1.5 text-start font-mono text-[10px] font-bold uppercase tracking-wide text-dim"
               >
                 {col}
               </th>
@@ -88,13 +88,13 @@ function DiffBlock({ before, after, beforeLabel = "Before", afterLabel = "After"
   return (
     <div className="grid grid-cols-1 divide-y divide-border-subtle sm:grid-cols-2 sm:divide-x sm:divide-y-0">
       <div className="bg-block/5 px-3 py-2">
-        <div className="font-mono text-[9.5px] font-bold uppercase tracking-wide text-block">{beforeLabel}</div>
+        <div className="font-mono text-[10px] font-bold uppercase tracking-wide text-block">{beforeLabel}</div>
         <p className="mt-1 break-words font-mono text-[11.5px] leading-relaxed text-block line-through">
           {before}
         </p>
       </div>
       <div className="bg-ok/5 px-3 py-2">
-        <div className="font-mono text-[9.5px] font-bold uppercase tracking-wide text-ok">{afterLabel}</div>
+        <div className="font-mono text-[10px] font-bold uppercase tracking-wide text-ok">{afterLabel}</div>
         <p className="mt-1 break-words font-mono text-[11.5px] leading-relaxed text-ink">{after}</p>
       </div>
     </div>
@@ -183,7 +183,7 @@ function MetricsBlock({ items }: Extract<ToolResultBlock, { kind: "metrics" }>) 
     <div className="grid grid-cols-2 gap-px overflow-hidden rounded-md bg-border-subtle sm:grid-cols-4">
       {items.map((item) => (
         <div key={item.label} className="bg-bg-elevated px-2.5 py-2">
-          <div className="font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim">{item.label}</div>
+          <div className="font-mono text-[10px] font-bold uppercase tracking-wide text-dim">{item.label}</div>
           <div className={cn("mt-0.5 font-mono text-[14px] font-bold", item.tone ? toneText[item.tone] : "text-ink")}>
             {item.value}
           </div>
@@ -197,7 +197,7 @@ function CodeBlock({ content, language }: Extract<ToolResultBlock, { kind: "code
   return (
     <div className="bg-bg-elevated">
       {language ? (
-        <div className="border-b border-border-subtle px-3 py-1 font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim">
+        <div className="border-b border-border-subtle px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wide text-dim">
           {language}
         </div>
       ) : null}

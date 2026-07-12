@@ -78,13 +78,13 @@ export function ApprovalChainStepper({ steps, className, ...props }: ApprovalCha
             <div className="flex-1 pb-5">
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <span className="text-[13px] font-medium text-ink">{step.approver}</span>
-                <span className="font-mono text-[9.5px] uppercase tracking-wide text-faint">{step.role}</span>
+                <span className="font-mono text-[10px] uppercase tracking-wide text-faint">{step.role}</span>
                 <span className={cn("font-mono text-[11px] font-semibold", cfg.text)}>
                   · {t.approvalChainStepper[step.decision]}
                 </span>
                 {step.at ? <span className="font-mono text-[10.5px] text-faint">{step.at}</span> : null}
                 {unreached ? (
-                  <span className="font-mono text-[9.5px] uppercase tracking-wide text-faint">
+                  <span className="font-mono text-[10px] uppercase tracking-wide text-faint">
                     ({t.approvalChainStepper.unreached})
                   </span>
                 ) : null}

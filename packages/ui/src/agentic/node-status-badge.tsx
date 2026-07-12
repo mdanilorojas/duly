@@ -119,7 +119,7 @@ export function NodeStatusBadge({
         {showAttempt ? (
           <span
             aria-hidden
-            className="absolute -bottom-1.5 -right-1.5 rounded border border-border-subtle bg-surface-3 px-0.5 font-mono text-[8px] font-semibold leading-tight text-dim"
+            className="absolute -bottom-1.5 -right-1.5 rounded border border-border-subtle bg-surface-3 px-0.5 font-mono text-[10px] font-semibold leading-tight text-dim"
           >
             {attempt[0]}/{attempt[1]}
           </span>
@@ -159,7 +159,7 @@ export function NodeStatusLegend({ className, ...props }: React.ComponentProps<"
           <NodeStatusBadge status={status} size="sm" attempt={status === "retrying" ? [2, 3] : undefined} />
           <div className="leading-tight">
             <div className="text-[11px] font-semibold text-ink">{t.nodeStatus[status]}</div>
-            <div className="font-mono text-[9px] text-dim">{t.nodeStatusBadge.legendHint[status]}</div>
+            <div className="font-mono text-[10px] text-dim">{t.nodeStatusBadge.legendHint[status]}</div>
           </div>
         </div>
       ))}

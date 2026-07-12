@@ -88,13 +88,13 @@ function PolicyRow({ policy }: PolicyRowProps) {
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-          <span className="font-mono text-[9px] font-bold uppercase tracking-wide text-dim">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wide text-dim">
             {categoryLabel[policy.category]}
           </span>
           <span className="text-[12.5px] font-semibold text-ink">{policy.name}</span>
           <span
             className={cn(
-              "inline-flex items-center rounded-full px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide",
+              "inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide",
               toneChip[tone],
             )}
           >
@@ -158,7 +158,7 @@ export function GuardrailIndicator({
           <OverallIcon className="size-3" aria-hidden />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim">{label}</span>
+          <span className="block font-mono text-[10px] font-bold uppercase tracking-wide text-dim">{label}</span>
           <span className="block text-[12px] font-medium text-ink">{summaryText(policies)}</span>
         </span>
         <ChevronDown
@@ -190,7 +190,7 @@ export function GuardrailChip({ policy }: { policy: GuardrailPolicy }) {
     <span
       title={`${policy.name} (${categoryLabel[policy.category]}): ${policy.rationale}`}
       className={cn(
-        "inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide",
+        "inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide",
         toneChip[tone],
       )}
     >

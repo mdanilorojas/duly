@@ -147,7 +147,7 @@ export function WhoDidWhatTimeline({
                         </p>
                         <span
                           className={cn(
-                            "shrink-0 rounded-full px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wide",
+                            "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide",
                             toneChip[e.outcome],
                           )}
                         >

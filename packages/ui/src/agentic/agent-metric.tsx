@@ -43,7 +43,7 @@ export function AgentMetric({
       )}
       {...props}
     >
-      <div className="font-mono text-[8.5px] font-bold uppercase leading-tight tracking-wide text-dim">
+      <div className="font-mono text-[10px] font-bold uppercase leading-tight tracking-wide text-dim">
         {label}
       </div>
       <div className={cn("mt-1.5 flex items-baseline gap-1 font-mono text-xl font-extrabold", toneText[tone])}>

@@ -169,7 +169,7 @@ export function EvalScoreBadge({
         </span>
         <span
           className={cn(
-            "inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide",
+            "inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide",
             toneChip[deltaTone],
           )}
           title={deltaLabel}

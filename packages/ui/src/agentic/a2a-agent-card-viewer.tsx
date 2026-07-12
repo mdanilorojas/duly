@@ -26,7 +26,7 @@ function Modes({ label, modes }: { label: string; modes?: string[] }) {
   if (!modes?.length) return null;
   return (
     <div className="flex flex-wrap items-center gap-1">
-      <span className="font-mono text-[9.5px] uppercase tracking-wide text-faint">{label}</span>
+      <span className="font-mono text-[10px] uppercase tracking-wide text-faint">{label}</span>
       {modes.map((m) => (
         <span key={m} className="rounded border border-border-subtle bg-bg-elevated px-1.5 py-0.5 font-mono text-[10px] text-dim">
           {m}
@@ -80,7 +80,7 @@ export function A2AAgentCardViewer({ card, className, ...props }: A2AAgentCardVi
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="inline-flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-wide text-faint">
+        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wide text-faint">
           <Puzzle className="size-3" aria-hidden />
           Skills
         </span>
@@ -96,7 +96,7 @@ export function A2AAgentCardViewer({ card, className, ...props }: A2AAgentCardVi
 
       {card.inputModes?.length || card.outputModes?.length ? (
         <div className="flex flex-col gap-1.5 border-t border-border-subtle pt-2">
-          <span className="inline-flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-wide text-faint">
+          <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wide text-faint">
             <ArrowRightLeft className="size-3" aria-hidden />
             Modalidades
           </span>

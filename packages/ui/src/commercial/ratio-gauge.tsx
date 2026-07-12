@@ -63,7 +63,7 @@ export function RatioGauge({
       className={cn("flex flex-col gap-1.5 rounded-xl border border-border-subtle bg-surface-2 p-3", className)}
       {...props}
     >
-      <span className="font-mono text-[9.5px] uppercase tracking-wide text-faint">{label}</span>
+      <span className="font-mono text-[10px] uppercase tracking-wide text-faint">{label}</span>
       <span className={cn("font-mono text-2xl font-semibold tabular-nums leading-none", TXT[resolvedTone])}>
         {headline}
       </span>

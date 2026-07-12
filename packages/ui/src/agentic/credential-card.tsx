@@ -154,7 +154,7 @@ export function CredentialCard({ credential, compact = false, className, ...prop
             {credential.scopes.map((scope) => (
               <span
                 key={scope}
-                className="rounded border border-border-subtle bg-bg-elevated px-1.5 py-0.5 font-mono text-[9.5px] text-dim"
+                className="rounded border border-border-subtle bg-bg-elevated px-1.5 py-0.5 font-mono text-[10px] text-dim"
               >
                 {scope}
               </span>

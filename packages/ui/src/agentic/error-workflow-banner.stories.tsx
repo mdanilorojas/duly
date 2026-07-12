@@ -95,7 +95,7 @@ export const OnFailedRunInspector: S = {
       <div className="mx-auto max-w-xl overflow-hidden rounded-xl border border-border-subtle bg-surface-2">
         <div className="flex items-center justify-between border-b border-border-subtle bg-surface-header px-4 py-2.5">
           <span className="text-[11px] font-extrabold uppercase tracking-wide text-dim">Run inspector</span>
-          <span className="rounded px-1.5 py-0.5 font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim ring-1 ring-border-subtle">
+          <span className="rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-dim ring-1 ring-border-subtle">
             read-only
           </span>
         </div>

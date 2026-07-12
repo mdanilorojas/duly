@@ -65,7 +65,7 @@ function EvidenceField({
 }) {
   return (
     <div className="min-w-0 rounded-lg border border-border-subtle bg-bg-elevated px-3 py-2">
-      <dt className="flex items-center gap-1.5 font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim">
+      <dt className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wide text-dim">
         <Icon className="size-3" aria-hidden /> {label}
       </dt>
       <dd className="mt-1 break-words text-[12.5px] leading-relaxed text-ink">{value}</dd>

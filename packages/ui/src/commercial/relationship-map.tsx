@@ -104,9 +104,9 @@ export function RelationshipMap({
               >
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[12.5px] font-medium text-ink">{p.name}</span>
-                  <span className="block font-mono text-[9.5px] uppercase tracking-wide text-faint">{p.title}</span>
+                  <span className="block font-mono text-[10px] uppercase tracking-wide text-faint">{p.title}</span>
                 </span>
-                <span className={cn("rounded border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wide", CHIP[meta.tone])}>
+                <span className={cn("rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide", CHIP[meta.tone])}>
                   {meta.label}
                 </span>
                 <span role="img" className="flex shrink-0 gap-0.5" aria-label={`Influencia ${p.influence} de 5`}>

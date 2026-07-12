@@ -137,7 +137,7 @@ function EvalScoreChip({ evalScore }: { evalScore: NonNullable<TraceSpan["evalSc
     <span
       title={`${evalScore.name}: ${evalScore.score}/${evalScore.threshold} threshold`}
       className={cn(
-        "inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide",
+        "inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide",
         toneChip[tone],
       )}
     >
@@ -204,7 +204,7 @@ function SpanRow({ span, depth, totalDurationMs, rollup, collapsed, hasChildren,
           >
             <Icon className="size-3.5" aria-hidden />
           </span>
-          <span className="font-mono text-[8.5px] font-bold uppercase tracking-wide text-dim shrink-0">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wide text-dim shrink-0">
             {kindLabel[span.kind]}
           </span>
           <span className="min-w-0 truncate font-mono text-[12px] text-ink">{span.name}</span>
@@ -224,7 +224,7 @@ function SpanRow({ span, depth, totalDurationMs, rollup, collapsed, hasChildren,
             <>
               <span className={hasChildren ? "text-ink" : undefined}>{fmt(costUsd)}</span>
               {hasTokens ? (
-                <span className="ms-1 hidden text-dim/70 md:inline">
+                <span className="ms-1 text-dim/70">
                   {tokensIn.toLocaleString()}→{tokensOut.toLocaleString()}
                 </span>
               ) : null}
@@ -393,7 +393,7 @@ export function TraceTree({
         </div>
       </div>
 
-      <div className="hidden grid-cols-[minmax(0,1fr)_120px_72px_88px] gap-3 border-b border-border-subtle px-4 py-1.5 font-mono text-[9px] font-bold uppercase tracking-wide text-dim sm:grid sm:grid-cols-[minmax(0,1fr)_160px_84px_96px]">
+      <div className="hidden grid-cols-[minmax(0,1fr)_120px_72px_88px] gap-3 border-b border-border-subtle px-4 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wide text-dim sm:grid sm:grid-cols-[minmax(0,1fr)_160px_84px_96px]">
         {/* TODO(rtl): paddingLeft fijo alinea con el ancho del ícono/trigger — necesita paddingInlineStart o lógica dir-aware. */}
         <span style={{ paddingLeft: "27px" }}>Span</span>
         <span>Timeline</span>

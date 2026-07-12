@@ -102,7 +102,7 @@ export function MutualActionPlanBoard({
                 <span className={cn("text-[13px] font-medium text-ink", m.status === "done" && "line-through opacity-60")}>
                   {m.title}
                 </span>
-                <span className={cn("rounded border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wide", SIDE[m.side].chip)}>
+                <span className={cn("rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide", SIDE[m.side].chip)}>
                   {SIDE[m.side].label}
                 </span>
                 {m.status === "blocked" ? (

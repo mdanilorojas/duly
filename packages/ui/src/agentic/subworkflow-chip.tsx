@@ -56,7 +56,7 @@ export function SubworkflowChip({ subworkflow, className, ...props }: Subworkflo
         {summary ? (
           <Collapsible.Trigger
             aria-label={open ? "Hide subworkflow summary" : "Show subworkflow summary"}
-            className="inline-flex size-5 shrink-0 items-center justify-center rounded text-dim hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:ring-2 focus-visible:ring-ring"
+            className="inline-flex size-6 shrink-0 items-center justify-center rounded text-dim hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:ring-2 focus-visible:ring-ring"
           >
             <ChevronDown
               className={cn("size-3 transition-transform duration-base ease-standard", open && "rotate-180")}

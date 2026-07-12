@@ -105,15 +105,15 @@ export function ForecastRollupTable({
                   }}
                   aria-label={r._expanded ? `Colapsar ${r.owner}` : `Expandir ${r.owner}`}
                   aria-expanded={r._expanded}
-                  className="inline-flex size-5 items-center justify-center rounded text-faint outline-none hover:text-ink focus-visible:ring-2 focus-visible:ring-ring"
+                  className="inline-flex size-6 items-center justify-center rounded text-faint outline-none hover:text-ink focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <ChevronRight className={cn("size-3.5 transition-transform", r._expanded && "rotate-90")} aria-hidden />
                 </button>
               ) : (
-                <span className="inline-block w-5" aria-hidden />
+                <span className="inline-block w-6" aria-hidden />
               )}
               <span className="truncate font-medium text-ink">{r.owner}</span>
-              <span className="font-mono text-[9px] uppercase tracking-wide text-faint">{r.level}</span>
+              <span className="font-mono text-[10px] uppercase tracking-wide text-faint">{r.level}</span>
             </div>
           );
         },

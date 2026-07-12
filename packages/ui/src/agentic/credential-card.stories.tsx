@@ -127,7 +127,7 @@ function PickerDemo() {
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       <CredentialPicker credentials={FINANCIAL_CREDENTIALS} selectedId={selectedId} onSelect={setSelectedId} />
       <div>
-        <div className="mb-1.5 font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim">Selected</div>
+        <div className="mb-1.5 font-mono text-[10px] font-bold uppercase tracking-wide text-dim">Selected</div>
         {selected ? <CredentialCard credential={selected} /> : null}
       </div>
     </div>

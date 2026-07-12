@@ -57,7 +57,7 @@ function ActorCell({ kind, name }: { kind: AuditActorKind; name: string }) {
       </span>
       <span className="min-w-0">
         <span className="block truncate text-[12.5px] font-medium text-ink">{name}</span>
-        <span className="block font-mono text-[9.5px] uppercase tracking-wide text-dim">{cfg.label}</span>
+        <span className="block font-mono text-[10px] uppercase tracking-wide text-dim">{cfg.label}</span>
       </span>
     </div>
   );
@@ -142,7 +142,7 @@ export function AuditLogTable({
                   <th
                     key={h}
                     scope="col"
-                    className="whitespace-nowrap px-3 py-2 font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim"
+                    className="whitespace-nowrap px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-wide text-dim"
                   >
                     {h}
                   </th>

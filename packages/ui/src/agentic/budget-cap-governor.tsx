@@ -50,7 +50,7 @@ function CapRow({ cap }: { cap: BudgetCap }) {
         <span className="flex items-center gap-2 text-[12.5px] font-medium text-ink">
           {cap.label}
           {halted ? (
-            <span className="inline-flex items-center gap-1 rounded bg-block/15 px-1.5 py-0.5 font-mono text-[9.5px] font-bold uppercase tracking-wide text-block">
+            <span className="inline-flex items-center gap-1 rounded bg-block/15 px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-block">
               <OctagonX className="size-3" aria-hidden />
               Tope alcanzado
             </span>
@@ -73,7 +73,7 @@ function CapRow({ cap }: { cap: BudgetCap }) {
           style={{ width: `${Math.min(100, pctLabel)}%` }}
         />
       </div>
-      <span className="font-mono text-[9.5px] uppercase tracking-wide text-faint">{cap.scope}</span>
+      <span className="font-mono text-[10px] uppercase tracking-wide text-faint">{cap.scope}</span>
     </div>
   );
 }

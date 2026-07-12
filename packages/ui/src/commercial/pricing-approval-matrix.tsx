@@ -65,7 +65,7 @@ export function PricingApprovalMatrix({
                 key={i}
                 scope="col"
                 className={cn(
-                  "px-3 py-1.5 font-mono text-[9.5px] font-bold uppercase tracking-wide text-faint",
+                  "px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wide text-faint",
                   i === 3 && "sr-only",
                 )}
               >
