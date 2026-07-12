@@ -123,7 +123,7 @@ export function WhoDidWhatTimeline({
               <div className="sticky top-0 z-10 -mx-4 mb-2 bg-surface-2/95 px-4 py-1 font-mono text-[10px] font-bold uppercase tracking-wide text-dim backdrop-blur-sm">
                 {group.label}
               </div>
-              <ol className="relative flex flex-col gap-3 border-l border-border-subtle pl-4">
+              <ol className="relative flex flex-col gap-3 border-s border-border-subtle ps-4">
                 {group.events.map((e) => {
                   const cfg = actorKindConfig[e.actorKind];
                   const Icon = cfg.icon;
@@ -132,7 +132,7 @@ export function WhoDidWhatTimeline({
                       <span
                         aria-hidden
                         className={cn(
-                          "absolute -left-[21px] top-0.5 flex size-5 items-center justify-center rounded-full border bg-surface-2",
+                          "absolute -start-[21px] top-0.5 flex size-5 items-center justify-center rounded-full border bg-surface-2",
                           cfg.ring,
                         )}
                       >

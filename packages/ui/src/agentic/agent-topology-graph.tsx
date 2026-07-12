@@ -97,7 +97,7 @@ export function AgentTopologyGraph({
                 onClick={() => select(n.id)}
                 aria-pressed={isSelected}
                 className={cn(
-                  "flex w-full items-center gap-3 px-3 py-2 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+                  "flex w-full items-center gap-3 px-3 py-2 text-start outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                   isSelected ? "bg-surface-3/60" : "hover:bg-surface-3/30",
                 )}
               >
@@ -107,7 +107,7 @@ export function AgentTopologyGraph({
                   <span className="block font-mono text-[9.5px] uppercase tracking-wide text-faint">{n.role}</span>
                 </span>
                 {n.tokens != null || n.costUsd != null ? (
-                  <span className="shrink-0 text-right font-mono text-[10.5px] tabular-nums text-dim">
+                  <span className="shrink-0 text-end font-mono text-[10.5px] tabular-nums text-dim">
                     {n.tokens != null ? <span className="block">{n.tokens.toLocaleString()} tok</span> : null}
                     {n.costUsd != null ? <span className="block text-faint">{fmt(n.costUsd)}</span> : null}
                   </span>

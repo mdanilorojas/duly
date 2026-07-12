@@ -11,11 +11,11 @@ const swatchBg: Record<Tone, string> = {
 };
 
 const swatchBorder: Record<Tone, string> = {
-  info: "border-l-info",
-  ok: "border-l-ok",
-  review: "border-l-review",
-  warn: "border-l-warn",
-  block: "border-l-block",
+  info: "border-s-info",
+  ok: "border-s-ok",
+  review: "border-s-review",
+  warn: "border-s-warn",
+  block: "border-s-block",
 };
 
 // "info" usa text-dim: el gris del tono (L 0.61) no llega a 4.5:1 sobre surface-2.
@@ -61,7 +61,7 @@ export function AgentStatusMatrix({ items, className, ...props }: AgentStatusMat
           role="listitem"
           key={`${item.code}-${item.label}`}
           className={cn(
-            "flex items-center gap-2.5 rounded-[11px] border border-border-subtle border-l-[3px] bg-surface-2 px-3 py-2.5",
+            "flex items-center gap-2.5 rounded-[11px] border border-border-subtle border-s-[3px] bg-surface-2 px-3 py-2.5",
             swatchBorder[item.tone],
           )}
         >

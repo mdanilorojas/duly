@@ -60,7 +60,7 @@ function TableBlock({ columns, rows, caption }: Extract<ToolResultBlock, { kind:
               <th
                 key={col}
                 scope="col"
-                className="whitespace-nowrap px-2.5 py-1.5 text-left font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim"
+                className="whitespace-nowrap px-2.5 py-1.5 text-start font-mono text-[9.5px] font-bold uppercase tracking-wide text-dim"
               >
                 {col}
               </th>
@@ -267,7 +267,7 @@ export function RichToolCallCard({
         <code className="truncate font-mono text-[11px] text-review">{tool}</code>
         {latency ? (
           <span className={cn("shrink-0 font-mono text-[10px] font-semibold", toneText[tone])}>
-            <Clock className="mr-1 inline size-2.5" aria-hidden />
+            <Clock className="me-1 inline size-2.5" aria-hidden />
             {latency}
           </span>
         ) : null}

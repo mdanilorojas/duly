@@ -15,10 +15,10 @@ export interface Alarm {
 }
 
 const PRIORITY_BORDER: Record<AlarmPriority, string> = {
-  critical: "border-l-block",
-  high: "border-l-warn",
-  medium: "border-l-review",
-  low: "border-l-info",
+  critical: "border-s-block",
+  high: "border-s-warn",
+  medium: "border-s-review",
+  low: "border-s-info",
 };
 
 const PRIORITY_TEXT: Record<AlarmPriority, string> = {
@@ -64,7 +64,7 @@ export function AlarmBanner({ topAlarm, unackCount, onAck, className, ...props }
     <div
       role="alert"
       className={cn(
-        "flex flex-wrap items-center gap-3 rounded-lg border border-l-4 border-border-subtle bg-surface-2 px-3 py-2",
+        "flex flex-wrap items-center gap-3 rounded-lg border border-s-4 border-border-subtle bg-surface-2 px-3 py-2",
         PRIORITY_BORDER[topAlarm.priority],
         className,
       )}
@@ -73,7 +73,7 @@ export function AlarmBanner({ topAlarm, unackCount, onAck, className, ...props }
       <AlarmChip priority={topAlarm.priority} state="unack" />
       <div className="min-w-0 flex-1">
         <span className="font-mono text-[11px] font-semibold text-ink">{topAlarm.tag}</span>
-        <span className="ml-2 text-[12.5px] text-dim">{topAlarm.description}</span>
+        <span className="ms-2 text-[12.5px] text-dim">{topAlarm.description}</span>
       </div>
       {topAlarm.timestamp ? (
         <span className="font-mono text-[10.5px] text-faint tabular-nums">{topAlarm.timestamp}</span>

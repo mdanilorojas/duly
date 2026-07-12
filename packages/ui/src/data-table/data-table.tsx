@@ -181,8 +181,8 @@ export function DataTable<T>({
           onRowActivate?.(row.original);
         }}
         className={cn(
-          "grid items-center border-b border-l-2 border-b-border-subtle",
-          tone ? toneBorder[tone] : "border-l-transparent",
+          "grid items-center border-b border-s-2 border-b-border-subtle",
+          tone ? toneBorder[tone] : "border-s-transparent",
           onRowActivate && "cursor-pointer",
           isActive ? "bg-surface-3/60" : "hover:bg-surface-3/30",
         )}

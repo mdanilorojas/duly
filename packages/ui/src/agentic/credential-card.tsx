@@ -241,14 +241,14 @@ export function CredentialPicker({
     >
       <div className="border-b border-border-subtle bg-surface-header px-3 py-2">
         <div className="relative">
-          <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-dim" aria-hidden />
+          <Search className="pointer-events-none absolute start-2.5 top-1/2 size-3.5 -translate-y-1/2 text-dim" aria-hidden />
           <Input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search credentials by name, owner, or type…"
             aria-label="Search credentials"
-            className="h-8 bg-surface-2 pl-8 text-[12.5px]"
+            className="h-8 bg-surface-2 ps-8 text-[12.5px]"
           />
         </div>
       </div>

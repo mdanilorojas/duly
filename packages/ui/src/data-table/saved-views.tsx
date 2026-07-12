@@ -179,7 +179,7 @@ export function SavedViews<T>({
                   onClick={() => apply(v.id)}
                   aria-pressed={isActive}
                   className={cn(
-                    "inline-flex items-center gap-1 rounded-l-md border py-1 pl-2.5 pr-2 font-mono text-[11px] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
+                    "inline-flex items-center gap-1 rounded-s-md border py-1 ps-2.5 pe-2 font-mono text-[11px] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
                     isActive
                       ? "border-accent-border bg-accent-surface text-accent"
                       : "border-border-subtle bg-surface-2 text-dim hover:text-ink",
@@ -191,7 +191,7 @@ export function SavedViews<T>({
                   type="button"
                   onClick={() => remove(v.id)}
                   aria-label={t.savedViews.remove(v.name)}
-                  className="inline-flex items-center rounded-r-md border border-l-0 border-border-subtle bg-surface-2 px-1.5 text-faint outline-none hover:text-block focus-visible:ring-2 focus-visible:ring-ring"
+                  className="inline-flex items-center rounded-e-md border border-s-0 border-border-subtle bg-surface-2 px-1.5 text-faint outline-none hover:text-block focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <X className="size-3" aria-hidden />
                 </button>

@@ -73,7 +73,7 @@ function InspectorNodeRow({ node, isLast, defaultOpen }: InspectorNodeRowProps) 
       {!isLast ? (
         <span
           aria-hidden
-          className={cn("absolute left-[15px] top-8 bottom-0 w-px", nodeStatusConnectorClass(node.status))}
+          className={cn("absolute start-[15px] top-8 bottom-0 w-px", nodeStatusConnectorClass(node.status))}
         />
       ) : null}
       <NodeStatusBadge status={node.status} attempt={node.attempt} className="relative z-10 shrink-0" />
@@ -85,7 +85,7 @@ function InspectorNodeRow({ node, isLast, defaultOpen }: InspectorNodeRowProps) 
             <span className="font-mono text-[9.5px] text-dim">{node.nodeType}</span>
           ) : null}
           {node.meta ? (
-            <span className="ml-auto font-mono text-[10px] text-dim">{node.meta}</span>
+            <span className="ms-auto font-mono text-[10px] text-dim">{node.meta}</span>
           ) : null}
         </div>
 

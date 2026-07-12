@@ -63,7 +63,7 @@ export function FilterBar<T>({ table, fields, className, ...props }: FilterBarPr
         return (
           <div key={f.columnId} className="relative">
             <Search
-              className="pointer-events-none absolute left-2 top-1/2 size-3.5 -translate-y-1/2 text-faint"
+              className="pointer-events-none absolute start-2 top-1/2 size-3.5 -translate-y-1/2 text-faint"
               aria-hidden
             />
             <Input
@@ -72,7 +72,7 @@ export function FilterBar<T>({ table, fields, className, ...props }: FilterBarPr
               placeholder={f.placeholder ?? t.filterBar.searchPlaceholder(f.label)}
               value={value}
               onChange={(e) => col.setFilterValue(e.target.value || undefined)}
-              className="h-8 w-auto max-w-[200px] pl-7 text-[12.5px]"
+              className="h-8 w-auto max-w-[200px] ps-7 text-[12.5px]"
             />
           </div>
         );

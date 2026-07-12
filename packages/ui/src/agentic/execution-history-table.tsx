@@ -91,7 +91,7 @@ export function ExecutionHistoryTable({
         <div className="px-4 py-8 text-center text-xs text-dim">{emptyLabel}</div>
       ) : (
         <div className="overflow-x-auto" style={maxHeight ? { maxHeight, overflowY: "auto" } : undefined}>
-          <table className="w-full min-w-[720px] border-collapse text-left">
+          <table className="w-full min-w-[720px] border-collapse text-start">
             <caption className="sr-only">{title}: historial de ejecuciones de workflow</caption>
             <thead className="sticky top-0 z-10 bg-surface-header">
               <tr className="border-b border-border-subtle">
@@ -136,7 +136,7 @@ export function ExecutionHistoryTable({
                     <td className="whitespace-nowrap px-3 py-2.5 font-mono text-[11px] text-dim">
                       {run.attempt ? `${run.attempt[0]}/${run.attempt[1]}` : "—"}
                     </td>
-                    <td className="px-3 py-2.5 text-right">
+                    <td className="px-3 py-2.5 text-end">
                       <button
                         type="button"
                         onClick={() => onSelect?.(run.id)}

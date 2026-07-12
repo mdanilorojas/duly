@@ -118,7 +118,9 @@ function SpanRow({ span, depth, totalDurationMs, defaultOpenDepth }: SpanRowProp
   const row = (
     <>
     <div
-      className="grid grid-cols-[minmax(0,1fr)_120px_72px_88px] items-center gap-3 py-1.5 pr-2 sm:grid-cols-[minmax(0,1fr)_160px_84px_96px]"
+      className="grid grid-cols-[minmax(0,1fr)_120px_72px_88px] items-center gap-3 py-1.5 pe-2 sm:grid-cols-[minmax(0,1fr)_160px_84px_96px]"
+      // TODO(rtl): paddingLeft codifica profundidad del árbol — necesita
+      // paddingInlineStart o lógica dir-aware, no un rename de clase.
       style={{ paddingLeft: `${depth * 18 + 8}px` }}
     >
       <div className="flex min-w-0 items-center gap-1.5">
@@ -151,14 +153,14 @@ function SpanRow({ span, depth, totalDurationMs, defaultOpenDepth }: SpanRowProp
         />
       </div>
 
-      <span className="shrink-0 text-right font-mono text-[11px] text-dim">{formatMs(span.durationMs)}</span>
+      <span className="shrink-0 text-end font-mono text-[11px] text-dim">{formatMs(span.durationMs)}</span>
 
-      <span className="shrink-0 text-right font-mono text-[11px] text-dim">
+      <span className="shrink-0 text-end font-mono text-[11px] text-dim">
         {costUsd > 0 ? (
           <>
             <span className={hasChildren ? "text-ink" : undefined}>{fmt(costUsd)}</span>
             {hasTokens ? (
-              <span className="ml-1 hidden text-dim/70 md:inline">
+              <span className="ms-1 hidden text-dim/70 md:inline">
                 {tokensIn.toLocaleString()}→{tokensOut.toLocaleString()}
               </span>
             ) : null}
@@ -171,6 +173,7 @@ function SpanRow({ span, depth, totalDurationMs, defaultOpenDepth }: SpanRowProp
     {hasBadges ? (
       <div
         className="flex flex-wrap items-center gap-1.5 pb-1.5"
+        // TODO(rtl): mismo caso que el paddingLeft de arriba — depth-indent, no dir-aware.
         style={{ paddingLeft: `${depth * 18 + 8 + 27}px` }}
       >
         {span.guardrails?.map((g) => <GuardrailChip key={g.id} policy={g} />)}
@@ -271,10 +274,11 @@ export function TraceTree({
       </div>
 
       <div className="hidden grid-cols-[minmax(0,1fr)_120px_72px_88px] gap-3 border-b border-border-subtle px-4 py-1.5 font-mono text-[9px] font-bold uppercase tracking-wide text-dim sm:grid sm:grid-cols-[minmax(0,1fr)_160px_84px_96px]">
+        {/* TODO(rtl): paddingLeft fijo alinea con el ancho del ícono/trigger — necesita paddingInlineStart o lógica dir-aware. */}
         <span style={{ paddingLeft: "27px" }}>Span</span>
         <span>Timeline</span>
-        <span className="text-right">Duration</span>
-        <span className="text-right">Cost</span>
+        <span className="text-end">Duration</span>
+        <span className="text-end">Cost</span>
       </div>
 
       {spans.length === 0 ? (
