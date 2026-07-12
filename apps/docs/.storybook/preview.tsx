@@ -1,5 +1,6 @@
 import React from "react";
 import type { Preview } from "@storybook/react";
+import { CopyProvider } from "@duly/ui";
 import "./app.css";
 
 const preview: Preview = {
@@ -9,6 +10,16 @@ const preview: Preview = {
       toolbar: {
         items: ["cockpit", "light", "violet"],
         title: "Tema",
+      },
+    },
+    locale: {
+      defaultValue: "es",
+      toolbar: {
+        items: [
+          { value: "es", title: "Español" },
+          { value: "en", title: "English" },
+        ],
+        title: "Idioma",
       },
     },
   },
@@ -50,15 +61,17 @@ const preview: Preview = {
       // propio ancho — no las capamos a 580; solo las de componente suelto.
       const fullscreen = ctx.parameters?.layout === "fullscreen";
       return (
-        <div data-theme={ctx.globals.theme} style={{ background: "var(--bg-base)", padding: fullscreen ? 0 : 24 }}>
-          {fullscreen ? (
-            <Story />
-          ) : (
-            <div style={{ width: "100%", maxWidth: 580, margin: "0 auto" }}>
+        <CopyProvider locale={ctx.globals.locale === "en" ? "en" : "es"}>
+          <div data-theme={ctx.globals.theme} style={{ background: "var(--bg-base)", padding: fullscreen ? 0 : 24 }}>
+            {fullscreen ? (
               <Story />
-            </div>
-          )}
-        </div>
+            ) : (
+              <div style={{ width: "100%", maxWidth: 580, margin: "0 auto" }}>
+                <Story />
+              </div>
+            )}
+          </div>
+        </CopyProvider>
       );
     },
   ],
