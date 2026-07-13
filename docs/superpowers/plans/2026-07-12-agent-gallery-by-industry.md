@@ -468,7 +468,7 @@ export const SOFTWARE_AGENTS: NeuralAgent[] = [
         float angle = d * 2.0 - t * 0.5;
         float s = sin(angle), c = cos(angle);
         vec2 p = mat2(c, -s, s, c) * uv;
-        float w = sin(p.x * 6.0 + t) * cos(p.y * 6.0 - t) * 0.5 + sin(p.x * 4.0 - t * 1.5) * cos(p.y * 4.0 + t * 1.2) * 0.5 + 0.5;
+        float w = sin(p.x*6.+t)*cos(p.y*6.-t)*0.5 + sin(p.x*4.-t*1.5)*cos(p.y*4.+t*1.2)*0.5 + 0.5;
         vec3 base = mix(vec3(0.02, 0.08, 0.12), vec3(0.13, 0.82, 0.84), w);
         float core = smoothstep(0.7, 0.0, d);
         base = mix(base, vec3(0.9, 1.0, 1.0), pow(core, 2.0 - act) * (0.3 + act * 0.7));
@@ -487,7 +487,7 @@ export const SOFTWARE_AGENTS: NeuralAgent[] = [
       vec3 getColor(vec2 uv, float t, float act, float d) {
         t *= (0.5 + act * 1.5);
         vec2 p = uv * 5.0;
-        float n = sin(p.x + t) * cos(p.y - t) + sin(p.x * 1.5 - t * 1.2) * cos(p.y * 1.5 + t * 0.8);
+        float n = sin(p.x + t) * cos(p.y - t) + sin(p.x*1.5 - t*1.2) * cos(p.y*1.5 + t*0.8);
         n = smoothstep(0.0, 1.0, n * 0.5 + 0.5);
         vec3 dark = vec3(0.1, 0.0, 0.2);
         vec3 purple = vec3(0.7, 0.1, 1.0);
@@ -536,7 +536,7 @@ export const SOFTWARE_AGENTS: NeuralAgent[] = [
         vec3 base = vec3(r, g, b);
         vec3 silver = vec3(0.8, 0.85, 0.9);
         vec3 col = mix(vec3(0.1), silver, length(base) * 0.6);
-        col += vec3(r * g, g * b, b * r) * 2.0 * (0.5 + act);
+        col += vec3(r*g, g*b, b*r) * 2.0 * (0.5 + act);
         return col;
       }
     `,
@@ -700,7 +700,7 @@ export const INDUSTRIAL_AGENTS: NeuralAgent[] = [
         vec3 coreC = vec3(0.8, 1.0, 0.6);
         vec3 col = mix(dark, bio, r);
         float breath = sin(t * 2.0) * 0.5 + 0.5;
-        float core = smoothstep(0.6 + breath * 0.1, 0.0, d);
+        float core = smoothstep(0.6 + breath*0.1, 0.0, d);
         col = mix(col, coreC, core * (0.4 + act * 0.6));
         return col;
       }
@@ -717,13 +717,13 @@ export const INDUSTRIAL_AGENTS: NeuralAgent[] = [
         t *= (1.5 + act * 4.0);
         float angle = atan(uv.y, uv.x);
         float radius = d;
-        float stripes = sin(angle * 12.0 + sin(t) * 2.0) * 0.5 + 0.5;
+        float stripes = sin(angle * 12.0 + sin(t)*2.0) * 0.5 + 0.5;
         float tunnel = fract(1.0 / (radius + 0.01) + t);
         vec3 bg = vec3(0.1, 0.0, 0.2);
         vec3 cyan = vec3(0.0, 1.0, 1.0);
         vec3 magenta = vec3(1.0, 0.0, 1.0);
         vec3 col = mix(bg, cyan, stripes * smoothstep(0.0, 0.5, tunnel));
-        col = mix(col, magenta, (1.0 - stripes) * smoothstep(0.5, 1.0, tunnel));
+        col = mix(col, magenta, (1.0-stripes) * smoothstep(0.5, 1.0, tunnel));
         col += vec3(1.0) * smoothstep(0.2, 0.0, d) * (1.0 + act);
         return col;
       }
