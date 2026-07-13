@@ -18,7 +18,7 @@ export interface AgentGalleryProps extends React.ComponentProps<"div"> {
  */
 export function AgentGallery({
   agents,
-  title = "Neural Cores",
+  title,
   subtitle,
   className,
   ...props

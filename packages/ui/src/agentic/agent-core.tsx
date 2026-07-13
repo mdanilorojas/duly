@@ -30,6 +30,9 @@ export interface AgentCoreProps extends React.ComponentProps<"div"> {
 // ahí proyectando el maestro vía drawImage cada frame del loop compartido.
 // ---------------------------------------------------------------------------
 
+// Techo de calidad: consumidores con size > 120 (backing res > 240) escalan
+// el maestro hacia arriba y pierden nitidez. Ningún consumidor actual pasa
+// de 120; subir esto si alguno lo necesita.
 const MASTER_SIZE = 240;
 
 interface RenderEntry {
