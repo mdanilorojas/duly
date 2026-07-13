@@ -1,11 +1,12 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { AgentCard } from "./agent-card.js";
-import { NEURAL_AGENTS, type NeuralAgent } from "./neural-agents.js";
+import type { NeuralAgent } from "./neural-agents.js";
 
 export interface AgentGalleryProps extends React.ComponentProps<"div"> {
-  /** Agentes a mostrar. Por defecto los 10 Neural Cores. */
-  agents?: NeuralAgent[];
+  /** Roster de agentes a mostrar — un sector explícito (ver legal-agents.ts,
+   *  petroleum-agents.ts, software-agents.ts, industrial-agents.ts). */
+  agents: NeuralAgent[];
   /** Título opcional del encabezado. */
   title?: string;
   /** Subtítulo opcional (mono). */
@@ -13,10 +14,10 @@ export interface AgentGalleryProps extends React.ComponentProps<"div"> {
 }
 
 /**
- * Galería en grid de agentes IA con cores WebGL. Composición V001 "Neural Cores".
+ * Galería en grid de agentes IA con cores WebGL, agrupada por sector/industria.
  */
 export function AgentGallery({
-  agents = NEURAL_AGENTS,
+  agents,
   title = "Neural Cores",
   subtitle,
   className,
