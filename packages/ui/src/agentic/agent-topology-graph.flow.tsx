@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import {
   ReactFlow,
   Background,
@@ -82,6 +83,21 @@ export default function FlowCanvas({ nodes, edges, layout, selected, onSelect }:
       nodesConnectable={false}
       onNodeClick={(_, n) => onSelect?.(n.id)}
       className="bg-transparent"
+      style={
+        // xyflow's own stylesheet ships light-mode defaults for pieces we
+        // don't render ourselves (Controls buttons, edge labels) — point
+        // them at our tokens instead of a hardcoded `.dark` class, so it
+        // tracks whichever theme (cockpit/light/violet) is active.
+        {
+          "--xy-controls-button-background-color": "var(--surface-2)",
+          "--xy-controls-button-background-color-hover": "var(--surface-3)",
+          "--xy-controls-button-color": "var(--ink)",
+          "--xy-controls-button-color-hover": "var(--ink)",
+          "--xy-controls-button-border-color": "var(--border-strong)",
+          "--xy-edge-label-background-color": "var(--surface-2)",
+          "--xy-edge-label-color": "var(--ink)",
+        } as CSSProperties
+      }
     >
       <Background color="var(--border-subtle)" gap={20} />
       <Controls showInteractive={false} className="!border-border-subtle !bg-surface-2" />
