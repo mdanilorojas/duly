@@ -15,24 +15,217 @@ export interface AgentCoreProps extends React.ComponentProps<"div"> {
   active?: boolean;
 }
 
-function compile(gl: WebGLRenderingContext, type: number, src: string) {
-  const s = gl.createShader(type);
-  if (!s) return null;
-  gl.shaderSource(s, src);
-  gl.compileShader(s);
-  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-    // Shader inválido: no rompas la app, solo omite este core.
-    console.error("[AgentCore] shader error", gl.getShaderInfoLog(s));
-    gl.deleteShader(s);
-    return null;
-  }
-  return s;
+// ---------------------------------------------------------------------------
+// Renderer compartido (singleton a nivel de módulo, no un Context de React
+// — ningún consumidor necesita envolver su árbol en un provider nuevo).
+//
+// El navegador tiene un techo de ~16 contextos WebGL vivos simultáneos. Antes
+// de este refactor, cada AgentCore creaba su propio canvas + contexto WebGL;
+// una galería de 24 agentes (ver legal/petroleum/software/industrial-agents.ts)
+// lo golpearía y algunos cores caerían al fallback estático sin animar.
+//
+// Ahora hay UN solo contexto WebGL "maestro" (canvas offscreen, nunca en el
+// DOM), creado perezosamente al montar el primer AgentCore. Cada instancia
+// sigue montando su propio <canvas> visible, pero como contexto 2D — pinta
+// ahí proyectando el maestro vía drawImage cada frame del loop compartido.
+// ---------------------------------------------------------------------------
+
+const MASTER_SIZE = 240;
+
+interface RenderEntry {
+  program: WebGLProgram;
+  posLoc: number;
+  locTime: WebGLUniformLocation | null;
+  locRes: WebGLUniformLocation | null;
+  locAct: WebGLUniformLocation | null;
+  targetRef: React.MutableRefObject<number>;
+  currentActivity: number;
+  startTime: number;
+  ctx2d: CanvasRenderingContext2D;
+  isVisible: boolean;
 }
 
+class SharedAgentRenderer {
+  private gl: WebGLRenderingContext | null = null;
+  private masterCanvas: HTMLCanvasElement | null = null;
+  private vertexShader: WebGLShader | null = null;
+  private positionBuffer: WebGLBuffer | null = null;
+  private initFailed = false;
+  private entries = new Map<string, RenderEntry>();
+  private rafId = 0;
+
+  private ensureInit(): boolean {
+    if (this.gl) return true;
+    if (this.initFailed) return false;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = MASTER_SIZE;
+    canvas.height = MASTER_SIZE;
+    const gl = canvas.getContext("webgl", {
+      antialias: false,
+      alpha: true,
+      premultipliedAlpha: true,
+    });
+    if (!gl) {
+      this.initFailed = true;
+      return false;
+    }
+
+    const vs = gl.createShader(gl.VERTEX_SHADER);
+    if (!vs) {
+      this.initFailed = true;
+      return false;
+    }
+    gl.shaderSource(vs, VERTEX_SHADER);
+    gl.compileShader(vs);
+    if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) {
+      console.error("[AgentCore] vertex shader error", gl.getShaderInfoLog(vs));
+      this.initFailed = true;
+      return false;
+    }
+
+    const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    this.gl = gl;
+    this.masterCanvas = canvas;
+    this.vertexShader = vs;
+    this.positionBuffer = buffer;
+    return true;
+  }
+
+  /** Registra un agente. Devuelve false si WebGL no está disponible o el shader falló al compilar. */
+  register(
+    id: string,
+    agent: NeuralAgent,
+    ctx2d: CanvasRenderingContext2D,
+    targetRef: React.MutableRefObject<number>,
+    reduced: boolean,
+  ): boolean {
+    if (!this.ensureInit()) return false;
+    const gl = this.gl!;
+
+    const fs = gl.createShader(gl.FRAGMENT_SHADER);
+    if (!fs) return false;
+    gl.shaderSource(fs, buildFragmentShader(agent.glsl));
+    gl.compileShader(fs);
+    if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
+      console.error("[AgentCore] shader error", agent.name, gl.getShaderInfoLog(fs));
+      gl.deleteShader(fs);
+      return false;
+    }
+
+    const program = gl.createProgram();
+    if (!program) return false;
+    gl.attachShader(program, this.vertexShader!);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+
+    const posLoc = gl.getAttribLocation(program, "position");
+    const locTime = gl.getUniformLocation(program, "u_time");
+    const locRes = gl.getUniformLocation(program, "u_resolution");
+    const locAct = gl.getUniformLocation(program, "u_activity");
+
+    if (reduced) {
+      // prefers-reduced-motion: un solo frame estático — nunca entra al loop
+      // compartido, así que no gasta un draw call por frame para siempre.
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer!);
+      gl.useProgram(program);
+      gl.enableVertexAttribArray(posLoc);
+      gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+      gl.uniform1f(locTime, 0);
+      gl.uniform2f(locRes, MASTER_SIZE, MASTER_SIZE);
+      gl.uniform1f(locAct, 0);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      ctx2d.clearRect(0, 0, MASTER_SIZE, MASTER_SIZE);
+      ctx2d.drawImage(this.masterCanvas!, 0, 0);
+      gl.deleteProgram(program);
+      return true;
+    }
+
+    // Desfase pseudo-aleatorio estable por agente para que no sincronicen exacto.
+    const seed = agent.id.charCodeAt(0) * 37 + agent.id.charCodeAt(agent.id.length - 1);
+    const startTime = (typeof performance !== "undefined" ? performance.now() : 0) - seed;
+
+    this.entries.set(id, {
+      program,
+      posLoc,
+      locTime,
+      locRes,
+      locAct,
+      targetRef,
+      currentActivity: 0,
+      startTime,
+      ctx2d,
+      isVisible: true,
+    });
+    this.ensureLoop();
+    return true;
+  }
+
+  unregister(id: string) {
+    const entry = this.entries.get(id);
+    if (entry && this.gl) this.gl.deleteProgram(entry.program);
+    this.entries.delete(id);
+    if (this.entries.size === 0) this.stopLoop();
+  }
+
+  setVisible(id: string, visible: boolean) {
+    const entry = this.entries.get(id);
+    if (entry) entry.isVisible = visible;
+  }
+
+  private ensureLoop() {
+    if (this.rafId) return;
+    const tick = () => {
+      this.rafId = requestAnimationFrame(tick);
+      const gl = this.gl;
+      if (!gl || !this.positionBuffer || !this.masterCanvas) return;
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
+      const now = typeof performance !== "undefined" ? performance.now() : Date.now();
+
+      this.entries.forEach((entry) => {
+        entry.currentActivity += (entry.targetRef.current - entry.currentActivity) * 0.1;
+        // Fuera de viewport y ya en reposo: salta el draw call de esta instancia.
+        if (!entry.isVisible && entry.currentActivity < 0.01) return;
+
+        const time = (now - entry.startTime) / 1000;
+        gl.useProgram(entry.program);
+        gl.enableVertexAttribArray(entry.posLoc);
+        gl.vertexAttribPointer(entry.posLoc, 2, gl.FLOAT, false, 0, 0);
+        gl.uniform1f(entry.locTime, time);
+        gl.uniform2f(entry.locRes, MASTER_SIZE, MASTER_SIZE);
+        gl.uniform1f(entry.locAct, entry.currentActivity);
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        entry.ctx2d.clearRect(0, 0, MASTER_SIZE, MASTER_SIZE);
+        entry.ctx2d.drawImage(this.masterCanvas!, 0, 0);
+      });
+    };
+    this.rafId = requestAnimationFrame(tick);
+  }
+
+  private stopLoop() {
+    if (this.rafId) cancelAnimationFrame(this.rafId);
+    this.rafId = 0;
+  }
+}
+
+const sharedRenderer = new SharedAgentRenderer();
+let nextInstanceId = 0;
+
 /**
- * Core neural WebGL de un agente. Renderiza el shader del agente en un canvas
- * circular. Degrada a un glow estático si no hay WebGL. Con `prefers-reduced-motion`
- * pinta un solo frame en vez de animar.
+ * Core neural WebGL de un agente. Renderiza el shader del agente proyectado
+ * desde un contexto WebGL compartido (ver `SharedAgentRenderer` arriba) hacia
+ * su propio canvas 2D. Degrada a un glow estático si WebGL no está disponible.
+ * Con `prefers-reduced-motion` pinta un solo frame en vez de animar.
  */
 export function AgentCore({
   agent,
@@ -45,6 +238,8 @@ export function AgentCore({
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const targetRef = React.useRef(0);
   const [supported, setSupported] = React.useState(true);
+  const instanceIdRef = React.useRef<string | null>(null);
+  if (!instanceIdRef.current) instanceIdRef.current = `agent-core-${nextInstanceId++}`;
 
   React.useEffect(() => {
     targetRef.current = active ? 1 : 0;
@@ -53,91 +248,32 @@ export function AgentCore({
   React.useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const gl = canvas.getContext("webgl", { antialias: false });
-    if (!gl) {
+    const ctx2d = canvas.getContext("2d");
+    if (!ctx2d) {
       setSupported(false);
       return;
     }
-
-    const program = gl.createProgram();
-    const vs = compile(gl, gl.VERTEX_SHADER, VERTEX_SHADER);
-    const fs = compile(gl, gl.FRAGMENT_SHADER, buildFragmentShader(agent.glsl));
-    if (!program || !vs || !fs) {
-      setSupported(false);
-      return;
-    }
-    gl.attachShader(program, vs);
-    gl.attachShader(program, fs);
-    gl.linkProgram(program);
-    gl.useProgram(program);
-
-    const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
-    const buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-    const posLoc = gl.getAttribLocation(program, "position");
-    gl.enableVertexAttribArray(posLoc);
-    gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
-
-    const locTime = gl.getUniformLocation(program, "u_time");
-    const locRes = gl.getUniformLocation(program, "u_resolution");
-    const locAct = gl.getUniformLocation(program, "u_activity");
 
     const reduced =
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
-    let raf = 0;
-    let current = 0;
-    let visible = true;
-    // Desfase pseudo-aleatorio estable por agente para que no sincronicen exacto.
-    const seed = agent.id.charCodeAt(0) * 37 + agent.id.charCodeAt(agent.id.length - 1);
-    const start = (typeof performance !== "undefined" ? performance.now() : 0) - seed;
-
-    // `schedule` es el único punto que pide el próximo frame — si el core
-    // está fuera de viewport, el loop deja de pedir frames por completo (no
-    // solo se salta el draw); al reentrar, el observer lo reinicia.
-    function schedule() {
-      if (!visible) return;
-      raf = requestAnimationFrame(draw);
-    }
-
-    const draw = (nowMs: number) => {
-      current += (targetRef.current - current) * 0.1;
-      const time = (nowMs - start) / 1000;
-      gl.uniform1f(locTime, time);
-      gl.uniform2f(locRes, canvas.width, canvas.height);
-      gl.uniform1f(locAct, current);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      schedule();
-    };
+    const id = instanceIdRef.current!;
+    const ok = sharedRenderer.register(id, agent, ctx2d, targetRef, !!reduced);
+    setSupported(ok);
+    if (!ok) return;
 
     const observer =
       typeof IntersectionObserver !== "undefined"
         ? new IntersectionObserver(([entry]) => {
-            const wasVisible = visible;
-            visible = entry.isIntersecting;
-            if (visible && !wasVisible && !reduced) schedule();
+            sharedRenderer.setVisible(id, entry.isIntersecting);
           })
         : null;
     observer?.observe(canvas);
 
-    if (reduced) {
-      // Un frame estático: sin loop de animación, sin necesidad de pausa por viewport.
-      current = targetRef.current;
-      draw(start);
-      cancelAnimationFrame(raf);
-    } else {
-      schedule();
-    }
-
     return () => {
       observer?.disconnect();
-      cancelAnimationFrame(raf);
-      gl.deleteBuffer(buffer);
-      gl.deleteProgram(program);
-      gl.deleteShader(vs);
-      gl.deleteShader(fs);
+      sharedRenderer.unregister(id);
     };
   }, [agent.glsl, agent.id]);
 
