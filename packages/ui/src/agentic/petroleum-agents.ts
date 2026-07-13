@@ -45,7 +45,7 @@ export const PETROLEUM_AGENTS: NeuralAgent[] = [
         float noiseVal = fbm(vec2(angle * 3.0 + t, radius * 10.0 - t));
         vec3 gold = vec3(0.9, 0.6, 0.1);
         vec3 violet = vec3(0.3, 0.0, 0.5);
-        float eventHorizon = smoothstep(0.3, 0.35 - act * 0.1, radius);
+        float eventHorizon = smoothstep(0.3, 0.35 - act*0.1, radius);
         vec3 col = mix(violet, gold, noiseVal);
         col *= eventHorizon;
         float rim = smoothstep(0.8, 1.0, radius);
@@ -72,7 +72,7 @@ export const PETROLEUM_AGENTS: NeuralAgent[] = [
         vec3 white = vec3(1.0);
         vec3 col = mix(bg, gold, smoothstep(0.0, 0.2, wave));
         col = mix(col, white, smoothstep(0.8, 1.0, wave) * (0.5 + act));
-        col += gold * smoothstep(0.3, 0.0, d) * (1.0 + act * 2.0);
+        col += gold * smoothstep(0.3, 0.0, d) * (1.0 + act*2.0);
         return col;
       }
     `,
