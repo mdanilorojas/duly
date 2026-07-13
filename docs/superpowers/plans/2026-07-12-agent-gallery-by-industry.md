@@ -1092,6 +1092,7 @@ class SharedAgentRenderer {
     gl.attachShader(program, this.vertexShader!);
     gl.attachShader(program, fs);
     gl.linkProgram(program);
+    gl.deleteShader(fs); // el program linkeado retiene el código compilado
 
     const posLoc = gl.getAttribLocation(program, "position");
     const locTime = gl.getUniformLocation(program, "u_time");
@@ -1111,8 +1112,10 @@ class SharedAgentRenderer {
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      ctx2d.clearRect(0, 0, MASTER_SIZE, MASTER_SIZE);
-      ctx2d.drawImage(this.masterCanvas!, 0, 0);
+      const w0 = ctx2d.canvas.width;
+      const h0 = ctx2d.canvas.height;
+      ctx2d.clearRect(0, 0, w0, h0);
+      ctx2d.drawImage(this.masterCanvas!, 0, 0, w0, h0);
       gl.deleteProgram(program);
       return true;
     }
@@ -1175,8 +1178,10 @@ class SharedAgentRenderer {
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-        entry.ctx2d.clearRect(0, 0, MASTER_SIZE, MASTER_SIZE);
-        entry.ctx2d.drawImage(this.masterCanvas!, 0, 0);
+        const w = entry.ctx2d.canvas.width;
+        const h = entry.ctx2d.canvas.height;
+        entry.ctx2d.clearRect(0, 0, w, h);
+        entry.ctx2d.drawImage(this.masterCanvas!, 0, 0, w, h);
       });
     };
     this.rafId = requestAnimationFrame(tick);
