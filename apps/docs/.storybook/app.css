@@ -2,3 +2,26 @@
    scanning the UI package source so component utilities are generated. */
 @import "@duly/tokens/css";
 @source "../../../packages/ui/src/**/*.{ts,tsx}";
+
+/*
+ * React Flow's Controls (+/−/fit-view) ship a hardcoded light button
+ * background from `@xyflow/react/dist/style.css`. Storybook doesn't consume
+ * @duly/ui's built styles.css (it regenerates Tailwind straight from
+ * source), so the same override from packages/ui/src/styles.css needs to
+ * be duplicated here for the docs app to render correctly too.
+ */
+@layer components {
+  /* !important: @xyflow/react/dist/style.css is un-layered, so per the CSS
+     cascade-layers spec it outranks anything in a named @layer regardless
+     of specificity or import order. Only !important can win here. */
+  .react-flow__controls-button {
+    background: var(--surface-2) !important;
+    border-bottom-color: var(--border-subtle) !important;
+  }
+  .react-flow__controls-button:hover {
+    background: var(--surface-3) !important;
+  }
+  .react-flow__controls-button svg {
+    fill: var(--ink) !important;
+  }
+}
