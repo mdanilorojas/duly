@@ -185,6 +185,10 @@ export const esCopy = {
       sandbox: "SBX",
     },
   },
+  stepper: {
+    label: "Etapas del proceso",
+    state: { done: "completada", current: "etapa actual", pending: "pendiente" },
+  },
   dateRangePicker: {
     label: "Rango de fechas",
     openCalendar: "Abrir calendario",

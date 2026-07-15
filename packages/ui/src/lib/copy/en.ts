@@ -190,6 +190,10 @@ export const enCopy = {
       sandbox: "SBX",
     },
   },
+  stepper: {
+    label: "Process steps",
+    state: { done: "done", current: "current step", pending: "pending" },
+  },
   dateRangePicker: {
     label: "Date range",
     openCalendar: "Open calendar",
