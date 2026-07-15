@@ -161,10 +161,11 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | Capacidad | Propósito | Estado |
 |---|---|---|
 | WCAG 2.2 AA | focus-not-obscured, targets 24px, alternativas a drag | ✅ (axe wcag2a/aa/21aa/22aa: 0 violaciones en todas las stories; hit-areas 24px en Checkbox/Radio/Switch; auditor: `scripts/a11y-audit.mjs` (requiere playwright)) |
-| Density modes | comfortable/compact (Spectrum-style) para tablas ops | 🟡 (el `DataTable` denso soporta `density: "comfortable"\|"compact"` internamente; falta el modo a nivel de sitio/tema fuera de esa tabla) |
+| AppShell (chrome multi-caso-de-uso) | Sidebar colapsable + topbar + workspace switcher + drawer mobile: un solo chrome config-driven para todas las verticales del DS | ✅ (V001, 2026-07-15, Storybook `App Shell/V001 Multi-Workspace Shell` — `AppShell` (skip-link WCAG 2.4.1, landmarks nav/main, `data-density` en el root), `AppSidebar`/`SidebarSection`/`SidebarItem` (rail de iconos con tooltips, badges con tono, `aria-current="page"`, drawer mobile sobre `Sheet`), `AppTopbar` (breadcrumbs, `TopbarSearchButton` ⌘K, `TopbarIconButton` con contador, `DensityToggle`), `WorkspaceSwitcher` (pivote entre soluciones: agent ops / auditoría / certificación ISO / cotizaciones industriales / churn radar — 5 stories sobre la misma API), `EnvironmentBadge` (production = tono `warn`: en una consola que aprueba acciones de agentes reales, "estás en producción" es información de seguridad) |
+| Density modes | comfortable/compact (Spectrum-style) para tablas ops | ✅ (2026-07-15: el `AppShell` fija la densidad a nivel de sitio vía el `DensityContext` compartido con `TraceLog` (+ `DensityToggle` en el topbar y `data-density` en el root), y `DataTable` ahora hereda esa densidad como default cuando no recibe prop explícita — la prop le sigue ganando al contexto, sin cambio de comportamiento fuera de un shell) |
 | Theming white-label | ThemeProvider + tokens OKLCH re-brandeable | 🟡 (3 temas; falta guía white-label) |
 | Data-viz tokens | Paleta categórica 3:1 sobre dark (Carbon-style), sequential + alert | ❌ |
-| CommandPalette | Keyboard-first ops | ❌ (dependencia ya decidida en el spec de ladder — `cmdk`, la misma que usa shadcn — pero aún no construido) |
+| CommandPalette | Keyboard-first ops | ✅ (V001, 2026-07-15, Storybook `App Shell/V001 Multi-Workspace Shell` — construido sobre `cmdk` (la dependencia ya decidida en el spec del ladder) dentro del `Dialog` temado; API items-driven (grupos, keywords/alias, hints de atajo, disabled) para que cada workspace registre sus propios comandos, + hook `useCommandPalette` con atajo global ⌘K/Ctrl+K y `TopbarSearchButton` como punto de entrada visible) |
 | DataTable denso | Virtualizado, roving tabindex, saved views/FilterBar | ✅ (rung 1 del ladder: `@tanstack/react-table` + `@tanstack/react-virtual`, roving tabindex ↑/↓/Home/End/PageUp/PageDown, `FilterBar` + `SavedViews`/`useSavedViews` (persistencia en `localStorage`, feature de compliance del principio #10); `AuditLogTable`/`ExecutionHistoryTable` ya remontadas encima sin cambiar su API) |
 | EmptyState/ErrorState/Skeleton triad | Estados vacío/error diseñados | 🟡 (mejora 2026-07-13: `components/ui/error-state.tsx` — primitivo `ErrorState` reutilizable (cva sobre `Alert`) ya existe y está wireado en el slot `emptyState` de `DataTable` y en `emptyLabel` de `ExecutionHistoryTable` — cierra el hueco que señalaba el audit "impeccable" del 2026-07-12. Sigue en 🟡 y no ✅ porque no tiene story propia standalone en Storybook — solo se ve indirectamente a través de `DataTable`) |
 | DateRangePicker + timezone | Rango con zona horaria visible | ❌ (dependencia ya decidida — `react-aria-components`, a11y de fechas — pero aún no construido) |
@@ -240,9 +241,9 @@ técnica real**, no de catálogo — por eso el top-5 de la semana pasada sigue 
 3. **RBACMatrixViewer** — área C sigue en 55%; `ModelProvenanceCard` y `ApprovalChainStepper` ya
    dan el vocabulario de actor/provider necesario para "por qué este usuario tiene acceso".
    Temporal Cloud sigue con "Custom Roles" en pre-release, sin cambio esta semana.
-4. **CommandPalette + Density modes sitewide + DateRangePicker** — sigue siendo la secuencia
-   natural de table stakes; dependencias (`cmdk`, `react-aria-components`) ya decididas, falta
-   construir. Área D sigue la más rezagada del catálogo (40%/45% esta semana, ver score).
+4. **CommandPalette + Density modes sitewide + DateRangePicker** — 2026-07-15: los dos primeros
+   cerrados junto con el `AppShell` (ver filas nuevas del área D); queda `DateRangePicker`
+   (`react-aria-components`, ya decidida) como el pendiente de esta secuencia de table stakes.
 5. **AgentAnomalyIndicator (Behavioral Deviation Flag)** — arrastrada de la semana pasada (fuente
    FINRA, servicios financieros); reusa vocabulario `Tone`/`NodeStatus` existente.
 6. **VendorRiskCard** — arrastrada de la semana pasada (fuente auditores SOC2 2026); complementa a
