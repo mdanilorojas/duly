@@ -194,6 +194,9 @@ export const enCopy = {
     label: "Process steps",
     state: { done: "done", current: "current step", pending: "pending" },
   },
+  deltaList: {
+    improved: "improved",
+  },
   dateRangePicker: {
     label: "Date range",
     openCalendar: "Open calendar",

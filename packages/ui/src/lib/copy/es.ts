@@ -189,6 +189,9 @@ export const esCopy = {
     label: "Etapas del proceso",
     state: { done: "completada", current: "etapa actual", pending: "pendiente" },
   },
+  deltaList: {
+    improved: "mejoró",
+  },
   dateRangePicker: {
     label: "Rango de fechas",
     openCalendar: "Abrir calendario",
