@@ -29,17 +29,17 @@ const STATE: Record<ConnectorState, StateConfig> = {
   paused: { icon: Pause, chip: "text-dim border-border-default" },
 };
 
+export interface ConnectorStatusProps extends Omit<React.ComponentProps<"ul">, "children"> {
+  connectors: ConnectorEntry[];
+}
+
 /**
  * Estado de fuentes de ingesta (área B) — los SourceConnector de una corrida:
  * de dónde entran los documentos, cuándo sincronizó cada fuente y cuál está
  * rota. Estado no binario connected/syncing/error/paused con ícono + color +
  * etiqueta de texto (colorblind-safe, principio #1).
  */
-export function ConnectorStatus({
-  connectors,
-  className,
-  ...props
-}: { connectors: ConnectorEntry[] } & Omit<React.ComponentProps<"ul">, "children">) {
+export function ConnectorStatus({ connectors, className, ...props }: ConnectorStatusProps) {
   const copy = useCopy();
   return (
     <ul className={cn("flex flex-col gap-2", className)} {...props}>
@@ -57,7 +57,7 @@ export function ConnectorStatus({
                 cfg.chip,
               )}
             >
-              <Icon aria-hidden className={cn("size-3", cfg.spin && "animate-spin")} />
+              <Icon aria-hidden className={cn("size-3", cfg.spin && "motion-safe:animate-spin")} />
               {copy.connectorStatus[c.state]}
             </span>
             <span className="min-w-0 truncate text-ink">
