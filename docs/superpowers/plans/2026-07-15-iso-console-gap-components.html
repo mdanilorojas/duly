@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es" data-theme="cockpit">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan — Componentes gap consola ISO 27001 · Duly DS</title>
+<style>
+[data-theme=cockpit]{
+  color-scheme:dark;
+  --bg-base:oklch(14.5% .008 285); --bg-elevated:oklch(19% .009 285);
+  --surface-2:oklch(23.5% .01 285); --surface-3:oklch(28% .012 285);
+  --surface-header:oklch(21% .009 285); --surface-sunken:oklch(18.5% .008 285);
+  --ink:oklch(95% .004 285); --dim:oklch(78% .008 285); --faint:oklch(58% .016 285);
+  --border-subtle:oklch(32% .012 285); --border-default:oklch(41% .011 285);
+  --border-divider:oklch(37% .02 241);
+  --accent:oklch(78% .13 198); --accent-surface:oklch(27% .05 198); --accent-border:oklch(40% .07 198);
+  --accent-secondary:oklch(74% .13 275);
+  --ok:oklch(81% .16 162); --review:oklch(76% .13 256);
+  --warn:oklch(74% .15 70); --block:oklch(72% .18 19);
+  --radius-sm:.25rem; --radius-md:.375rem; --radius-lg:.5rem; --radius-xl:.75rem;
+  --font-sans:ui-sans-serif,system-ui,"Segoe UI",sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg-base);color:var(--ink);font-family:var(--font-sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin-inline:auto;padding:0 clamp(1rem,3.5vw,2.5rem) 4rem}
+code,.mono{font-family:var(--font-mono)}
+h1{font-size:clamp(1.6rem,4vw,2.3rem);font-weight:750;letter-spacing:-.02em;line-height:1.15}
+h1 em{font-style:normal;color:var(--accent)}
+h2{font-size:clamp(1.2rem,2.4vw,1.6rem);font-weight:680;margin:2.6rem 0 .5rem}
+.lede{color:var(--dim);max-width:70ch;margin-top:.8rem}
+.topbar{background:var(--surface-header);border-bottom:1px solid var(--border-divider);padding:.7rem 0;margin-bottom:2.5rem}
+.topbar .wrap{padding-bottom:0;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.wordmark{font-family:var(--font-mono);font-size:.82rem}
+.wordmark b{color:var(--accent)} .wordmark span{color:var(--faint);margin-inline:.4rem}
+.stamp{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.08em;color:var(--ok);border:1px solid oklch(45% .09 162);border-radius:var(--radius-sm);padding:.18rem .6rem}
+.sec-intro{color:var(--dim);max-width:74ch;margin-bottom:1.2rem;font-size:.94rem}
+
+/* pipeline */
+.pipe{display:flex;flex-direction:column;gap:.45rem;margin-top:1rem}
+.task{display:grid;grid-template-columns:3.4rem 1fr;gap:.7rem;align-items:stretch}
+.tn{display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.72rem;color:var(--accent);border:1px solid var(--accent-border);border-radius:var(--radius-md);background:var(--accent-surface)}
+.tbody{border:1px solid var(--border-default);border-radius:var(--radius-lg);background:var(--surface-2);padding:.65rem .9rem}
+.thead{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap}
+.thead h3{font-size:.95rem;font-weight:650}
+.thead .file{font-family:var(--font-mono);font-size:.62rem;color:var(--faint)}
+.tbody p{font-size:.8rem;color:var(--dim);margin-top:.25rem}
+.gate{margin-left:4.1rem;font-family:var(--font-mono);font-size:.64rem;color:var(--ok);border-left:2px solid oklch(45% .09 162);padding:.15rem 0 .15rem .7rem}
+.badge{font-family:var(--font-mono);font-size:.58rem;padding:.1rem .45rem;border-radius:999px;border:1px solid;white-space:nowrap}
+.badge.tdd{color:var(--ok);border-color:oklch(45% .09 162)}
+.badge.dep{color:var(--warn);border-color:oklch(45% .09 70)}
+.badge.story{color:var(--accent);border-color:var(--accent-border)}
+.badge.ext{color:var(--review);border-color:oklch(40% .07 256)}
+.arrow{text-align:center;color:var(--faint);font-size:.75rem;line-height:1;padding-left:3.4rem}
+
+/* table */
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th,td{text-align:left;padding:.5rem .65rem;border-bottom:1px solid var(--border-subtle);vertical-align:top}
+th{font-family:var(--font-mono);font-size:.64rem;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+td.s{font-family:var(--font-mono);font-size:.7rem;white-space:nowrap}
+.tblwrap{overflow-x:auto}
+.note{font-family:var(--font-mono);font-size:.74rem;color:var(--faint);margin-top:1.4rem;border-left:2px solid var(--accent-border);padding-left:.7rem}
+footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border-subtle);color:var(--faint);font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <div class="wordmark"><b>Duly DS</b><span>×</span>Consola ISO 27001<span>·</span>plan de implementación</div>
+  <div class="stamp">PLAN · 2026-07-15 · 10 tareas</div>
+</div></div>
+
+<div class="wrap">
+<h1>10 tareas, cada una con su <em>ciclo TDD + commit</em>.</h1>
+<p class="lede">Orden por riesgo creciente: primitivas sin dependencias primero (1–6), la única dependencia nueva (dnd-kit) aislada en la tarea 7, recetas de composición al final (8–9) cuando todos los componentes ya existen, y el gate integral al cierre (10).</p>
+
+<h2>Pipeline de tareas</h2>
+<div class="pipe">
+  <div class="task"><div class="tn">T1</div><div class="tbody"><div class="thead"><h3>Stepper</h3><span class="badge tdd">TDD</span><span class="badge story">story</span><span class="file">components/ui/stepper.tsx</span></div><p>Stagebar horizontal done/current/pending · aria-current="step" · copy en+es · pills como wireframe.</p></div></div>
+  <div class="arrow">↓</div>
+  <div class="task"><div class="tn">T2</div><div class="tbody"><div class="thead"><h3>BandGauge</h3><span class="badge tdd">TDD</span><span class="badge story">story</span><span class="file">compliance/band-gauge.tsx</span></div><p>Escala discreta N segmentos + número grande · role="meter" · tono derivado (≥.7 ok · ≥.4 warn · &lt;.4 block) u override.</p></div></div>
+  <div class="arrow">↓</div>
+  <div class="task"><div class="tn">T3</div><div class="tbody"><div class="thead"><h3>DeltaList</h3><span class="badge tdd">TDD</span><span class="badge story">story</span><span class="file">compliance/delta-list.tsx</span></div><p>Filas antes→después · `improved` explícito con ▲ + sr-only · el diff lo computa el consumidor.</p></div></div>
+  <div class="arrow">↓</div>
+  <div class="task"><div class="tn">T4</div><div class="tbody"><div class="thead"><h3>AgentStatusMatrix V002</h3><span class="badge ext">EXTENSIÓN</span><span class="badge tdd">TDD</span><span class="file">agentic/agent-status-matrix.tsx</span></div><p>density="compact" (heatmap 13 áreas) + critical (⚠ accesible) + onSelectItem · API previa intacta, test de no-regresión incluido.</p></div></div>
+  <div class="arrow">↓</div>
+  <div class="task"><div class="tn">T5</div><div class="tbody"><div class="thead"><h3>ConnectorStatus</h3><span class="badge tdd">TDD</span><span class="badge story">story</span><span class="file">agentic/connector-status.tsx</span></div><p>connected/syncing/error/paused · ícono+color+texto · lastSync + docCount.</p></div></div>
+  <div class="arrow">↓</div>
+  <div class="task"><div class="tn">T6</div><div class="tbody"><div class="thead"><h3>Dropzone</h3><span class="badge tdd">TDD</span><span class="badge story">story</span><span class="file">components/ui/dropzone.tsx</span></div><p>Botón-zona con input file oculto · drag-over/disabled · onFiles(File[]) · cero lógica de upload.</p></div></div>
+  <div class="arrow">↓</div>
+  <div class="task"><div class="tn">T7</div><div class="tbody"><div class="thead"><h3>KanbanBoard</h3><span class="badge dep">+dnd-kit</span><span class="badge tdd">TDD</span><span class="badge story">story</span><span class="file">kanban/kanban-board.tsx</span></div><p>Controlado · onMove(ticketId, toColumn, index) · helper puro resolveMove testeable sin simular drags · KeyboardSensor + announcements es/en · read-only sin onMove.</p></div></div>
+  <div class="arrow">↓</div>
+  <div class="task"><div class="tn">T8</div><div class="tbody"><div class="thead"><h3>Recetas 1–3</h3><span class="badge story">stories</span><span class="file">stories/recipes/</span></div><p>SoaCoverageBar (Progress+labels) · GapList (filas severidad+impacto) · ScopeBuilder (form primitives). Cero componentes nuevos.</p></div></div>
+  <div class="arrow">↓</div>
+  <div class="task"><div class="tn">T9</div><div class="tbody"><div class="thead"><h3>Consola ISO completa</h3><span class="badge story">story integral</span><span class="file">stories/recipes/iso-console.stories.tsx</span></div><p>AppShell + WorkspaceSwitcher + Stepper + 5 vistas · usa los 7 nuevos + los 7 existentes · datos lifted de stories canónicas.</p></div></div>
+  <div class="arrow">↓</div>
+  <div class="task"><div class="tn">T10</div><div class="tbody"><div class="thead"><h3>NORTH_STAR + gate final</h3><span class="file">NORTH_STAR.md</span></div><p>Filas de catálogo (áreas B y C + primitivas) · suite completa + lint + build verdes.</p></div></div>
+  <div class="gate">✓ gate por tarea: test rojo → verde → lint → commit local (nunca push)</div>
+</div>
+
+<h2>Qué entrega cada tarea</h2>
+<div class="tblwrap"><table>
+  <thead><tr><th>Tarea</th><th>Entrega</th><th>Cubre (wireframe)</th><th>Tests</th></tr></thead>
+  <tbody>
+    <tr><td class="s">T1 Stepper</td><td>Stepper horizontal genérico</td><td>Stagebar del chasis (9 etapas)</td><td class="s">4</td></tr>
+    <tr><td class="s">T2 BandGauge</td><td>Escala discreta 1..N</td><td>Veredicto de banda (D2)</td><td class="s">5</td></tr>
+    <tr><td class="s">T3 DeltaList</td><td>Diff antes→después</td><td>DeltaView R1→R2 (D4)</td><td class="s">4</td></tr>
+    <tr><td class="s">T4 Matrix V002</td><td>Heatmap compacta + critical</td><td>AreaMatrix 13 áreas (D2)</td><td class="s">7</td></tr>
+    <tr><td class="s">T5 ConnectorStatus</td><td>Salud de fuentes de ingesta</td><td>Recopilación (D5)</td><td class="s">3</td></tr>
+    <tr><td class="s">T6 Dropzone</td><td>Zona de carga presentacional</td><td>Data room (D1)</td><td class="s">5</td></tr>
+    <tr><td class="s">T7 KanbanBoard</td><td>Tablero controlado dnd-kit</td><td>RemediationBoard (D4)</td><td class="s">8</td></tr>
+    <tr><td class="s">T8 Recetas</td><td>3 stories de composición</td><td>SoA bar · GapList · ScopeBuilder</td><td class="s">lint/tsc</td></tr>
+    <tr><td class="s">T9 Consola</td><td>Demo integral 5 pantallas</td><td>Todo el journey map</td><td class="s">visual</td></tr>
+    <tr><td class="s">T10 Cierre</td><td>Catálogo + gate</td><td>—</td><td class="s">suite full</td></tr>
+  </tbody>
+</table></div>
+
+<p class="note">Fuente de verdad para ejecución: <code>2026-07-15-iso-console-gap-components.md</code> (mismo dir) — código completo por paso, comandos exactos, criterios de fallo/éxito. Spec: <code>../specs/2026-07-15-iso-console-gap-components-design.md</code>.</p>
+
+<footer>Plan 2026-07-15 · Duly DS · ejecutable con subagent-driven-development o executing-plans.</footer>
+</div>
+</body>
+</html>
