@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@ag-ui/core": "^0.0.57",
+    "@internationalized/date": "^3.12.2",
     "@mcp-ui/client": "^7.1.1",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@opentelemetry/api": "^1.9.1",
@@ -57,8 +58,10 @@
     "@xyflow/react": "^12.11.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "cmdk": "^1.1.1",
     "lucide-react": "^0.451.0",
     "radix-ui": "^1.6.1",
+    "react-aria-components": "^1.19.0",
     "recharts": "^3.9.1",
     "tailwind-merge": "^2.5.0"
   },

@@ -1,4 +1,5 @@
 export { cn } from "./lib/cn.js";
+export { vizCat, vizSeq, vizCategorical, VIZ_CAT_SLOTS, VIZ_SEQ_STEPS } from "./lib/viz.js";
 export { TraceLog } from "./trace-log/trace-log.js";
 export type { Tone, Density } from "./trace-log/trace-log.variants.js";
 
@@ -30,8 +31,15 @@ export * from "./components/ui/accordion.js";
 export * from "./components/ui/progress.js";
 export * from "./components/ui/skeleton.js";
 
+// app-shell — chrome de aplicación multi-caso-de-uso (sidebar, topbar,
+// workspace switcher, command palette, densidad de sitio)
+export * from "./app-shell/index.js";
+
 // data-table — primitiva densa/virtualizada, columna vertebral de todas las tablas
 export * from "./data-table/index.js";
+
+// date-range-picker — rango con zona horaria visible (react-aria-components)
+export * from "./date-range-picker/index.js";
 
 // agentic — AI agent UI experiments
 export * from "./agentic/index.js";

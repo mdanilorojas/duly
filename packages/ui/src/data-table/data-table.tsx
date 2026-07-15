@@ -14,6 +14,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 import { cn } from "../lib/cn.js";
 import { useCopy } from "../lib/copy/index.js";
+import { useDensity } from "../trace-log/trace-log.context.js";
 import type { Tone, Density } from "../trace-log/trace-log.variants.js";
 import { cellPad, ROW_HEIGHT, toneBorder } from "./data-table.variants.js";
 
@@ -61,6 +62,7 @@ export interface DataTableProps<T> extends Omit<React.ComponentProps<"div">, "ch
   table?: Table<T>;
   /** Nombre accesible de la tabla (obligatorio). */
   caption: string;
+  /** Default: densidad de sitio del `DensityContext` (la fija el `AppShell`). */
   density?: Density;
   getRowId?: (row: T, index: number) => string;
   /** Franja de tono por fila (ej. severidad). */
@@ -91,7 +93,7 @@ export function DataTable<T>({
   columns,
   table: externalTable,
   caption,
-  density = "comfortable",
+  density: densityProp,
   getRowId,
   rowTone,
   onRowActivate,
@@ -103,6 +105,11 @@ export function DataTable<T>({
   ...props
 }: DataTableProps<T>) {
   const t = useCopy();
+  // Densidad a nivel de sitio (NORTH_STAR área D): sin prop explícita, la
+  // tabla hereda la densidad del shell vía DensityContext (default
+  // "comfortable" sin provider — comportamiento previo intacto).
+  const siteDensity = useDensity();
+  const density = densityProp ?? siteDensity;
   const internalTable = useReactTable<T>({
     data: data ?? [],
     columns: columns ?? [],
