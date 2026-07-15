@@ -1,4 +1,5 @@
 export { cn } from "./lib/cn.js";
+export { vizCat, vizSeq, vizCategorical, VIZ_CAT_SLOTS, VIZ_SEQ_STEPS } from "./lib/viz.js";
 export { TraceLog } from "./trace-log/trace-log.js";
 export type { Tone, Density } from "./trace-log/trace-log.variants.js";
 
