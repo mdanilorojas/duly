@@ -54,6 +54,14 @@ const preview: Preview = {
       },
       defaultViewport: "desktop1440",
     },
+    options: {
+      // Orden de lectura de la IA: fundamentos -> primitivas -> áreas de
+      // dominio -> recetas. Sin esto Storybook cae al orden de escaneo de
+      // archivos, no al orden conceptual del sidebar.
+      storySort: {
+        order: ["Fundamentos", "Primitivas", "Agentic", "Compliance", "Comercial", "Industrial", "Recetas"],
+      },
+    },
   },
   decorators: [
     (Story, ctx) => {
