@@ -26,7 +26,7 @@ const STATE: Record<ConnectorState, StateConfig> = {
   connected: { icon: Check, chip: "text-ok border-ok/50" },
   syncing: { icon: Loader2, chip: "text-review border-review/50", spin: true },
   error: { icon: X, chip: "text-block border-block/50" },
-  paused: { icon: Pause, chip: "text-dim border-border-default" },
+  paused: { icon: Pause, chip: "text-info border-info/50" },
 };
 
 export interface ConnectorStatusProps extends Omit<React.ComponentProps<"ul">, "children"> {
