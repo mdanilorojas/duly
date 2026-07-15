@@ -41,7 +41,7 @@ export function AppSidebar({
   ...props
 }: AppSidebarProps) {
   const copy = useCopy();
-  const { collapsed } = React.useContext(SidebarViewContext);
+  const { collapsed, inDrawer } = React.useContext(SidebarViewContext);
   const shell = useOptionalAppShell();
   const navId = React.useId();
 
@@ -69,7 +69,9 @@ export function AppSidebar({
 
         {footer && <div className={cn("border-t border-border-subtle", collapsed ? "p-2" : "p-3")}>{footer}</div>}
 
-        {collapsible && shell && (
+        {/* El toggle de colapso solo aplica al rail de desktop — en el drawer
+            mobile la sidebar siempre va expandida y colapsar no significa nada. */}
+        {collapsible && shell && !inDrawer && (
           <div className={cn("border-t border-border-subtle", collapsed ? "p-2" : "p-3")}>
             <button
               type="button"

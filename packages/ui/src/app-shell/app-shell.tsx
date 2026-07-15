@@ -56,9 +56,13 @@ export function useOptionalAppShell(): AppShellContextValue | null {
 /**
  * La sidebar se renderiza dos veces (aside desktop + Sheet mobile); este
  * contexto le dice a cada instancia si debe pintarse colapsada — en el Sheet
- * siempre va expandida aunque el rail de desktop esté colapsado.
+ * siempre va expandida aunque el rail de desktop esté colapsado — y si vive
+ * dentro del drawer mobile (donde el toggle de colapso no tiene sentido).
  */
-export const SidebarViewContext = React.createContext<{ collapsed: boolean }>({ collapsed: false });
+export const SidebarViewContext = React.createContext<{ collapsed: boolean; inDrawer: boolean }>({
+  collapsed: false,
+  inDrawer: false,
+});
 
 export interface AppShellProps extends Omit<React.ComponentProps<"div">, "children"> {
   /** Navegación lateral — normalmente un `<AppSidebar>`. */
@@ -123,7 +127,7 @@ export function AppShell({
           </a>
 
           {/* Rail/sidebar de desktop. */}
-          <SidebarViewContext.Provider value={{ collapsed }}>
+          <SidebarViewContext.Provider value={{ collapsed, inDrawer: false }}>
             <div className="hidden shrink-0 lg:flex">{sidebar}</div>
           </SidebarViewContext.Provider>
 
@@ -132,7 +136,7 @@ export function AppShell({
             <SheetContent side="left" className="w-72 gap-0 p-0 lg:hidden">
               <SheetTitle className="sr-only">{copy.appShell.navigation}</SheetTitle>
               <SheetDescription className="sr-only">{copy.appShell.navigation}</SheetDescription>
-              <SidebarViewContext.Provider value={{ collapsed: false }}>
+              <SidebarViewContext.Provider value={{ collapsed: false, inDrawer: true }}>
                 {sidebar}
               </SidebarViewContext.Provider>
             </SheetContent>

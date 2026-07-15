@@ -178,6 +178,12 @@ export const esCopy = {
       development: "Desarrollo",
       sandbox: "Sandbox",
     },
+    environmentShort: {
+      production: "PROD",
+      staging: "STAG",
+      development: "DEV",
+      sandbox: "SBX",
+    },
   },
   dateRangePicker: {
     label: "Rango de fechas",

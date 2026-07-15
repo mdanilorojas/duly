@@ -70,8 +70,15 @@ export function Breadcrumbs({ items, className }: { items: BreadcrumbItem[]; cla
         {items.map((item, i) => {
           const last = i === items.length - 1;
           return (
-            <li key={`${item.label}-${i}`} className="flex min-w-0 items-center gap-1.5">
-              {i > 0 && <ChevronRight aria-hidden className="size-3.5 shrink-0 text-faint-deco rtl:rotate-180" />}
+            // En <sm solo cabe (y solo importa) la miga actual: las anteriores
+            // se ocultan en vez de aplastarse a "A…" ilegible.
+            <li
+              key={`${item.label}-${i}`}
+              className={cn("flex min-w-0 items-center gap-1.5", !last && "max-sm:hidden")}
+            >
+              {i > 0 && (
+                <ChevronRight aria-hidden className="size-3.5 shrink-0 text-faint-deco max-sm:hidden rtl:rotate-180" />
+              )}
               {last ? (
                 <span aria-current="page" className="truncate font-medium text-ink">
                   {item.label}
@@ -103,6 +110,8 @@ export interface TopbarSearchButtonProps extends Omit<React.ComponentProps<"butt
 /**
  * Botón con aspecto de input que abre el `CommandPalette` — el punto de
  * entrada visible del "keyboard-first ops" para quien no conoce el atajo.
+ * En <sm colapsa a icon-button (el input falso aplastado era ilegible);
+ * el nombre accesible se mantiene vía aria-label.
  */
 export function TopbarSearchButton({
   shortcutHint = "⌘K",
@@ -111,20 +120,24 @@ export function TopbarSearchButton({
   ...props
 }: TopbarSearchButtonProps) {
   const copy = useCopy();
+  const text = label ?? copy.appShell.search;
   return (
     <button
       type="button"
+      aria-label={text}
       className={cn(
-        "flex h-8 w-full max-w-64 items-center gap-2 rounded-md border border-border-subtle bg-surface-2 px-2.5 text-sm text-faint outline-none hover:border-border-default hover:text-dim focus-visible:ring-[3px] focus-visible:ring-ring",
+        "flex h-8 items-center rounded-md border border-border-subtle text-sm text-faint outline-none hover:border-border-default hover:text-dim focus-visible:ring-[3px] focus-visible:ring-ring",
+        "max-sm:w-8 max-sm:shrink-0 max-sm:justify-center",
+        "sm:w-full sm:max-w-64 sm:gap-2 sm:bg-surface-2 sm:px-2.5",
         className,
       )}
       {...props}
     >
       <Search aria-hidden className="size-3.5 shrink-0" />
-      <span className="min-w-0 flex-1 truncate text-start">{label ?? copy.appShell.search}</span>
+      <span className="min-w-0 flex-1 truncate text-start max-sm:hidden">{text}</span>
       <kbd
         aria-hidden
-        className="shrink-0 rounded border border-border-subtle bg-bg-base px-1 py-0.5 font-sans text-[10px] leading-none text-faint"
+        className="shrink-0 rounded border border-border-subtle bg-bg-base px-1 py-0.5 font-sans text-[10px] leading-none text-faint max-sm:hidden"
       >
         {shortcutHint}
       </kbd>
@@ -175,7 +188,10 @@ export function TopbarIconButton({ icon: Icon, label, count, className, ...props
 
 /**
  * Toggle comfortable/compact a nivel de sitio — muta la densidad del shell
- * (`DensityContext`), que `DataTable`/`TraceLog` leen como default.
+ * (`DensityContext`), que `DataTable`/`TraceLog` leen como default. Densidad
+ * es una preferencia de pantallas ops de escritorio: en <lg se oculta por
+ * defecto (el topbar mobile no tiene espacio y compact no aporta en touch);
+ * pásale `className="flex"` si un caso de uso lo necesita visible.
  */
 export function DensityToggle({ className }: { className?: string }) {
   const copy = useCopy();
@@ -191,7 +207,7 @@ export function DensityToggle({ className }: { className?: string }) {
     <div
       role="group"
       aria-label={copy.appShell.density}
-      className={cn("flex items-center rounded-md border border-border-subtle p-0.5", className)}
+      className={cn("hidden items-center rounded-md border border-border-subtle p-0.5 lg:flex", className)}
     >
       {options.map(({ value, icon: Icon, label }) => (
         <Tooltip key={value}>

@@ -181,6 +181,14 @@ export const enCopy = {
       development: "Development",
       sandbox: "Sandbox",
     },
+    // Abreviaturas para el badge en <sm — la señal "estás en producción"
+    // se comprime, nunca se oculta.
+    environmentShort: {
+      production: "PROD",
+      staging: "STAG",
+      development: "DEV",
+      sandbox: "SBX",
+    },
   },
   dateRangePicker: {
     label: "Date range",
