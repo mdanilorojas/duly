@@ -116,7 +116,7 @@ export function AgentStatusMatrix({
           "rounded-[11px] border border-border-subtle border-s-[3px] bg-surface-2",
           compact ? "px-2.5 py-2" : "px-3 py-2.5",
           swatchBorder[item.tone],
-          item.critical && "border-block/60",
+          item.critical && "ring-1 ring-inset ring-block/60",
         );
 
         return (

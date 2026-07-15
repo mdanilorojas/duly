@@ -46,4 +46,14 @@ describe("AgentStatusMatrix — extensión", () => {
     const { container } = render(<AgentStatusMatrix items={items} density="compact" />);
     expect(await axe(container)).toHaveNoViolations();
   });
+
+  it("critical no descarta el borde de tono (usa ring aditivo, no border-color)", () => {
+    const warnCriticalItems = [
+      { code: "WARN-01", label: "Revisión pendiente", tone: "warn" as const, critical: true },
+    ];
+    const { container } = render(<AgentStatusMatrix items={warnCriticalItems} />);
+    const listitem = container.querySelector('[role="listitem"]');
+    expect(listitem?.className).toContain("border-s-warn");
+    expect(listitem?.className).toContain("ring-block/60");
+  });
 });
