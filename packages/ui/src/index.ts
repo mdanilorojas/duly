@@ -29,6 +29,8 @@ export * from "./components/ui/dropdown-menu.js";
 export * from "./components/ui/tabs.js";
 export * from "./components/ui/accordion.js";
 export * from "./components/ui/progress.js";
+export * from "./components/ui/stepper.js";
+export * from "./components/ui/dropzone.js";
 export * from "./components/ui/skeleton.js";
 
 // app-shell — chrome de aplicación multi-caso-de-uso (sidebar, topbar,
@@ -37,6 +39,9 @@ export * from "./app-shell/index.js";
 
 // data-table — primitiva densa/virtualizada, columna vertebral de todas las tablas
 export * from "./data-table/index.js";
+
+// kanban — tablero de columnas controlado (dnd-kit), backlogs por estado
+export * from "./kanban/index.js";
 
 // date-range-picker — rango con zona horaria visible (react-aria-components)
 export * from "./date-range-picker/index.js";

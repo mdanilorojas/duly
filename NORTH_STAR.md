@@ -75,8 +75,9 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | ToolIntegrityIndicator (tool-definition drift) | Señal cuando la definición de una tool cambió desde que un agente/humano la aprobó por última vez ("rug pull" de MCP) | ❌ — nueva fila 2026-07-13: Vercel AI SDK 7.0.19 (9-jul-2026) shippeó `fingerprintTools`/`detectToolDrift` a nivel de SDK para detectar tools MCP que mutan su definición después de ser confiadas; la literatura de seguridad MCP de 2026 (tool poisoning / rug-pull) recomienda hacer visible en UI cuándo una tool cambió tras su aprobación — sin componente hoy. Candidato natural: extensión de `GuardrailIndicator` o pill nueva junto a `RichToolCallCard`/`CredentialCard`. Fuente: Vercel AI SDK changelog (`ai@7.0.19`), policylayer.com/attacks/mcp-rug-pull. |
 | AgentAnomalyIndicator (Behavioral Deviation Flag) | Flag cuando un agente se desvía de su baseline de comportamiento (volumen, scope de datos, tablas/joins inusuales) | ❌ — nueva fila 2026-07-06: FINRA clasifica a los agentes de IA como categoría de riesgo de supervisión propia y recomienda "behavioral baselining" (desviación automática vs patrón aprendido) como control explícito para servicios financieros; sin componente hoy — ver "Prioridad de construcción". Fuente: fin.ai/learn/evaluate-ai-agent-compliance-financial-services, jul-2026. |
 | AgentCore/Card/Gallery (identidad) | Orbs WebGL con identidad por agente | ✅ (V001, Storybook `Agentic/Agent Gallery`; presentación interna renombrada `AgentCard` → `AgentTile`. Reorganizada 2026-07-12 en 4 galerías sectoriales de 24 agentes — Legal & Compliance, Petroleum & Energy, Software & Networks, Industrial & Logistics — portadas de una segunda referencia HTML del usuario, con un solo contexto WebGL compartido entre instancias por performance. Nota: "Legal & Compliance" e "Industrial & Logistics" no son 2 de las 5 industrias objetivo de este DS (inmobiliaria/petróleo/software/servicios-financieros/salud) — es reorganización de identidad visual del laboratorio agentic, no una vertical de negocio nueva tipo áreas E/F; no confundir con prioridad de "vertical de salud" que sigue pendiente) |
-| AgentMetric / AgentStatusMatrix | Tiles de métrica y matriz de estatus con tonos semánticos | ✅ (Storybook `Agentic/Property Intelligence`) |
+| AgentMetric / AgentStatusMatrix | Tiles de métrica y matriz de estatus con tonos semánticos | ✅ (V002, Storybook `Agentic/Agent Status Matrix/V002 Compact Heatmap` — modo `density="compact"` heatmap, flag `critical`, handler `onSelectItem`) |
 | ExecutionTimeline / RunStep / ToolCallCard | Timeline vertical de un run multi-agente, paso a paso, con detalle expandible | ✅ (V001, Storybook `Agentic/Execution Timeline`) |
+| ConnectorStatus | Estado de salud de fuentes de ingesta (SourceConnector) | ✅ (V001, Storybook `Agentic/Connector Status/V001 Ingestion Sources`) |
 
 > **Novedades 2026-07-02 relevantes para esta área:**
 > - OpenAI formalizó una guía única "Guardrails and human review" (input/output/tool guardrails +
@@ -124,6 +125,8 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | IncidentView | Timeline de incidente: run disparador, recursos afectados, remediación | ❌ |
 | RetentionBadge / ImmutabilityIndicator | Señal de confianza "WORM, retenido 6+ meses" | ✅ (V001, Storybook `Agentic/Retention Badge/V001 WORM & Immutability` — `RetentionBadge` pill compacto (protected/eligible-for-deletion/hold) + `ImmutabilityIndicator` expandible con base legal, progreso de ventana mínima y hash del registro; separado explícitamente de `AuditLogTable`/`ModelProvenanceCard` (Art. 12/13) como obligación distinta (Art. 19)) |
 | VendorRiskCard (LLM vendor risk assessment) | Evaluación de riesgo por proveedor de LLM de terceros: modelo, contrato de datos, certificaciones, última revisión | ❌ — nueva fila 2026-07-06: auditores SOC2 2026 piden explícitamente "vendor risk assessment por cada LLM de terceros invocado" como evidencia AI-specific mapeada a CC6/CC7; sin componente hoy, aunque `ModelProvenanceCard` ya cubre el "qué modelo" a nivel de run. Fuente: soc2auditors.org/insights/soc-2-for-ai-companies, jul-2026. |
+| BandGauge | Veredicto de banda discreta (readiness ISO 1–6, madurez, cualquier score de N escalones) | ✅ (V001, Storybook `Compliance/Band Gauge/V001 Discrete Bands`) |
+| DeltaList | Diff antes→después entre corridas (diffRuns, qué área subió) | ✅ (V001, Storybook `Compliance/Delta List/V001 Run Diff`) |
 
 > **Señal regulatoria (actualizado 2026-07-13) — EU AI Act:** sin cambio de contenido desde
 > 2026-07-06, pero con deadline mecánico ahora más preciso: fuentes legales de esta semana
@@ -155,6 +158,14 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 > **prEN 18286** (CEN-CENELEC JTC 21), en consulta pública desde 30-oct-2025, con cierre esperado
 > a fines de 2026; su Anexo D mapea a los controles del Anexo A de ISO 42001. Agregar prEN 18286
 > a "Fuentes de vanguardia" (abajo) como el estándar real a seguir para compliance UI.
+
+### Primitivas nuevas (2026-07-15)
+
+| Componente | Propósito | Estado |
+|---|---|---|
+| Stepper | Stagebar horizontal de proceso | ✅ (Storybook `Primitives/Stepper`) |
+| Dropzone | Zona de carga presentacional | ✅ (Storybook `Primitives/Dropzone`) |
+| KanbanBoard | Tablero controlado con dnd-kit | ✅ (Storybook `Kanban/Kanban Board/V001 Remediation Backlog`) |
 
 ### D. Table stakes enterprise 2026
 

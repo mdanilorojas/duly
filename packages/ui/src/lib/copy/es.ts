@@ -185,6 +185,16 @@ export const esCopy = {
       sandbox: "SBX",
     },
   },
+  stepper: {
+    label: "Etapas del proceso",
+    state: { done: "completada", current: "etapa actual", pending: "pendiente" },
+  },
+  deltaList: {
+    improved: "mejoró",
+  },
+  statusMatrix: {
+    critical: "crítica",
+  },
   dateRangePicker: {
     label: "Rango de fechas",
     openCalendar: "Abrir calendario",
@@ -196,5 +206,24 @@ export const esCopy = {
       monthToDate: "Mes a la fecha",
       quarterToDate: "Trimestre a la fecha",
     },
+  },
+  connectorStatus: {
+    connected: "Conectado",
+    syncing: "Sincronizando…",
+    error: "Error",
+    paused: "Pausado",
+    docCount: (n: number) => `${n} docs`,
+  },
+  dropzone: {
+    label: "Arrastra archivos aquí o haz clic para elegir",
+  },
+  kanban: {
+    board: "Tablero kanban",
+    instructions:
+      "Para levantar una tarjeta, presiona espacio o enter. Usa las flechas para moverla, espacio o enter para soltar, escape para cancelar.",
+    pickedUp: (t: string) => `Levantaste ${t}`,
+    movedOver: (t: string, target: string) => `${t} está sobre ${target}`,
+    dropped: (t: string, target: string) => `${t} soltada en ${target}`,
+    canceled: (t: string) => `Movimiento de ${t} cancelado`,
   },
 } satisfies CopyDict;

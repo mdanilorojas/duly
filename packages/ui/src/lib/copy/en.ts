@@ -190,6 +190,16 @@ export const enCopy = {
       sandbox: "SBX",
     },
   },
+  stepper: {
+    label: "Process steps",
+    state: { done: "done", current: "current step", pending: "pending" },
+  },
+  deltaList: {
+    improved: "improved",
+  },
+  statusMatrix: {
+    critical: "critical",
+  },
   dateRangePicker: {
     label: "Date range",
     openCalendar: "Open calendar",
@@ -201,5 +211,24 @@ export const enCopy = {
       monthToDate: "Month to date",
       quarterToDate: "Quarter to date",
     },
+  },
+  connectorStatus: {
+    connected: "Connected",
+    syncing: "Syncing…",
+    error: "Error",
+    paused: "Paused",
+    docCount: (n: number) => `${n} docs`,
+  },
+  dropzone: {
+    label: "Drop files here or click to browse",
+  },
+  kanban: {
+    board: "Kanban board",
+    instructions:
+      "To pick up a card, press space or enter. Use the arrow keys to move it, space or enter to drop, escape to cancel.",
+    pickedUp: (t: string) => `Picked up ${t}`,
+    movedOver: (t: string, target: string) => `${t} is over ${target}`,
+    dropped: (t: string, target: string) => `${t} dropped on ${target}`,
+    canceled: (t: string) => `Movement of ${t} canceled`,
   },
 };
