@@ -219,4 +219,7 @@ export const enCopy = {
     paused: "Paused",
     docCount: (n: number) => `${n} docs`,
   },
+  dropzone: {
+    label: "Drop files here or click to browse",
+  },
 };

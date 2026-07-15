@@ -214,4 +214,7 @@ export const esCopy = {
     paused: "Pausado",
     docCount: (n: number) => `${n} docs`,
   },
+  dropzone: {
+    label: "Arrastra archivos aquí o haz clic para elegir",
+  },
 } satisfies CopyDict;

@@ -30,6 +30,7 @@ export * from "./components/ui/tabs.js";
 export * from "./components/ui/accordion.js";
 export * from "./components/ui/progress.js";
 export * from "./components/ui/stepper.js";
+export * from "./components/ui/dropzone.js";
 export * from "./components/ui/skeleton.js";
 
 // app-shell — chrome de aplicación multi-caso-de-uso (sidebar, topbar,
