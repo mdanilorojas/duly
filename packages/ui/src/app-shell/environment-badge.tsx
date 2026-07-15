@@ -35,10 +35,25 @@ export interface EnvironmentBadgeProps extends React.ComponentProps<"span"> {
 
 export function EnvironmentBadge({ environment, label, className, ...props }: EnvironmentBadgeProps) {
   const copy = useCopy();
+  const full = label ?? copy.appShell.environment[environment];
+  const short = copy.appShell.environmentShort[environment];
   return (
     <span className={cn(environmentBadgeVariants({ environment }), className)} {...props}>
       <span aria-hidden className="size-1.5 rounded-full bg-current" />
-      {label ?? copy.appShell.environment[environment]}
+      {/* En <sm el topbar no tiene espacio para "PRODUCTION" pero la señal de
+          seguridad no puede desaparecer: se abrevia (PROD), no se oculta. Con
+          `label` editorial se respeta tal cual en todos los tamaños. */}
+      {label ? (
+        <span>{full}</span>
+      ) : (
+        <>
+          <span className="max-sm:hidden">{full}</span>
+          <span aria-hidden className="sm:hidden">
+            {short}
+          </span>
+          <span className="sr-only sm:hidden">{full}</span>
+        </>
+      )}
     </span>
   );
 }

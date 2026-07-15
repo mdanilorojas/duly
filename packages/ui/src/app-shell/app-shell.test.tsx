@@ -110,10 +110,22 @@ describe("AppShell", () => {
     expect(screen.getByRole("button", { name: "Pending interrupts (3)" })).toBeDefined();
   });
 
-  it("EnvironmentBadge production usa tono warn (actuar con cuidado)", () => {
-    render(<EnvironmentBadge environment="production" />);
-    const badge = screen.getByText("Production");
+  it("EnvironmentBadge production usa tono warn y abrevia (no oculta) en mobile", () => {
+    const { container } = render(<EnvironmentBadge environment="production" />);
+    const badge = container.firstElementChild!;
     expect(badge.className).toContain("text-warn");
+    // ≥sm el label completo; <sm la abreviatura visible + label completo sr-only
+    expect(badge.textContent).toContain("Production");
+    expect(badge.textContent).toContain("PROD");
+  });
+
+  it("el drawer mobile no muestra el toggle de colapso (solo aplica al rail desktop)", async () => {
+    render(<Harness />);
+    await userEvent.click(screen.getByRole("button", { name: /open navigation/i }));
+    const drawer = await screen.findByRole("dialog");
+    expect(within(drawer).queryByRole("button", { name: /collapse sidebar/i })).toBeNull();
+    // la navegación sí está completa dentro del drawer
+    expect(within(drawer).getByRole("button", { name: "Overview" })).toBeDefined();
   });
 
   it("sin violaciones de accesibilidad (axe)", async () => {
