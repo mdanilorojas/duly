@@ -212,4 +212,11 @@ export const enCopy = {
       quarterToDate: "Quarter to date",
     },
   },
+  connectorStatus: {
+    connected: "Connected",
+    syncing: "Syncing…",
+    error: "Error",
+    paused: "Paused",
+    docCount: (n: number) => `${n} docs`,
+  },
 };

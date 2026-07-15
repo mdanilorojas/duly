@@ -207,4 +207,11 @@ export const esCopy = {
       quarterToDate: "Trimestre a la fecha",
     },
   },
+  connectorStatus: {
+    connected: "Conectado",
+    syncing: "Sincronizando…",
+    error: "Error",
+    paused: "Pausado",
+    docCount: (n: number) => `${n} docs`,
+  },
 } satisfies CopyDict;
