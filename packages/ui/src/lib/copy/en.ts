@@ -197,6 +197,9 @@ export const enCopy = {
   deltaList: {
     improved: "improved",
   },
+  statusMatrix: {
+    critical: "critical",
+  },
   dateRangePicker: {
     label: "Date range",
     openCalendar: "Open calendar",

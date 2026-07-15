@@ -192,6 +192,9 @@ export const esCopy = {
   deltaList: {
     improved: "mejoró",
   },
+  statusMatrix: {
+    critical: "crítica",
+  },
   dateRangePicker: {
     label: "Rango de fechas",
     openCalendar: "Abrir calendario",
