@@ -44,7 +44,12 @@ export interface KanbanColumn {
 
 export interface KanbanBoardProps extends Omit<React.ComponentProps<"div">, "children" | "onDrop"> {
   columns: KanbanColumn[];
-  /** Controlado: el consumidor aplica el movimiento y re-renderiza. Sin esto, read-only. */
+  /**
+   * Controlado: el consumidor aplica el movimiento y re-renderiza. Sin esto, read-only.
+   * `index` se mide sobre `columns` tal como llegó (antes de remover el ticket de origen)
+   * — al reordenar dentro de la misma columna, insertar en `toColumn` sin remover primero
+   * el ticket de origen preserva la posición pretendida.
+   */
   onMove?: (ticketId: string, toColumn: string, index: number) => void;
 }
 
