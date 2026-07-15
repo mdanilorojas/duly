@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useCopy } from "@/lib/copy/index.js";
 
 export interface DropzoneProps
-  extends Omit<React.ComponentProps<"button">, "onDrop" | "children" | "type"> {
+  extends Omit<React.ComponentProps<"button">, "onDrop" | "onClick" | "onDragOver" | "onDragLeave" | "children" | "type"> {
   onFiles: (files: File[]) => void;
   /** Pasa directo al `<input type="file">`. No filtra el drop — la app valida. */
   accept?: string;
