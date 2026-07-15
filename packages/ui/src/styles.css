@@ -30,4 +30,24 @@
   ::after {
     border-color: var(--border-subtle);
   }
+
+  /*
+   * React Flow's Controls (+/−/fit-view) render internal buttons with a
+   * hardcoded light background from `@xyflow/react/dist/style.css`. The
+   * consumer only tokenizes the outer `.react-flow__controls` wrapper, so on
+   * dark themes the buttons stay white with an invisible (white-on-white)
+   * icon. `@xyflow/react/dist/style.css` is un-layered, which outranks any
+   * named @layer regardless of specificity/order per the cascade-layers
+   * spec — !important is the only way to win here.
+   */
+  .react-flow__controls-button {
+    background: var(--surface-2) !important;
+    border-bottom-color: var(--border-subtle) !important;
+  }
+  .react-flow__controls-button:hover {
+    background: var(--surface-3) !important;
+  }
+  .react-flow__controls-button svg {
+    fill: var(--ink) !important;
+  }
 }
