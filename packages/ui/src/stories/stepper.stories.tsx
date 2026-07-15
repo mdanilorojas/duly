@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Stepper } from "../components/ui/stepper.js";
 
 const meta: Meta<typeof Stepper> = {
-  title: "Primitives/Stepper",
+  title: "Primitivas/Forms/Stepper",
   component: Stepper,
 };
 export default meta;

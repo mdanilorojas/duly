@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { RetentionBadge, ImmutabilityIndicator, type RetentionRecord } from "./retention-badge.js";
 
 const meta: Meta<typeof ImmutabilityIndicator> = {
-  title: "Agentic/Retention Badge/V001 WORM & Immutability",
+  title: "Agentic/Retention Badge/V001 WORM e inmutabilidad",
   component: ImmutabilityIndicator,
   parameters: {
     layout: "fullscreen",

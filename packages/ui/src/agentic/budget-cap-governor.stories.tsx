@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { BudgetCapGovernor, type BudgetCap } from "./budget-cap-governor.js";
 
 const meta: Meta<typeof BudgetCapGovernor> = {
-  title: "Agentic/Orchestration/V001 Budget Cap Governor",
+  title: "Agentic/Orchestration/V001 Gobernador de tope de presupuesto",
   component: BudgetCapGovernor,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

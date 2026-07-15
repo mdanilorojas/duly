@@ -4,7 +4,7 @@ import { NodeStatusBadge, type NodeStatus } from "../agentic/node-status-badge.j
 import type { Tone } from "../trace-log/trace-log.variants.js";
 
 const meta: Meta<typeof DataTable> = {
-  title: "DataTable/V001 Dense Virtualized",
+  title: "Primitivas/DataTable/V001 Denso y virtualizado",
   component: DataTable,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

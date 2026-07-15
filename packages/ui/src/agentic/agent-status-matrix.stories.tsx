@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { AgentStatusMatrix } from "./agent-status-matrix.js";
 
 const meta: Meta<typeof AgentStatusMatrix> = {
-  title: "Agentic/Agent Status Matrix/V002 Compact Heatmap",
+  title: "Agentic/Agent Status Matrix/V002 Mapa de calor compacto",
   component: AgentStatusMatrix,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

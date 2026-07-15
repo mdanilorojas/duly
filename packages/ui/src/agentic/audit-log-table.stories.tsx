@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { AuditLogTable, type AuditEvent } from "./audit-log-table.js";
 
 const meta: Meta<typeof AuditLogTable> = {
-  title: "Agentic/Audit Log Table/V001 Immutable Stream",
+  title: "Agentic/Audit Log Table/V001 Flujo inmutable",
   component: AuditLogTable,
   parameters: {
     layout: "fullscreen",

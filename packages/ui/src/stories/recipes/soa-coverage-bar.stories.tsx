@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Progress } from "../../components/ui/progress.js";
 
 const meta: Meta = {
-  title: "Recipes/ISO Console/SoA Coverage Bar",
+  title: "Recetas/Consola ISO/Barra de cobertura SoA",
 };
 export default meta;
 

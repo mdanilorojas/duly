@@ -4,7 +4,7 @@ import { Info, AlertCircle, CheckCircle, AlertTriangle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "../components/ui/alert.js";
 
 const meta: Meta<typeof Alert> = {
-  title: "Feedback/Alert",
+  title: "Primitivas/Retroalimentación/Alert",
   component: Alert,
 };
 export default meta;

@@ -7,7 +7,7 @@ import {
   AccordionTrigger,
 } from "../components/ui/accordion.js";
 
-const meta = { title: "Display/Accordion" };
+const meta = { title: "Primitivas/Visualización/Accordion" };
 export default meta;
 type S = StoryObj<typeof meta>;
 

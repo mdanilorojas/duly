@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { BandGauge } from "./band-gauge.js";
 
 const meta: Meta<typeof BandGauge> = {
-  title: "Compliance/Band Gauge/V001 Discrete Bands",
+  title: "Compliance/Band Gauge/V001 Bandas discretas",
   component: BandGauge,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

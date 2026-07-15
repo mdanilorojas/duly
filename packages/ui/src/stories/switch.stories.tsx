@@ -3,7 +3,7 @@ import type { StoryObj } from "@storybook/react";
 import { Switch } from "../components/ui/switch.js";
 import { Label } from "../components/ui/label.js";
 
-const meta = { title: "Primitives/Switch" };
+const meta = { title: "Primitivas/Forms/Switch" };
 export default meta;
 type S = StoryObj<typeof meta>;
 

@@ -12,7 +12,7 @@ import { Button } from "../components/ui/button.js";
 import { Switch } from "../components/ui/switch.js";
 import { Label } from "../components/ui/label.js";
 
-const meta = { title: "Overlay/Sheet" };
+const meta = { title: "Primitivas/Superpuestos/Sheet" };
 export default meta;
 type S = StoryObj<typeof meta>;
 

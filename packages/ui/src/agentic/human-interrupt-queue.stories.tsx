@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { HumanInterruptQueue, type InterruptQueueItem } from "./human-interrupt-queue.js";
 
 const meta: Meta<typeof HumanInterruptQueue> = {
-  title: "Agentic/Human Interrupt Queue/V001 Risk-Ordered Inbox",
+  title: "Agentic/Human Interrupt Queue/V001 Bandeja ordenada por riesgo",
   component: HumanInterruptQueue,
   parameters: {
     layout: "fullscreen",

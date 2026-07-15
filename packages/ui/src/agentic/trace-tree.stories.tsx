@@ -3,7 +3,7 @@ import { TraceTree, type TraceSpan } from "./trace-tree.js";
 import type { GuardrailPolicy } from "./guardrail-indicator.js";
 
 const meta: Meta<typeof TraceTree> = {
-  title: "Agentic/Trace Tree/V001 Cost-Attributed Spans",
+  title: "Agentic/Trace Tree/V001 Spans con costo atribuido",
   component: TraceTree,
   parameters: {
     layout: "fullscreen",

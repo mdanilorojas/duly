@@ -8,7 +8,7 @@ import { Textarea } from "../../components/ui/textarea.js";
 import { Button } from "../../components/ui/button.js";
 
 const meta: Meta = {
-  title: "Recipes/ISO Console/Scope Builder",
+  title: "Recetas/Consola ISO/Constructor de alcance",
 };
 export default meta;
 

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { TraceLog } from "./trace-log.js";
 
 const meta: Meta<typeof TraceLog.Root> = {
-  title: "Agent-ops/TraceLog",
+  title: "Agentic/Trace Log/V001 Registro de eventos",
   component: TraceLog.Root,
 };
 export default meta;

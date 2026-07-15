@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ApprovalGateCard } from "./approval-gate-card.js";
 
 const meta: Meta<typeof ApprovalGateCard> = {
-  title: "Agentic/Approval Gate/V001 Evidence Pack",
+  title: "Agentic/Approval Gate/V001 Paquete de evidencia",
   component: ApprovalGateCard,
   parameters: {
     layout: "fullscreen",

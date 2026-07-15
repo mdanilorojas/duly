@@ -7,7 +7,7 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs.js";
 
-const meta = { title: "Display/Tabs" };
+const meta = { title: "Primitivas/Visualización/Tabs" };
 export default meta;
 type S = StoryObj<typeof meta>;
 

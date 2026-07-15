@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ErrorWorkflowBanner, type ErrorHandlerRef } from "./error-workflow-banner.js";
 
 const meta: Meta<typeof ErrorWorkflowBanner> = {
-  title: "Agentic/Error Workflow Banner/V001 Routed to Handler",
+  title: "Agentic/Error Workflow Banner/V001 Enrutado al manejador",
   component: ErrorWorkflowBanner,
   parameters: {
     layout: "fullscreen",

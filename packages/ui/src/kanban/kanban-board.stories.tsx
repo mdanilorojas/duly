@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { KanbanBoard, type KanbanColumn } from "./kanban-board.js";
 
 const meta: Meta<typeof KanbanBoard> = {
-  title: "Kanban/Kanban Board/V001 Remediation Backlog",
+  title: "Agentic/Kanban Board/V001 Backlog de remediación",
   component: KanbanBoard,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

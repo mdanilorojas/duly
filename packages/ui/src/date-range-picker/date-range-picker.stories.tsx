@@ -5,7 +5,7 @@ import { CalendarDate } from "@internationalized/date";
 import { DateRangePicker, type DateRange } from "./date-range-picker.js";
 
 const meta: Meta<typeof DateRangePicker> = {
-  title: "DateRangePicker/V001 Range + Timezone",
+  title: "Primitivas/Forms/DateRangePicker/V001 Rango y zona horaria",
   component: DateRangePicker,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

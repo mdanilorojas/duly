@@ -12,7 +12,7 @@ import { TraceTree } from "./trace-tree.js";
 import { otelSpansToTraceSpans, ATTR_STUDIO_USAGE_COST, type OtelGenAiSpan } from "./otel-trace-adapter.js";
 
 const meta: Meta = {
-  title: "Agentic/Trace Tree/V001 From OpenTelemetry gen_ai spans",
+  title: "Agentic/Trace Tree/V001 Desde spans gen_ai de OpenTelemetry",
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };
 export default meta;

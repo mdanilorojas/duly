@@ -2,7 +2,7 @@ import React from "react";
 import type { StoryObj } from "@storybook/react";
 import { Textarea } from "../components/ui/textarea.js";
 
-const meta = { title: "Primitives/Textarea" };
+const meta = { title: "Primitivas/Forms/Textarea" };
 export default meta;
 type S = StoryObj<typeof meta>;
 

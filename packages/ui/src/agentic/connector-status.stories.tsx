@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ConnectorStatus } from "./connector-status.js";
 
 const meta: Meta<typeof ConnectorStatus> = {
-  title: "Agentic/Connector Status/V001 Ingestion Sources",
+  title: "Agentic/Connector Status/V001 Fuentes de ingesta",
   component: ConnectorStatus,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

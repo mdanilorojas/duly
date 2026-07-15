@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { DataTable, FilterBar, useDataTable, type ColumnDef } from "./index.js";
 
 const meta: Meta<typeof FilterBar> = {
-  title: "DataTable/V001 FilterBar",
+  title: "Primitivas/DataTable/V001 FilterBar",
   component: FilterBar,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

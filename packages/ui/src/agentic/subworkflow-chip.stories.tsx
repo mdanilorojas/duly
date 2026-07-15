@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { SubworkflowChip, type SubworkflowRef } from "./subworkflow-chip.js";
 
 const meta: Meta<typeof SubworkflowChip> = {
-  title: "Agentic/Subworkflow Chip/V001 Child Execution Reference",
+  title: "Agentic/Subworkflow Chip/V001 Referencia a ejecución hija",
   component: SubworkflowChip,
   parameters: {
     layout: "fullscreen",

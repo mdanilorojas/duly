@@ -4,7 +4,7 @@ import { Zap, ArrowRight, Trash2, Plus } from "lucide-react";
 import { Button } from "../components/ui/button.js";
 
 const meta: Meta<typeof Button> = {
-  title: "Primitives/Button",
+  title: "Primitivas/Forms/Button",
   component: Button,
 };
 export default meta;

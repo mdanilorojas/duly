@@ -2,7 +2,7 @@ import React from "react";
 import type { StoryObj } from "@storybook/react";
 import { Progress } from "../components/ui/progress.js";
 
-const meta = { title: "Feedback/Progress" };
+const meta = { title: "Primitivas/Retroalimentación/Progress" };
 export default meta;
 type S = StoryObj<typeof meta>;
 

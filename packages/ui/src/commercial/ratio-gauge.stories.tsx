@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { RatioGauge } from "./ratio-gauge.js";
 
 const meta: Meta<typeof RatioGauge> = {
-  title: "Commercial/V001 Ratio Gauge",
+  title: "Comercial/V001 Ratio Gauge",
   component: RatioGauge,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { GuardrailIndicator, GuardrailChip, type GuardrailPolicy } from "./guardrail-indicator.js";
 
 const meta: Meta<typeof GuardrailIndicator> = {
-  title: "Agentic/Guardrail Indicator/V001 Policy Checks",
+  title: "Agentic/Guardrail Indicator/V001 Verificación de políticas",
   component: GuardrailIndicator,
   parameters: {
     layout: "fullscreen",

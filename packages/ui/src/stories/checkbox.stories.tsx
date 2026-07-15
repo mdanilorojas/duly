@@ -3,7 +3,7 @@ import type { StoryObj } from "@storybook/react";
 import { Checkbox } from "../components/ui/checkbox.js";
 import { Label } from "../components/ui/label.js";
 
-const meta = { title: "Primitives/Checkbox" };
+const meta = { title: "Primitivas/Forms/Checkbox" };
 export default meta;
 type S = StoryObj<typeof meta>;
 

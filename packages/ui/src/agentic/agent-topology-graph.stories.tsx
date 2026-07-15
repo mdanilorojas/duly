@@ -3,7 +3,7 @@ import "@xyflow/react/dist/style.css";
 import { AgentTopologyGraph, type AgentNode, type AgentEdge } from "./agent-topology-graph.js";
 
 const meta: Meta<typeof AgentTopologyGraph> = {
-  title: "Agentic/Orchestration/V001 Agent Topology Graph",
+  title: "Agentic/Orchestration/V001 Grafo de topología de agentes",
   component: AgentTopologyGraph,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

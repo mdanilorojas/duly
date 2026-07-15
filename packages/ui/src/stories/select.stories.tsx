@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "../components/ui/select.js";
 
-const meta = { title: "Primitives/Select" };
+const meta = { title: "Primitivas/Forms/Select" };
 export default meta;
 type S = StoryObj<typeof meta>;
 

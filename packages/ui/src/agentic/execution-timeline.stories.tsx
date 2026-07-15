@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ExecutionTimeline, RunStep, ToolCallCard } from "./execution-timeline.js";
 
 const meta: Meta<typeof ExecutionTimeline> = {
-  title: "Agentic/Execution Timeline/V001 Agent Run Trace",
+  title: "Agentic/Execution Timeline/V001 Traza de ejecución del agente",
   component: ExecutionTimeline,
   parameters: {
     layout: "fullscreen",

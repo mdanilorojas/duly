@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { TokenCostMeter } from "./token-cost-meter.js";
 
 const meta: Meta<typeof TokenCostMeter> = {
-  title: "Agentic/Token Cost Meter/V001 Budget Attribution",
+  title: "Agentic/Token Cost Meter/V001 Atribución de presupuesto",
   component: TokenCostMeter,
   parameters: {
     layout: "fullscreen",

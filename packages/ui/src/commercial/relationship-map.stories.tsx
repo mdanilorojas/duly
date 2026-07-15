@@ -3,7 +3,7 @@ import "@xyflow/react/dist/style.css";
 import { RelationshipMap, type Stakeholder, type RelationshipLink } from "./relationship-map.js";
 
 const meta: Meta<typeof RelationshipMap> = {
-  title: "Commercial/V001 Relationship Map",
+  title: "Comercial/V001 Relationship Map",
   component: RelationshipMap,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

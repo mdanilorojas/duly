@@ -4,7 +4,7 @@ import { Input } from "../components/ui/input.js";
 import { Label } from "../components/ui/label.js";
 
 const meta: Meta<typeof Input> = {
-  title: "Primitives/Input",
+  title: "Primitivas/Forms/Input",
   component: Input,
 };
 export default meta;

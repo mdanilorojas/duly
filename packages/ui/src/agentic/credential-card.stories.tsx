@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { CredentialCard, CredentialPicker, type Credential } from "./credential-card.js";
 
 const meta: Meta<typeof CredentialCard> = {
-  title: "Agentic/Credential Card/V001 Type Owner Health",
+  title: "Agentic/Credential Card/V001 Tipo, dueño y salud",
   component: CredentialCard,
   parameters: {
     layout: "fullscreen",

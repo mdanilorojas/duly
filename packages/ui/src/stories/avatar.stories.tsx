@@ -10,7 +10,7 @@ import {
 } from "../components/ui/avatar.js";
 
 const meta: Meta<typeof Avatar> = {
-  title: "Display/Avatar",
+  title: "Primitivas/Visualización/Avatar",
   component: Avatar,
 };
 export default meta;

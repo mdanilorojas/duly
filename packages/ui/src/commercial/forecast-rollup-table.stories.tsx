@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ForecastRollupTable, type ForecastRow } from "./forecast-rollup-table.js";
 
 const meta: Meta<typeof ForecastRollupTable> = {
-  title: "Commercial/V001 Forecast Rollup Table",
+  title: "Comercial/V001 Forecast Rollup Table",
   component: ForecastRollupTable,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

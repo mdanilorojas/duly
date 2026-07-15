@@ -4,7 +4,7 @@ import { RetryControls, type RetryAttemptRecord } from "./retry-controls.js";
 import { RunInspector, type RunInspectorNode } from "./run-inspector.js";
 
 const meta: Meta<typeof RetryControls> = {
-  title: "Agentic/Retry Controls/V001 Start vs Failed Node",
+  title: "Agentic/Retry Controls/V001 Reinicio vs nodo fallido",
   component: RetryControls,
   parameters: {
     layout: "fullscreen",

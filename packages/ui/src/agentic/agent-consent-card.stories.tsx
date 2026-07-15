@@ -4,7 +4,7 @@ import { AgentConsentCard, type ConsentLimit, type ConsentScopeItem } from "./ag
 import { NEURAL_AGENTS } from "./neural-agents.js";
 
 const meta: Meta<typeof AgentConsentCard> = {
-  title: "Agentic/Agent Consent/V001 Know Your Agent",
+  title: "Agentic/Agent Consent/V001 Conoce a tu agente",
   component: AgentConsentCard,
   parameters: {
     layout: "fullscreen",

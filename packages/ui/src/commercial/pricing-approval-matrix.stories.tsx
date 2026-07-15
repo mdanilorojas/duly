@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { PricingApprovalMatrix, type DiscountTier } from "./pricing-approval-matrix.js";
 
 const meta: Meta<typeof PricingApprovalMatrix> = {
-  title: "Commercial/V001 Pricing Approval Matrix",
+  title: "Comercial/V001 Pricing Approval Matrix",
   component: PricingApprovalMatrix,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { MutualActionPlanBoard, type Milestone } from "./mutual-action-plan-board.js";
 
 const meta: Meta<typeof MutualActionPlanBoard> = {
-  title: "Commercial/V001 Mutual Action Plan Board",
+  title: "Comercial/V001 Mutual Action Plan Board",
   component: MutualActionPlanBoard,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

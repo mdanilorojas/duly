@@ -13,7 +13,7 @@ import { Button } from "../components/ui/button.js";
 import { Badge } from "../components/ui/badge.js";
 
 const meta: Meta<typeof Card> = {
-  title: "Layout/Card",
+  title: "Primitivas/Layout/Card",
   component: Card,
 };
 export default meta;

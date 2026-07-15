@@ -2,7 +2,7 @@ import React from "react";
 import type { StoryObj } from "@storybook/react";
 import { Skeleton } from "../components/ui/skeleton.js";
 
-const meta = { title: "Feedback/Skeleton" };
+const meta = { title: "Primitivas/Retroalimentación/Skeleton" };
 export default meta;
 type S = StoryObj<typeof meta>;
 

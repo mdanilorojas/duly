@@ -3,7 +3,7 @@ import type { AuditEvent } from "./audit-log-table.js";
 import { WhoDidWhatTimeline, type AuditEventGroup, type SavedQuery } from "./who-did-what-timeline.js";
 
 const meta: Meta<typeof WhoDidWhatTimeline> = {
-  title: "Agentic/Who Did What Timeline/V001 Auditor Self-Service",
+  title: "Agentic/Who Did What Timeline/V001 Autoservicio para auditoría",
   component: WhoDidWhatTimeline,
   parameters: {
     layout: "fullscreen",

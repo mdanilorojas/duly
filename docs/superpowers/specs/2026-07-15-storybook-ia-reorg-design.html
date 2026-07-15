@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es" data-theme="cockpit">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spec — Reorganización IA Storybook · Duly DS</title>
+<style>
+[data-theme=cockpit]{
+  color-scheme:dark;
+  --bg-base:oklch(14.5% .008 285); --bg-elevated:oklch(19% .009 285);
+  --surface-2:oklch(23.5% .01 285); --surface-3:oklch(28% .012 285);
+  --surface-header:oklch(21% .009 285); --surface-sunken:oklch(18.5% .008 285);
+  --ink:oklch(95% .004 285); --dim:oklch(78% .008 285); --faint:oklch(58% .016 285);
+  --border-subtle:oklch(32% .012 285); --border-default:oklch(41% .011 285); --border-divider:oklch(37% .02 241);
+  --accent:oklch(78% .13 198); --accent-surface:oklch(27% .05 198); --accent-border:oklch(40% .07 198);
+  --ok:oklch(81% .16 162); --warn:oklch(74% .15 70); --block:oklch(72% .18 19);
+  --radius-sm:.25rem; --radius-md:.375rem; --radius-lg:.5rem; --radius-xl:.75rem;
+  --font-sans:ui-sans-serif,system-ui,"Segoe UI",sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg-base);color:var(--ink);font-family:var(--font-sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1150px;margin-inline:auto;padding:0 clamp(1rem,3.5vw,2.5rem) 4rem}
+code,.mono{font-family:var(--font-mono)}
+h1{font-size:clamp(1.5rem,3.6vw,2.1rem);font-weight:750;letter-spacing:-.02em}
+h2{font-size:1.15rem;font-weight:680;margin:2.2rem 0 .6rem}
+.lede{color:var(--dim);max-width:70ch;margin-top:.7rem}
+.topbar{background:var(--surface-header);border-bottom:1px solid var(--border-divider);padding:.65rem 0;margin-bottom:2rem}
+.topbar .wrap{padding-bottom:0;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.wordmark{font-family:var(--font-mono);font-size:.8rem}
+.wordmark b{color:var(--accent)} .wordmark span{color:var(--faint);margin-inline:.4rem}
+.stamp{font-family:var(--font-mono);font-size:.64rem;color:var(--warn);border:1px solid oklch(45% .09 70);border-radius:var(--radius-sm);padding:.15rem .55rem}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.2rem}
+.card{border:1px solid var(--border-default);border-radius:var(--radius-lg);background:var(--surface-2);padding:1rem 1.2rem}
+.card h3{font-size:.85rem;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.7rem}
+.tree{font-family:var(--font-mono);font-size:.78rem;line-height:1.75;white-space:pre;overflow-x:auto}
+.tree .cat{color:var(--accent)} .tree .frag{color:var(--block)} .tree .fix{color:var(--ok)}
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin-top:.6rem}
+th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--border-subtle);vertical-align:top}
+th{font-family:var(--font-mono);font-size:.62rem;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+.tag{font-family:var(--font-mono);font-size:.6rem;padding:.1rem .45rem;border-radius:999px;border:1px solid}
+.tag.es{color:var(--ok);border-color:oklch(45% .09 162)} .tag.en{color:var(--warn);border-color:oklch(45% .09 70)}
+.note{font-family:var(--font-mono);font-size:.72rem;color:var(--faint);margin-top:1.2rem;border-left:2px solid var(--accent-border);padding-left:.7rem}
+footer{margin-top:2.5rem;padding-top:1.2rem;border-top:1px solid var(--border-subtle);color:var(--faint);font-size:.78rem}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <div class="wordmark"><b>Duly DS</b><span>×</span>Storybook<span>·</span>reorganización de navegación
+  <div class="stamp">SPEC · 2026-07-15</div>
+</div></div>
+
+<div class="wrap">
+<h1>5 grupos fragmentados → 3 niveles con sentido de dominio</h1>
+<p class="lede">83 archivos <code>.stories.tsx</code>, cero cambios de lógica — solo la propiedad <code>title</code> del <code>meta</code>. Cambio mecánico, verificado con lint limpio y sin colisiones de nombre.</p>
+
+<h2>Antes → después</h2>
+<div class="grid2">
+  <div class="card"><h3>Antes (fragmentado, huérfanos sueltos)</h3>
+    <div class="tree">Primitives/ <span class="frag">(11 archivos)</span>
+Layout/ <span class="frag">(2)</span>
+Display/ <span class="frag">(4)</span>
+Feedback/ <span class="frag">(3)</span>
+Overlay/ <span class="frag">(3)</span>
+DataTable/ <span class="frag">(3, huérfano)</span>
+Agent-ops/TraceLog <span class="frag">(huérfano, inconsistente con "Agentic")</span>
+Kanban/ <span class="frag">(huérfano)</span>
+App Shell/ <span class="frag">(huérfano)</span>
+DateRangePicker/ <span class="frag">(huérfano)</span>
+Data-viz Tokens/ <span class="frag">(huérfano)</span>
+Commercial/ <span class="frag">(sin traducir)</span>
+Recipes/ <span class="frag">(sin traducir)</span>
+Compliance/ <span class="cat">(3 flat + 2 anidados — inconsistente)</span></div>
+  </div>
+  <div class="card"><h3>Después (3 niveles, dominio-first)</h3>
+    <div class="tree"><span class="cat">Fundamentos</span>/
+  └ Data-viz Tokens <span class="fix">(era huérfano)</span>
+<span class="cat">Primitivas</span>/  <span class="fix">(era 5 grupos)</span>
+  ├ Forms/  (Button, Badge, Input, DateRangePicker...)
+  ├ Layout/  (Card, Separator, App Shell)
+  ├ Visualización/  (era Display)
+  ├ Retroalimentación/  (era Feedback)
+  ├ Superpuestos/  (era Overlay)
+  └ DataTable/
+<span class="cat">Agentic</span>/  <span class="fix">(+ TraceLog, + Kanban Board)</span>
+<span class="cat">Compliance</span>/
+<span class="cat">Comercial</span>/  (era Commercial)
+<span class="cat">Industrial</span>/
+<span class="cat">Recetas</span>/  (era Recipes)</div>
+  </div>
+</div>
+
+<h2>Reglas de idioma</h2>
+<table>
+  <thead><tr><th>Segmento</th><th>Idioma</th><th>Ejemplo</th></tr></thead>
+  <tbody>
+    <tr><td>Categoría top-level</td><td><span class="tag es">ES</span> excepto Agentic/Compliance/Layout</td><td><code>Comercial</code>, <code>Recetas</code>, pero <code>Agentic</code>, <code>Compliance</code></td></tr>
+    <tr><td>Nombre de componente (2do nivel)</td><td><span class="tag en">EN</span> — matchea el código</td><td><code>Agent Status Matrix</code>, <code>Kanban Board</code></td></tr>
+    <tr><td>Descriptor de variante (post V00x)</td><td><span class="tag es">ES</span></td><td><code>V002 Mapa de calor compacto</code></td></tr>
+    <tr><td>Número de versión</td><td>literal, sin traducir</td><td><code>V001</code>, <code>V002</code></td></tr>
+    <tr><td>Código / archivos / props</td><td><span class="tag en">EN</span> — sin cambios</td><td><code>agent-status-matrix.tsx</code></td></tr>
+  </tbody>
+</table>
+
+<h2>Descartado</h2>
+<p class="lede">Bucket "transversal/todas las industrias" para componentes reusados entre verticales (TraceLog, ApprovalGateCard, etc.) — el usuario decidió mantenerlos en su dominio de origen (Agentic) en vez de un 4to grupo separado.</p>
+
+<p class="note">Verificación: 83 títulos únicos post-cambio (sin colisiones), <code>pnpm --filter @duly/ui lint</code> limpio. Cero cambios de lógica, props, o ubicación física de archivos.</p>
+
+<footer>Spec 2026-07-15 · companion visual de <code>2026-07-15-storybook-ia-reorg-design.md</code>.</footer>
+</div>
+</body>
+</html>

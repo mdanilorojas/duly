@@ -10,7 +10,7 @@ import {
 import { Button } from "../components/ui/button.js";
 
 const meta: Meta<typeof Tooltip> = {
-  title: "Display/Tooltip",
+  title: "Primitivas/Visualización/Tooltip",
   component: Tooltip,
 };
 export default meta;

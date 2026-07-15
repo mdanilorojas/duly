@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { SwarmControlBar } from "./swarm-control-bar.js";
 
 const meta: Meta<typeof SwarmControlBar> = {
-  title: "Agentic/Orchestration/V001 Swarm Control Bar",
+  title: "Agentic/Orchestration/V001 Barra de control de enjambre",
   component: SwarmControlBar,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

@@ -3,7 +3,7 @@ import type { StoryObj } from "@storybook/react";
 import { Label } from "../components/ui/label.js";
 import { Input } from "../components/ui/input.js";
 
-const meta = { title: "Primitives/Label" };
+const meta = { title: "Primitivas/Forms/Label" };
 export default meta;
 type S = StoryObj<typeof meta>;
 

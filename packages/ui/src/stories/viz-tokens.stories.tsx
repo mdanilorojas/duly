@@ -13,7 +13,7 @@ import { vizCat, vizSeq, vizCategorical, VIZ_CAT_SLOTS, VIZ_SEQ_STEPS } from "..
  * elige a ojo.
  */
 const meta: Meta = {
-  title: "Data-viz Tokens/V001 Categorical + Sequential",
+  title: "Fundamentos/Data-viz Tokens/V001 Categórico + secuencial",
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };
 export default meta;

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { MRRMovementWaterfall, type MRRMovement } from "./mrr-movement-waterfall.js";
 
 const meta: Meta<typeof MRRMovementWaterfall> = {
-  title: "Commercial/V001 MRR Movement Waterfall",
+  title: "Comercial/V001 MRR Movement Waterfall",
   component: MRRMovementWaterfall,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

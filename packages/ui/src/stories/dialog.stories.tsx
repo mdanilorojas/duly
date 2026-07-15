@@ -11,7 +11,7 @@ import {
 } from "../components/ui/dialog.js";
 import { Button } from "../components/ui/button.js";
 
-const meta = { title: "Overlay/Dialog" };
+const meta = { title: "Primitivas/Superpuestos/Dialog" };
 export default meta;
 type S = StoryObj<typeof meta>;
 

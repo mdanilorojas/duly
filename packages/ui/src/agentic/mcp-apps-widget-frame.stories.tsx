@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { MCPAppsWidgetFrame, type SandboxConfig } from "./mcp-apps-widget-frame.js";
 
 const meta: Meta<typeof MCPAppsWidgetFrame> = {
-  title: "Agentic/Orchestration/V001 MCP Apps Widget Frame",
+  title: "Agentic/Orchestration/V001 Marco de widget MCP Apps",
   component: MCPAppsWidgetFrame,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

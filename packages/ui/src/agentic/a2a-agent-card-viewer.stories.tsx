@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { A2AAgentCardViewer, type A2AAgentCard } from "./a2a-agent-card-viewer.js";
 
 const meta: Meta<typeof A2AAgentCardViewer> = {
-  title: "Agentic/Orchestration/V001 A2A Agent Card Viewer",
+  title: "Agentic/Orchestration/V001 Visor de tarjeta A2A",
   component: A2AAgentCardViewer,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

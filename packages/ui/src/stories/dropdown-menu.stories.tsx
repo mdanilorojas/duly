@@ -12,7 +12,7 @@ import {
 import { Button } from "../components/ui/button.js";
 import { ChevronDown } from "lucide-react";
 
-const meta = { title: "Overlay/DropdownMenu" };
+const meta = { title: "Primitivas/Superpuestos/DropdownMenu" };
 export default meta;
 type S = StoryObj<typeof meta>;
 

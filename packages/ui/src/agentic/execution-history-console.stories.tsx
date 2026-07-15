@@ -289,7 +289,7 @@ export const DEFAULT_EXECUTION_NODES: Record<string, RunInspectorNode[]> = {
 };
 
 const meta: Meta<typeof ExecutionHistoryConsole> = {
-  title: "Agentic/Execution History/V001 n8n-style Runs",
+  title: "Agentic/Execution History/V001 Corridas estilo n8n",
   component: ExecutionHistoryConsole,
   parameters: {
     layout: "fullscreen",

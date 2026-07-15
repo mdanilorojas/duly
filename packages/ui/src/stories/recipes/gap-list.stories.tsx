@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Badge } from "../../components/ui/badge.js";
 
 const meta: Meta = {
-  title: "Recipes/ISO Console/Gap List",
+  title: "Recetas/Consola ISO/Lista de brechas",
 };
 export default meta;
 

@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { RichToolCallCard, type ToolResultBlock } from "./rich-tool-call-card.js";
 
 const meta: Meta<typeof RichToolCallCard> = {
-  title: "Agentic/Tool Call Card/V002 Rich Tool-UI",
+  title: "Agentic/Tool Call Card/V002 UI enriquecida de herramienta",
   component: RichToolCallCard,
   parameters: {
     layout: "fullscreen",

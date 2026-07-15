@@ -3,7 +3,7 @@ import type { StoryObj } from "@storybook/react";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group.js";
 import { Label } from "../components/ui/label.js";
 
-const meta = { title: "Primitives/RadioGroup" };
+const meta = { title: "Primitivas/Forms/RadioGroup" };
 export default meta;
 type S = StoryObj<typeof meta>;
 

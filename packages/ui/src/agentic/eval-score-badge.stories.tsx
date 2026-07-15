@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { EvalScoreBadge, type EvalScoreRun } from "./eval-score-badge.js";
 
 const meta: Meta<typeof EvalScoreBadge> = {
-  title: "Agentic/Eval Score Badge/V001 Score vs Threshold",
+  title: "Agentic/Eval Score Badge/V001 Puntaje vs umbral",
   component: EvalScoreBadge,
   parameters: {
     layout: "fullscreen",

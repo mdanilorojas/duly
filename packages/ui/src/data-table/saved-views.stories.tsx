@@ -4,7 +4,7 @@ import { DataTable, FilterBar, SavedViews, useDataTable, type ColumnDef } from "
 import type { Density } from "../trace-log/trace-log.variants.js";
 
 const meta: Meta<typeof SavedViews> = {
-  title: "DataTable/V001 Saved Views",
+  title: "Primitivas/DataTable/V001 Vistas guardadas",
   component: SavedViews,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

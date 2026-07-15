@@ -16,7 +16,7 @@ import { TraceLog } from "../../trace-log/trace-log.js";
 import { RunTimeline } from "../../agentic/run-timeline.js";
 
 const meta: Meta = {
-  title: "Recipes/ISO Console/V001 Full Console",
+  title: "Recetas/Consola ISO/V001 Consola completa",
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };
 export default meta;

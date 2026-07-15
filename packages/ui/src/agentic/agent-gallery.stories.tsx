@@ -8,7 +8,7 @@ import { SOFTWARE_AGENTS } from "./software-agents.js";
 import { INDUSTRIAL_AGENTS } from "./industrial-agents.js";
 
 const meta: Meta<typeof AgentGallery> = {
-  title: "Agentic/Agent Gallery/V002 By Industry",
+  title: "Agentic/Agent Gallery/V002 Por industria",
   component: AgentGallery,
   parameters: {
     layout: "fullscreen",

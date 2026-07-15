@@ -3,7 +3,7 @@ import { RunTimeline } from "./run-timeline.js";
 import { NodeStatusLegend } from "./node-status-badge.js";
 
 const meta: Meta<typeof RunTimeline> = {
-  title: "Agentic/Run Timeline/V001 State Grammar",
+  title: "Agentic/Run Timeline/V001 Gramática de estados",
   component: RunTimeline,
   parameters: {
     layout: "fullscreen",

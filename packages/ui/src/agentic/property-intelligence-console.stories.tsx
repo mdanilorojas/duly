@@ -6,7 +6,7 @@ import { AgentStatusMatrix } from "./agent-status-matrix.js";
 import { REAL_ESTATE_AGENTS } from "./real-estate-agents.js";
 
 const meta: Meta<typeof PropertyIntelligenceConsole> = {
-  title: "Agentic/Property Intelligence/V001 Real Estate Console",
+  title: "Agentic/Property Intelligence/V001 Consola inmobiliaria",
   component: PropertyIntelligenceConsole,
   parameters: {
     layout: "fullscreen",

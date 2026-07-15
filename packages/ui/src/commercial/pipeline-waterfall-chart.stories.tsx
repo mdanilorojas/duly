@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { PipelineWaterfallChart, type PipelineChange } from "./pipeline-waterfall-chart.js";
 
 const meta: Meta<typeof PipelineWaterfallChart> = {
-  title: "Commercial/V001 Pipeline Waterfall",
+  title: "Comercial/V001 Pipeline Waterfall",
   component: PipelineWaterfallChart,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

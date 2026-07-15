@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { DeltaList } from "./delta-list.js";
 
 const meta: Meta<typeof DeltaList> = {
-  title: "Compliance/Delta List/V001 Run Diff",
+  title: "Compliance/Delta List/V001 Diferencia entre corridas",
   component: DeltaList,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

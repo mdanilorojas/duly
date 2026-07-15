@@ -3,7 +3,7 @@ import { EventType } from "@ag-ui/core";
 import { StreamingMessage, type AgUiStreamEvent } from "./streaming-message.js";
 
 const meta: Meta<typeof StreamingMessage> = {
-  title: "Agentic/Streaming Message/V001 AG-UI stream",
+  title: "Agentic/Streaming Message/V001 Flujo AG-UI",
   component: StreamingMessage,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };

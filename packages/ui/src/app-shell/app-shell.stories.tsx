@@ -46,7 +46,7 @@ import { RatioGauge } from "../commercial/ratio-gauge.js";
  * entre verticales.
  */
 const meta: Meta<typeof AppShell> = {
-  title: "App Shell/V001 Multi-Workspace Shell",
+  title: "Primitivas/Layout/App Shell/V001 Multi-espacio de trabajo",
   component: AppShell,
   parameters: { layout: "fullscreen", backgrounds: { default: "dark" } },
 };
