@@ -182,4 +182,16 @@ export const enCopy = {
       sandbox: "Sandbox",
     },
   },
+  dateRangePicker: {
+    label: "Date range",
+    openCalendar: "Open calendar",
+    timezoneNote: (tz: string) => `Times shown in ${tz}`,
+    presets: {
+      label: "Quick ranges",
+      last7: "Last 7 days",
+      last30: "Last 30 days",
+      monthToDate: "Month to date",
+      quarterToDate: "Quarter to date",
+    },
+  },
 };

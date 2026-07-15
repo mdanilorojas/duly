@@ -179,4 +179,16 @@ export const esCopy = {
       sandbox: "Sandbox",
     },
   },
+  dateRangePicker: {
+    label: "Rango de fechas",
+    openCalendar: "Abrir calendario",
+    timezoneNote: (tz: string) => `Horas mostradas en ${tz}`,
+    presets: {
+      label: "Rangos rápidos",
+      last7: "Últimos 7 días",
+      last30: "Últimos 30 días",
+      monthToDate: "Mes a la fecha",
+      quarterToDate: "Trimestre a la fecha",
+    },
+  },
 } satisfies CopyDict;
