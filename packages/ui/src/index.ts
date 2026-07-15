@@ -40,6 +40,9 @@ export * from "./app-shell/index.js";
 // data-table — primitiva densa/virtualizada, columna vertebral de todas las tablas
 export * from "./data-table/index.js";
 
+// kanban — tablero de columnas controlado (dnd-kit), backlogs por estado
+export * from "./kanban/index.js";
+
 // date-range-picker — rango con zona horaria visible (react-aria-components)
 export * from "./date-range-picker/index.js";
 

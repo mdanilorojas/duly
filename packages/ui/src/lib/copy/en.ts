@@ -222,4 +222,13 @@ export const enCopy = {
   dropzone: {
     label: "Drop files here or click to browse",
   },
+  kanban: {
+    board: "Kanban board",
+    instructions:
+      "To pick up a card, press space or enter. Use the arrow keys to move it, space or enter to drop, escape to cancel.",
+    pickedUp: (t: string) => `Picked up ${t}`,
+    movedOver: (t: string, target: string) => `${t} is over ${target}`,
+    dropped: (t: string, target: string) => `${t} dropped on ${target}`,
+    canceled: (t: string) => `Movement of ${t} canceled`,
+  },
 };

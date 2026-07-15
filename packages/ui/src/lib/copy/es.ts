@@ -217,4 +217,13 @@ export const esCopy = {
   dropzone: {
     label: "Arrastra archivos aquí o haz clic para elegir",
   },
+  kanban: {
+    board: "Tablero kanban",
+    instructions:
+      "Para levantar una tarjeta, presiona espacio o enter. Usa las flechas para moverla, espacio o enter para soltar, escape para cancelar.",
+    pickedUp: (t: string) => `Levantaste ${t}`,
+    movedOver: (t: string, target: string) => `${t} está sobre ${target}`,
+    dropped: (t: string, target: string) => `${t} soltada en ${target}`,
+    canceled: (t: string) => `Movimiento de ${t} cancelado`,
+  },
 } satisfies CopyDict;
