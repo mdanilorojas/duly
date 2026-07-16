@@ -5,8 +5,16 @@
  * so consuming apps keep their own element resets untouched. Token color/font
  * namespace (@theme inline) + theme variable values come from @duly/tokens.
  * `@source` scans this package's components so their utility classes are emitted.
+ *
+ * `base` is reserved here (with no content) so its cascade position is fixed
+ * BEFORE `utilities`, even though its actual rules live in the separately
+ * compiled `reset.css`. Without this, a consumer importing both `styles.css`
+ * and `reset.css` gets `base` appended after `utilities` in layer order (its
+ * first mention only happens in reset.css) — preflight's `*{padding:0;
+ * border:0 solid;...}` then silently wins over every padding/border/radius
+ * utility class in the whole app.
  */
-@layer theme, components, utilities;
+@layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 
