@@ -5,8 +5,9 @@ import { Agentic } from "./pages/Agentic";
 import { Compliance } from "./pages/Compliance";
 import { Comercial } from "./pages/Comercial";
 import { Industrial } from "./pages/Industrial";
+import { Primitivas } from "./pages/Primitivas";
 
-type Page = "home" | "agentic" | "compliance" | "comercial" | "industrial";
+type Page = "home" | "agentic" | "compliance" | "comercial" | "industrial" | "primitivas";
 
 const PAGES: { id: Page; label: string }[] = [
   { id: "home", label: "Inicio" },
@@ -14,6 +15,7 @@ const PAGES: { id: Page; label: string }[] = [
   { id: "compliance", label: "Compliance" },
   { id: "comercial", label: "Comercial" },
   { id: "industrial", label: "Industrial" },
+  { id: "primitivas", label: "Primitivas" },
 ];
 
 export default function App() {
@@ -67,6 +69,7 @@ export default function App() {
           {page === "compliance" && <Compliance />}
           {page === "comercial" && <Comercial />}
           {page === "industrial" && <Industrial />}
+          {page === "primitivas" && <Primitivas />}
         </main>
       </div>
     </CopyProvider>

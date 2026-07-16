@@ -16,11 +16,16 @@ import {
   ApprovalGateCard,
   TraceLog,
   RunTimeline,
+  ApprovalChainStepper,
+  EvidenceExportDialog,
+  ModelProvenanceCard,
   type Workspace,
   type KanbanColumn,
   type ConnectorEntry,
   type AuditEvent,
   type InterruptQueueItem,
+  type ApprovalStep,
+  type ExportResult,
 } from "@duly/ui";
 
 const isoSteps = [
@@ -34,13 +39,14 @@ const isoSteps = [
   { label: "Remediación", state: "pending" as const },
 ];
 
-type View = "dashboard" | "dataroom" | "cola" | "corrida" | "ciclo";
+type View = "dashboard" | "dataroom" | "cola" | "corrida" | "ciclo" | "evidencia";
 const VIEWS: { id: View; label: string }[] = [
   { id: "dashboard", label: "Dashboard" },
   { id: "dataroom", label: "Data room" },
   { id: "cola", label: "Cola de revisión" },
   { id: "corrida", label: "Corrida en vivo" },
   { id: "ciclo", label: "Backlog / ciclo" },
+  { id: "evidencia", label: "Evidencia" },
 ];
 
 // Taxonomía real del SGSI: 8 cláusulas (4-10) + 5 dominios del Anexo A.
@@ -77,6 +83,12 @@ const auditEvents: AuditEvent[] = [
   { id: "evt-1", actorKind: "agent", actor: "Evidence Collector Agent", action: "Ingirió 12 documentos nuevos desde SharePoint", resource: "SharePoint /Compliance · lote 2026-07-14", outcome: "info", timestamp: "2026-07-14 09:14:03 UTC", hash: "a3f9c1e2b7d4" },
   { id: "evt-2", actorKind: "human", actor: "Ana Beltrán", action: "Aprobó excepción de MFA para VPN de terceros", resource: "A8 · excepción EX-114", outcome: "ok", timestamp: "2026-07-14 09:16:41 UTC", hash: "f10e2a9c44b1" },
   { id: "evt-3", actorKind: "agent", actor: "Gap Detector Agent", action: "Marcó 46 controles del Anexo A sin evidencia", resource: "SoA · Declaración de Aplicabilidad", outcome: "warn", timestamp: "2026-07-14 08:52:10 UTC", hash: "7c2d8e91a05f" },
+];
+
+const approvalSteps: ApprovalStep[] = [
+  { approver: "Ana Beltrán", role: "CISO", decision: "approved", at: "09:16", note: "Excepción MFA revisada contra A.8.5." },
+  { approver: "Luis Farfán", role: "Legal", decision: "approved", at: "09:41" },
+  { approver: "Comité de riesgo", role: "GRC", decision: "pending" },
 ];
 
 const interruptItems: InterruptQueueItem[] = [
@@ -244,6 +256,68 @@ function Ciclo() {
   );
 }
 
+function Evidencia() {
+  const [exportOpen, setExportOpen] = useState(false);
+
+  async function runExport(): Promise<ExportResult> {
+    await new Promise((r) => setTimeout(r, 900));
+    return { manifestHash: "b4e7a1f0c9d2", url: "#" };
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
+        <div style={{ border: "1px solid var(--border-default)", borderRadius: "0.5rem", background: "var(--surface-2)", padding: "1rem" }}>
+          <p style={{ marginBottom: "0.6rem", fontFamily: "var(--font-mono)", fontSize: "0.66rem", color: "var(--faint)" }}>
+            Cadena de aprobación — excepción MFA
+          </p>
+          <ApprovalChainStepper steps={approvalSteps} />
+        </div>
+        <div style={{ border: "1px solid var(--border-default)", borderRadius: "0.5rem", background: "var(--surface-2)", padding: "1rem" }}>
+          <p style={{ marginBottom: "0.6rem", fontFamily: "var(--font-mono)", fontSize: "0.66rem", color: "var(--faint)" }}>
+            Procedencia del modelo — Gap Detector Agent
+          </p>
+          <ModelProvenanceCard
+            model="claude-sonnet-5"
+            provider="Anthropic"
+            promptVersion="gap-detector@2026-06-30"
+            configHash="9f21ab7e"
+            temperature={0.2}
+          />
+        </div>
+      </div>
+      <div style={{ border: "1px solid var(--border-default)", borderRadius: "0.5rem", background: "var(--surface-2)", padding: "1rem" }}>
+        <p style={{ marginBottom: "0.6rem", fontFamily: "var(--font-mono)", fontSize: "0.66rem", color: "var(--faint)" }}>
+          Export de evidencia firmada
+        </p>
+        <button
+          type="button"
+          onClick={() => setExportOpen(true)}
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.78rem",
+            padding: "0.4rem 0.9rem",
+            borderRadius: "0.375rem",
+            border: "1px solid var(--accent-border)",
+            background: "var(--accent-surface)",
+            color: "var(--accent)",
+            cursor: "pointer",
+          }}
+        >
+          Exportar evidencia — 148 registros
+        </button>
+        <EvidenceExportDialog
+          open={exportOpen}
+          onOpenChange={setExportOpen}
+          range="1–14 jul 2026"
+          recordCount={148}
+          onExport={runExport}
+        />
+      </div>
+    </div>
+  );
+}
+
 export function Compliance() {
   const [view, setView] = useState<View>("dashboard");
   const [engagement, setEngagement] = useState("banco-andino");
@@ -282,6 +356,7 @@ export function Compliance() {
         {view === "cola" && <Cola />}
         {view === "corrida" && <Corrida />}
         {view === "ciclo" && <Ciclo />}
+        {view === "evidencia" && <Evidencia />}
       </div>
     </AppShell>
   );

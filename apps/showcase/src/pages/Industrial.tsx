@@ -6,6 +6,7 @@ import {
   AutonomyModeSwitch,
   OEEWaterfall,
   ProcessValueTile,
+  AlarmChip,
   type Alarm,
   type AlarmRow,
   type AutonomyLevel,
@@ -61,6 +62,12 @@ export function Industrial() {
 
       <div style={{ border: "1px solid var(--border-default)", borderRadius: "0.5rem", background: "var(--surface-2)", padding: "1rem" }}>
         <AlarmSummaryTable alarms={alarms} onAck={() => {}} onShelve={() => {}} />
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginTop: "0.75rem" }}>
+          <AlarmChip priority="critical" state="unack" />
+          <AlarmChip priority="high" state="ack" />
+          <AlarmChip priority="medium" state="rtn" />
+          <AlarmChip priority="low" state="shelved" />
+        </div>
       </div>
 
       <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "1fr 1fr" }}>

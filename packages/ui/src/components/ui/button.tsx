@@ -39,25 +39,32 @@ const buttonVariants = cva(
   }
 )
 
-function Button({
-  className,
-  variant = "default",
-  size = "default",
-  asChild = false,
-  loading = false,
-  disabled,
-  children,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-    /** Muestra un spinner y deshabilita el botón — para acciones en vuelo (submit/approve/etc). */
-    loading?: boolean
-  }) {
+const Button = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentProps<"button"> &
+    VariantProps<typeof buttonVariants> & {
+      asChild?: boolean
+      /** Muestra un spinner y deshabilita el botón — para acciones en vuelo (submit/approve/etc). */
+      loading?: boolean
+    }
+>(function Button(
+  {
+    className,
+    variant = "default",
+    size = "default",
+    asChild = false,
+    loading = false,
+    disabled,
+    children,
+    ...props
+  },
+  ref
+) {
   const Comp = asChild ? Slot.Root : "button"
 
   return (
     <Comp
+      ref={ref}
       data-slot="button"
       data-variant={variant}
       data-size={size}
@@ -72,6 +79,6 @@ function Button({
       {children}
     </Comp>
   )
-}
+})
 
 export { Button, buttonVariants }

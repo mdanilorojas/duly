@@ -6,12 +6,16 @@ import {
   RatioGauge,
   PricingApprovalMatrix,
   RelationshipMap,
+  WaterfallChart,
+  MutualActionPlanBoard,
   type PipelineChange,
   type MRRMovement,
   type ForecastRow,
   type DiscountTier,
   type Stakeholder,
   type RelationshipLink,
+  type WaterfallSegment,
+  type Milestone,
 } from "@duly/ui";
 
 const pipelineChanges: PipelineChange[] = [
@@ -63,6 +67,20 @@ const links: RelationshipLink[] = [
   { id: "l2", source: "ciso", target: "cfo" },
 ];
 
+const headcountSegments: WaterfallSegment[] = [
+  { label: "Contrataciones Q3", delta: 8, tone: "ok" },
+  { label: "Bajas voluntarias", delta: -3, tone: "block" },
+  { label: "Transferencias entrantes", delta: 2, tone: "info" },
+];
+
+const milestones: Milestone[] = [
+  { id: "m1", title: "Firma de NDA mutuo", owner: "Legal (vendedor)", side: "seller", due: "2026-06-20", status: "done" },
+  { id: "m2", title: "Aprobación de seguridad (SOC 2)", owner: "Mara Kite (CISO)", side: "buyer", due: "2026-07-05", status: "done" },
+  { id: "m3", title: "Piloto técnico con equipo de Ivo Park", owner: "Ivo Park (VP Eng)", side: "buyer", due: "2026-07-18", status: "in-progress", dependsOn: ["m2"] },
+  { id: "m4", title: "Aprobación de presupuesto FY26", owner: "Dana Wu (CFO)", side: "buyer", due: "2026-07-10", status: "blocked", dependsOn: ["m3"] },
+  { id: "m5", title: "Redlines de contrato", owner: "Legal (vendedor)", side: "seller", due: "2026-07-25", status: "todo" },
+];
+
 export function Comercial() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: 1100, margin: "0 auto" }}>
@@ -96,6 +114,20 @@ export function Comercial() {
         <div style={{ border: "1px solid var(--border-default)", borderRadius: "0.5rem", background: "var(--surface-2)", padding: "1rem", minHeight: 260 }}>
           <RelationshipMap people={people} links={links} ariaLabel="Comité de compra" onSelect={() => {}} />
         </div>
+      </div>
+
+      <div>
+        <p style={{ marginBottom: "0.6rem", fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--faint)" }}>
+          Waterfall genérico — headcount del equipo comercial
+        </p>
+        <WaterfallChart title="Headcount · Q3" startValue={42} segments={headcountSegments} />
+      </div>
+
+      <div style={{ border: "1px solid var(--border-default)", borderRadius: "0.5rem", background: "var(--surface-2)", padding: "1rem" }}>
+        <p style={{ marginBottom: "0.6rem", fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--faint)" }}>
+          Plan de acción mutuo — cierre Banco Andino
+        </p>
+        <MutualActionPlanBoard milestones={milestones} onToggle={() => {}} now="2026-07-15" />
       </div>
     </div>
   );
