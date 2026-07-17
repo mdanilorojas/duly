@@ -91,4 +91,5 @@ export const vizPalettes: Record<string, VizPalette> = {
   cockpit: { cat: CAT_DARK, seq: SEQ_COCKPIT },
   violet: { cat: CAT_DARK, seq: SEQ_VIOLET },
   light: { cat: CAT_LIGHT, seq: SEQ_LIGHT },
+  ganapliego: { cat: CAT_LIGHT, seq: SEQ_LIGHT },
 };

@@ -21,7 +21,8 @@
     "./motion.css": "./dist/motion.css",
     "./theme-cockpit.css": "./dist/theme-cockpit.css",
     "./theme-light.css": "./dist/theme-light.css",
-    "./theme-violet.css": "./dist/theme-violet.css"
+    "./theme-violet.css": "./dist/theme-violet.css",
+    "./theme-ganapliego.css": "./dist/theme-ganapliego.css"
   },
   "publishConfig": { "access": "public" },
   "scripts": {
