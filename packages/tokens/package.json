@@ -1,5 +1,5 @@
 {
-  "name": "@duly/tokens",
+  "name": "@enregla-ui/duly-tokens",
   "version": "0.1.0",
   "type": "module",
   "description": "Design tokens for the Studio design system — themeable CSS variables (hex + oklch) and typed JS token maps.",

@@ -78,7 +78,7 @@ import {
   type CommandPaletteItem,
   type ColumnDef,
   type DateRange,
-} from "@duly/ui";
+} from "@enregla-ui/duly-ui";
 import { Bell } from "lucide-react";
 
 const sectionLabelStyle: React.CSSProperties = {

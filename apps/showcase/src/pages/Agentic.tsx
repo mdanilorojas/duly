@@ -53,7 +53,7 @@ import {
   type ToolResultBlock,
   type ExecutionRecord,
   type RunInspectorNode,
-} from "@duly/ui";
+} from "@enregla-ui/duly-ui";
 
 const queue: InterruptQueueItem[] = [
   {

@@ -1,6 +1,6 @@
 import React from "react";
 import type { Preview } from "@storybook/react";
-import { CopyProvider } from "@duly/ui";
+import { CopyProvider } from "@enregla-ui/duly-ui";
 import "./app.css";
 
 const preview: Preview = {

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { TraceLog } from "@duly/ui";
-import { tokens } from "@duly/tokens";
+import { TraceLog } from "@enregla-ui/duly-ui";
+import { tokens } from "@enregla-ui/duly-tokens";
 
 type Theme = "cockpit" | "test";
 

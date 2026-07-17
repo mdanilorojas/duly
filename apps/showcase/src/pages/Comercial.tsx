@@ -16,7 +16,7 @@ import {
   type RelationshipLink,
   type WaterfallSegment,
   type Milestone,
-} from "@duly/ui";
+} from "@enregla-ui/duly-ui";
 
 const pipelineChanges: PipelineChange[] = [
   { label: "Creado", kind: "created", delta: 420000 },

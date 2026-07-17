@@ -6,7 +6,7 @@
     "build": "storybook build"
   },
   "dependencies": {
-    "@duly/ui": "workspace:*",
+    "@enregla-ui/duly-ui": "workspace:*",
     "react": "^18.3.0",
     "react-dom": "^18.3.0"
   },
@@ -15,7 +15,7 @@
     "@storybook/addon-essentials": "^8.6.18",
     "@storybook/react": "^8.3.0",
     "@storybook/react-vite": "^8.3.0",
-    "@duly/tokens": "workspace:*",
+    "@enregla-ui/duly-tokens": "workspace:*",
     "@tailwindcss/postcss": "^4.0.0",
     "storybook": "^8.3.0",
     "tailwindcss": "^4.0.0",

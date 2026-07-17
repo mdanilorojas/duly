@@ -61,7 +61,7 @@ const motionCss =
 writeFileSync(new URL("motion.css", DIST), motionCss);
 
 // 3. theme.css — @theme inline (var(--token), no hex) + fuentes. Mapea el namespace de color
-//    y motion de Tailwind sin arrastrar el motor/preflight, para que @duly/ui lo reutilice.
+//    y motion de Tailwind sin arrastrar el motor/preflight, para que @enregla-ui/duly-ui lo reutilice.
 //    Tailwind resuelve la utilidad "duration-*" contra el theme key "--transition-duration-*"
 //    (no "--duration-*"); "ease-*" sí resuelve directo contra "--ease-*".
 const themeMap = [...SEMANTIC_KEYS, ...VIZ_KEYS].map((k) => `  --color-${k}: var(--${k});`).join("\n");

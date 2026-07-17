@@ -1,4 +1,4 @@
-import { Button, Badge, Progress } from "@duly/ui";
+import { Button, Badge, Progress } from "@enregla-ui/duly-ui";
 
 type Page = "agentic" | "compliance" | "comercial" | "industrial";
 

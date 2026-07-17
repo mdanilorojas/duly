@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CopyProvider } from "@duly/ui";
+import { CopyProvider } from "@enregla-ui/duly-ui";
 import { Home } from "./pages/Home";
 import { Agentic } from "./pages/Agentic";
 import { Compliance } from "./pages/Compliance";

@@ -1,4 +1,4 @@
-// Acceso a los data-viz tokens de @duly/tokens (--viz-cat-*, --viz-seq-*).
+// Acceso a los data-viz tokens de @enregla-ui/duly-tokens (--viz-cat-*, --viz-seq-*).
 // Devuelven referencias var() — el valor concreto lo resuelve el tema activo
 // (cockpit/violet/light), así un chart cambia de tema sin re-render.
 //
@@ -12,9 +12,9 @@
 // - Alertas en charts usan los status tokens (ok/warn/block), nunca un slot
 //   categórico — y siempre con icono/label, no color solo.
 
-/** Slots categóricos disponibles. Debe coincidir con VIZ_CAT_SLOTS de @duly/tokens. */
+/** Slots categóricos disponibles. Debe coincidir con VIZ_CAT_SLOTS de @enregla-ui/duly-tokens. */
 export const VIZ_CAT_SLOTS = 8;
-/** Pasos de la rampa sequential. Debe coincidir con VIZ_SEQ_STEPS de @duly/tokens. */
+/** Pasos de la rampa sequential. Debe coincidir con VIZ_SEQ_STEPS de @enregla-ui/duly-tokens. */
 export const VIZ_SEQ_STEPS = 7;
 
 /** Color categórico del slot `1..8` como referencia var() temable. */

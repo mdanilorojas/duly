@@ -11,7 +11,7 @@ import {
   type AlarmRow,
   type AutonomyLevel,
   type OEELoss,
-} from "@duly/ui";
+} from "@enregla-ui/duly-ui";
 
 const topAlarm: Alarm = {
   id: "a1",

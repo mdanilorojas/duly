@@ -26,7 +26,7 @@ import {
   type InterruptQueueItem,
   type ApprovalStep,
   type ExportResult,
-} from "@duly/ui";
+} from "@enregla-ui/duly-ui";
 
 const isoSteps = [
   { label: "Acumulación", state: "done" as const },
