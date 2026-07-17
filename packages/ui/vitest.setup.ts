@@ -12,3 +12,9 @@ if (!("ResizeObserver" in globalThis)) {
     disconnect() {}
   };
 }
+
+// jsdom no implementa Element.scrollIntoView — cmdk lo llama al montar/mover
+// el ítem activo (Combobox). No-op mínimo para que sus tests no rompan.
+if (!Element.prototype.scrollIntoView) {
+  Element.prototype.scrollIntoView = function () {};
+}

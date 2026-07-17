@@ -33,6 +33,8 @@ export * from "./components/ui/stepper.js";
 export * from "./components/ui/dropzone.js";
 export * from "./components/ui/skeleton.js";
 export * from "./components/ui/toast.js";
+export * from "./components/ui/combobox.js";
+export * from "./form/index.js";
 
 // app-shell — chrome de aplicación multi-caso-de-uso (sidebar, topbar,
 // workspace switcher, command palette, densidad de sitio)
