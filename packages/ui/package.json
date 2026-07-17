@@ -1,6 +1,6 @@
 {
   "name": "@duly/ui",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "description": "React UI components for the Studio design system — accessible, themeable, Tailwind v4, RSC-ready.",
   "keywords": [
