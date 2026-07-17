@@ -6,5 +6,5 @@ export default defineConfig({
   // sean testeables. Sin esto, un componente que importa una primitiva rompe
   // la suite (vite no lee tsconfig paths por defecto).
   resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
-  test: { environment: "jsdom", setupFiles: ["./vitest.setup.ts"], globals: true },
+  test: { environment: "jsdom", setupFiles: ["./vitest.setup.ts", "./src/test-setup.ts"], globals: true },
 });
