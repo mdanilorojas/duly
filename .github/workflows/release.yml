@@ -26,11 +26,11 @@ jobs:
       - run: pnpm turbo run tokens build lint test
 
       # Requires an NPM_TOKEN repo secret (npmjs.com automation token, "Publish"
-      # permission for the @duly scope). Without it this step opens/updates the
-      # version PR but the publish step is skipped by changesets/action.
+      # permission for the @enregla-ui scope). Without it this step opens/updates
+      # the version PR but the publish step is skipped by changesets/action.
       - uses: changesets/action@v1
         with:
-          publish: pnpm publish -r --filter "@duly/*" --access public --no-git-checks
+          publish: pnpm publish -r --filter "@enregla-ui/*" --access public --no-git-checks
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
