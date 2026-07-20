@@ -2,144 +2,158 @@
 
 > Se sobreescribe cada semana. Historial real vive en `git log -- VANGUARD_REPORT.md`.
 
-**Fecha:** 2026-07-13 · **Generado por:** routine cloud "vanguard check" #3
+**Fecha:** 2026-07-20 · **Generado por:** routine cloud "vanguard check" #4
 
 ## Resumen ejecutivo
 
-El repo está sano: 189/189 tests pasan (40 archivos), CI en verde en `main` (verificado hoy vía
-GitHub Actions), rebrand Studio DS→Duly completado. Esta semana **no fue de catálogo**: un audit
-"impeccable" (2026-07-12) encontró 4 P0 (copy bilingüe, approvals irreversibles, sin CI, nada en
-npm) y el loop de construcción los cerró casi todos el mismo día — CI ya está verde, pero el
-Release workflow **sigue fallando** (no hay paquete publicado en npm). Como el trabajo de la
-semana fue calidad/i18n/rebrand y no catálogo, `AgentHandoffMarker`/`CheckpointBadge` arrastran
-ya **2 semanas** sin construirse. La novedad externa más concreta: Vercel AI SDK shippeó detección
-de "tool-definition drift" (rug pull de MCP) — gap nuevo sin componente en este catálogo.
+Dos bloqueos de larga data se cerraron esta semana. (1) **Distribución RESUELTA**: los paquetes
+ya **están publicados en npm** — `@enregla-ui/duly-ui@0.2.0` y `@enregla-ui/duly-tokens@0.1.0`
+(el scope `@duly` no estaba libre, se renombró a `@enregla-ui/duly-*`); Release y CI **en verde**
+en HEAD. Era el riesgo #1 arrastrado varias semanas. (2) **Regulatorio RESUELTO**: el EU AI Act
+Digital Omnibus fue **firmado el 8-jul-2026** — la incertidumbre "¿se publica antes del 30-jul?"
+dejó de existir. El loop de construcción invirtió la semana en distribución + 4 primitivas
+(Toast/Combobox/FormField/FlowStepper) + un 4º tema + `apps/showcase`, pero **cero gaps del catálogo
+A/B/C se cerraron**: `AgentHandoffMarker`/`CheckpointBadge` cruzan **4 semanas** como prioridad #1.
+La cobertura sube fuerte (a 78%/80%) — pero eso refleja el score poniéndose al día con la ola de
+build del 07-15, no trabajo de catálogo de esta semana.
 
 ## Novedades de la semana (con fuente)
 
-**Inventario interno (lo más grande de esta semana):** entre 2026-07-06 y 2026-07-12 el repo pasó
-por 5 workstreams de calidad + un rebrand + una segunda feature de galería, todo disparado por un
-audit "impeccable" (`.impeccable/critique/2026-07-12T16-25-10Z__packages-ui.md`, Nielsen 23/40,
-Audit Health 15/20, 4 P0/5 P1):
-- **Rebrand** Studio DS → Duly, `@studio/*` → `@duly/*` (commit `b3364f4`).
-- **CI + Release workflows** nuevos (`e9a3d30`) — cierra el P0 "sin CI" del audit. Verificado hoy:
-  `.github/workflows/ci.yml` corre `tokens build lint test` en cada push a `main` y **está en
-  verde** en el commit actual (`eac16e1`, run `29218218470`, conclusion `success`). El workflow de
-  `Release` (changesets + `pnpm publish`) **falla** en sus 2 corridas hasta ahora — el paquete
-  sigue sin publicarse en npm; ver "Riesgos".
-- **Workstream 1 (i18n):** `CopyProvider`/`useCopy`/`useFormatCurrency` — contrato de copy
-  inyectable con diccionarios `en`/`es`, reemplaza el copy bilingüe mezclado que el audit marcó P0.
-- **Workstream 2 (RTL):** sweep de propiedades lógicas CSS en 16 componentes — con 4 TODOs
-  documentados y sin resolver (indentación de `TraceTree`, centrado de `Dialog`, estilos inline de
-  `ProcessValueTile`, virtualizador de `DataTable`).
-- **Workstream 3 (a11y P0):** `Button` gana prop `loading`; `ApprovalGateCard` gana estado en
-  vuelo (deshabilita las 3 acciones mientras una corre) + confirmación real para
-  `riskTone="block"` en vez de ejecutar directo — cierra el P0 "approvals irreversibles sin
-  fricción"; nuevo primitivo `ErrorState` (cva sobre `Alert`), wireado en `DataTable`/
-  `ExecutionHistoryTable`.
-- **Workstream 4 (perf):** `TraceTree` virtualizado, `AgentCore` pausa fuera de viewport.
-- **Workstream 5 (mobile a11y):** touch targets 24px + piso tipográfico.
-- **Agent Gallery por industria:** 24 agentes nuevos en 4 sectores (Legal & Compliance, Petroleum
-  & Energy, Software & Networks, Industrial & Logistics), portados de una segunda referencia HTML
-  del usuario, con un único contexto WebGL compartido entre instancias de `AgentCore` por
-  performance (`feb0b05`…`4a681e4`). Nota: 2 de esos 4 sectores (Legal, Industrial & Logistics) no
-  corresponden a las 5 industrias objetivo de este DS — es reorganización de identidad visual del
-  laboratorio, no una vertical de negocio nueva (no confundir con las áreas E/F, que sí son
-  verticales completas).
+### Interno (lo más importante)
 
-Todo esto es deuda técnica y calidad real (y necesaria), pero **cero filas del catálogo de gaps
-de la semana pasada se cerraron**.
+- **npm publish — RESUELTO.** El bloqueador #1 de semanas ("nada en npm", marcado P0-dist por el
+  audit impeccable) se cerró: `@enregla-ui/duly-ui` está en el registry con versiones `0.1.0` y
+  `0.2.0` (latest `0.2.0`), y `@enregla-ui/duly-tokens@0.1.0`. La causa raíz del fallo previo era
+  doble: el scope `@duly` no estaba disponible en npm (rename a `@enregla-ui/duly-*`, `920f0e2`) y
+  el filtro de publish del workflow apuntaba al scope viejo (`f786617`). El Release workflow corrió
+  **success** en el último run (2026-07-20, sha `d472144`). Verificado contra el registry real, no
+  solo contra el estado del workflow.
+- **CI/Release en verde en HEAD** (`d472144`, 2026-07-20). Un commit intermedio (`7014f42`) rompió
+  CI y Release por `@import` de CSS y entrada de Storybook que el rename dejó apuntando al scope
+  viejo (funcionaba local por tolerancia del resolver de tailwind CLI, rompía bajo Vite/lightningcss);
+  el fix `d472144` lo corrigió y dejó ambos workflows verdes.
+- **4 primitivas nuevas** (todas dependencias table-stakes que faltaban): `Toast`/`Toaster`
+  (`583efaa`, con story en Storybook), `Combobox` (`e471ef9`), `FormField`/`useZodForm`
+  (`e471ef9`, `packages/ui/src/form/`), `FlowStepper` (wizard multi-paso, `7014f42`). Toast queda
+  ✅; las otras 3 en 🟡 (existen + test + demostradas en `apps/showcase`, pero sin story standalone
+  en Storybook — mismo criterio con que `ErrorState` quedó en 🟡).
+- **4º tema `ganapliego`** (`59b2701`) — tema de producto light-based (clon de `light` en v1). El
+  theming white-label sube a 4 temas pero sigue en 🟡: aún falta la guía white-label documentada.
+- **`apps/showcase`** (Duly Showcase, `d33bced`→`9744a36`) — primera superficie de demostración
+  compuesta por vertical (Agentic/Comercial/Compliance/Industrial/Primitivas), desplegada en Vercel.
+  Refuerza directamente el principio "demostrable, no un demo bonito".
 
-**Vercel AI SDK (novedad externa más concreta):** `ai@7.0.19` (9-jul-2026) agrega
-`fingerprintTools`/`detectToolDrift` para detectar tools MCP que mutan su definición después de
-ser aprobadas ("rug pull"). Combinado con literatura de seguridad MCP de 2026 que trata esto como
-vector de ataque activo, es una categoría de UI que este catálogo no cubre — nueva fila
-`ToolIntegrityIndicator` en área B. Fuentes: [Vercel AI SDK changelog](https://vercel.com/changelog),
-[policylayer.com/attacks/mcp-rug-pull](https://policylayer.com/attacks/mcp-rug-pull).
+Todo esto es infraestructura de "producto consumible" real y necesaria — pero ninguna fila de gap
+del catálogo (área A/B/C) se construyó.
 
-**EU AI Act:** sin cambio de contenido; deadline mecánico más preciso — el Digital Omnibus debe
-publicarse en el Diario Oficial **a más tardar el 30-jul-2026** para entrar en vigor el 2-ago-2026.
-A esta fecha (2026-07-13) sigue sin confirmarse la publicación en EUR-Lex. Fuentes:
-[Bird & Bird](https://www.twobirds.com/en/insights/2026/ai-act-,-a-,-provisionally-agreed-ai-digital-omnibus-consolidated-version),
-[axis-intelligence.com](https://axis-intelligence.com/eu-ai-act-news/).
+### Externo
 
-**n8n / Temporal / OpenAI / Anthropic / IBM Carbon / Adobe Spectrum:** todos revisados, sin
-cambios sustantivos de patrón esta semana. Anthropic solo publicó features administrativas
-(tabs de uso en consola admin de Claude Code, expiración de API keys, "Reflect") sin relevancia
-de UI de agentes.
-
-**Salud (reconfirmación):** el patrón "activity panel separation" (mostrar una recomendación a la
-vez + panel de evidencia + override de un clic) sigue siendo el estándar de facto en UI clínica de
-IA — mismo hallazgo de la semana pasada ("Explainability on Demand"), ahora con una fuente
-adicional que agrega urgencia: proyección de que los reclamos legales "death by AI" superarán
-2000 para fin de 2026 por guardrails insuficientes. Sigue sin vertical propia en el catálogo — la
-oportunidad de pionero más clara, sin cambio de análisis. Fuente:
-[fuselabcreative.com/ui-design-for-ai-agents](https://fuselabcreative.com/ui-design-for-ai-agents/).
+- **EU AI Act Digital Omnibus — RESUELTO.** Cronología completa: Parlamento 16-jun, Consejo 29-jun,
+  **acto final FIRMADO 8-jul-2026**; entra en vigor al 3er día tras publicación en el Diario Oficial
+  (ya firmado, publicación inminente). La fecha de aplicación de alto-riesgo **2-ago-2026 queda
+  oficialmente diferida**: standalone → **2-dic-2027**, embebido en productos regulados →
+  **2-ago-2028**. El watermarking/transparencia de contenido IA sigue en **2-dic-2026** (NO diferido)
+  y es ahora la obligación exigible más próxima — ya cubierta por `ModelProvenanceChip` (principio #8).
+  Fuentes:
+  [Freshfields](https://www.freshfields.com/en/our-thinking/blogs/technology-quotient/eu-ai-act-unpacked-34-the-final-digital-omnibus-on-ai-key-amendments-to-the-a-102nber),
+  [Gibson Dunn](https://www.gibsondunn.com/eu-ai-act-omnibus-agreement-postponed-high-risk-deadlines-and-other-key-changes/),
+  [DLA Piper](https://knowledge.dlapiper.com/dlapiperknowledge/globalemploymentlatestdevelopments/2026/The-Digital-AI-Omnibus-Proposed-deferral-of-high-risk-AI-obligations-under-the-AI-Act).
+- **Patrón nuevo "planning visibility"** — fuentes de UX de agentes 2026 tratan "ver la secuencia de
+  acciones intencionada ANTES de ejecutar" como 1 de 5 patrones universales de agente enterprise
+  (junto a tool-use disclosure, memory surfacing, workflow tracking, recovery routing). Es distinto
+  de aprobar una acción puntual (`ApprovalGateCard`) o consentir alcance (`AgentConsentCard`): es el
+  plan completo de N pasos por adelantado, editable. Sin componente hoy → nueva fila
+  `AgentPlanPreview` (área B). Fuente:
+  [fuselabcreative.com/ui-design-for-ai-agents](https://fuselabcreative.com/ui-design-for-ai-agents/).
+- **n8n** — releases de julio: bug fixes de editor/AI-builder/nodos + soporte de **OAuth 2.0 Token
+  Exchange (RFC 8693)** para embed en iframe sin login separado. Mejora la *auth* del embed, no el
+  *branding*: sigue sin white-label completo, el análisis de `WorkflowCanvasFrame` no cambia. Fuente:
+  [n8n release notes](https://docs.n8n.io/release-notes/), [n8n Embed docs](https://docs.n8n.io/embed/).
+- **Vercel AI SDK** — `ai@7.0.30` (16-jul-2026): parche de seguridad de URLs de provider
+  (`trustedOrigin`/`credentialedOrigin`, validación de redirects) + grok-4.5. Sin componente nuevo,
+  pero refuerza la línea "integridad/seguridad de la superficie de tools" que motivó
+  `ToolIntegrityIndicator`. Fuente:
+  [github.com/vercel/ai/releases](https://github.com/vercel/ai/releases).
+- **OpenAI / Anthropic** — sin patrón nuevo de UI de agentes esta semana. OpenAI: transporte
+  websocket para modelos Responses + sandbox nativo (tooling). Anthropic: subagent text streaming,
+  progress heartbeats, tool `EndConversation` en Claude Code (dev tooling, no UI de agentes).
+- **IBM Carbon / Adobe Spectrum** — sin release notes de patrón nuevo esta semana.
 
 ## Score de cobertura
 
-Catálogo ampliado a **64 ítems** (antes 63; +1 fila `ToolIntegrityIndicator` en área B, +1 fila
-subió de ❌ a 🟡 en área D):
+**Recuento completo reconciliado contra el `NORTH_STAR.md` actual.** El salto grande vs el reporte
+anterior (72%/75% → 78%/80%) **no es trabajo de catálogo de esta semana**: es el score poniéndose al
+día con la ola de build del **2026-07-15** (AppShell, CommandPalette, DateRangePicker, data-viz
+tokens, BandGauge, DeltaList, ConnectorStatus), que aterrizó *después* del reporte #3 y quedó
+reflejada en el `NORTH_STAR` pero nunca fue puntuada por un reporte. Esta semana solo agrega 1 gap
+nuevo (`AgentPlanPreview`, ❌ en B) y 0 cierres de catálogo.
 
-| Área | ✅ | 🟡 | ❌ | Total | Cobertura (✅) | Cobertura ponderada (✅=1, 🟡=0.5) |
+| Área | ✅ | 🟡 | ❌ | Total | Cobertura (✅) | Ponderada (✅=1, 🟡=0.5) |
 |---|---|---|---|---|---|---|
 | A. n8n / proceso empresarial | 7 | 0 | 1 | 8 | 88% | 88% |
-| B. Agent ops / consola de IA | 18 | 0 | 4 | 22 | 82% | 82% |
-| C. Auditoría / compliance | 6 | 0 | 5 | 11 | 55% | 55% |
-| D. Table stakes enterprise | 2 | 4 | 4 | 10 | 20% | 40% |
+| B. Agent ops / consola de IA | 19 | 0 | 5 | 24 | 79% | 79% |
+| C. Auditoría / compliance | 8 | 0 | 5 | 13 | 62% | 62% |
+| D. Table stakes enterprise | 7 | 3 | 1 | 11 | 64% | 77% |
 | E. Comercial / RevOps | 6 | 0 | 0 | 6 | 100% | 100% |
 | F. Industrial / OT | 7 | 0 | 0 | 7 | 100% | 100% |
-| **Total** | **46** | **4** | **14** | **64** | **72%** | **75%** |
+| **Total (A–F)** | **54** | **3** | **12** | **69** | **78%** | **80%** |
 
-Prácticamente plano vs la semana pasada (73%/75% → 72%/75%) — coherente con que el trabajo de la
-semana fue calidad, no catálogo: sube 1 fila de D (i18n/RTL, ❌→🟡, ver detalle en `NORTH_STAR.md`)
-pero se agrega 1 gap nuevo en B (`ToolIntegrityIndicator`), que se cancelan casi exactamente.
+(Las **primitivas** — Stepper/Dropzone/KanbanBoard/Toast/Combobox/FormField/FlowStepper — se
+documentan pero, como en reportes previos, **no se puntúan** en la tabla A–F para mantener la
+comparación limpia. De sumarse, 4 son ✅ y 3 son 🟡.)
+
+Área D deja de ser la más rezagada del catálogo (subió de 20%/40% a 64%/77% con la ola del 07-15).
+**C (compliance) es ahora la de menor cobertura ✅ (62%)** — 5 gaps abiertos: `RBACMatrixViewer`,
+`DataLineageGraph`, `ChangeRecordCard`, `IncidentView`, `VendorRiskCard`.
 
 ## Top 5 gaps priorizados (backlog para el loop de construcción de 5h)
 
-1. **AgentHandoffMarker + CheckpointBadge** — prioridad #1 por **tercera semana consecutiva**
-   (iteración 15 → ladder §07 → semana de calidad, ninguno las tocó). Marcadores puntuales sobre
-   `RunTimeline`/`TraceTree`/`ExecutionTimeline` ya existentes; bajo esfuerzo. Si la próxima semana
-   tampoco se cierran, vale la pena investigar si hay un bloqueo estructural en vez de solo
-   prioridad.
-2. **ToolIntegrityIndicator (tool-definition drift)** — nuevo esta semana; Vercel AI SDK ya lo
-   resuelve a nivel de SDK, sin UI equivalente en este catálogo. Extender `GuardrailIndicator` en
-   vez de construir desde cero.
-3. **RBACMatrixViewer** — área C en 55%; vocabulario de actor/provider ya existe en
-   `ModelProvenanceCard`/`ApprovalChainStepper`.
-4. **CommandPalette + Density modes sitewide + DateRangePicker** — área D sigue la más rezagada
-   del catálogo (20%/40%); dependencias ya decididas (`cmdk`, `react-aria-components`).
-5. **AgentAnomalyIndicator + VendorRiskCard** — ambas arrastradas de la semana pasada (FINRA /
-   SOC2 2026 respectivamente), sin cambio de análisis.
+1. **AgentHandoffMarker + CheckpointBadge** — prioridad #1 por **cuarta semana consecutiva** (iter.15
+   → ladder §07 → semana de calidad → semana de distribución/npm, ninguna las tocó). Marcadores
+   puntuales sobre `RunTimeline`/`TraceTree`/`ExecutionTimeline` ya existentes; bajo esfuerzo. **El
+   patrón ya no es "orden de prioridad" sino que el top-5 de este documento no está llegando al loop
+   de construcción.** Acción concreta sugerida: sembrarlas como el PRIMER ítem de la próxima sesión,
+   o promover el par a un spec explícito en `docs/`.
+2. **RBACMatrixViewer** — C es ahora la peor área (62%); el vocabulario actor/provider ya existe en
+   `ModelProvenanceCard`/`ApprovalChainStepper`. "Por qué este usuario tiene acceso" sigue sin UI.
+3. **ToolIntegrityIndicator (tool-definition drift)** — Vercel AI SDK ya lo resuelve a nivel SDK
+   (`fingerprintTools`/`detectToolDrift`), reforzado por el parche de seguridad de tools de esta
+   semana; sin UI equivalente. Extender `GuardrailIndicator` en vez de construir desde cero.
+4. **AgentAnomalyIndicator + VendorRiskCard** — arrastradas (FINRA behavioral baselining / auditores
+   SOC2 2026 respectivamente); ambas reusan vocabulario `Tone`/`NodeStatus` o `ModelProvenanceCard`.
+5. **AgentPlanPreview (planning visibility)** — nuevo esta semana; patrón emergente de UX de agentes
+   enterprise (secuencia de acciones antes de ejecutar). Bajo-medio esfuerzo reusando la gramática de
+   pasos. Menor urgencia que 1–4 por ser de esta semana, pero de valor transversal a las 5 verticales.
 
-(`WorkflowCanvasFrame` sigue fuera del top 5, mayor esfuerzo del catálogo restante. Vertical de
-salud sigue siendo la oportunidad de pionero de mayor plazo — ningún competidor visible tiene una
-vertical clínica construida todavía y la señal regulatoria/UX sigue acumulándose semana a semana.)
+(Las 3 primitivas en 🟡 — `Combobox`/`FlowStepper`/`FormField` — solo necesitan una story standalone
+en Storybook para pasar a ✅; trabajo trivial, no compite con los gaps de arriba. `WorkflowCanvasFrame`
+sigue fuera del top 5, mayor esfuerzo. **Vertical de salud** sigue siendo la oportunidad de pionero de
+mayor plazo — ningún competidor visible tiene vertical clínica construida y la señal UX/regulatoria se
+sigue acumulando.)
 
 ## Riesgos
 
-- **Release/npm publish sigue roto:** el workflow `Release` (`.github/workflows/release.yml`) se
-  ejecutó 2 veces esta semana y **falló las 2** (`conclusion: failure`, runs `29205461478` y
-  `29218218448`) — el `NPM_TOKEN` requerido probablemente no está configurado como secret del
-  repo. Resultado: `@duly/*` sigue en v0.0.0, sin publicar, consumible solo por clon del monorepo.
-  El audit "impeccable" ya lo marcó P0-dist ("Nada publicado en npm... Bloqueador #1 de control
-  plane") — la infraestructura de CI/release ya existe, pero el bloqueador de fondo (secret de
-  npm) sigue sin resolverse. Fuera de mi alcance arreglarlo (solo toco `.md`), pero vale la pena
-  que el loop de construcción o el usuario lo revisen — es la brecha más concreta entre "parece
-  publicado" (hay workflow) y "está publicado" (no hay paquete).
-- **`AgentHandoffMarker`/`CheckpointBadge` llevan 3 semanas sin cerrar** pese a ser prioridad #1
-  en cada reporte desde la iteración 15 — dos loops de construcción distintos (ladder §07, semana
-  de calidad) corrieron con agendas propias y ninguno las tocó. Si sigue así una semana más, el
-  problema deja de ser "orden de prioridad" y pasa a ser señal de que el backlog de este documento
-  no está llegando al loop de construcción de forma efectiva.
+- **El top-5 de este documento no está llegando al loop de construcción (riesgo de proceso, el más
+  importante esta semana).** 4 loops de construcción distintos corrieron desde la iteración 15 y
+  ninguno construyó `AgentHandoffMarker`/`CheckpointBadge` pese a ser prioridad #1 en cada reporte.
+  El loop trabaja de sus propios specs/audits (impeccable, ladder §07, distribución) y no consume
+  este backlog. Recomendación: acoplar explícitamente el top-5 del vanguard al arranque del loop de
+  construcción, o convertir el par pendiente en un spec en `docs/` que el loop sí lea.
+- **Nombres de paquete stale en docs de repo (bajo, pero consumidor-visible):** `README.md` y
+  `apps/showcase/package.json` todavía dicen `@duly/tokens` / `@duly/ui` / `@duly/showcase`, cuando
+  el paquete publicado es `@enregla-ui/duly-*`. Un dev que copie el snippet de instalación del README
+  instalará un paquete inexistente. Fuera de mi alcance arreglarlo (solo toco `.md` de vanguardia);
+  vale que el loop de construcción sincronice README/CONTRIBUTING con el scope real.
 - **`AGENTIC_EXPERIMENTS_LOG.md` sigue desactualizado** — se detiene en la iteración 15
-  (2026-07-04T19:15:00Z); toda la actividad posterior (ladder, workstreams 1-5, agent gallery por
-  industria) solo vive en mensajes de commit y specs, no en el log narrativo. Mismo riesgo
-  señalado la semana pasada, sin resolver.
-- **Regulatorio, ventana agotándose:** el Digital Omnibus debe publicarse en el Diario Oficial a
-  más tardar el 30-jul-2026 — quedan ~2 semanas y media a la fecha de este reporte sin
-  confirmación en EUR-Lex. Sin señal de retraso todavía, pero la próxima revisión (2026-07-20)
-  debería traer una respuesta definitiva.
-- **Cobertura por área sigue muy desigual:** D (table stakes, 20%/40%) sigue siendo la más
-  rezagada, por debajo de C (compliance, 55%) — la mejora de i18n/RTL a 🟡 ayuda pero
-  `CommandPalette`/`DateRangePicker`/Data-viz tokens siguen en ❌ puro.
+  (2026-07-04). Toda la actividad posterior (ladder, workstreams, agent gallery, ola 07-15,
+  distribución/npm, showcase) solo vive en commits/specs, no en el log narrativo. Riesgo repetido
+  sin resolver desde hace 3 reportes.
+- **Deuda de Storybook en primitivas nuevas:** `Combobox`/`FlowStepper`/`FormField` se shippearon
+  sin story standalone (solo test + showcase). Coherente con la nota de `ErrorState`, pero si se
+  vuelve costumbre erosiona el criterio "✅ = existe Y está en Storybook" del propio catálogo.
+
+## Notas de estado (sin acción)
+
+- **EU AI Act**: monitoreo futuro se reduce a registrar la referencia EUR-Lex exacta cuando aparezca;
+  ya no hay decisión regulatoria pendiente que vigilar semana a semana.
+- **SOC2/ISO 42001/prEN 18286/WCAG 2.2**: sin novedad esta semana (estado del reporte #3 vigente).
