@@ -75,11 +75,21 @@ import {
   vizSeq,
   VIZ_CAT_SLOTS,
   VIZ_SEQ_STEPS,
+  FlowStepper,
+  FlowStepperItem,
+  FlowStepperTrigger,
+  FlowStepperIndicator,
+  FlowStepperSeparator,
+  FlowStepperNav,
+  FlowStepperTitle,
+  FlowStepperDescription,
+  FlowStepperPanel,
+  FlowStepperContent,
   type CommandPaletteItem,
   type ColumnDef,
   type DateRange,
 } from "@enregla-ui/duly-ui";
-import { Bell } from "lucide-react";
+import { Bell, BookOpenIcon, CodeIcon, AwardIcon, ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 
 const sectionLabelStyle: React.CSSProperties = {
   fontSize: "0.78rem",
@@ -176,6 +186,75 @@ function CommandPaletteDemo() {
       </Button>
       <CommandPalette open={open} onOpenChange={setOpen} items={commandItems} placeholder="Buscar comando…" />
     </div>
+  );
+}
+
+const flowStepperSteps = [
+  { id: "details", title: "Detalles", description: "Ingresa los datos requeridos", icon: <BookOpenIcon /> },
+  { id: "review", title: "Revisión", description: "Confirma tu información", icon: <CodeIcon /> },
+  { id: "done", title: "Listo", description: "Todo configurado", icon: <AwardIcon /> },
+];
+
+function FlowStepperDemo() {
+  const [current, setCurrent] = useState(flowStepperSteps[0].id);
+  const currentIndex = flowStepperSteps.findIndex((s) => s.id === current);
+  const goNext = () => setCurrent(flowStepperSteps[Math.min(currentIndex + 1, flowStepperSteps.length - 1)].id);
+  const goBack = () => setCurrent(flowStepperSteps[Math.max(currentIndex - 1, 0)].id);
+
+  return (
+    <FlowStepper
+      steps={flowStepperSteps}
+      value={current}
+      onValueChange={setCurrent}
+      orientation="vertical"
+      className="flex items-center justify-center gap-10 max-lg:flex-col max-lg:items-start"
+    >
+      <FlowStepperNav className="w-60">
+        {flowStepperSteps.map((step, index) => (
+          <FlowStepperItem key={step.id} stepId={step.id} className="relative items-start">
+            <FlowStepperTrigger className="items-start gap-2.5 pb-15 last:pb-0">
+              <FlowStepperIndicator>{index + 1}</FlowStepperIndicator>
+              <div className="text-left">
+                <FlowStepperTitle>{step.title}</FlowStepperTitle>
+                <FlowStepperDescription>{step.description}</FlowStepperDescription>
+              </div>
+            </FlowStepperTrigger>
+            {index < flowStepperSteps.length - 1 && (
+              <FlowStepperSeparator className="absolute inset-y-0 top-[calc(50%-22px)] left-2 group-data-[orientation=vertical]/flow-stepper-nav:h-15" />
+            )}
+          </FlowStepperItem>
+        ))}
+      </FlowStepperNav>
+      <FlowStepperPanel className="w-xs text-center text-sm sm:w-116">
+        {flowStepperSteps.map((step) => (
+          <FlowStepperContent key={step.id} value={step.id}>
+            <div className="bg-surface-2 border-accent/15 flex flex-col items-center gap-4 rounded-lg border-2 border-dashed p-4 md:p-8">
+              <div className="space-y-2">
+                <h3 className="text-dim text-lg font-medium">{step.title}</h3>
+                <p className="text-dim text-sm">{step.description}</p>
+              </div>
+              <div className="w-full">
+                <div className="text-dim flex h-36 items-center justify-center">
+                  <span className="text-base">Contenido de {step.title}</span>
+                </div>
+                <div className="mt-6 flex items-center justify-between">
+                  <Button onClick={goBack} disabled={currentIndex === 0} variant={currentIndex === 0 ? "secondary" : "default"}>
+                    <ArrowLeftIcon className="size-4" /> Atrás
+                  </Button>
+                  <Button
+                    onClick={goNext}
+                    disabled={currentIndex === flowStepperSteps.length - 1}
+                    variant={currentIndex === flowStepperSteps.length - 1 ? "secondary" : "default"}
+                  >
+                    Siguiente <ArrowRightIcon className="size-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </FlowStepperContent>
+        ))}
+      </FlowStepperPanel>
+    </FlowStepper>
   );
 }
 
@@ -395,6 +474,10 @@ export function Primitivas() {
 
       <Section label="Tabla de datos">
         <DataTableDemo />
+      </Section>
+
+      <Section label="Stepper (flujo multi-paso)">
+        <FlowStepperDemo />
       </Section>
 
       <Section label="Fundamentos: tokens de data-viz">

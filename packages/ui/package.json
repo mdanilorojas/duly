@@ -57,6 +57,7 @@
     "@radix-ui/react-collapsible": "^1.1.0",
     "@radix-ui/react-scroll-area": "^1.1.0",
     "@radix-ui/react-slot": "^1.3.0",
+    "@stepperize/react": "^7.0.0",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.14.5",
     "@xyflow/react": "^12.11.1",
@@ -77,8 +78,8 @@
   },
   "devDependencies": {
     "@duly/eslint-config": "workspace:*",
-    "@enregla-ui/duly-tokens": "workspace:*",
     "@duly/tsconfig": "workspace:*",
+    "@enregla-ui/duly-tokens": "workspace:*",
     "@tailwindcss/cli": "^4.0.0",
     "@tailwindcss/postcss": "^4.0.0",
     "@testing-library/jest-dom": "^6.5.0",
