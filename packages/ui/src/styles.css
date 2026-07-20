@@ -18,10 +18,10 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 
-@import "@duly/tokens/theme.css";
-@import "@duly/tokens/motion.css";
-@import "@duly/tokens/theme-cockpit.css";
-@import "@duly/tokens/theme-violet.css";
+@import "@enregla-ui/duly-tokens/theme.css";
+@import "@enregla-ui/duly-tokens/motion.css";
+@import "@enregla-ui/duly-tokens/theme-cockpit.css";
+@import "@enregla-ui/duly-tokens/theme-violet.css";
 
 @source "./**/*.{ts,tsx}";
 
