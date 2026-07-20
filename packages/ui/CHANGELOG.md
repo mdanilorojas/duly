@@ -1,5 +1,11 @@
 # @duly/ui
 
+## 0.2.0
+
+### Minor Changes
+
+- Add FlowStepper multi-step wizard primitive, ported from shadcn-studio's stepper-09 block on @stepperize/react.
+
 ## 0.1.0
 
 ### Minor Changes
