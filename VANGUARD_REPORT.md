@@ -2,158 +2,149 @@
 
 > Se sobreescribe cada semana. Historial real vive en `git log -- VANGUARD_REPORT.md`.
 
-**Fecha:** 2026-07-20 · **Generado por:** routine cloud "vanguard check" #4
+**Fecha:** 2026-07-27 · **Generado por:** routine cloud "vanguard check" #5
 
 ## Resumen ejecutivo
 
-Dos bloqueos de larga data se cerraron esta semana. (1) **Distribución RESUELTA**: los paquetes
-ya **están publicados en npm** — `@enregla-ui/duly-ui@0.2.0` y `@enregla-ui/duly-tokens@0.1.0`
-(el scope `@duly` no estaba libre, se renombró a `@enregla-ui/duly-*`); Release y CI **en verde**
-en HEAD. Era el riesgo #1 arrastrado varias semanas. (2) **Regulatorio RESUELTO**: el EU AI Act
-Digital Omnibus fue **firmado el 8-jul-2026** — la incertidumbre "¿se publica antes del 30-jul?"
-dejó de existir. El loop de construcción invirtió la semana en distribución + 4 primitivas
-(Toast/Combobox/FormField/FlowStepper) + un 4º tema + `apps/showcase`, pero **cero gaps del catálogo
-A/B/C se cerraron**: `AgentHandoffMarker`/`CheckpointBadge` cruzan **4 semanas** como prioridad #1.
-La cobertura sube fuerte (a 78%/80%) — pero eso refleja el score poniéndose al día con la ola de
-build del 07-15, no trabajo de catálogo de esta semana.
+Semana sin construcción: **`HEAD` sigue siendo el commit de vanguardia del reporte anterior**
+(`e862c61`, 2026-07-20) — el loop de construcción no corrió ningún commit esta semana, así que el
+catálogo A–F es byte-idéntico y ninguna columna de Estado cambia por trabajo interno. Lo externo sí
+se movió: (1) el **EU AI Act Digital Omnibus se PUBLICÓ** como `Regulation (EU) 2026/1744` (OJ
+24-jul, en vigor hoy 27-jul) — cierra el único pendiente de monitoreo con la ref EUR-Lex exacta, y
+el texto trae 2 prohibiciones nuevas y confirma Art. 50 transparencia el **2-ago-2026** (5 días);
+(2) **LangGraph/LangChain 1.0 GA** + LangSmith "Fleet"; (3) Anthropic abrió beta de **memoria de
+agente** — respaldo de API para un gap nuevo (`AgentMemoryPanel`). Cobertura baja levemente a
+**77%/79%** por sumar 1 gap, no por regresión. `AgentHandoffMarker`/`CheckpointBadge` cruzan **5
+semanas** como prioridad #1.
 
 ## Novedades de la semana (con fuente)
 
 ### Interno (lo más importante)
 
-- **npm publish — RESUELTO.** El bloqueador #1 de semanas ("nada en npm", marcado P0-dist por el
-  audit impeccable) se cerró: `@enregla-ui/duly-ui` está en el registry con versiones `0.1.0` y
-  `0.2.0` (latest `0.2.0`), y `@enregla-ui/duly-tokens@0.1.0`. La causa raíz del fallo previo era
-  doble: el scope `@duly` no estaba disponible en npm (rename a `@enregla-ui/duly-*`, `920f0e2`) y
-  el filtro de publish del workflow apuntaba al scope viejo (`f786617`). El Release workflow corrió
-  **success** en el último run (2026-07-20, sha `d472144`). Verificado contra el registry real, no
-  solo contra el estado del workflow.
-- **CI/Release en verde en HEAD** (`d472144`, 2026-07-20). Un commit intermedio (`7014f42`) rompió
-  CI y Release por `@import` de CSS y entrada de Storybook que el rename dejó apuntando al scope
-  viejo (funcionaba local por tolerancia del resolver de tailwind CLI, rompía bajo Vite/lightningcss);
-  el fix `d472144` lo corrigió y dejó ambos workflows verdes.
-- **4 primitivas nuevas** (todas dependencias table-stakes que faltaban): `Toast`/`Toaster`
-  (`583efaa`, con story en Storybook), `Combobox` (`e471ef9`), `FormField`/`useZodForm`
-  (`e471ef9`, `packages/ui/src/form/`), `FlowStepper` (wizard multi-paso, `7014f42`). Toast queda
-  ✅; las otras 3 en 🟡 (existen + test + demostradas en `apps/showcase`, pero sin story standalone
-  en Storybook — mismo criterio con que `ErrorState` quedó en 🟡).
-- **4º tema `ganapliego`** (`59b2701`) — tema de producto light-based (clon de `light` en v1). El
-  theming white-label sube a 4 temas pero sigue en 🟡: aún falta la guía white-label documentada.
-- **`apps/showcase`** (Duly Showcase, `d33bced`→`9744a36`) — primera superficie de demostración
-  compuesta por vertical (Agentic/Comercial/Compliance/Industrial/Primitivas), desplegada en Vercel.
-  Refuerza directamente el principio "demostrable, no un demo bonito".
-
-Todo esto es infraestructura de "producto consumible" real y necesaria — pero ninguna fila de gap
-del catálogo (área A/B/C) se construyó.
+- **El loop de construcción no corrió esta semana.** `git log e862c61..HEAD` está vacío: no hay ni un
+  commit desde el reporte anterior. Las 4 semanas previas el loop trabajaba con agenda propia (ladder,
+  calidad, distribución/npm) sin tocar el backlog del vanguard; **esta semana no trabajó en absoluto**.
+  El diagnóstico de proceso cambia de "el top-5 no llega al loop" a "el loop no está corriendo" (ver
+  Riesgos). Catálogo A–F idéntico al 2026-07-20; verificado por inventario real de `packages/ui/src`
+  (las 13 filas ❌ siguen sin archivo de implementación; grep confirma 0 archivos para
+  HandoffMarker/CheckpointBadge/ToolIntegrity/AgentAnomaly/AgentPlanPreview/RBACMatrix/DataLineage/
+  ChangeRecord/IncidentView/VendorRisk).
 
 ### Externo
 
-- **EU AI Act Digital Omnibus — RESUELTO.** Cronología completa: Parlamento 16-jun, Consejo 29-jun,
-  **acto final FIRMADO 8-jul-2026**; entra en vigor al 3er día tras publicación en el Diario Oficial
-  (ya firmado, publicación inminente). La fecha de aplicación de alto-riesgo **2-ago-2026 queda
-  oficialmente diferida**: standalone → **2-dic-2027**, embebido en productos regulados →
-  **2-ago-2028**. El watermarking/transparencia de contenido IA sigue en **2-dic-2026** (NO diferido)
-  y es ahora la obligación exigible más próxima — ya cubierta por `ModelProvenanceChip` (principio #8).
-  Fuentes:
-  [Freshfields](https://www.freshfields.com/en/our-thinking/blogs/technology-quotient/eu-ai-act-unpacked-34-the-final-digital-omnibus-on-ai-key-amendments-to-the-a-102nber),
-  [Gibson Dunn](https://www.gibsondunn.com/eu-ai-act-omnibus-agreement-postponed-high-risk-deadlines-and-other-key-changes/),
-  [DLA Piper](https://knowledge.dlapiper.com/dlapiperknowledge/globalemploymentlatestdevelopments/2026/The-Digital-AI-Omnibus-Proposed-deferral-of-high-risk-AI-obligations-under-the-AI-Act).
-- **Patrón nuevo "planning visibility"** — fuentes de UX de agentes 2026 tratan "ver la secuencia de
-  acciones intencionada ANTES de ejecutar" como 1 de 5 patrones universales de agente enterprise
-  (junto a tool-use disclosure, memory surfacing, workflow tracking, recovery routing). Es distinto
-  de aprobar una acción puntual (`ApprovalGateCard`) o consentir alcance (`AgentConsentCard`): es el
-  plan completo de N pasos por adelantado, editable. Sin componente hoy → nueva fila
-  `AgentPlanPreview` (área B). Fuente:
-  [fuselabcreative.com/ui-design-for-ai-agents](https://fuselabcreative.com/ui-design-for-ai-agents/).
-- **n8n** — releases de julio: bug fixes de editor/AI-builder/nodos + soporte de **OAuth 2.0 Token
-  Exchange (RFC 8693)** para embed en iframe sin login separado. Mejora la *auth* del embed, no el
-  *branding*: sigue sin white-label completo, el análisis de `WorkflowCanvasFrame` no cambia. Fuente:
-  [n8n release notes](https://docs.n8n.io/release-notes/), [n8n Embed docs](https://docs.n8n.io/embed/).
-- **Vercel AI SDK** — `ai@7.0.30` (16-jul-2026): parche de seguridad de URLs de provider
-  (`trustedOrigin`/`credentialedOrigin`, validación de redirects) + grok-4.5. Sin componente nuevo,
-  pero refuerza la línea "integridad/seguridad de la superficie de tools" que motivó
-  `ToolIntegrityIndicator`. Fuente:
-  [github.com/vercel/ai/releases](https://github.com/vercel/ai/releases).
-- **OpenAI / Anthropic** — sin patrón nuevo de UI de agentes esta semana. OpenAI: transporte
-  websocket para modelos Responses + sandbox nativo (tooling). Anthropic: subagent text streaming,
-  progress heartbeats, tool `EndConversation` en Claude Code (dev tooling, no UI de agentes).
-- **IBM Carbon / Adobe Spectrum** — sin release notes de patrón nuevo esta semana.
+- **EU AI Act Digital Omnibus — PUBLICADO (hilo cerrado).** Ya no está solo firmado: se publicó en el
+  Diario Oficial como **`Regulation (EU) 2026/1744` el 24-jul-2026**, en vigor al 3er día = **27-jul
+  (hoy)**. Esta es la referencia EUR-Lex exacta que el reporte anterior dejó como único pendiente.
+  Sustancia nueva vs la semana pasada:
+  - **2 prohibiciones nuevas (Art. 5(1))**: generadores de imágenes íntimas no consentidas y de CSAM,
+    con "salvaguardas técnicas documentadas" (refusal training, prompt guardrails, content filtering,
+    abuse detection); sanción hasta **35M€/7%**. Vocabulario idéntico a `GuardrailIndicator` — lo que
+    falta no es mostrar el guardrail activo (ya existe) sino *documentar* la salvaguarda como artefacto.
+  - **Art. 75a nuevo**: poderes consolidados de supervisión/enforcement de la AI Office.
+  - **Corrección de fecha**: la transparencia del **Art. 50 se mantiene 2-ago-2026** (NO diferida; el
+    reporte #4 la había situado en 2-dic). Es ahora la fecha exigible más próxima — a 5 días. El marking
+    pipeline de generadores preexistentes tiene transición al 2-dic-2026. `ModelProvenanceChip` cubre
+    procedencia por output, pero el marcado de contenido sintético generado es más amplio y sin
+    componente propio.
+  - Diferimientos confirmados: standalone alto-riesgo → 2-dic-2027, embebido → 2-ago-2028, autoridades
+    públicas preexistentes → 2-ago-2030.
+  - Fuentes: [NicFab](https://www.nicfab.eu/en/posts/digital-omnibus-ai-official-journal/),
+    [lawandtechnology.eu](https://lawandtechnology.eu/en/digital-omnibus-on-ai-official-journal-regulation-2026-1744/),
+    [Modulos](https://www.modulos.ai/blog/eu-ai-act-omnibus-now-law),
+    [Freshfields](https://www.freshfields.com/en/our-thinking/blogs/technology-quotient/eu-ai-act-unpacked-34-the-final-digital-omnibus-on-ai-key-amendments-to-the-a-102nber).
+- **LangGraph 1.0 / LangChain 1.0 GA (22-jul-2026).** LangSmith renombró "Agent Builder" a **LangSmith
+  Fleet** (deploy/operación de flota de agentes) y añadió **vista de costo unificada cross-workflow** +
+  AWS Marketplace. Fuente antes marcada "sin novedad" que sí se movió — pero reconfirma lo ya construido
+  sin patrón nuevo: Fleet ↔ `AgentTopologyGraph`/`SwarmControlBar`, costo unificado ↔ `TokenCostMeter`/
+  `BudgetCapGovernor`. Fuente: [langchain.com](https://www.langchain.com/blog/langchain-langgraph-1dot0).
+- **Anthropic — beta de memoria de agente (`agent-memory-2026-07-22`)** y **mid-conversation tool
+  changes** GA/beta (`mid-conversation-tool-changes-2026-07-01`). La primera es backend real de memoria
+  persistente → motiva el gap nuevo `AgentMemoryPanel`. La segunda (tools que mutan entre turnos)
+  refuerza la relevancia de `ToolIntegrityIndicator`. Fuente:
+  [platform.claude.com/release-notes](https://platform.claude.com/docs/en/release-notes/overview).
+- **Nuevo gap: memory surfacing.** De los 5 patrones universales de UX de agentes enterprise (planning
+  visibility · tool-use disclosure · **memory surfacing** · workflow tracking · recovery routing), este
+  DS cubre 3 con componentes existentes, tiene `AgentPlanPreview` pendiente para planning visibility, y
+  **no tiene nada para memory surfacing** (ver/editar qué recuerda el agente entre sesiones). Con el
+  beta de Anthropic ya hay API que exponer → nueva fila `AgentMemoryPanel` (área B). Fuentes:
+  [fuselabcreative.com](https://fuselabcreative.com/ui-design-for-ai-agents/),
+  [mem0.ai](https://mem0.ai/blog/state-of-ai-agent-memory-2026).
+- **Salud — FDA CDS guidance 2026** formaliza "suggest→validate→execute" y exige, para Non-Device CDS,
+  una sola recomendación + que el clínico revise independientemente la base (lógica/datos verificables).
+  Es exactamente `ApprovalGateCard` + panel de evidencia + `HumanInterruptQueue` mapeado a obligación
+  regulatoria; reconfirma la vertical de salud como oportunidad de pionero. Fuente:
+  [Orrick](https://www.orrick.com/en/insights/2026/01/fda-eases-oversight-for-ai-enabled-clinical-decision-support-software-and-wearables).
+- **Vercel AI SDK / OpenAI / IBM Carbon / Adobe Spectrum / Temporal / Microsoft AG-UI** — sin patrón
+  nuevo de UI verificable esta semana (Vercel: patch `ai@7.0.30`; Temporal: Custom Roles sigue en
+  pre-release).
 
 ## Score de cobertura
 
-**Recuento completo reconciliado contra el `NORTH_STAR.md` actual.** El salto grande vs el reporte
-anterior (72%/75% → 78%/80%) **no es trabajo de catálogo de esta semana**: es el score poniéndose al
-día con la ola de build del **2026-07-15** (AppShell, CommandPalette, DateRangePicker, data-viz
-tokens, BandGauge, DeltaList, ConnectorStatus), que aterrizó *después* del reporte #3 y quedó
-reflejada en el `NORTH_STAR` pero nunca fue puntuada por un reporte. Esta semana solo agrega 1 gap
-nuevo (`AgentPlanPreview`, ❌ en B) y 0 cierres de catálogo.
+Catálogo idéntico al reporte anterior salvo **+1 gap nuevo** (`AgentMemoryPanel`, ❌ en área B). Sin
+cierres de catálogo (no hubo build). La cobertura baja de 78%/80% a **77%/79%** exclusivamente por
+sumar el denominador — **ninguna regresión**.
 
 | Área | ✅ | 🟡 | ❌ | Total | Cobertura (✅) | Ponderada (✅=1, 🟡=0.5) |
 |---|---|---|---|---|---|---|
 | A. n8n / proceso empresarial | 7 | 0 | 1 | 8 | 88% | 88% |
-| B. Agent ops / consola de IA | 19 | 0 | 5 | 24 | 79% | 79% |
+| B. Agent ops / consola de IA | 19 | 0 | 6 | 25 | 76% | 76% |
 | C. Auditoría / compliance | 8 | 0 | 5 | 13 | 62% | 62% |
 | D. Table stakes enterprise | 7 | 3 | 1 | 11 | 64% | 77% |
 | E. Comercial / RevOps | 6 | 0 | 0 | 6 | 100% | 100% |
 | F. Industrial / OT | 7 | 0 | 0 | 7 | 100% | 100% |
-| **Total (A–F)** | **54** | **3** | **12** | **69** | **78%** | **80%** |
+| **Total (A–F)** | **54** | **3** | **13** | **70** | **77%** | **79%** |
 
 (Las **primitivas** — Stepper/Dropzone/KanbanBoard/Toast/Combobox/FormField/FlowStepper — se
-documentan pero, como en reportes previos, **no se puntúan** en la tabla A–F para mantener la
-comparación limpia. De sumarse, 4 son ✅ y 3 son 🟡.)
-
-Área D deja de ser la más rezagada del catálogo (subió de 20%/40% a 64%/77% con la ola del 07-15).
-**C (compliance) es ahora la de menor cobertura ✅ (62%)** — 5 gaps abiertos: `RBACMatrixViewer`,
-`DataLineageGraph`, `ChangeRecordCard`, `IncidentView`, `VendorRiskCard`.
+documentan pero **no se puntúan** en la tabla A–F, igual que en reportes previos. De sumarse, 4 ✅ y
+3 🟡.) **C (compliance) sigue siendo la de menor cobertura ✅ (62%)**; B baja a 76% por el gap nuevo.
 
 ## Top 5 gaps priorizados (backlog para el loop de construcción de 5h)
 
-1. **AgentHandoffMarker + CheckpointBadge** — prioridad #1 por **cuarta semana consecutiva** (iter.15
-   → ladder §07 → semana de calidad → semana de distribución/npm, ninguna las tocó). Marcadores
-   puntuales sobre `RunTimeline`/`TraceTree`/`ExecutionTimeline` ya existentes; bajo esfuerzo. **El
-   patrón ya no es "orden de prioridad" sino que el top-5 de este documento no está llegando al loop
-   de construcción.** Acción concreta sugerida: sembrarlas como el PRIMER ítem de la próxima sesión,
-   o promover el par a un spec explícito en `docs/`.
-2. **RBACMatrixViewer** — C es ahora la peor área (62%); el vocabulario actor/provider ya existe en
+1. **AgentHandoffMarker + CheckpointBadge** — prioridad #1 por **quinta semana consecutiva**.
+   Marcadores puntuales sobre `RunTimeline`/`TraceTree`/`ExecutionTimeline` existentes; bajo esfuerzo,
+   cierra las 2 filas más viejas del documento. **Antes de re-priorizar nada: confirmar que el routine
+   de construcción sigue programado** (esta semana no corrió). Luego sembrarlas como PRIMER ítem o
+   promoverlas a un spec en `docs/`.
+2. **RBACMatrixViewer** — C es la peor área (62%); vocabulario actor/provider ya existe en
    `ModelProvenanceCard`/`ApprovalChainStepper`. "Por qué este usuario tiene acceso" sigue sin UI.
-3. **ToolIntegrityIndicator (tool-definition drift)** — Vercel AI SDK ya lo resuelve a nivel SDK
-   (`fingerprintTools`/`detectToolDrift`), reforzado por el parche de seguridad de tools de esta
-   semana; sin UI equivalente. Extender `GuardrailIndicator` en vez de construir desde cero.
+3. **ToolIntegrityIndicator (tool-definition drift)** — reforzado esta semana por el beta de Anthropic
+   de mid-conversation tool changes (tools que mutan en vivo). Extender `GuardrailIndicator`.
 4. **AgentAnomalyIndicator + VendorRiskCard** — arrastradas (FINRA behavioral baselining / auditores
-   SOC2 2026 respectivamente); ambas reusan vocabulario `Tone`/`NodeStatus` o `ModelProvenanceCard`.
-5. **AgentPlanPreview (planning visibility)** — nuevo esta semana; patrón emergente de UX de agentes
-   enterprise (secuencia de acciones antes de ejecutar). Bajo-medio esfuerzo reusando la gramática de
-   pasos. Menor urgencia que 1–4 por ser de esta semana, pero de valor transversal a las 5 verticales.
+   SOC2 2026); `VendorRiskCard` además ahora roza la obligación del Omnibus de *documentar salvaguardas*.
+5. **AgentPlanPreview + AgentMemoryPanel** — los 2 patrones universales de agente sin componente
+   (planning visibility + memory surfacing). `AgentMemoryPanel` es nuevo esta semana pero ya con backend
+   Anthropic; ambos bajo-medio esfuerzo reusando la gramática de pasos/tiles existente.
 
-(Las 3 primitivas en 🟡 — `Combobox`/`FlowStepper`/`FormField` — solo necesitan una story standalone
-en Storybook para pasar a ✅; trabajo trivial, no compite con los gaps de arriba. `WorkflowCanvasFrame`
-sigue fuera del top 5, mayor esfuerzo. **Vertical de salud** sigue siendo la oportunidad de pionero de
-mayor plazo — ningún competidor visible tiene vertical clínica construida y la señal UX/regulatoria se
-sigue acumulando.)
+(Las 3 primitivas 🟡 — `Combobox`/`FlowStepper`/`FormField` — solo necesitan story standalone en
+Storybook para pasar a ✅; trivial, no compite con lo de arriba. `WorkflowCanvasFrame` sigue fuera del
+top-5. **Vertical de salud** sigue siendo la oportunidad de pionero de mayor plazo, ahora con refuerzo
+regulatorio FDA CDS 2026 mapeando 1:1 a componentes ya construidos.)
 
 ## Riesgos
 
-- **El top-5 de este documento no está llegando al loop de construcción (riesgo de proceso, el más
-  importante esta semana).** 4 loops de construcción distintos corrieron desde la iteración 15 y
-  ninguno construyó `AgentHandoffMarker`/`CheckpointBadge` pese a ser prioridad #1 en cada reporte.
-  El loop trabaja de sus propios specs/audits (impeccable, ladder §07, distribución) y no consume
-  este backlog. Recomendación: acoplar explícitamente el top-5 del vanguard al arranque del loop de
-  construcción, o convertir el par pendiente en un spec en `docs/` que el loop sí lea.
-- **Nombres de paquete stale en docs de repo (bajo, pero consumidor-visible):** `README.md` y
-  `apps/showcase/package.json` todavía dicen `@duly/tokens` / `@duly/ui` / `@duly/showcase`, cuando
-  el paquete publicado es `@enregla-ui/duly-*`. Un dev que copie el snippet de instalación del README
-  instalará un paquete inexistente. Fuera de mi alcance arreglarlo (solo toco `.md` de vanguardia);
-  vale que el loop de construcción sincronice README/CONTRIBUTING con el scope real.
-- **`AGENTIC_EXPERIMENTS_LOG.md` sigue desactualizado** — se detiene en la iteración 15
-  (2026-07-04). Toda la actividad posterior (ladder, workstreams, agent gallery, ola 07-15,
-  distribución/npm, showcase) solo vive en commits/specs, no en el log narrativo. Riesgo repetido
-  sin resolver desde hace 3 reportes.
-- **Deuda de Storybook en primitivas nuevas:** `Combobox`/`FlowStepper`/`FormField` se shippearon
-  sin story standalone (solo test + showcase). Coherente con la nota de `ErrorState`, pero si se
-  vuelve costumbre erosiona el criterio "✅ = existe Y está en Storybook" del propio catálogo.
+- **El loop de construcción no corrió esta semana (riesgo de proceso, el más importante — ESCALADO).**
+  `HEAD` no avanzó desde el 2026-07-20. En los 4 reportes previos el riesgo era de *acoplamiento* (el
+  loop trabajaba pero no leía este backlog); ahora es de *disponibilidad* (el loop no produjo nada).
+  Recomendación concreta al usuario: **verificar que el routine de construcción de 5h sigue activo y
+  programado** — si se detuvo, el design system deja de avanzar aunque este audit siga corriendo cada
+  semana. Un vanguard que reporta sobre un catálogo congelado pierde su función.
+- **`Art. 50 transparencia` exigible en 5 días (2-ago-2026) y sin componente de marcado de contenido
+  sintético.** `ModelProvenanceChip` cubre procedencia por output pero no el watermark/etiqueta de
+  contenido generado (audio/imagen/video/texto) que el Omnibus publicado exige. Aplica a clientes que
+  generen media con IA en las 5 verticales. No es un gap del catálogo actual (no estaba listado); vale
+  evaluarlo como fila nueva si algún cliente objetivo genera contenido sintético.
+- **Nombres de paquete stale en docs de repo (arrastrado, sin resolver):** `README.md` y
+  `apps/showcase/package.json` aún dicen `@duly/*` cuando el paquete publicado es `@enregla-ui/duly-*`.
+  Un dev que copie el snippet de instalación instala un paquete inexistente. Fuera de mi alcance (solo
+  toco `.md` de vanguardia); el loop de construcción debe sincronizarlo.
+- **`AGENTIC_EXPERIMENTS_LOG.md` sigue desactualizado** — se detiene en la iteración 15 (2026-07-04);
+  toda la actividad posterior solo vive en commits/specs. Riesgo repetido sin resolver desde hace 4
+  reportes.
 
 ## Notas de estado (sin acción)
 
-- **EU AI Act**: monitoreo futuro se reduce a registrar la referencia EUR-Lex exacta cuando aparezca;
-  ya no hay decisión regulatoria pendiente que vigilar semana a semana.
-- **SOC2/ISO 42001/prEN 18286/WCAG 2.2**: sin novedad esta semana (estado del reporte #3 vigente).
+- **EU AI Act**: hilo cerrado por completo — publicado como `Regulation (EU) 2026/1744`, ref EUR-Lex
+  registrada. Ya no hay decisión regulatoria pendiente que vigilar; monitoreo futuro solo por si la AI
+  Office (Art. 75a) emite guías de implementación con requisitos de UI.
+- **SOC2 / ISO 42001 / prEN 18286 / WCAG 2.2**: sin novedad esta semana (estado del reporte #3/#4
+  vigente).

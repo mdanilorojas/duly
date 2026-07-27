@@ -4,7 +4,7 @@
 > interfaces de orquestación de agentes, automatización de procesos con n8n, y auditoría/compliance.
 > El loop semanal de vanguardia re-verifica este documento contra el estado del arte y contra el
 > inventario real de componentes, y mantiene la tabla de gaps al día.
-> Última revisión: 2026-07-20 · Próxima: semanal (routine cloud "vanguard check").
+> Última revisión: 2026-07-27 · Próxima: semanal (routine cloud "vanguard check").
 
 ## Visión
 
@@ -75,6 +75,7 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | ToolIntegrityIndicator (tool-definition drift) | Señal cuando la definición de una tool cambió desde que un agente/humano la aprobó por última vez ("rug pull" de MCP) | ❌ — nueva fila 2026-07-13: Vercel AI SDK 7.0.19 (9-jul-2026) shippeó `fingerprintTools`/`detectToolDrift` a nivel de SDK para detectar tools MCP que mutan su definición después de ser confiadas; la literatura de seguridad MCP de 2026 (tool poisoning / rug-pull) recomienda hacer visible en UI cuándo una tool cambió tras su aprobación — sin componente hoy. Candidato natural: extensión de `GuardrailIndicator` o pill nueva junto a `RichToolCallCard`/`CredentialCard`. Fuente: Vercel AI SDK changelog (`ai@7.0.19`), policylayer.com/attacks/mcp-rug-pull. |
 | AgentAnomalyIndicator (Behavioral Deviation Flag) | Flag cuando un agente se desvía de su baseline de comportamiento (volumen, scope de datos, tablas/joins inusuales) | ❌ — nueva fila 2026-07-06: FINRA clasifica a los agentes de IA como categoría de riesgo de supervisión propia y recomienda "behavioral baselining" (desviación automática vs patrón aprendido) como control explícito para servicios financieros; sin componente hoy — ver "Prioridad de construcción". Fuente: fin.ai/learn/evaluate-ai-agent-compliance-financial-services, jul-2026. |
 | AgentPlanPreview (planning visibility) | Secuencia de acciones que el agente PIENSA ejecutar, mostrada ANTES de correr, con editar/saltar por paso | ❌ — nueva fila 2026-07-20: fuentes de UX de agentes 2026 tratan "planning visibility" (ver la secuencia de acciones intencionada antes de que empiece la ejecución) como uno de 5 patrones que aplican a todo agente enterprise, distinto de aprobar una acción puntual (`ApprovalGateCard`) o consentir alcance (`AgentConsentCard`): es el plan completo de N pasos por adelantado. `RunTimeline`/`ExecutionTimeline` muestran pasos durante/después, no un preview pre-ejecución editable. Candidato de bajo-medio esfuerzo reusando la gramática de pasos existente. Fuente: fuselabcreative.com/ui-design-for-ai-agents ("five patterns… planning visibility"), jul-2026. |
+| AgentMemoryPanel (memory surfacing) | Ver/editar qué recuerda el agente sobre el usuario/sesión (hechos extraídos, preferencias, resoluciones previas) antes de que los use en una acción | ❌ — nueva fila 2026-07-27: "memory surfacing" es el 5º de los 5 patrones universales de UX de agentes enterprise (junto a planning visibility, tool-use disclosure, workflow tracking, recovery routing). Este DS cubre los otros 4 (`AgentPlanPreview` pendiente cubre planning visibility) pero NO tiene componente para mostrar/editar la memoria persistente del agente — distinto de `TraceTree` (spans de retrieval de UN run) porque la memoria vive entre sesiones e indexa por usuario. Esta semana ganó respaldo de API concreto: Anthropic shippeó el beta `agent-memory-2026-07-22` (memory store con listado de orden estable, `path_prefix` por segmento) — hay backend real que exponer en UI. Fuentes: fuselabcreative.com/ui-design-for-ai-agents ("five patterns… memory surfacing"), platform.claude.com/docs/release-notes (`agent-memory-2026-07-22`), mem0.ai/blog/state-of-ai-agent-memory-2026. |
 | AgentCore/Card/Gallery (identidad) | Orbs WebGL con identidad por agente | ✅ (V001, Storybook `Agentic/Agent Gallery`; presentación interna renombrada `AgentCard` → `AgentTile`. Reorganizada 2026-07-12 en 4 galerías sectoriales de 24 agentes — Legal & Compliance, Petroleum & Energy, Software & Networks, Industrial & Logistics — portadas de una segunda referencia HTML del usuario, con un solo contexto WebGL compartido entre instancias por performance. Nota: "Legal & Compliance" e "Industrial & Logistics" no son 2 de las 5 industrias objetivo de este DS (inmobiliaria/petróleo/software/servicios-financieros/salud) — es reorganización de identidad visual del laboratorio agentic, no una vertical de negocio nueva tipo áreas E/F; no confundir con prioridad de "vertical de salud" que sigue pendiente) |
 | AgentMetric / AgentStatusMatrix | Tiles de métrica y matriz de estatus con tonos semánticos | ✅ (V002, Storybook `Agentic/Agent Status Matrix/V002 Compact Heatmap` — modo `density="compact"` heatmap, flag `critical`, handler `onSelectItem`) |
 | ExecutionTimeline / RunStep / ToolCallCard | Timeline vertical de un run multi-agente, paso a paso, con detalle expandible | ✅ (V001, Storybook `Agentic/Execution Timeline`) |
@@ -129,19 +130,31 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | BandGauge | Veredicto de banda discreta (readiness ISO 1–6, madurez, cualquier score de N escalones) | ✅ (V001, Storybook `Compliance/Band Gauge/V001 Discrete Bands`) |
 | DeltaList | Diff antes→después entre corridas (diffRuns, qué área subió) | ✅ (V001, Storybook `Compliance/Delta List/V001 Run Diff`) |
 
-> **Señal regulatoria (RESUELTA 2026-07-20) — EU AI Act Digital Omnibus:** cerró la incertidumbre
-> que este documento arrastraba desde el 2026-07-06. Cronología ahora completa: Parlamento adoptó
-> **16-jun-2026**, Consejo aprobación final **29-jun-2026**, **acto final FIRMADO 8-jul-2026** — el
-> Digital Omnibus entra en vigor al **tercer día tras su publicación en el Diario Oficial** (ya
-> firmado, publicación inminente; la "ventana agotándose" de la semana pasada dejó de ser un riesgo).
-> Efecto neto: la fecha de aplicación de alto-riesgo **2-ago-2026 queda oficialmente diferida**. Fechas
-> objetivo confirmadas: Anexo III (alto riesgo standalone) **→ 2-dic-2027**; sistemas embebidos en
-> productos ya regulados **→ 2-ago-2028**; watermarking/transparencia de contenido IA **2-dic-2026**
-> (trabajo que ya cubre `ModelProvenanceChip`, principio #8) — este último NO se difirió y es ahora la
-> fecha exigible más cercana. Fuentes: Freshfields ("EU AI Act unpacked #34: The final Digital Omnibus
-> on AI", jul-2026), Gibson Dunn ("EU AI Act Omnibus Agreement", jul-2026), DLA Piper (jul-2026),
-> Consilium (comunicado oficial, 29-jun-2026). Monitoreo futuro se reduce a confirmar la referencia
-> EUR-Lex exacta cuando aparezca — ya no hay decisión pendiente.
+> **Señal regulatoria (PUBLICADA 2026-07-24 — cierre total del hilo) — EU AI Act Digital Omnibus:**
+> el acto ya no está solo firmado sino **publicado en el Diario Oficial como `Regulation (EU) 2026/1744`
+> el 24-jul-2026**, entrando en vigor al tercer día = **27-jul-2026 (hoy)**. Esta es la referencia
+> EUR-Lex exacta que la nota de la semana pasada dejó como único pendiente de monitoreo — queda
+> registrada y el hilo se cierra por completo. Cronología final: Parlamento 16-jun, Consejo 29-jun,
+> firma 8-jul, publicación OJ 24-jul, vigor 27-jul. Fechas objetivo confirmadas por el texto publicado:
+> Anexo III (alto riesgo standalone) **→ 2-dic-2027**; embebidos en productos regulados **→ 2-ago-2028**;
+> alto-riesgo de autoridades públicas preexistente **→ 2-ago-2030**. **Corrección de fecha vs el reporte
+> anterior:** la aplicación general + **transparencia del Art. 50 se mantiene en 2-ago-2026** (NO se
+> difirió, a 5 días de esta revisión); el *marking pipeline* para generadores sintéticos ya en mercado
+> antes del 2-ago tiene ventana de transición al **2-dic-2026**. La fecha exigible más próxima es por
+> tanto **2-ago-2026 (Art. 50 transparencia)** — `ModelProvenanceChip` (principio #8) cubre la
+> procedencia por output, pero el marcado de contenido sintético (audio/imagen/video/texto generado) es
+> más amplio que un chip de provenance y no tiene componente propio hoy (candidato: señal de
+> watermark/etiqueta de contenido-IA en outputs generativos).
+> **Novedad sustantiva del texto publicado (no en el reporte anterior):** el Omnibus **añade 2
+> prohibiciones nuevas al Art. 5(1)** — generadores de (a) imágenes íntimas no consentidas y (b) CSAM —
+> exigiendo "salvaguardas técnicas documentadas" (refusal training, prompt guardrails, content filtering,
+> abuse detection), con sanción de hasta **35M€ / 7%**; y un **Art. 75a nuevo** que consolida los poderes
+> de supervisión/enforcement de la AI Office. La cláusula de salvaguardas documentadas usa exactamente el
+> vocabulario de `GuardrailIndicator` (input/output/tool guardrails) — la evidencia de que esos guardrails
+> están activos es demostrable con componentes ya existentes; lo que falta es la *documentación* de la
+> salvaguarda como artefacto de compliance (roza `VendorRiskCard`/un futuro card de política). Fuentes:
+> NicFab / lawandtechnology.eu (`Regulation (EU) 2026/1744` en el OJ, 24-jul-2026), Modulos ("EU AI Act
+> Omnibus now law", jul-2026), Freshfields ("EU AI Act unpacked #34", jul-2026), Gibson Dunn, DLA Piper.
 > Detalle útil de diseño: la retención mínima de logs (6 meses) vive en el **Art. 19**, no en el
 > Art. 12 (que solo exige la capacidad técnica de logging) — separar `RetentionBadge` (Art. 19) de
 > `AuditLogTable`/`ModelProvenanceCard` (Art. 12/13) en cualquier implementación futura.
@@ -232,27 +245,23 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 ## Prioridad de construcción (guía para el loop de 5h)
 
-Reordenado 2026-07-20 (vanguard check #4). La semana 2026-07-13 → 2026-07-20 **tampoco tocó el
-backlog de gaps de catálogo** — el loop de construcción invirtió en infraestructura de distribución
-y primitivas: (a) **resolvió el bloqueador #1 de semanas** — `@enregla-ui/duly-ui@0.2.0` y
-`@enregla-ui/duly-tokens@0.1.0` ahora **están publicados en npm** (el scope `@duly` no estaba
-disponible, se renombró a `@enregla-ui/duly-*`, `920f0e2`; Release workflow **en verde** en el último
-run del 2026-07-20); (b) shippeó 4 primitivas nuevas — Toast, Combobox, FormField/useZodForm,
-FlowStepper — y un 4º tema (`ganapliego`); (c) construyó `apps/showcase` (Duly Showcase, páginas
-por vertical desplegadas en Vercel), la primera superficie de demostración compuesta fuera de
-Storybook. Trabajo real de "producto consumible" y **demostrable**, pero **cero filas de gap del
-catálogo A/B/C se cerraron**: `AgentHandoffMarker`/`CheckpointBadge` arrastran ya **3 semanas** como
-prioridad #1 sin construirse — cruzó el umbral que el reporte anterior fijó como "deja de ser orden
-de prioridad y pasa a ser señal de que el backlog de este documento no llega al loop de construcción".
+Reordenado 2026-07-27 (vanguard check #5). La semana 2026-07-20 → 2026-07-27 **no registró NINGÚN
+commit de construcción** — `HEAD` sigue siendo el commit de vanguardia del reporte anterior
+(`e862c61`, 2026-07-20). No es que el loop haya trabajado en otra cosa (como las 4 semanas previas):
+esta semana **el loop de construcción simplemente no corrió**. El catálogo A–F es byte-idéntico al de
+la semana pasada; ninguna columna de Estado cambia por trabajo interno. Consecuencia directa:
+`AgentHandoffMarker`/`CheckpointBadge` arrastran ya **5 semanas** como prioridad #1 sin construirse.
+El diagnóstico deja de ser "el top-5 no llega al loop" (que asumía un loop activo con otra agenda) y
+pasa a "**el loop de construcción no está corriendo**" — el riesgo de proceso escaló de acoplamiento a
+disponibilidad. Ver Riesgos en `VANGUARD_REPORT.md`.
 
-1. **AgentHandoffMarker + CheckpointBadge** (prioridad #1 por **cuarta semana consecutiva** —
-   arrastrada desde la iteración 15; ladder §07, semana de calidad y semana de distribución/npm,
-   ninguna las tocó) — marcadores puntuales sobre timelines/trees ya existentes (`RunTimeline`,
+1. **AgentHandoffMarker + CheckpointBadge** (prioridad #1 por **quinta semana consecutiva** —
+   arrastrada desde la iteración 15; ladder §07, semana de calidad, semana de distribución/npm y ahora
+   una semana sin loop) — marcadores puntuales sobre timelines/trees ya existentes (`RunTimeline`,
    `TraceTree`, `ExecutionTimeline`); bajo esfuerzo, cierra las 2 filas más viejas sin resolver del
-   documento. **La hipótesis de "bloqueo estructural" del reporte anterior se confirma como patrón**:
-   3 loops de construcción distintos corrieron con agenda propia y ninguno leyó este top-5. Acción
-   sugerida al usuario/loop: sembrar estas 2 como el PRIMER ítem de la próxima sesión de construcción
-   antes de cualquier otra cosa, o mover el par a un spec explícito en `docs/`.
+   documento. Acción sugerida al usuario/loop: verificar primero que el routine de construcción de 5h
+   sigue programado y corriendo; luego sembrar estas 2 como el PRIMER ítem de la próxima sesión, o
+   mover el par a un spec explícito en `docs/` que el loop lea al arrancar.
 2. **ToolIntegrityIndicator (tool-definition drift)** — nueva prioridad esta semana: Vercel AI SDK
    ya lo resuelve a nivel de SDK (`fingerprintTools`/`detectToolDrift`, `ai@7.0.19`, 9-jul-2026) y
    la literatura de seguridad MCP de 2026 lo trata como vector de ataque activo ("rug pull"); este
@@ -274,8 +283,12 @@ de prioridad y pasa a ser señal de que el backlog de este documento no llega al
 n8n agregó **OAuth 2.0 Token Exchange (RFC 8693)** para embed en iframe sin login separado — facilita
 la parte de *auth* del embed, pero el branding sigue sin ser white-label, así que el análisis "hay que
 reconstruir la vista de ejecución, no envolver marca ajena" no cambia. Vertical de salud sigue siendo
-la oportunidad de pionero de mayor plazo — ver `VANGUARD_REPORT.md`. Candidato emergente nuevo esta
-semana: **`AgentPlanPreview`** (planning visibility, ver fila en área B) — bajo-medio esfuerzo. Resto:
+la oportunidad de pionero de mayor plazo — la guía FDA CDS 2026 ("suggest→validate→execute", el clínico
+debe poder revisar independientemente la base de cada recomendación) reconfirma el patrón exacto de
+`ApprovalGateCard` + panel de evidencia; ver `VANGUARD_REPORT.md`. Candidatos emergentes de patrón
+universal de agentes: **`AgentPlanPreview`** (planning visibility, 07-20) y **`AgentMemoryPanel`**
+(memory surfacing, nuevo 07-27, con backend Anthropic `agent-memory` beta) — ambos bajo-medio esfuerzo,
+completan 2 de los 5 patrones universales que aún no tienen componente. Resto:
 `DataLineageGraph`, `ChangeRecordCard`, `IncidentView` (área C), stories standalone para `ErrorState`/
 `Combobox`/`FlowStepper`/`FormField` (primitivas ya construidas pero en 🟡 por falta de Storybook),
 variante de inmobiliaria por rol tipo Rex CRM más allá de `PropertyIntelligenceConsole`.)
@@ -285,21 +298,32 @@ variante de inmobiliaria por rol tipo Rex CRM más allá de `PropertyIntelligenc
 n8n docs (executions, error handling; el embed NO es white-label — reconfirmado, sin cambios de
 branding. **Novedad 2026-07-20**: soporte de **OAuth 2.0 Token Exchange (RFC 8693)** para embed en
 iframe sin pantalla de login separada — mejora la auth del embed, no el branding) · Temporal Web UI
-(Custom Roles sigue en pre-release desde 25-jun-2026, sin novedad esta semana) · LangSmith/LangGraph
-(sin novedad verificada esta semana) · OpenAI Agents SDK + ChatKit (ambos GA; esta semana solo
-transporte websocket para modelos Responses + sandbox nativo, sin patrón nuevo de UI) · Anthropic
-Console / Claude (esta semana: subagent text streaming en Claude Code, progress heartbeats, tool
-`EndConversation` — todo de tooling de dev, sin patrón nuevo de UI de agentes) · **Vercel AI SDK:
-`ai@7.0.30` (16-jul-2026)** — parche de seguridad de URLs de provider (`trustedOrigin`/
-`credentialedOrigin`, validación de redirects) + soporte grok-4.5; sin componente nuevo, pero refuerza
-la línea "integridad/seguridad de la superficie de tools" que motivó `ToolIntegrityIndicator`
-(`fingerprintTools`/`detectToolDrift` siguen siendo la referencia, `ai@7.0.19`) · Microsoft AG-UI /
-Agent Framework (GA 1.0, sin novedad verificable esta semana) · IBM Carbon (sin release notes de
-patrón nuevo) · Adobe Spectrum / React Spectrum (sin release relevante) · **EU AI Act Digital Omnibus
-(RESUELTO): acto final FIRMADO 8-jul-2026**, entra en vigor al 3er día tras publicación en el Diario
-Oficial; alto-riesgo standalone diferido a 2-dic-2027, embebido a 2-ago-2028; watermarking sigue en
-2-dic-2026 (fecha exigible más próxima). Ya no hay decisión pendiente que vigilar (fuentes:
-Freshfields, Gibson Dunn, DLA Piper, jul-2026) · SOC2 CC7/CC8 (sin TSC de IA formal, sin novedad) ·
+(Custom Roles sigue en pre-release desde 25-jun-2026, sin novedad esta semana) · **LangSmith/LangGraph
+(NOVEDAD 2026-07-22): LangChain 1.0 y LangGraph 1.0 GA**; LangSmith renombró "Agent Builder" a
+**LangSmith Fleet** (deploy y operación de flota de agentes) y añadió **vista de costo unificada
+cross-workflow** + disponibilidad en AWS Marketplace. Reconfirma componentes ya construidos, sin patrón
+nuevo: "Fleet" ↔ `AgentTopologyGraph`/`SwarmControlBar`, costo unificado ↔ `TokenCostMeter`/
+`BudgetCapGovernor`. Fuente: langchain.com/blog/langchain-langgraph-1dot0 · OpenAI Agents SDK + ChatKit
+(ambos GA; sin patrón nuevo de UI esta semana) · **Anthropic Console / Claude (NOVEDAD): beta
+`agent-memory-2026-07-22`** (memory store: listado en orden estable server-defined, `depth` 0/1,
+`path_prefix` por segmento) — backend real de memoria persistente, motiva la fila nueva
+`AgentMemoryPanel` (área B); además **mid-conversation tool changes** GA/beta
+(`mid-conversation-tool-changes-2026-07-01`: añadir/quitar tools entre turnos preservando el cache) —
+refuerza la relevancia de `ToolIntegrityIndicator` (si el set de tools muta en vivo, la deriva de
+definición es aún más visible-crítica). Fuente: platform.claude.com/docs/release-notes · **Vercel AI
+SDK: `ai@7.0.30` (16-jul-2026)** — parche de seguridad de URLs de provider (`trustedOrigin`/
+`credentialedOrigin`) + grok-4.5; sin componente nuevo, refuerza la línea de integridad/seguridad de
+tools que motivó `ToolIntegrityIndicator` (`fingerprintTools`/`detectToolDrift`, `ai@7.0.19`) ·
+Microsoft AG-UI / Agent Framework (GA 1.0, sin novedad verificable esta semana) · IBM Carbon (sin
+release notes de patrón nuevo) · Adobe Spectrum / React Spectrum (sin release relevante) · **EU AI Act
+Digital Omnibus (PUBLICADO): `Regulation (EU) 2026/1744` en el Diario Oficial 24-jul-2026, en vigor
+27-jul-2026.** Alto-riesgo standalone → 2-dic-2027, embebido → 2-ago-2028, autoridades públicas
+preexistentes → 2-ago-2030; **Art. 50 transparencia se mantiene 2-ago-2026 (fecha exigible más
+próxima, NO diferida)**, marking pipeline de generadores preexistentes con transición al 2-dic-2026.
+Texto publicado añade 2 prohibiciones nuevas al Art. 5(1) (imágenes íntimas no consentidas + CSAM, con
+salvaguardas documentadas) y un Art. 75a de poderes de la AI Office. Hilo cerrado — ref EUR-Lex exacta
+registrada (fuentes: NicFab/lawandtechnology.eu, Modulos, Freshfields, jul-2026) · SOC2 CC7/CC8 (sin
+TSC de IA formal, sin novedad) ·
 ISO/IEC 42001 + prEN 18286 (sin novedad) · WCAG 2.2 AA (vigente, sin novedad) · FINRA (behavioral
 baselining, sin novedad) · **Seguridad MCP / tool poisoning-rug pull** (motiva `ToolIntegrityIndicator`,
 sin novedad) · **UX de agentes enterprise — "planning visibility"** (nueva fuente 2026-07-20,
@@ -308,4 +332,9 @@ universales de agentes enterprise; motiva la fila nueva `AgentPlanPreview` en á
 patrón "activity panel separation"** (fuselabcreative.com — mostrar una recomendación a la vez +
 panel de evidencia + override de un clic sigue siendo el patrón dominante en UI clínica de IA;
 reconfirma la oportunidad de pionero de la vertical de salud, Gartner proyecta 40% de apps enterprise
-con agentes task-specific para fin-2026).
+con agentes task-specific para fin-2026). **Refuerzo regulatorio 2026-07-27**: la guía FDA de Clinical
+Decision Support 2026 formaliza el patrón "suggest→validate→execute" y exige, para quedar como
+Non-Device CDS, que el software dé **una sola recomendación clínicamente apropiada** y permita al
+clínico **revisar independientemente la base** (lógica + datos de entrada verificables) — es
+exactamente `ApprovalGateCard` + panel de evidencia + `HumanInterruptQueue`, mapeado a una obligación
+regulatoria concreta. Fuente: FDA CDS guidance 2026 (orrick.com, appliedclinicaltrialsonline.com).
