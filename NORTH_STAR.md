@@ -4,7 +4,7 @@
 > interfaces de orquestación de agentes, automatización de procesos con n8n, y auditoría/compliance.
 > El loop semanal de vanguardia re-verifica este documento contra el estado del arte y contra el
 > inventario real de componentes, y mantiene la tabla de gaps al día.
-> Última revisión: 2026-07-27 · Próxima: semanal (routine cloud "vanguard check").
+> Última revisión: 2026-08-03 · Próxima: semanal (routine cloud "vanguard check").
 
 ## Visión
 
@@ -66,7 +66,7 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | AgentHandoffMarker | Punto visual de transferencia agente↔agente o agente→humano | ❌ (arrastra 2 semanas sin cerrar: marcada prioridad #1 desde la iteración 15 del loop de construcción; el ladder §07 y la semana de calidad/i18n/rebrand recién cerrada tomaron otro orden de trabajo. Ver "Prioridad de construcción") |
 | StreamingMessage / ThinkingIndicator | Stream de tokens con chips de tool-call inline | ✅ (V001, Storybook `Agentic/Streaming Message` — conforma ~16 tipos de evento del protocolo AG-UI (`event_start`/`event_delta`/tool-call inline), construido desde cero contra el estándar en vez de un formato propio) |
 | Rich Tool-UI (tool-based generative UI) | UI enriquecida por tipo de tool dentro de un tool-call, no solo texto/JSON | ✅ (V002, Storybook `Agentic/Tool Call Card/V002 Rich Tool-UI` — `RichToolCallCard` con 6 tipos de bloque: table/diff/citations/confirm/metrics/code; gana modo aditivo `variant="mcp-app"` que delega en `MCPAppsWidgetFrame` en vez de un renderer propio) |
-| MCPAppsWidgetFrame | Host temado del sandbox iframe/postMessage estándar MCP Apps (ratificado 2026-01-26) para renderizar el recurso de UI de un tool MCP | ✅ (Storybook `Agentic/MCP Apps Widget Frame` — envuelve el `AppRenderer` real de `@mcp-ui/client`, no un mock; carga diferida vía `React.lazy`) |
+| MCPAppsWidgetFrame | Host temado del sandbox iframe/postMessage estándar MCP Apps (ratificado 2026-01-26) para renderizar el recurso de UI de un tool MCP | ✅ (Storybook `Agentic/MCP Apps Widget Frame` — envuelve el `AppRenderer` real de `@mcp-ui/client`, no un mock; carga diferida vía `React.lazy`. **Reconfirmado 2026-08-03**: el nuevo spec **MCP 2026-07-28** (release candidate, 28-jul) elevó **MCP Apps a extensión versionada formal** del protocolo — deja de ser solo un patrón ratificado y pasa a estar en el spec, con la garantía de que toda acción iniciada desde la UI del app viaja por el mismo camino de audit/consent JSON-RPC que un tool-call directo (alineado con `AuditLogTable`/`AgentConsentCard`). Anthropic lo shippeó a Claude junto con Enterprise-Managed Auth y dashboards de Observability por connector. Sin cambio de estado — el componente ya implementa el estándar. Fuente: blog.modelcontextprotocol.io/posts/2026-07-28, claude.com/blog/bringing-mcp-2026-07-28-to-claude.) |
 | AgentTopologyGraph | Grafo vivo de la flota de agentes (React Flow): nodos con `NodeStatus`/costo/tokens, edges animados en hops activos | ✅ (Storybook `Agentic/Agent Topology Graph` — nodo custom reusa `NodeStatusBadge`; fallback `role="list"` navegable por teclado para el canvas) |
 | SwarmControlBar | Pausar/reanudar/cancelar el enjambre o una cohorte filtrada (broadcast), cancel con confirm inline | ✅ (Storybook `Agentic/Swarm Control Bar` — reusa el patrón de confirmación de `ApprovalGateCard`) |
 | BudgetCapGovernor | Cap de gasto por agente/workflow con burn-down vs cap y auto-halt visual al 100% (FinOps) | ✅ (Storybook `Agentic/Budget Cap Governor` — reusa la gramática de umbral ok/warn/block de `TokenCostMeter`) |
@@ -127,6 +127,7 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | IncidentView | Timeline de incidente: run disparador, recursos afectados, remediación | ❌ |
 | RetentionBadge / ImmutabilityIndicator | Señal de confianza "WORM, retenido 6+ meses" | ✅ (V001, Storybook `Agentic/Retention Badge/V001 WORM & Immutability` — `RetentionBadge` pill compacto (protected/eligible-for-deletion/hold) + `ImmutabilityIndicator` expandible con base legal, progreso de ventana mínima y hash del registro; separado explícitamente de `AuditLogTable`/`ModelProvenanceCard` (Art. 12/13) como obligación distinta (Art. 19)) |
 | VendorRiskCard (LLM vendor risk assessment) | Evaluación de riesgo por proveedor de LLM de terceros: modelo, contrato de datos, certificaciones, última revisión | ❌ — nueva fila 2026-07-06: auditores SOC2 2026 piden explícitamente "vendor risk assessment por cada LLM de terceros invocado" como evidencia AI-specific mapeada a CC6/CC7; sin componente hoy, aunque `ModelProvenanceCard` ya cubre el "qué modelo" a nivel de run. Fuente: soc2auditors.org/insights/soc-2-for-ai-companies, jul-2026. |
+| AIDisclosureLabel / SyntheticContentMark (transparencia Art. 50) | Familia de señales de transparencia exigidas por el Art. 50: (a) disclosure "estás interactuando con IA" al primer contacto en un chatbot, (b) etiqueta de contenido generado/manipulado por IA sobre outputs (imagen/audio/video/texto) usando el **icon-set oficial de la Comisión** (3 diseños: totalmente-generado / parcialmente-modificado / IA-involucrada), (c) label de deepfake sobre media que se parece a personas reales | ❌ — **nueva fila 2026-08-03, gap regulatorio-exigible AHORA**: el Art. 50 del EU AI Act entró en vigor y su **enforcement empezó el 2-ago-2026 (anteayer)** — sanción hasta **15M€ / 3%**, con la carga de probar el disclosure a tiempo sobre el proveedor/deployer. La semana pasada esto era un riesgo proyectado ("candidato: señal de watermark/etiqueta de contenido-IA"); esta semana es obligación viva y además apareció una **referencia de diseño oficial**: la Comisión publicó un icon-set voluntario (con variantes de color) + un **Code of Practice on Transparency of AI-generated Content** que fija estándares de colocación que los firmantes ya adoptaron y "probablemente se vuelvan el benchmark regulatorio". Distinto de `ModelProvenanceChip` (procedencia técnica por output, no es una marca legible-por-humano de "esto es IA" ni el marcado machine-readable). Aplica transversalmente a las 5 verticales (cualquier cliente con chatbot o que genere media sintética). Candidato bajo esfuerzo: pill/badge reusando la gramática de `GuardrailChip`/`ModelProvenanceChip` + el icon-set. Fuentes: CSA "EU AI Act Article 50 Transparency" (labs.cloudsecurityalliance.org, 29-jul-2026), digital-strategy.ec.europa.eu "Code of Practice on AI-generated Content", artificialintelligenceact.eu/article/50. |
 | BandGauge | Veredicto de banda discreta (readiness ISO 1–6, madurez, cualquier score de N escalones) | ✅ (V001, Storybook `Compliance/Band Gauge/V001 Discrete Bands`) |
 | DeltaList | Diff antes→después entre corridas (diffRuns, qué área subió) | ✅ (V001, Storybook `Compliance/Delta List/V001 Run Diff`) |
 
@@ -145,6 +146,20 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 > procedencia por output, pero el marcado de contenido sintético (audio/imagen/video/texto generado) es
 > más amplio que un chip de provenance y no tiene componente propio hoy (candidato: señal de
 > watermark/etiqueta de contenido-IA en outputs generativos).
+> **ACTUALIZACIÓN 2026-08-03 — el Art. 50 YA ESTÁ EN VIGOR (deadline cumplido, ya no es proyección):**
+> la transparencia del Art. 50 se hizo exigible el **2-ago-2026** y su **enforcement empezó de inmediato
+> ese día** (sanción hasta **15M€ / 3%**; la carga de probar el disclosure a tiempo recae sobre el
+> proveedor/deployer, no sobre el regulador). El candidato de componente que las semanas anteriores se
+> dejó como nota-de-riesgo se **promueve a fila de catálogo** (`AIDisclosureLabel / SyntheticContentMark`,
+> arriba) porque ahora hay obligación viva **y referencia de diseño oficial**: la Comisión publicó un
+> **icon-set voluntario** (3 diseños — totalmente-generado / parcialmente-modificado / IA-involucrada —
+> con variantes de color) y un **Code of Practice on Transparency of AI-generated Content** cuyos
+> estándares de colocación los firmantes ya adoptaron y probablemente se vuelvan el benchmark de
+> cumplimiento. La marca debe ser doble: legible-por-humano (icono/label) **y** machine-readable
+> ("detectable" técnicamente) — el texto legal admite "as far as technically feasible", reconociendo que
+> el watermarking del estado del arte es evadible (<$50/ataque en la literatura). Fuentes: CSA "EU AI Act
+> Article 50 Transparency" (labs.cloudsecurityalliance.org, 29-jul-2026), digital-strategy.ec.europa.eu
+> "Code of Practice on AI-generated Content", artificialintelligenceact.eu/article/50.
 > **Novedad sustantiva del texto publicado (no en el reporte anterior):** el Omnibus **añade 2
 > prohibiciones nuevas al Art. 5(1)** — generadores de (a) imágenes íntimas no consentidas y (b) CSAM —
 > exigiendo "salvaguardas técnicas documentadas" (refusal training, prompt guardrails, content filtering,
@@ -245,38 +260,44 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 ## Prioridad de construcción (guía para el loop de 5h)
 
-Reordenado 2026-07-27 (vanguard check #5). La semana 2026-07-20 → 2026-07-27 **no registró NINGÚN
-commit de construcción** — `HEAD` sigue siendo el commit de vanguardia del reporte anterior
-(`e862c61`, 2026-07-20). No es que el loop haya trabajado en otra cosa (como las 4 semanas previas):
-esta semana **el loop de construcción simplemente no corrió**. El catálogo A–F es byte-idéntico al de
-la semana pasada; ninguna columna de Estado cambia por trabajo interno. Consecuencia directa:
-`AgentHandoffMarker`/`CheckpointBadge` arrastran ya **5 semanas** como prioridad #1 sin construirse.
-El diagnóstico deja de ser "el top-5 no llega al loop" (que asumía un loop activo con otra agenda) y
-pasa a "**el loop de construcción no está corriendo**" — el riesgo de proceso escaló de acoplamiento a
-disponibilidad. Ver Riesgos en `VANGUARD_REPORT.md`.
+Reordenado 2026-08-03 (vanguard check #6). La semana 2026-07-27 → 2026-08-03 **tampoco registró ningún
+commit de construcción** — `HEAD` sigue siendo `b06335f`, el propio commit del reporte de vanguardia
+anterior (2026-07-27). Es la **segunda semana consecutiva sin loop de construcción** (la primera fue
+2026-07-20 → 2026-07-27). El catálogo A–F es byte-idéntico salvo por la fila nueva que agrega esta
+revisión (`AIDisclosureLabel`, ❌); ninguna columna de Estado cambia por trabajo interno. Consecuencia
+directa: `AgentHandoffMarker`/`CheckpointBadge` arrastran ya **6 semanas** como prioridad #1 sin
+construirse. El diagnóstico "**el loop de construcción no está corriendo**" se confirma por segunda
+semana — ya no es una lectura de una sola semana muerta sino una tendencia; el riesgo de proceso pasa de
+"disponibilidad puntual" a "**el loop parece haberse detenido**". Novedad de prioridad esta semana: un
+gap **regulatorio-exigible-hoy** (`AIDisclosureLabel`, Art. 50 en vigor desde 2-ago) entra directo al
+top. Ver Riesgos en `VANGUARD_REPORT.md`.
 
-1. **AgentHandoffMarker + CheckpointBadge** (prioridad #1 por **quinta semana consecutiva** —
+1. **AgentHandoffMarker + CheckpointBadge** (prioridad #1 por **sexta semana consecutiva** —
    arrastrada desde la iteración 15; ladder §07, semana de calidad, semana de distribución/npm y ahora
-   una semana sin loop) — marcadores puntuales sobre timelines/trees ya existentes (`RunTimeline`,
+   dos semanas sin loop) — marcadores puntuales sobre timelines/trees ya existentes (`RunTimeline`,
    `TraceTree`, `ExecutionTimeline`); bajo esfuerzo, cierra las 2 filas más viejas sin resolver del
    documento. Acción sugerida al usuario/loop: verificar primero que el routine de construcción de 5h
-   sigue programado y corriendo; luego sembrar estas 2 como el PRIMER ítem de la próxima sesión, o
+   sigue programado y corriendo (dos semanas sin un solo commit); luego sembrar estas 2 como el PRIMER ítem de la próxima sesión, o
    mover el par a un spec explícito en `docs/` que el loop lea al arrancar.
-2. **ToolIntegrityIndicator (tool-definition drift)** — nueva prioridad esta semana: Vercel AI SDK
+2. **AIDisclosureLabel / SyntheticContentMark** (área C) — **prioridad nueva y la única con deadline
+   ya vencido**: el Art. 50 del EU AI Act entró en vigor con enforcement desde el **2-ago-2026**
+   (sanción hasta 15M€/3%). Ya existe referencia de diseño oficial (icon-set de la Comisión + Code of
+   Practice de contenido generado), así que el diseño no arranca de cero. Esfuerzo bajo: pill/badge que
+   reusa la gramática de `ModelProvenanceChip`/`GuardrailChip` + el icon-set oficial, con las tres
+   variantes de disclosure (chatbot / contenido-IA / deepfake). Cualquier cliente objetivo con chatbot
+   o generación de media ya está fuera de cumplimiento sin esto.
+3. **ToolIntegrityIndicator (tool-definition drift)** — Vercel AI SDK
    ya lo resuelve a nivel de SDK (`fingerprintTools`/`detectToolDrift`, `ai@7.0.19`, 9-jul-2026) y
    la literatura de seguridad MCP de 2026 lo trata como vector de ataque activo ("rug pull"); este
    DS no tiene ninguna señal visual para "esta tool cambió desde que fue aprobada". Esfuerzo bajo
    si se extiende `GuardrailIndicator` en vez de construir un primitivo nuevo. Ver fila nueva en
    área B.
-3. **RBACMatrixViewer** — área C sigue en 55%; `ModelProvenanceCard` y `ApprovalChainStepper` ya
-   dan el vocabulario de actor/provider necesario para "por qué este usuario tiene acceso".
-   Temporal Cloud sigue con "Custom Roles" en pre-release, sin cambio esta semana.
-4. **CommandPalette + Density modes sitewide + DateRangePicker** — 2026-07-15: secuencia
-   completa cerrada en la misma sesión que construyó el `AppShell` (ver filas del área D).
-   El siguiente table stake pendiente del área D es "Data-viz tokens" (paleta categórica 3:1).
-5. **AgentAnomalyIndicator (Behavioral Deviation Flag)** — arrastrada de la semana pasada (fuente
-   FINRA, servicios financieros); reusa vocabulario `Tone`/`NodeStatus` existente.
-6. **VendorRiskCard** — arrastrada de la semana pasada (fuente auditores SOC2 2026); complementa a
+4. **RBACMatrixViewer** — área C es la peor cobertura (baja a 57% al sumar `AIDisclosureLabel`);
+   `ModelProvenanceCard` y `ApprovalChainStepper` ya dan el vocabulario de actor/provider necesario
+   para "por qué este usuario tiene acceso". Temporal Cloud sigue con "Custom Roles" en pre-release.
+5. **AgentAnomalyIndicator (Behavioral Deviation Flag)** — arrastrada (fuente FINRA, servicios
+   financieros); reusa vocabulario `Tone`/`NodeStatus` existente.
+6. **VendorRiskCard** — arrastrada de semanas previas (fuente auditores SOC2 2026); complementa a
    `ModelProvenanceCard` a nivel de proveedor en vez de nivel de run.
 
 (`WorkflowCanvasFrame` sigue fuera del top 5 — mayor esfuerzo del catálogo restante; nota nueva:
@@ -310,7 +331,15 @@ nuevo: "Fleet" ↔ `AgentTopologyGraph`/`SwarmControlBar`, costo unificado ↔ `
 `AgentMemoryPanel` (área B); además **mid-conversation tool changes** GA/beta
 (`mid-conversation-tool-changes-2026-07-01`: añadir/quitar tools entre turnos preservando el cache) —
 refuerza la relevancia de `ToolIntegrityIndicator` (si el set de tools muta en vivo, la deriva de
-definición es aún más visible-crítica). Fuente: platform.claude.com/docs/release-notes · **Vercel AI
+definición es aún más visible-crítica). **NOVEDAD 2026-07-28: spec `MCP 2026-07-28`** (release candidate)
+— core stateless, **MCP Apps elevado a extensión versionada formal del protocolo** (reconfirma
+`MCPAppsWidgetFrame`, sin patrón nuevo), extensión **Tasks** (server responde `tools/call` con un task
+handle; cliente maneja `tasks/get`/`update`/`cancel` — lifecycle de tarea larga, roza `CheckpointBadge`),
+y auth hardening OAuth/OIDC (validación `iss` per RFC 9207). Anthropic lo shippeó a Claude junto con
+Enterprise-Managed Auth y **dashboards de Observability por connector** (adopción/errores/latencia —
+roza `ConnectorStatus`, sin patrón nuevo). También **Claude Opus 5 (24-jul, thinking-on-by-default)** —
+noticia de modelo, no de patrón UI. Fuente: blog.modelcontextprotocol.io/posts/2026-07-28,
+claude.com/blog/bringing-mcp-2026-07-28-to-claude, platform.claude.com/docs/release-notes · **Vercel AI
 SDK: `ai@7.0.30` (16-jul-2026)** — parche de seguridad de URLs de provider (`trustedOrigin`/
 `credentialedOrigin`) + grok-4.5; sin componente nuevo, refuerza la línea de integridad/seguridad de
 tools que motivó `ToolIntegrityIndicator` (`fingerprintTools`/`detectToolDrift`, `ai@7.0.19`) ·
@@ -318,12 +347,18 @@ Microsoft AG-UI / Agent Framework (GA 1.0, sin novedad verificable esta semana) 
 release notes de patrón nuevo) · Adobe Spectrum / React Spectrum (sin release relevante) · **EU AI Act
 Digital Omnibus (PUBLICADO): `Regulation (EU) 2026/1744` en el Diario Oficial 24-jul-2026, en vigor
 27-jul-2026.** Alto-riesgo standalone → 2-dic-2027, embebido → 2-ago-2028, autoridades públicas
-preexistentes → 2-ago-2030; **Art. 50 transparencia se mantiene 2-ago-2026 (fecha exigible más
-próxima, NO diferida)**, marking pipeline de generadores preexistentes con transición al 2-dic-2026.
-Texto publicado añade 2 prohibiciones nuevas al Art. 5(1) (imágenes íntimas no consentidas + CSAM, con
-salvaguardas documentadas) y un Art. 75a de poderes de la AI Office. Hilo cerrado — ref EUR-Lex exacta
-registrada (fuentes: NicFab/lawandtechnology.eu, Modulos, Freshfields, jul-2026) · SOC2 CC7/CC8 (sin
-TSC de IA formal, sin novedad) ·
+preexistentes → 2-ago-2030. **ACTUALIZACIÓN 2026-08-03: el Art. 50 transparencia YA ESTÁ EN VIGOR —
+exigible desde el 2-ago-2026 con enforcement inmediato ese día** (sanción hasta 15M€/3%). Apareció
+**referencia de diseño oficial**: la Comisión publicó un **icon-set voluntario** (3 diseños:
+totalmente-generado / parcialmente-modificado / IA-involucrada, con variantes de color) + un **Code of
+Practice on Transparency of AI-generated Content** con estándares de colocación que los firmantes ya
+adoptaron. Esto **promueve la nota-de-riesgo de contenido sintético a fila de catálogo**
+(`AIDisclosureLabel / SyntheticContentMark`, área C, ❌) — obligación viva + referencia de diseño = ya
+no es especulativo. Fuentes: CSA labs.cloudsecurityalliance.org (29-jul-2026), digital-strategy.ec.europa.eu
+"Code of Practice on AI-generated Content", artificialintelligenceact.eu/article/50. Texto publicado del
+Omnibus añade 2 prohibiciones nuevas al Art. 5(1) (imágenes íntimas no consentidas + CSAM, con
+salvaguardas documentadas) y un Art. 75a de poderes de la AI Office. Ref EUR-Lex `Regulation (EU) 2026/1744`
+(OJ 24-jul) registrada · SOC2 CC7/CC8 (sin TSC de IA formal, sin novedad) ·
 ISO/IEC 42001 + prEN 18286 (sin novedad) · WCAG 2.2 AA (vigente, sin novedad) · FINRA (behavioral
 baselining, sin novedad) · **Seguridad MCP / tool poisoning-rug pull** (motiva `ToolIntegrityIndicator`,
 sin novedad) · **UX de agentes enterprise — "planning visibility"** (nueva fuente 2026-07-20,
