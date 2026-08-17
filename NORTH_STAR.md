@@ -4,7 +4,7 @@
 > interfaces de orquestación de agentes, automatización de procesos con n8n, y auditoría/compliance.
 > El loop semanal de vanguardia re-verifica este documento contra el estado del arte y contra el
 > inventario real de componentes, y mantiene la tabla de gaps al día.
-> Última revisión: 2026-08-10 · Próxima: semanal (routine cloud "vanguard check").
+> Última revisión: 2026-08-17 · Próxima: semanal (routine cloud "vanguard check").
 
 ## Visión
 
@@ -127,7 +127,7 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 | IncidentView | Timeline de incidente: run disparador, recursos afectados, remediación | ❌ |
 | RetentionBadge / ImmutabilityIndicator | Señal de confianza "WORM, retenido 6+ meses" | ✅ (V001, Storybook `Agentic/Retention Badge/V001 WORM & Immutability` — `RetentionBadge` pill compacto (protected/eligible-for-deletion/hold) + `ImmutabilityIndicator` expandible con base legal, progreso de ventana mínima y hash del registro; separado explícitamente de `AuditLogTable`/`ModelProvenanceCard` (Art. 12/13) como obligación distinta (Art. 19)) |
 | VendorRiskCard (LLM vendor risk assessment) | Evaluación de riesgo por proveedor de LLM de terceros: modelo, contrato de datos, certificaciones, última revisión | ❌ — nueva fila 2026-07-06: auditores SOC2 2026 piden explícitamente "vendor risk assessment por cada LLM de terceros invocado" como evidencia AI-specific mapeada a CC6/CC7; sin componente hoy, aunque `ModelProvenanceCard` ya cubre el "qué modelo" a nivel de run. Fuente: soc2auditors.org/insights/soc-2-for-ai-companies, jul-2026. |
-| AIDisclosureLabel / SyntheticContentMark (transparencia Art. 50) | Familia de señales de transparencia exigidas por el Art. 50: (a) disclosure "estás interactuando con IA" al primer contacto en un chatbot, (b) etiqueta de contenido generado/manipulado por IA sobre outputs (imagen/audio/video/texto) usando el **icon-set oficial de la Comisión** (3 diseños: totalmente-generado / parcialmente-modificado / IA-involucrada), (c) label de deepfake sobre media que se parece a personas reales | ❌ — **nueva fila 2026-08-03, gap regulatorio-exigible AHORA**: el Art. 50 del EU AI Act entró en vigor y su **enforcement empezó el 2-ago-2026 (anteayer)** — sanción hasta **15M€ / 3%**, con la carga de probar el disclosure a tiempo sobre el proveedor/deployer. La semana pasada esto era un riesgo proyectado ("candidato: señal de watermark/etiqueta de contenido-IA"); esta semana es obligación viva y además apareció una **referencia de diseño oficial**: la Comisión publicó un icon-set voluntario (con variantes de color) + un **Code of Practice on Transparency of AI-generated Content** que fija estándares de colocación que los firmantes ya adoptaron y "probablemente se vuelvan el benchmark regulatorio". Distinto de `ModelProvenanceChip` (procedencia técnica por output, no es una marca legible-por-humano de "esto es IA" ni el marcado machine-readable). Aplica transversalmente a las 5 verticales (cualquier cliente con chatbot o que genere media sintética). Candidato bajo esfuerzo: pill/badge reusando la gramática de `GuardrailChip`/`ModelProvenanceChip` + el icon-set. **Refinamiento 2026-08-10:** el marco de guía de la Comisión quedó **completo** — a la vez que el Code of Practice + icon-set, la Comisión **finalizó las `Guidelines on transparency obligations` (publicadas 20-jul, página actualizada 6-ago)**; juntas cierran el framework de guía del Art. 50. Detalle de diseño accionable del texto finalizado: **ninguna técnica única satisface el marcado** ("no single technique satisfies the marking requirements") → el mark machine-readable debe ser **multi-capa** (watermark + metadata/C2PA + …), no un solo badge; el componente debe modelar la marca como conjunto, no como flag booleano. Fechas nuevas a vigilar: sistemas generativos ya en mercado antes del 2-ago tienen ventana al **2-dic-2026**, y la **interoperabilidad de detección de watermark se exige el 2-feb-2027**. Fuentes: CSA "EU AI Act Article 50 Transparency" (labs.cloudsecurityalliance.org, 29-jul-2026), digital-strategy.ec.europa.eu "Guidelines on transparency of AI-generated content" (6-ago-2026) + "Code of Practice on AI-generated Content", Paul Weiss "EU Finalises Transparency Rules for AI-Generated Content" (paulweiss.com), artificialintelligenceact.eu/article/50. |
+| AIDisclosureLabel / SyntheticContentMark (transparencia Art. 50) | Familia de señales de transparencia exigidas por el Art. 50: (a) disclosure "estás interactuando con IA" al primer contacto en un chatbot, (b) etiqueta de contenido generado/manipulado por IA sobre outputs (imagen/audio/video/texto) usando el **icon-set oficial de la Comisión** (3 diseños: totalmente-generado / parcialmente-modificado / IA-involucrada), (c) label de deepfake sobre media que se parece a personas reales | ❌ — **nueva fila 2026-08-03, gap regulatorio-exigible AHORA**: el Art. 50 del EU AI Act entró en vigor y su **enforcement empezó el 2-ago-2026 (anteayer)** — sanción hasta **15M€ / 3%**, con la carga de probar el disclosure a tiempo sobre el proveedor/deployer. La semana pasada esto era un riesgo proyectado ("candidato: señal de watermark/etiqueta de contenido-IA"); esta semana es obligación viva y además apareció una **referencia de diseño oficial**: la Comisión publicó un icon-set voluntario (con variantes de color) + un **Code of Practice on Transparency of AI-generated Content** que fija estándares de colocación que los firmantes ya adoptaron y "probablemente se vuelvan el benchmark regulatorio". Distinto de `ModelProvenanceChip` (procedencia técnica por output, no es una marca legible-por-humano de "esto es IA" ni el marcado machine-readable). Aplica transversalmente a las 5 verticales (cualquier cliente con chatbot o que genere media sintética). Candidato bajo esfuerzo: pill/badge reusando la gramática de `GuardrailChip`/`ModelProvenanceChip` + el icon-set. **Refinamiento 2026-08-10:** el marco de guía de la Comisión quedó **completo** — a la vez que el Code of Practice + icon-set, la Comisión **finalizó las `Guidelines on transparency obligations` (publicadas 20-jul, página actualizada 6-ago)**; juntas cierran el framework de guía del Art. 50. Detalle de diseño accionable del texto finalizado: **ninguna técnica única satisface el marcado** ("no single technique satisfies the marking requirements") → el mark machine-readable debe ser **multi-capa** (watermark + metadata/C2PA + …), no un solo badge; el componente debe modelar la marca como conjunto, no como flag booleano. Fechas nuevas a vigilar: sistemas generativos ya en mercado antes del 2-ago tienen ventana al **2-dic-2026**, y la **interoperabilidad de detección de watermark se exige el 2-feb-2027**. Fuentes: CSA "EU AI Act Article 50 Transparency" (labs.cloudsecurityalliance.org, 29-jul-2026), digital-strategy.ec.europa.eu "Guidelines on transparency of AI-generated content" (6-ago-2026) + "Code of Practice on AI-generated Content", Paul Weiss "EU Finalises Transparency Rules for AI-Generated Content" (paulweiss.com), artificialintelligenceact.eu/article/50. **Refinamiento 2026-08-17 — validación de un peer + diseño por actor/momento:** (1) **IBM Carbon** — DS benchmark de este documento — shippeó el componente **"AI label"** en *Carbon for AI*: "the primary indicator to communicate that AI is present… to reinforce AI transparency, accountability, and explainability at any interface level". Es la **primera vez que un design system enterprise de referencia trae de fábrica exactamente la señal de disclosure de presencia-IA** que esta fila especifica — la especulación regulatoria ahora tiene también respaldo de patrón de un peer, no solo del regulador. Reafirma el estado ❌ como gap real (Carbon ya lo tiene, este DS no). (2) La cobertura legal de la semana precisa que el Art. 50 es una **cadena de responsabilidad diferenciada por actor y momento**, no "un badge en todo": el *provider* debe el marcado **machine-readable** de los outputs generativos; el *deployer*/usuario profesional debe la **disclosure legible-por-humano** en casos más estrechos (deepfakes, texto de interés público no revisado editorialmente) — al construir, las 3 variantes (chatbot/contenido-IA/deepfake) deben modelar **quién marca y en qué momento** (design→publication→first-exposure), no solo el tipo de contenido. Fuentes: carbondesignsystem.com/guidelines/carbon-for-ai, Silicon Canals "Europe's AI watermarking rules are now live…" (siliconcanals.com, ago-2026). |
 | BandGauge | Veredicto de banda discreta (readiness ISO 1–6, madurez, cualquier score de N escalones) | ✅ (V001, Storybook `Compliance/Band Gauge/V001 Discrete Bands`) |
 | DeltaList | Diff antes→después entre corridas (diffRuns, qué área subió) | ✅ (V001, Storybook `Compliance/Delta List/V001 Run Diff`) |
 
@@ -260,26 +260,26 @@ Estado: ✅ existe · 🟡 parcial · ❌ falta. (El loop semanal actualiza esta
 
 ## Prioridad de construcción (guía para el loop de 5h)
 
-Revisado 2026-08-10 (vanguard check #7). La semana 2026-08-03 → 2026-08-10 **tampoco registró ningún
-commit de construcción** — `HEAD` sigue siendo `32f5d50`, el propio commit del reporte de vanguardia
-anterior (2026-08-03). Es la **tercera semana consecutiva sin loop de construcción** (2026-07-20→27,
-27→08-03, 08-03→10). El catálogo A–F es **byte-idéntico** al de la semana pasada — esta revisión no
-agrega ninguna fila de componente (los hallazgos de la semana, AIUC-1 y las Guidelines finalizadas del
-Art. 50, son fuentes/refinamientos, no componentes nuevos); ninguna columna de Estado cambia. Evidencia
-dura nueva de que el loop se detuvo: `AGENTIC_LOOP_STATE.json` sigue congelado en `iteration 15`,
-`lastRunAt 2026-07-04`, `status: running` — más de **5 semanas sin avanzar** el contador. Consecuencia
-directa: `AgentHandoffMarker`/`CheckpointBadge` arrastran ya **7 semanas** como prioridad #1 sin
-construirse. El diagnóstico "**el loop de construcción se detuvo**" ya no es lectura de tendencia sino
-hecho establecido a 3 semanas + archivo de estado stale. La acción #1 real de este documento no es
-re-priorizar componentes sino **reactivar (o re-programar) el routine de construcción de 5h**: mientras
-no corra, cualquier orden del backlog es teórico. Ver Riesgos en `VANGUARD_REPORT.md`.
+Revisado 2026-08-17 (vanguard check #8). La semana 2026-08-10 → 2026-08-17 **tampoco registró ningún
+commit de construcción** — `HEAD` es `5720d22`, el propio commit del reporte de vanguardia anterior
+(2026-08-10). Es la **cuarta semana consecutiva sin loop de construcción** (2026-07-20→27, 27→08-03,
+08-03→10, 08-10→17). El catálogo A–F es **byte-idéntico** al de la semana pasada — esta revisión no
+agrega ninguna fila de componente (el hallazgo más fuerte de la semana, el componente "AI label" de IBM
+Carbon, mapea a la fila `AIDisclosureLabel` ya existente; el resto son fuentes/refinamientos); ninguna
+columna de Estado cambia. `AGENTIC_LOOP_STATE.json` sigue congelado en `iteration 15`, `lastRunAt
+2026-07-04`, `status: running` — más de **6 semanas sin avanzar** el contador. Consecuencia directa:
+`AgentHandoffMarker`/`CheckpointBadge` arrastran ya **8 semanas** como prioridad #1 sin construirse. El
+diagnóstico "**el loop de construcción se detuvo**" es hecho establecido a 4 semanas + archivo de estado
+stale. La acción #1 real de este documento no es re-priorizar componentes sino **reactivar (o
+re-programar) el routine de construcción de 5h**: mientras no corra, cualquier orden del backlog es
+teórico. Ver Riesgos en `VANGUARD_REPORT.md`.
 
-1. **AgentHandoffMarker + CheckpointBadge** (prioridad #1 por **séptima semana consecutiva** —
+1. **AgentHandoffMarker + CheckpointBadge** (prioridad #1 por **octava semana consecutiva** —
    arrastrada desde la iteración 15; ladder §07, semana de calidad, semana de distribución/npm y ahora
-   tres semanas sin loop) — marcadores puntuales sobre timelines/trees ya existentes (`RunTimeline`,
+   cuatro semanas sin loop) — marcadores puntuales sobre timelines/trees ya existentes (`RunTimeline`,
    `TraceTree`, `ExecutionTimeline`); bajo esfuerzo, cierra las 2 filas más viejas sin resolver del
    documento. Acción sugerida al usuario/loop: **el bloqueo real no es la prioridad sino que el loop no
-   corre** — verificar/reactivar primero el routine de construcción de 5h (3 semanas + `AGENTIC_LOOP_STATE.json`
+   corre** — verificar/reactivar primero el routine de construcción de 5h (4 semanas + `AGENTIC_LOOP_STATE.json`
    congelado en iter 15 desde el 04-jul); luego sembrar estas 2 como el PRIMER ítem de la próxima sesión, o
    mover el par a un spec explícito en `docs/` que el loop lea al arrancar.
 2. **AIDisclosureLabel / SyntheticContentMark** (área C) — **prioridad nueva y la única con deadline
@@ -346,8 +346,16 @@ claude.com/blog/bringing-mcp-2026-07-28-to-claude, platform.claude.com/docs/rele
 SDK: `ai@7.0.30` (16-jul-2026)** — parche de seguridad de URLs de provider (`trustedOrigin`/
 `credentialedOrigin`) + grok-4.5; sin componente nuevo, refuerza la línea de integridad/seguridad de
 tools que motivó `ToolIntegrityIndicator` (`fingerprintTools`/`detectToolDrift`, `ai@7.0.19`) ·
-Microsoft AG-UI / Agent Framework (GA 1.0, sin novedad verificable esta semana) · IBM Carbon (sin
-release notes de patrón nuevo) · Adobe Spectrum / React Spectrum (sin release relevante) · **EU AI Act
+**Microsoft AG-UI / Agent Framework (NOVEDAD 2026-08-17): Agent Framework 1.14.0** — añade **workflow
+checkpoint resume** (reconfirma la relevancia de `CheckpointBadge`, prioridad #1) + fixes de approval/
+streaming; sigue AG-UI-compatible con CopilotKit como capa de UI recomendada, sin patrón de UI nuevo.
+Fuente: learn.microsoft.com/agent-framework, releasebot.io/updates/microsoft · **IBM Carbon (NOVEDAD
+2026-08-17): Carbon for AI trae el componente "AI label"** — indicador primario de presencia de IA a
+nivel de interfaz (transparencia/accountability/explainability); Carbon AI Chat apunta a WCAG 2.2 AA para
+fin-2026; **Carbon MCP** permite explorar componentes/tokens/iconos vía MCP (se conecta con la nota DTCG,
+"agentes que entienden el DS"). Primer patrón nuevo de Carbon en semanas — **valida `AIDisclosureLabel`/
+`ModelProvenanceChip`** desde un DS benchmark. Fuente: carbondesignsystem.com/guidelines/carbon-for-ai ·
+Adobe Spectrum / React Spectrum (sin release relevante) · **EU AI Act
 Digital Omnibus (PUBLICADO): `Regulation (EU) 2026/1744` en el Diario Oficial 24-jul-2026, en vigor
 27-jul-2026.** Alto-riesgo standalone → 2-dic-2027, embebido → 2-ago-2028, autoridades públicas
 preexistentes → 2-ago-2030. **ACTUALIZACIÓN 2026-08-03: el Art. 50 transparencia YA ESTÁ EN VIGOR —
@@ -404,3 +412,20 @@ Este DS ya publica `@enregla-ui/duly-tokens` en npm; adoptar el formato DTCG (no
 schema del export de tokens) haría el rebrand white-label consumible por herramientas externas — se
 conecta con el 🟡 de "Theming white-label". Sin acción esta semana; candidato de mejora de tokens para
 el loop de construcción. Fuente: supernova.io "The Future of Enterprise Design Systems: 2026 Trends".
+· **Art. 50 — cadena de responsabilidad diferenciada (refinamiento de diseño 2026-08-17):** la cobertura
+legal de la semana precisa que las reglas ya en vigor **no son "un badge en todo"** sino una cadena por
+actor y momento: el *provider* debe el marcado machine-readable de los outputs; el *deployer*/usuario
+profesional debe la disclosure legible-por-humano en casos estrechos (deepfakes, texto de interés público
+no revisado). Insumo directo para el diseño de las 3 variantes de `AIDisclosureLabel` (quién marca, cuándo).
+Fuente: Silicon Canals "Europe's AI watermarking rules are now live…" (siliconcanals.com), Herbert Smith
+Freehills Kramer "Transparency obligations… from principle to practice" (hsfkramer.com).
+· **AIUC-1 — alcance concreto (refinamiento 2026-08-17):** el estándar tiene **51 requisitos / 130
+controles**, certificado válido 12 meses con **testing técnico trimestral** (cadencia de cambio mayor que
+SOC2/ISO 42001); el update de ene-2026 añadió **40+ requisitos voice-specific** — señal de que los agentes
+de voz emergen como superficie regulada propia (a vigilar; sin componente de UI todavía). Complementario a
+SOC2 (postura general) e ISO 42001 (gobernanza). Fuentes: schellman.com/blog/…/what-is-aiuc-1, zeltser.com/aiuc-1-cert.
+· **Servicios financieros — deadline de alto riesgo ya vivo (2026-08-17):** los requisitos de alto riesgo
+del EU AI Act para **credit scoring y fraud-detection agents** entraron en vigor el **2-ago-2026**
+(transparencia, trazabilidad, supervisión humana); la Colorado AI Act (30-jun-2026) suma disclosure +
+impact-assessment. Refuerza que la vertical financiera necesita `AuditLogTable`/`WhoDidWhatTimeline`/
+`ApprovalGateCard` (ya ✅) + `AgentAnomalyIndicator`/`VendorRiskCard` (❌). Fuente: fin.ai/learn/evaluate-ai-agent-compliance-financial-services.
