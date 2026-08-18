@@ -1,0 +1,1663 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Duly Flow — Designer</title>
+<style>
+/* ─────────────────────────────────────────────────────────────
+   Tokens Duly (tema cockpit). Valores literales del design system:
+   packages/tokens/dist/theme-cockpit.css
+   ───────────────────────────────────────────────────────────── */
+:root {
+  color-scheme: dark;
+  --bg-base:        oklch(0.145 0.008 285);
+  --bg-elevated:    oklch(0.190 0.009 285);
+  --surface-2:      oklch(0.235 0.010 285);
+  --surface-3:      oklch(0.280 0.012 285);
+  --surface-header: oklch(0.210 0.009 285);
+  --surface-sunken: oklch(0.185 0.008 285);
+  --ink:            oklch(0.95 0.004 285);
+  --dim:            oklch(0.78 0.008 285);
+  --faint:          oklch(0.58 0.016 285);
+  --faint-deco:     oklch(0.50 0.034 264);
+  --border-subtle:  oklch(0.32 0.012 285);
+  --border-default: oklch(0.41 0.011 285);
+  --border-strong:  oklch(0.65 0.010 285);
+  --accent:         oklch(0.78 0.13 198);
+  --on-accent:      oklch(0.22 0.03 198);
+  --accent-surface: oklch(0.27 0.05 198);
+  --accent-border:  oklch(0.40 0.07 198);
+  --accent-2:       oklch(0.74 0.13 275);
+  --ok:             oklch(0.81 0.16 162);
+  --on-ok:          oklch(0.24 0.04 162);
+  --review:         oklch(0.76 0.13 256);
+  --warn:           oklch(0.74 0.15 70);
+  --on-warn:        oklch(0.22 0.05 70);
+  --block:          oklch(0.72 0.18 19);
+  --on-block:       oklch(0.22 0.06 19);
+  --glow-seed:      oklch(0.88 0.12 192);
+
+  --pack-salesforce: oklch(0.62 0.161 255);
+  --pack-snowflake:  oklch(0.76 0.13 256);
+  --pack-transform:  oklch(0.78 0.13 198);
+  --pack-flow:       oklch(0.67 0.145 287);
+  --pack-binary:     oklch(0.67 0.143 73);
+
+  --font-sans: 'Manrope', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Mono', ui-monospace, Consolas, monospace;
+  --fast: 150ms; --base: 200ms; --slow: 300ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  --r-sm: 6px; --r-md: 10px; --r-lg: 14px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-base);
+  color: var(--ink);
+  font-size: 13px;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 99px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ── Shell ─────────────────────────────────────────────────── */
+#app { display: grid; grid-template-rows: 48px 1fr; height: 100%; }
+
+.topbar {
+  display: flex; align-items: center; gap: 16px;
+  padding: 0 14px;
+  background: var(--surface-header);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.brand { display: flex; align-items: center; gap: 9px; padding-right: 14px; border-right: 1px solid var(--border-subtle); }
+.brand-mark {
+  width: 22px; height: 22px; display: grid; place-items: center;
+  color: var(--accent);
+}
+.brand-name { font-weight: 700; letter-spacing: -0.01em; font-size: 14px; }
+.nav { display: flex; gap: 2px; }
+.nav button {
+  padding: 6px 11px; border-radius: var(--r-sm); color: var(--faint);
+  font-size: 12.5px; transition: color var(--fast) var(--ease), background var(--fast) var(--ease);
+}
+.nav button:hover { color: var(--dim); background: var(--surface-2); }
+.nav button[aria-current="page"] { color: var(--ink); background: var(--surface-2); }
+.nav button[disabled] { cursor: default; opacity: 0.55; }
+.nav button[disabled]:hover { background: none; color: var(--faint); }
+
+.pipeline-id { display: flex; align-items: baseline; gap: 8px; margin-left: 6px; }
+.pipeline-id .name { font-size: 12.5px; color: var(--dim); }
+.pipeline-id .path { font-family: var(--font-mono); font-size: 10.5px; color: var(--faint); }
+.spacer { flex: 1; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: var(--r-sm);
+  border: 1px solid var(--border-default); background: var(--surface-2);
+  font-size: 12.5px; color: var(--dim);
+  transition: all var(--fast) var(--ease);
+}
+.btn:hover { background: var(--surface-3); color: var(--ink); border-color: var(--border-strong); }
+.btn-primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 600; }
+.btn-primary:hover { background: var(--glow-seed); color: var(--on-accent); border-color: var(--glow-seed); }
+.btn[disabled] { opacity: 0.5; cursor: default; }
+.btn[disabled]:hover { background: var(--surface-2); color: var(--dim); border-color: var(--border-default); }
+
+.avatar {
+  width: 26px; height: 26px; border-radius: 99px;
+  background: linear-gradient(140deg, var(--accent-2), var(--accent));
+  color: var(--on-accent); font-size: 10.5px; font-weight: 700;
+  display: grid; place-items: center;
+}
+
+.main { display: grid; grid-template-columns: 236px 1fr 320px; min-height: 0; }
+
+/* ── Paleta ───────────────────────────────────────────────── */
+.palette {
+  background: var(--bg-elevated); border-right: 1px solid var(--border-subtle);
+  display: flex; flex-direction: column; min-height: 0;
+}
+.panel-head {
+  padding: 11px 13px 9px;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.09em;
+  color: var(--faint); font-family: var(--font-mono);
+}
+.search-wrap { padding: 0 11px 10px; }
+.search {
+  width: 100%; padding: 7px 10px; border-radius: var(--r-sm);
+  background: var(--surface-sunken); border: 1px solid var(--border-subtle);
+  color: var(--ink); font-size: 12.5px; font-family: inherit;
+}
+.search::placeholder { color: var(--faint); }
+.search:focus { outline: none; border-color: var(--accent-border); background: var(--bg-base); }
+
+.pack-list { overflow-y: auto; flex: 1; padding: 0 8px 16px; }
+.pack { margin-bottom: 3px; }
+.pack-head {
+  width: 100%; display: flex; align-items: center; gap: 7px;
+  padding: 6px 6px; border-radius: var(--r-sm); color: var(--dim); font-size: 12px;
+}
+.pack-head:hover { background: var(--surface-2); }
+.pack-caret { color: var(--faint); transition: transform var(--fast) var(--ease); }
+.pack[data-open="true"] .pack-caret { transform: rotate(90deg); }
+.pack-dot { width: 7px; height: 7px; border-radius: 2px; }
+.pack-count { margin-left: auto; font-family: var(--font-mono); font-size: 10px; color: var(--faint); }
+.pack-body { display: none; padding: 2px 0 6px 8px; }
+.pack[data-open="true"] .pack-body { display: block; }
+
+.snap-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px; border-radius: var(--r-sm);
+  cursor: grab; user-select: none;
+  border: 1px solid transparent;
+  transition: background var(--fast) var(--ease), border-color var(--fast) var(--ease);
+}
+.snap-item:hover { background: var(--surface-2); border-color: var(--border-subtle); }
+.snap-item:active { cursor: grabbing; }
+.snap-icon {
+  width: 20px; height: 20px; border-radius: 5px; flex: none;
+  display: grid; place-items: center; font-size: 10px; font-weight: 700;
+  font-family: var(--font-mono);
+}
+.snap-item-name { font-size: 12px; color: var(--dim); line-height: 1.25; }
+.palette-hint {
+  padding: 10px 13px; font-size: 11px; color: var(--faint);
+  border-top: 1px solid var(--border-subtle); line-height: 1.5;
+}
+
+/* ── Canvas ───────────────────────────────────────────────── */
+.canvas-wrap { position: relative; overflow: hidden; background: var(--bg-base); min-width: 0; }
+#canvas {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, var(--border-subtle) 1px, transparent 1px);
+  background-size: 22px 22px;
+  cursor: grab; touch-action: none;
+}
+#canvas.panning { cursor: grabbing; }
+#world { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+#edges { position: absolute; top: 0; left: 0; overflow: visible; pointer-events: none; }
+#edges path { pointer-events: stroke; }
+
+.node {
+  position: absolute; width: 236px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-md);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+  cursor: grab; user-select: none;
+  transition: border-color var(--fast) var(--ease), box-shadow var(--fast) var(--ease);
+}
+.node:hover { border-color: var(--border-strong); }
+.node.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 10px 30px -14px oklch(0.78 0.13 198 / 0.5);
+}
+.node.dragging { cursor: grabbing; }
+.node[data-status="error"] { border-color: var(--block); }
+.node[data-status="running"] { border-color: var(--accent); }
+
+.node-head { display: flex; align-items: center; gap: 8px; padding: 9px 10px 0; }
+.node-pack {
+  width: 21px; height: 21px; border-radius: 5px; flex: none;
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 9.5px; font-weight: 700;
+}
+.node-title { min-width: 0; flex: 1; }
+.node-name {
+  font-size: 12px; font-weight: 600; color: var(--ink); line-height: 1.2;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.node-type {
+  font-family: var(--font-mono); font-size: 9px; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--faint); line-height: 1.4;
+}
+.node-doc {
+  margin: 7px 10px 10px;
+  font-size: 11px; line-height: 1.45; color: var(--dim);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  line-clamp: 2; overflow: hidden;
+  border-left: 2px solid var(--accent-border); padding-left: 8px;
+}
+.node.ai-off .node-doc { display: none; }
+.node.ai-off { padding-bottom: 10px; }
+
+/* badge de estado: la gramática de 6 estados del DS */
+.status {
+  width: 15px; height: 15px; flex: none; border-radius: 99px;
+  display: grid; place-items: center; position: relative;
+}
+.status::after { content: ""; width: 6px; height: 6px; border-radius: 99px; background: currentColor; }
+.status[data-s="waiting"]  { color: var(--faint); }
+.status[data-s="success"]  { color: var(--ok); }
+.status[data-s="error"]    { color: var(--block); }
+.status[data-s="skipped"]  { color: var(--faint-deco); }
+.status[data-s="skipped"]::after { width: 7px; height: 2px; border-radius: 1px; }
+.status[data-s="running"]  { color: var(--accent); }
+.status[data-s="retrying"] { color: var(--warn); }
+.status[data-s="running"]::before,
+.status[data-s="retrying"]::before {
+  content: ""; position: absolute; inset: 0;
+  border: 1.5px dashed currentColor; border-radius: 99px;
+  animation: spin 2.4s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.node-flags { display: flex; gap: 4px; flex-wrap: wrap; margin: 0 10px 9px; }
+.flag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 6px; border-radius: 99px;
+  font-size: 10px; font-family: var(--font-mono);
+  border: 1px solid;
+}
+.flag-error { color: var(--block); border-color: color-mix(in oklch, var(--block) 45%, transparent); background: color-mix(in oklch, var(--block) 12%, transparent); }
+.flag-ok    { color: var(--ok);    border-color: color-mix(in oklch, var(--ok) 40%, transparent);    background: color-mix(in oklch, var(--ok) 10%, transparent); }
+.flag-info  { color: var(--faint); border-color: var(--border-subtle); }
+
+/* puertos: círculo = documento, rombo = binario (convención SnapLogic) */
+.port {
+  position: absolute; width: 11px; height: 11px;
+  background: var(--surface-3); border: 1.5px solid var(--border-strong);
+  cursor: crosshair; z-index: 3;
+  transition: background var(--fast) var(--ease), border-color var(--fast) var(--ease), transform var(--fast) var(--ease);
+}
+.port[data-kind="doc"] { border-radius: 99px; }
+.port[data-kind="bin"] { border-radius: 2px; transform: rotate(45deg); }
+.port:hover { border-color: var(--accent); background: var(--accent-surface); transform: scale(1.35); }
+.port[data-kind="bin"]:hover { transform: rotate(45deg) scale(1.35); }
+.port.linked { border-color: var(--accent); background: var(--accent-surface); }
+.port.err { border-color: var(--block); }
+.port.err.linked { border-color: var(--block); background: color-mix(in oklch, var(--block) 25%, transparent); }
+.port.compatible { border-color: var(--ok); background: color-mix(in oklch, var(--ok) 25%, transparent); }
+.port-label {
+  position: absolute; font-family: var(--font-mono); font-size: 9px;
+  color: var(--faint); white-space: nowrap; pointer-events: none; z-index: 3;
+}
+
+/* nodo fantasma = sugerencia de IA */
+.ghost {
+  position: absolute; width: 200px; padding: 10px 11px;
+  border: 1.5px dashed var(--accent-border); border-radius: var(--r-md);
+  background: color-mix(in oklch, var(--accent-surface) 55%, transparent);
+  cursor: pointer; z-index: 2;
+  animation: ghost-in var(--slow) var(--ease);
+}
+@keyframes ghost-in { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+.ghost:hover { border-color: var(--accent); background: var(--accent-surface); }
+.ghost-tag {
+  display: flex; align-items: center; gap: 5px;
+  font-family: var(--font-mono); font-size: 9px; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--accent); margin-bottom: 5px;
+}
+.ghost-name { font-size: 12px; font-weight: 600; color: var(--ink); }
+.ghost-why { font-size: 10.5px; color: var(--dim); line-height: 1.4; margin-top: 4px; }
+.ghost-keys { font-size: 9.5px; color: var(--faint); margin-top: 7px; font-family: var(--font-mono); }
+
+/* chip de conteo sobre la arista */
+.edge-chip {
+  position: absolute; transform: translate(-50%, -50%);
+  padding: 2px 7px; border-radius: 99px;
+  background: var(--bg-elevated); border: 1px solid var(--border-default);
+  font-family: var(--font-mono); font-size: 9.5px; color: var(--dim);
+  cursor: pointer; white-space: nowrap; z-index: 2;
+  transition: all var(--fast) var(--ease);
+}
+.edge-chip:hover { border-color: var(--accent); color: var(--ink); background: var(--surface-2); }
+.edge-chip.err { border-color: color-mix(in oklch, var(--block) 50%, transparent); color: var(--block); }
+.edge-chip.active { border-color: var(--accent); color: var(--on-accent); background: var(--accent); }
+
+/* controles flotantes */
+.canvas-tools {
+  position: absolute; top: 12px; left: 12px; z-index: 10;
+  display: flex; gap: 6px; align-items: center;
+  padding: 5px; border-radius: var(--r-md);
+  background: color-mix(in oklch, var(--bg-elevated) 92%, transparent);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(8px);
+}
+.tool {
+  width: 30px; height: 28px; border-radius: var(--r-sm);
+  display: grid; place-items: center; color: var(--faint);
+  transition: all var(--fast) var(--ease);
+}
+.tool:hover { background: var(--surface-2); color: var(--ink); }
+.tool[aria-pressed="true"] { background: var(--accent-surface); color: var(--accent); }
+.tool-sep { width: 1px; height: 18px; background: var(--border-subtle); }
+.zoom-label { font-family: var(--font-mono); font-size: 10.5px; color: var(--faint); min-width: 34px; text-align: center; }
+
+.run-banner {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 10;
+  display: none; align-items: center; gap: 9px;
+  padding: 7px 13px; border-radius: 99px;
+  background: var(--surface-2); border: 1px solid var(--accent-border);
+  font-size: 12px; color: var(--dim);
+}
+.run-banner.on { display: flex; }
+.run-banner.done { border-color: var(--border-default); }
+
+/* ── Drawer de datos ──────────────────────────────────────── */
+.drawer {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 12;
+  height: 268px; display: none; flex-direction: column;
+  background: var(--bg-elevated); border-top: 1px solid var(--border-default);
+  box-shadow: 0 -14px 34px -18px rgb(0 0 0 / 0.8);
+}
+.drawer.on { display: flex; animation: drawer-in var(--base) var(--ease); }
+@keyframes drawer-in { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+.drawer-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-bottom: 1px solid var(--border-subtle);
+}
+.drawer-title { font-size: 12.5px; color: var(--ink); font-weight: 600; }
+.drawer-sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--faint); }
+.seg { display: flex; padding: 2px; gap: 2px; background: var(--surface-sunken); border-radius: var(--r-sm); border: 1px solid var(--border-subtle); }
+.seg button { padding: 3px 10px; border-radius: 4px; font-size: 11px; color: var(--faint); }
+.seg button[aria-pressed="true"] { background: var(--surface-3); color: var(--ink); }
+.ai-strip {
+  display: flex; gap: 9px; align-items: flex-start;
+  padding: 9px 12px; background: color-mix(in oklch, var(--accent-surface) 40%, transparent);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 11.5px; color: var(--dim); line-height: 1.5;
+}
+.ai-mark { color: var(--accent); flex: none; margin-top: 1px; }
+.drawer-body { flex: 1; overflow: auto; padding: 0; }
+table.preview { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 11px; }
+table.preview th {
+  position: sticky; top: 0; text-align: left; padding: 7px 10px;
+  background: var(--surface-header); color: var(--faint);
+  font-weight: 500; border-bottom: 1px solid var(--border-subtle); white-space: nowrap;
+}
+table.preview td { padding: 6px 10px; border-bottom: 1px solid var(--border-subtle); color: var(--dim); white-space: nowrap; }
+table.preview tr:hover td { background: var(--surface-2); color: var(--ink); }
+td.bad { color: var(--block); }
+pre.json {
+  padding: 12px; font-family: var(--font-mono); font-size: 11px;
+  line-height: 1.6; color: var(--dim); white-space: pre-wrap;
+}
+.j-key { color: var(--accent-2); } .j-str { color: var(--ok); }
+.j-num { color: var(--review); } .j-bad { color: var(--block); }
+
+/* ── Inspector ────────────────────────────────────────────── */
+.inspector {
+  background: var(--bg-elevated); border-left: 1px solid var(--border-subtle);
+  display: flex; flex-direction: column; min-height: 0;
+}
+.insp-head { padding: 12px 14px 10px; border-bottom: 1px solid var(--border-subtle); }
+.insp-title { display: flex; align-items: center; gap: 9px; }
+.insp-name { font-size: 13.5px; font-weight: 600; letter-spacing: -0.01em; }
+.insp-meta { font-family: var(--font-mono); font-size: 10px; color: var(--faint); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+.tabs { display: flex; gap: 2px; padding: 8px 10px 0; border-bottom: 1px solid var(--border-subtle); }
+.tabs button {
+  padding: 7px 11px; font-size: 12px; color: var(--faint);
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: color var(--fast) var(--ease), border-color var(--fast) var(--ease);
+}
+.tabs button:hover { color: var(--dim); }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.insp-body { flex: 1; overflow-y: auto; padding: 14px; }
+.empty { padding: 40px 20px; text-align: center; color: var(--faint); font-size: 12px; line-height: 1.6; }
+
+.ai-card {
+  border: 1px solid var(--accent-border); border-radius: var(--r-md);
+  background: color-mix(in oklch, var(--accent-surface) 45%, transparent);
+  padding: 11px 12px; margin-bottom: 12px;
+}
+.ai-card.diag { border-color: color-mix(in oklch, var(--block) 45%, transparent); background: color-mix(in oklch, var(--block) 8%, transparent); }
+.ai-card-head {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 7px;
+  font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--accent);
+}
+.ai-card.diag .ai-card-head { color: var(--block); }
+.ai-card p { font-size: 12px; line-height: 1.6; color: var(--dim); }
+.ai-card p + p { margin-top: 8px; }
+.ai-card strong { color: var(--ink); font-weight: 600; }
+.ai-prov {
+  margin-top: 9px; padding-top: 8px; border-top: 1px solid var(--border-subtle);
+  display: flex; gap: 5px; flex-wrap: wrap;
+}
+.prov-chip {
+  font-family: var(--font-mono); font-size: 9px; padding: 2px 6px;
+  border-radius: 99px; border: 1px solid var(--border-subtle); color: var(--faint);
+}
+.fix {
+  margin-top: 9px; padding: 8px 10px; border-radius: var(--r-sm);
+  background: var(--surface-sunken); border: 1px solid var(--border-subtle);
+  font-family: var(--font-mono); font-size: 10.5px; color: var(--ok); line-height: 1.5;
+}
+.fix-actions { display: flex; gap: 6px; margin-top: 9px; }
+
+.field { margin-bottom: 13px; }
+.field-label { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--faint); margin-bottom: 5px; }
+.expr-toggle {
+  width: 17px; height: 17px; border-radius: 4px; flex: none;
+  border: 1px solid var(--border-default); background: var(--surface-sunken);
+  font-family: var(--font-mono); font-size: 10px; color: var(--faint);
+  display: grid; place-items: center;
+}
+.expr-toggle[aria-pressed="true"] { background: var(--accent-surface); border-color: var(--accent-border); color: var(--accent); }
+.field-value {
+  width: 100%; padding: 7px 9px; border-radius: var(--r-sm);
+  background: var(--surface-sunken); border: 1px solid var(--border-subtle);
+  color: var(--dim); font-size: 11.5px; font-family: var(--font-mono);
+  line-height: 1.5; word-break: break-word;
+}
+.field-value.expr { color: var(--accent); border-color: var(--accent-border); }
+.field-value.select { display: flex; justify-content: space-between; align-items: center; color: var(--ink); font-family: var(--font-sans); font-size: 12px; }
+.map-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 10.5px; }
+.map-table th { text-align: left; padding: 5px 7px; color: var(--faint); font-weight: 500; border-bottom: 1px solid var(--border-subtle); }
+.map-table td { padding: 5px 7px; border-bottom: 1px solid var(--border-subtle); color: var(--dim); }
+.map-table td:first-child { color: var(--accent); }
+
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.stat { padding: 9px 10px; border-radius: var(--r-sm); background: var(--surface-2); border: 1px solid var(--border-subtle); }
+.stat-k { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--faint); }
+.stat-v { font-size: 15px; font-weight: 600; color: var(--ink); margin-top: 3px; font-variant-numeric: tabular-nums; }
+.stat-v.bad { color: var(--block); }
+.section-label {
+  font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase;
+  letter-spacing: 0.09em; color: var(--faint); margin: 4px 0 8px;
+}
+.view-row {
+  display: flex; align-items: center; gap: 8px; padding: 7px 9px;
+  border-radius: var(--r-sm); background: var(--surface-2);
+  border: 1px solid var(--border-subtle); margin-bottom: 6px; font-size: 11.5px;
+}
+.view-shape { width: 9px; height: 9px; border: 1.5px solid var(--border-strong); flex: none; }
+.view-shape.doc { border-radius: 99px; }
+.view-shape.bin { transform: rotate(45deg); border-radius: 2px; }
+.view-shape.err { border-color: var(--block); border-radius: 99px; }
+.view-row .n { margin-left: auto; font-family: var(--font-mono); font-size: 10.5px; color: var(--faint); }
+
+.toast {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+  padding: 9px 16px; border-radius: 99px; z-index: 50;
+  background: var(--surface-3); border: 1px solid var(--border-default);
+  font-size: 12px; color: var(--ink); opacity: 0; pointer-events: none;
+  transition: opacity var(--base) var(--ease), transform var(--base) var(--ease);
+}
+.toast.on { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+.drag-ghost {
+  position: fixed; z-index: 60; pointer-events: none;
+  padding: 8px 11px; border-radius: var(--r-md);
+  background: var(--surface-3); border: 1px solid var(--accent);
+  font-size: 12px; color: var(--ink); box-shadow: 0 12px 30px -10px rgb(0 0 0 / 0.7);
+  display: flex; align-items: center; gap: 8px;
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M12 2.5 20.5 7v10L12 21.5 3.5 17V7z" stroke-linejoin="round"/>
+          <circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/>
+        </svg>
+      </span>
+      <span class="brand-name">Duly Flow</span>
+    </div>
+    <nav class="nav" aria-label="Secciones">
+      <button aria-current="page">Designer</button>
+      <button disabled title="Fuera de alcance de este prototipo">Manager</button>
+      <button disabled title="Fuera de alcance de este prototipo">Dashboard</button>
+    </nav>
+    <div class="pipeline-id">
+      <span class="name">Opportunity → Snowflake</span>
+      <span class="path">/duly/ventas/pipelines</span>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn" id="btn-reset" title="Volver al pipeline inicial">Reiniciar</button>
+    <button class="btn btn-primary" id="btn-validate">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-14 9z"/></svg>
+      Validar
+    </button>
+    <div class="avatar" title="Danilo">DR</div>
+  </header>
+
+  <div class="main">
+
+    <aside class="palette">
+      <div class="panel-head">Catálogo de Snaps</div>
+      <div class="search-wrap">
+        <input class="search" id="snap-search" type="search" placeholder="Buscar Snaps…" autocomplete="off" />
+      </div>
+      <div class="pack-list" id="pack-list"></div>
+      <div class="palette-hint">Arrastra un Snap al canvas. Los puertos <b>círculo</b> llevan documentos; los <b>rombo</b>, binario.</div>
+    </aside>
+
+    <div class="canvas-wrap">
+      <div id="canvas">
+        <div id="world">
+          <svg id="edges"><g id="edge-layer"></g></svg>
+          <div id="node-layer"></div>
+          <div id="chip-layer"></div>
+        </div>
+      </div>
+
+      <div class="canvas-tools">
+        <button class="tool" id="zoom-out" title="Alejar (−)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg>
+        </button>
+        <span class="zoom-label" id="zoom-label">100%</span>
+        <button class="tool" id="zoom-in" title="Acercar (+)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        <button class="tool" id="zoom-fit" title="Ajustar a pantalla (F)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        </button>
+        <div class="tool-sep"></div>
+        <button class="tool" id="toggle-ai" aria-pressed="true" title="Mostrar/ocultar explicaciones de IA en los nodos">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M18 15.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z"/></svg>
+        </button>
+        <button class="tool" id="btn-delete" title="Eliminar selección (Supr)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg>
+        </button>
+      </div>
+
+      <div class="run-banner" id="run-banner"></div>
+
+      <div class="drawer" id="drawer">
+        <div class="drawer-head">
+          <div>
+            <div class="drawer-title" id="drawer-title">Preview</div>
+            <div class="drawer-sub" id="drawer-sub"></div>
+          </div>
+          <div class="spacer"></div>
+          <div class="seg" id="view-seg">
+            <button data-v="table" aria-pressed="true">Tabla</button>
+            <button data-v="json" aria-pressed="false">JSON</button>
+          </div>
+          <button class="btn" id="drawer-close">Cerrar</button>
+        </div>
+        <div class="ai-strip" id="ai-strip">
+          <span class="ai-mark" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/></svg>
+          </span>
+          <span id="ai-strip-text"></span>
+        </div>
+        <div class="drawer-body" id="drawer-body"></div>
+      </div>
+    </div>
+
+    <aside class="inspector">
+      <div class="insp-head" id="insp-head"></div>
+      <div class="tabs" id="tabs" role="tablist"></div>
+      <div class="insp-body" id="insp-body"></div>
+    </aside>
+
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════
+   Duly Flow — canvas de integración
+   Vanilla JS, sin dependencias. Geometría en "coordenadas de mundo";
+   el pan/zoom es un único transform sobre #world.
+   ═══════════════════════════════════════════════════════════════ */
+
+const NODE_W = 236;
+const PORT_Y0 = 30;      // primer puerto, relativo al top del nodo
+const PORT_DY = 22;      // separación vertical entre puertos de salida
+
+/* ── Catálogo de Snaps ─────────────────────────────────────────
+   `views` describe los puertos: doc = círculo, bin = rombo.
+   Los textos de IA son canned strings — ver README §"Honestidad". */
+const PACKS = [
+  { id: "salesforce", name: "Salesforce", color: "var(--pack-salesforce)", abbr: "SF" },
+  { id: "snowflake",  name: "Snowflake",  color: "var(--pack-snowflake)",  abbr: "SN" },
+  { id: "transform",  name: "Transform",  color: "var(--pack-transform)",  abbr: "TR" },
+  { id: "flow",       name: "Flow",       color: "var(--pack-flow)",       abbr: "FL" },
+  { id: "binary",     name: "Binary",     color: "var(--pack-binary)",     abbr: "BI" },
+];
+
+const SNAPS = {
+  "salesforce-read":   { pack: "salesforce", name: "Salesforce Read",   kind: "Read",      in: [],      out: [{ kind: "doc" }], err: true,
+    doc: "Lee objetos de Salesforce con una consulta SOQL." },
+  "salesforce-upsert": { pack: "salesforce", name: "Salesforce Upsert", kind: "Write",     in: [{ kind: "doc" }], out: [{ kind: "doc" }], err: true,
+    doc: "Inserta o actualiza registros en Salesforce por clave externa." },
+  "snowflake-bulk":    { pack: "snowflake",  name: "Snowflake Bulk Load", kind: "Write",   in: [{ kind: "doc" }], out: [{ kind: "doc" }], err: true,
+    doc: "Carga documentos a una tabla de Snowflake vía COPY." },
+  "snowflake-select":  { pack: "snowflake",  name: "Snowflake Select",  kind: "Read",      in: [], out: [{ kind: "doc" }], err: true,
+    doc: "Consulta una tabla de Snowflake y emite un documento por fila." },
+  "snowflake-scd2":    { pack: "snowflake",  name: "Snowflake SCD2",    kind: "Write",     in: [{ kind: "doc" }], out: [{ kind: "doc" }], err: true,
+    doc: "Mantiene historia tipo Slowly Changing Dimension 2." },
+  "mapper":            { pack: "transform",  name: "Mapper",            kind: "Transform", in: [{ kind: "doc" }], out: [{ kind: "doc" }], err: true,
+    doc: "Renombra, castea y calcula campos hacia el esquema destino." },
+  "json-formatter":    { pack: "transform",  name: "JSON Formatter",    kind: "Format",    in: [{ kind: "doc" }], out: [{ kind: "bin" }], err: true,
+    doc: "Serializa documentos a un stream binario JSON." },
+  "json-parser":       { pack: "transform",  name: "JSON Parser",       kind: "Parse",     in: [{ kind: "bin" }], out: [{ kind: "doc" }], err: true,
+    doc: "Convierte binario JSON en documentos." },
+  "csv-parser":        { pack: "transform",  name: "CSV Parser",        kind: "Parse",     in: [{ kind: "bin" }], out: [{ kind: "doc" }], err: true,
+    doc: "Convierte un archivo CSV en documentos JSON." },
+  "aggregate":         { pack: "transform",  name: "Aggregate",         kind: "Transform", in: [{ kind: "doc" }], out: [{ kind: "doc" }], err: true,
+    doc: "Agrupa y calcula sumas, conteos y promedios." },
+  "router":            { pack: "flow",       name: "Router",            kind: "Flow",      in: [{ kind: "doc" }], out: [{ kind: "doc", label: "ruta 1" }, { kind: "doc", label: "ruta 2" }], err: false,
+    doc: "Envía cada documento a la salida cuya condición se cumple." },
+  "filter":            { pack: "flow",       name: "Filter",            kind: "Flow",      in: [{ kind: "doc" }], out: [{ kind: "doc" }], err: false,
+    doc: "Descarta documentos que no cumplen una expresión." },
+  "join":              { pack: "flow",       name: "Join",              kind: "Flow",      in: [{ kind: "doc" }, { kind: "doc" }], out: [{ kind: "doc" }], err: true,
+    doc: "Combina dos flujos por una clave común." },
+  "union":             { pack: "flow",       name: "Union",             kind: "Flow",      in: [{ kind: "doc" }, { kind: "doc" }], out: [{ kind: "doc" }], err: false,
+    doc: "Une varias entradas en un solo flujo de salida." },
+  "copy":              { pack: "flow",       name: "Copy",              kind: "Flow",      in: [{ kind: "doc" }], out: [{ kind: "doc" }, { kind: "doc" }], err: false,
+    doc: "Duplica el flujo hacia varias salidas." },
+  "pipeline-execute":  { pack: "flow",       name: "Pipeline Execute",  kind: "Flow",      in: [{ kind: "doc" }], out: [{ kind: "doc" }], err: true,
+    doc: "Ejecuta otro pipeline como subrutina." },
+  "file-writer":       { pack: "binary",     name: "File Writer",       kind: "Write",     in: [{ kind: "bin" }], out: [], err: true,
+    doc: "Escribe el stream binario en un destino de archivos." },
+  "file-reader":       { pack: "binary",     name: "File Reader",       kind: "Read",      in: [], out: [{ kind: "bin" }], err: true,
+    doc: "Lee un archivo y emite su contenido como binario." },
+  "s3-writer":         { pack: "binary",     name: "S3 File Writer",    kind: "Write",     in: [{ kind: "bin" }], out: [], err: true,
+    doc: "Escribe el stream binario en un bucket de S3." },
+};
+
+/* ── Pipeline inicial: Salesforce → Snowflake ────────────────── */
+function seedGraph() {
+  return {
+    nodes: [
+      {
+        id: "n_sfdc", type: "salesforce-read", name: "Leer Opportunity", x: 40, y: 140,
+        doc: "Lee las oportunidades de Salesforce modificadas desde el último run (SOQL incremental sobre LastModifiedDate).",
+        config: [
+          { k: "Account", v: "sfdc_prod_oauth2", type: "select" },
+          { k: "Object type", v: "Opportunity", type: "select" },
+          { k: "SOQL query", expr: true, v: "\"SELECT Id, Name, AccountId, StageName, Amount, CloseDate, LastModifiedDate FROM Opportunity WHERE LastModifiedDate > \" + _last_run_ts" },
+          { k: "Output fields", v: "(todos los del SELECT)" },
+          { k: "Snap execution", v: "Validate & Execute", type: "select" },
+        ],
+        ai: { why: "Es la fuente del pipeline. Trae solo lo que cambió desde <strong>_last_run_ts</strong>, así la carga es incremental y no relee los 480k registros históricos cada noche.",
+              watch: "Si <strong>_last_run_ts</strong> viene vacío, el WHERE se degrada a full scan. El parámetro lo inyecta la Scheduled Task.",
+              prov: ["1.240 docs/s", "SOQL incremental", "sfdc_prod_oauth2"] },
+      },
+      {
+        id: "n_map", type: "mapper", name: "Normalizar a STG", x: 330, y: 140,
+        doc: "Castea Amount a decimal y CloseDate a fecha, renombra al esquema de STG_OPPORTUNITY y sella el lote.",
+        config: [
+          { k: "Mapping", type: "map", rows: [
+            ["$Id", "$OPPORTUNITY_ID"],
+            ["$Name", "$OPPORTUNITY_NAME"],
+            ["$AccountId", "$ACCOUNT_ID"],
+            ["$StageName", "$STAGE_NAME"],
+            ["parseFloat($Amount)", "$AMOUNT"],
+            ["Date.parse($CloseDate)", "$CLOSE_DATE"],
+            ["_batch_id", "$LOAD_BATCH_ID"],
+          ]},
+          { k: "Pass through", v: "false", type: "select" },
+          { k: "Null-safe access", v: "true", type: "select" },
+        ],
+        ai: { why: "Traduce el vocabulario de Salesforce al del warehouse: <strong>camelCase → UPPER_SNAKE</strong>, y castea los dos campos que vienen como texto.",
+              watch: "<strong>parseFloat($Amount)</strong> no valida: si Amount trae texto devuelve NaN y el error aparece recién en Snowflake, no acá.",
+              prov: ["7 mapeos", "2 casteos", "sin validación"] },
+      },
+      {
+        id: "n_router", type: "router", name: "Separar por etapa", x: 620, y: 140,
+        doc: "Manda las oportunidades cerradas al warehouse y deja las abiertas en una salida sin conectar.",
+        outLabels: ["cerradas", "abiertas"],
+        config: [
+          { k: "Ruta 1 · cerradas", expr: true, v: "$STAGE_NAME == \"Closed Won\" || $STAGE_NAME == \"Closed Lost\"" },
+          { k: "Ruta 2 · abiertas", expr: true, v: "true  // default" },
+          { k: "Unmatched behavior", v: "Route to last output", type: "select" },
+        ],
+        ai: { why: "Divide el flujo en dos: lo cerrado va a hechos, lo abierto es pipeline comercial vivo y se carga aparte.",
+              watch: "La salida <strong>abiertas</strong> no está conectada — 536 documentos se descartan silenciosamente en cada corrida.",
+              prov: ["2 rutas", "default = ruta 2"] },
+      },
+      {
+        id: "n_snow", type: "snowflake-bulk", name: "Cargar STG_OPPORTUNITY", x: 910, y: 92,
+        doc: "Carga por COPY a PROD_RAW.STG_OPPORTUNITY; los documentos que Snowflake rechaza salen por la error view.",
+        config: [
+          { k: "Account", v: "snowflake_prod_kp", type: "select" },
+          { k: "Schema", v: "PROD_RAW", type: "select" },
+          { k: "Table", v: "STG_OPPORTUNITY", type: "select" },
+          { k: "Load type", v: "Bulk (COPY)", type: "select" },
+          { k: "On error", v: "Route to error view", type: "select" },
+        ],
+        ai: { why: "Escribe el lote en staging con COPY, que es el camino barato en Snowflake: un solo comando por lote en vez de un INSERT por fila.",
+              watch: "<strong>On error = Route to error view</strong> significa que un documento malo no tumba la carga: se desvía y los demás entran.",
+              prov: ["COPY", "PROD_RAW", "error view activa"] },
+        diag: {
+          title: "2 documentos rechazados por la tabla destino",
+          body: "Snowflake rechazó <strong>2 de 1.876</strong> documentos al hacer COPY. Los 1.874 restantes se cargaron: la corrida no se perdió.<br><br>Ambos rechazos tienen <strong>AMOUNT = NaN</strong>. El origen está dos nodos atrás: en Salesforce esas dos oportunidades tienen <code>Amount</code> en blanco, y <code>parseFloat(null)</code> devuelve NaN en vez de null. La columna <code>AMOUNT</code> es <code>NUMBER(18,2) NOT NULL</code>.",
+          reason: "Numeric value 'NaN' is not recognized · column AMOUNT",
+          fix: "Mapper › AMOUNT:\n$Amount == null ? 0 : parseFloat($Amount)",
+          ids: ["0065f00000ARkQ2AAL", "0065f00000ARkR9AAL"],
+        },
+      },
+      {
+        id: "n_fmt", type: "json-formatter", name: "Serializar rechazos", x: 960, y: 296,
+        doc: "Convierte los documentos de error en un stream JSON para poder archivarlos.",
+        config: [
+          { k: "Binary header properties", v: "content-type: application/json" },
+          { k: "Format", v: "JSON Lines", type: "select" },
+        ],
+        ai: { why: "El File Writer solo acepta binario. Este Snap es el puente entre el mundo documento (círculo) y el mundo archivo (rombo).",
+              watch: "Preserva el documento de error completo, no solo el <code>original</code> — el auditor necesita <code>reason</code> y <code>resolution</code>.",
+              prov: ["doc → binario", "JSON Lines"] },
+      },
+      {
+        id: "n_file", type: "file-writer", name: "Archivar rechazos", x: 1250, y: 296,
+        doc: "Deja los rechazos en S3, particionados por fecha, para revisión del equipo de datos.",
+        config: [
+          { k: "File", expr: true, v: "\"s3://duly-rechazos/opportunity/\" + Date.now().toLocaleDateTimeString({format:\"yyyyMMdd\"}) + \"_\" + _run_id + \".jsonl\"" },
+          { k: "Write mode", v: "Overwrite", type: "select" },
+          { k: "Create directory if not exist", v: "true", type: "select" },
+        ],
+        ai: { why: "Cierra el circuito de errores: nada se pierde en silencio, cada documento rechazado queda en un objeto con el <code>run_id</code> en el nombre.",
+              watch: "Nadie lee este bucket automáticamente. Una alerta sobre el conteo de rechazos sería el siguiente paso.",
+              prov: ["S3", "particionado por día", "run_id en el nombre"] },
+      },
+    ],
+    edges: [
+      { id: "e1", from: ["n_sfdc", "out", 0],  to: ["n_map", "in", 0],   kind: "doc" },
+      { id: "e2", from: ["n_map", "out", 0],   to: ["n_router", "in", 0], kind: "doc" },
+      { id: "e3", from: ["n_router", "out", 0], to: ["n_snow", "in", 0],  kind: "doc", label: "cerradas" },
+      { id: "e4", from: ["n_snow", "err", 0],  to: ["n_fmt", "in", 0],   kind: "doc", err: true },
+      { id: "e5", from: ["n_fmt", "out", 0],   to: ["n_file", "in", 0],  kind: "bin" },
+    ],
+  };
+}
+
+/* ── Datos de muestra por arista (lo que ve el preview) ──────── */
+const SAMPLE = {
+  e1: {
+    docs: 2412, dur: "1.9 s", rate: "1.240 doc/s",
+    ai: "2.412 documentos · 6 campos. <strong>Amount</strong> llega como texto en 2.412 de 2.412 casos y viene vacío en 2 — Salesforce serializa currency como string. <strong>CloseDate</strong> es ISO-8601 sin zona horaria.",
+    rows: [
+      { Id: "0065f00000ARkLmAAL", Name: "Acme Corp — Renovación anual", AccountId: "0015f00000BqXyZAAV", StageName: "Closed Won",  Amount: "48500.00", CloseDate: "2026-07-31", LastModifiedDate: "2026-08-15T04:12:07.000+0000" },
+      { Id: "0065f00000ARkNpAAL", Name: "Vega Industrial — Expansión",  AccountId: "0015f00000BqYaBAAV", StageName: "Negotiation", Amount: "127300.50", CloseDate: "2026-09-15", LastModifiedDate: "2026-08-15T04:31:44.000+0000" },
+      { Id: "0065f00000ARkQ2AAL", Name: "Delta Salud — Piloto",         AccountId: "0015f00000BqZcDAAV", StageName: "Closed Won",  Amount: "",         CloseDate: "2026-08-02", LastModifiedDate: "2026-08-15T05:02:19.000+0000", _bad: ["Amount"] },
+      { Id: "0065f00000ARkR9AAL", Name: "Norte Energía — Fase 2",       AccountId: "0015f00000BqAeFAAV", StageName: "Closed Lost", Amount: "",         CloseDate: "2026-07-28", LastModifiedDate: "2026-08-15T05:14:02.000+0000", _bad: ["Amount"] },
+      { Id: "0065f00000ARkTGAA1", Name: "Sur Logística — Renovación",   AccountId: "0015f00000BqBgHAAV", StageName: "Closed Won",  Amount: "9800.00",  CloseDate: "2026-08-11", LastModifiedDate: "2026-08-15T05:47:56.000+0000" },
+    ],
+  },
+  e2: {
+    docs: 2412, dur: "0.6 s", rate: "4.020 doc/s",
+    ai: "Mismo conteo de entrada y salida: el Mapper no descarta nada. <strong>AMOUNT</strong> ya es número en 2.410 documentos, pero 2 quedaron en <code>NaN</code> — <code>parseFloat(\"\")</code> no devuelve null. Se agregó <strong>LOAD_BATCH_ID</strong>.",
+    rows: [
+      { OPPORTUNITY_ID: "0065f00000ARkLmAAL", OPPORTUNITY_NAME: "Acme Corp — Renovación anual", ACCOUNT_ID: "0015f00000BqXyZAAV", STAGE_NAME: "Closed Won",  AMOUNT: "48500.00",  CLOSE_DATE: "2026-07-31", LOAD_BATCH_ID: "BATCH-20260818-01" },
+      { OPPORTUNITY_ID: "0065f00000ARkNpAAL", OPPORTUNITY_NAME: "Vega Industrial — Expansión",  ACCOUNT_ID: "0015f00000BqYaBAAV", STAGE_NAME: "Negotiation", AMOUNT: "127300.50", CLOSE_DATE: "2026-09-15", LOAD_BATCH_ID: "BATCH-20260818-01" },
+      { OPPORTUNITY_ID: "0065f00000ARkQ2AAL", OPPORTUNITY_NAME: "Delta Salud — Piloto",         ACCOUNT_ID: "0015f00000BqZcDAAV", STAGE_NAME: "Closed Won",  AMOUNT: "NaN",       CLOSE_DATE: "2026-08-02", LOAD_BATCH_ID: "BATCH-20260818-01", _bad: ["AMOUNT"] },
+      { OPPORTUNITY_ID: "0065f00000ARkR9AAL", OPPORTUNITY_NAME: "Norte Energía — Fase 2",       ACCOUNT_ID: "0015f00000BqAeFAAV", STAGE_NAME: "Closed Lost", AMOUNT: "NaN",       CLOSE_DATE: "2026-07-28", LOAD_BATCH_ID: "BATCH-20260818-01", _bad: ["AMOUNT"] },
+      { OPPORTUNITY_ID: "0065f00000ARkTGAA1", OPPORTUNITY_NAME: "Sur Logística — Renovación",   ACCOUNT_ID: "0015f00000BqBgHAAV", STAGE_NAME: "Closed Won",  AMOUNT: "9800.00",   CLOSE_DATE: "2026-08-11", LOAD_BATCH_ID: "BATCH-20260818-01" },
+    ],
+  },
+  e3: {
+    docs: 1876, dur: "0.3 s", rate: "6.250 doc/s",
+    ai: "1.876 de 2.412 tomaron esta ruta (77,8%). Los 536 restantes salieron por <strong>abiertas</strong>, que no está conectada: se descartan. Los 2 documentos con <code>AMOUNT = NaN</code> vienen por acá.",
+    rows: [
+      { OPPORTUNITY_ID: "0065f00000ARkLmAAL", OPPORTUNITY_NAME: "Acme Corp — Renovación anual", STAGE_NAME: "Closed Won",  AMOUNT: "48500.00", CLOSE_DATE: "2026-07-31" },
+      { OPPORTUNITY_ID: "0065f00000ARkQ2AAL", OPPORTUNITY_NAME: "Delta Salud — Piloto",         STAGE_NAME: "Closed Won",  AMOUNT: "NaN",      CLOSE_DATE: "2026-08-02", _bad: ["AMOUNT"] },
+      { OPPORTUNITY_ID: "0065f00000ARkR9AAL", OPPORTUNITY_NAME: "Norte Energía — Fase 2",       STAGE_NAME: "Closed Lost", AMOUNT: "NaN",      CLOSE_DATE: "2026-07-28", _bad: ["AMOUNT"] },
+      { OPPORTUNITY_ID: "0065f00000ARkTGAA1", OPPORTUNITY_NAME: "Sur Logística — Renovación",   STAGE_NAME: "Closed Won",  AMOUNT: "9800.00",  CLOSE_DATE: "2026-08-11" },
+    ],
+  },
+  e4: {
+    docs: 2, dur: "0.1 s", rate: "—", err: true,
+    ai: "2 documentos en la error view. Ambos fallan por la <strong>misma causa</strong> (<code>AMOUNT</code> no numérico), así que es un defecto de la transformación, no datos sucios aleatorios. El campo <code>original</code> conserva el documento tal como entró.",
+    rows: [
+      { error: "Failed to load document into STG_OPPORTUNITY", reason: "Numeric value 'NaN' is not recognized · column AMOUNT", resolution: "Cast the value upstream or allow NULL on the target column", status_code: "400", original: "{ OPPORTUNITY_ID: 0065f00000ARkQ2AAL … }", _bad: ["error", "reason"] },
+      { error: "Failed to load document into STG_OPPORTUNITY", reason: "Numeric value 'NaN' is not recognized · column AMOUNT", resolution: "Cast the value upstream or allow NULL on the target column", status_code: "400", original: "{ OPPORTUNITY_ID: 0065f00000ARkR9AAL … }", _bad: ["error", "reason"] },
+    ],
+    json: [
+      {
+        error: "Failed to load document into STG_OPPORTUNITY",
+        reason: "Numeric value 'NaN' is not recognized · column AMOUNT",
+        resolution: "Cast the value upstream or allow NULL on the target column",
+        stacktrace: "com.snaplogic.snap.api.SnapDataException: Numeric value 'NaN' is not recognized",
+        status_code: 400,
+        run_id: "8f2c1e40-8b3a-4a2e-9d31-7a6b9e1c2f10",
+        original: {
+          OPPORTUNITY_ID: "0065f00000ARkQ2AAL",
+          OPPORTUNITY_NAME: "Delta Salud — Piloto",
+          ACCOUNT_ID: "0015f00000BqZcDAAV",
+          STAGE_NAME: "Closed Won",
+          AMOUNT: "NaN",
+          CLOSE_DATE: "2026-08-02",
+          LOAD_BATCH_ID: "BATCH-20260818-01",
+        },
+      },
+    ],
+  },
+  e5: {
+    docs: 2, bytes: "1,4 KB", dur: "0.1 s", rate: "14 KB/s", bin: true,
+    ai: "Vista binaria: se reportan <strong>bytes</strong>, no documentos. 1,4 KB en 2 líneas JSON — cada línea es un documento de error completo, no solo el <code>original</code>.",
+    rows: [
+      { "content-type": "application/json", "content-length": "1.436", lines: "2", encoding: "UTF-8" },
+    ],
+  },
+};
+
+/* ── Sugerencias de IA (nodo fantasma) ──────────────────────── */
+const SUGGESTIONS = {
+  n_router: { outIndex: 1, type: "snowflake-bulk", name: "Cargar oportunidades abiertas",
+    why: "La salida <b>abiertas</b> descarta 536 documentos por corrida. Cargarlos a STG_OPPORTUNITY_OPEN cierra la fuga." },
+  n_sfdc:   { outIndex: 0, type: "mapper", name: "Mapper",
+    why: "Una lectura casi siempre necesita normalizar al esquema destino antes de escribir." },
+  n_map:    { outIndex: 0, type: "filter", name: "Filter",
+    why: "Descartar documentos inválidos acá evita que el error aparezca recién en el destino." },
+  n_fmt:    { outIndex: 0, type: "s3-writer", name: "S3 File Writer",
+    why: "Archivar en S3 mantiene los rechazos fuera del Groundplex." },
+};
+
+/* ── Estado ─────────────────────────────────────────────────── */
+let G = seedGraph();
+let view = { x: 40, y: 20, z: 1 };
+let selected = null;         // { type: "node"|"edge", id }
+let activeTab = "ia";
+let previewEdge = null;
+let previewMode = "table";
+let showAI = true;
+let hasRun = false;
+let running = false;
+let ghost = null;            // sugerencia visible
+let seq = 0;                 // contador de ids
+
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, html) => { const n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; };
+const nodeById = (id) => G.nodes.find((n) => n.id === id);
+const packOf = (t) => PACKS.find((p) => p.id === SNAPS[t].pack);
+const fmt = (n) => n.toLocaleString("es-EC");
+
+/* ── Geometría ──────────────────────────────────────────────── */
+function nodeHeight(n) {
+  const outs = SNAPS[n.type].out.length;
+  const base = showAI ? 84 : 50;
+  const portsNeed = PORT_Y0 + Math.max(0, outs - 1) * PORT_DY + 20;
+  return Math.max(base, portsNeed);
+}
+
+function portPos(nodeId, side, index) {
+  const n = nodeById(nodeId);
+  if (!n) return null;
+  const h = nodeHeight(n);
+  if (side === "in")  return { x: n.x, y: n.y + PORT_Y0 + index * PORT_DY };
+  if (side === "out") return { x: n.x + NODE_W, y: n.y + PORT_Y0 + index * PORT_DY };
+  return { x: n.x + 30, y: n.y + h };   // error view, borde inferior izquierdo
+}
+
+function edgePath(a, b, fromErr) {
+  const dx = Math.max(46, Math.min(Math.abs(b.x - a.x) * 0.55, 170));
+  const c1 = fromErr ? { x: a.x, y: a.y + 54 } : { x: a.x + dx, y: a.y };
+  const c2 = { x: b.x - dx, y: b.y };
+  return { d: `M ${a.x} ${a.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${b.x} ${b.y}`, c1, c2 };
+}
+
+function overlaps(ax, ay, aw, ah, bx, by, bw, bh) {
+  return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+}
+
+function cubicAt(p0, p1, p2, p3, t) {
+  const u = 1 - t, a = u * u * u, b = 3 * u * u * t, c = 3 * u * t * t, d = t * t * t;
+  return { x: a * p0.x + b * p1.x + c * p2.x + d * p3.x, y: a * p0.y + b * p1.y + c * p2.y + d * p3.y };
+}
+
+function screenToWorld(cx, cy) {
+  const r = $("#canvas").getBoundingClientRect();
+  return { x: (cx - r.left - view.x) / view.z, y: (cy - r.top - view.y) / view.z };
+}
+
+/* ── Render: paleta ─────────────────────────────────────────── */
+function renderPalette(filter = "") {
+  const host = $("#pack-list");
+  host.innerHTML = "";
+  const q = filter.trim().toLowerCase();
+  PACKS.forEach((pack) => {
+    const items = Object.entries(SNAPS).filter(([, s]) => s.pack === pack.id)
+      .filter(([, s]) => !q || s.name.toLowerCase().includes(q) || s.kind.toLowerCase().includes(q));
+    if (!items.length) return;
+    const wrap = el("div", "pack");
+    wrap.dataset.open = q ? "true" : (pack.id === "salesforce" || pack.id === "transform" ? "true" : "false");
+    const head = el("button", "pack-head", `
+      <span class="pack-caret">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </span>
+      <span class="pack-dot" style="background:${pack.color}"></span>
+      <span>${pack.name}</span>
+      <span class="pack-count">${items.length}</span>`);
+    head.addEventListener("click", () => { wrap.dataset.open = wrap.dataset.open === "true" ? "false" : "true"; });
+    const body = el("div", "pack-body");
+    items.forEach(([type, s]) => {
+      const item = el("div", "snap-item", `
+        <span class="snap-icon" style="background:color-mix(in oklch, ${pack.color} 22%, transparent); color:${pack.color}">${pack.abbr}</span>
+        <span class="snap-item-name">${s.name}</span>`);
+      item.title = s.doc;
+      item.addEventListener("pointerdown", (e) => startPaletteDrag(e, type));
+      body.appendChild(item);
+    });
+    wrap.append(head, body);
+    host.appendChild(wrap);
+  });
+}
+
+/* ── Render: canvas ─────────────────────────────────────────── */
+function applyView() {
+  $("#world").style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.z})`;
+  $("#zoom-label").textContent = Math.round(view.z * 100) + "%";
+}
+
+function renderNodes() {
+  const layer = $("#node-layer");
+  layer.innerHTML = "";
+  G.nodes.forEach((n) => {
+    const def = SNAPS[n.type], pack = packOf(n.type);
+    const h = nodeHeight(n);
+    const box = el("div", "node" + (showAI ? "" : " ai-off"));
+    box.dataset.id = n.id;
+    box.dataset.status = n.status || "waiting";
+    if (selected && selected.type === "node" && selected.id === n.id) box.classList.add("selected");
+    box.style.left = n.x + "px";
+    box.style.top = n.y + "px";
+    box.style.minHeight = h + "px";
+
+    const flags = [];
+    if (n.status === "error" && n.diag) flags.push(`<span class="flag flag-error">${n.diag.ids.length} rechazados</span>`);
+    if (n.status === "success" && n.outCount != null) flags.push(`<span class="flag flag-ok">${fmt(n.outCount)} docs</span>`);
+    if (n.status === "success" && n.dur) flags.push(`<span class="flag flag-info">${n.dur}</span>`);
+
+    box.innerHTML = `
+      <div class="node-head">
+        <span class="node-pack" style="background:color-mix(in oklch, ${pack.color} 22%, transparent); color:${pack.color}">${pack.abbr}</span>
+        <span class="node-title">
+          <span class="node-name">${n.name}</span>
+          <span class="node-type">${def.name}</span>
+        </span>
+        <span class="status" data-s="${n.status || "waiting"}" title="${n.status || "waiting"}"></span>
+      </div>
+      ${showAI ? `<div class="node-doc">${n.doc || def.doc}</div>` : ""}
+      ${flags.length ? `<div class="node-flags">${flags.join("")}</div>` : ""}`;
+
+    // puertos
+    def.in.forEach((p, i) => box.appendChild(makePort(n, "in", i, p.kind, h)));
+    def.out.forEach((p, i) => {
+      box.appendChild(makePort(n, "out", i, p.kind, h));
+      const label = (n.outLabels && n.outLabels[i]) || p.label;
+      if (label) {
+        const lb = el("span", "port-label", label);
+        lb.style.left = NODE_W + 15 + "px";
+        lb.style.top = PORT_Y0 + i * PORT_DY - 5 + "px";
+        box.appendChild(lb);
+      }
+    });
+    if (def.err) box.appendChild(makePort(n, "err", 0, "doc", h));
+
+    box.addEventListener("pointerdown", (e) => startNodeDrag(e, n));
+    layer.appendChild(box);
+  });
+  renderGhost();
+}
+
+function makePort(n, side, index, kind, h) {
+  const p = el("div", "port");
+  p.dataset.kind = kind; p.dataset.node = n.id; p.dataset.side = side; p.dataset.index = index;
+  if (side === "err") p.classList.add("err");
+  const linked = G.edges.some((e) =>
+    (side === "in" ? e.to[0] === n.id && e.to[1] === "in" && e.to[2] === index
+                   : e.from[0] === n.id && e.from[1] === side && e.from[2] === index));
+  if (linked) p.classList.add("linked");
+  const pos = { in: { l: -6, t: PORT_Y0 + index * PORT_DY - 5 },
+                out: { l: NODE_W - 5, t: PORT_Y0 + index * PORT_DY - 5 },
+                err: { l: 24, t: h - 5 } }[side];
+  p.style.left = pos.l + "px"; p.style.top = pos.t + "px";
+  p.title = side === "err" ? "Error view (documento)" : `${side === "in" ? "Entrada" : "Salida"} · ${kind === "doc" ? "documento" : "binario"}`;
+  p.addEventListener("pointerdown", (e) => startPortDrag(e, n.id, side, index, kind));
+  return p;
+}
+
+function renderEdges() {
+  const g = $("#edge-layer"), chips = $("#chip-layer");
+  g.innerHTML = ""; chips.innerHTML = "";
+  G.edges.forEach((e) => {
+    const a = portPos(e.from[0], e.from[1], e.from[2]);
+    const b = portPos(e.to[0], e.to[1], e.to[2]);
+    if (!a || !b) return;
+    const { d, c1, c2 } = edgePath(a, b, e.from[1] === "err");
+    const isSel = selected && selected.type === "edge" && selected.id === e.id;
+    const flowing = e.flowing;
+    const stroke = e.err ? "var(--block)" : (e.docs != null || isSel ? "var(--accent)" : "var(--border-strong)");
+
+    const hit = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    hit.setAttribute("d", d); hit.setAttribute("fill", "none");
+    hit.setAttribute("stroke", "transparent"); hit.setAttribute("stroke-width", "14");
+    hit.style.cursor = "pointer";
+    hit.addEventListener("click", () => { select("edge", e.id); });
+    g.appendChild(hit);
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", d); path.setAttribute("fill", "none");
+    path.setAttribute("stroke", stroke);
+    path.setAttribute("stroke-width", isSel ? 2.4 : 1.6);
+    path.setAttribute("stroke-linecap", "round");
+    if (flowing) { path.setAttribute("stroke-dasharray", "5 6"); path.classList.add("flowing"); }
+    if (e.kind === "bin") path.setAttribute("stroke-dasharray", flowing ? "5 6" : "1 5");
+    g.appendChild(path);
+
+    // punta
+    const tip = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    tip.setAttribute("d", `M ${b.x - 7} ${b.y - 4} L ${b.x - 1} ${b.y} L ${b.x - 7} ${b.y + 4}`);
+    tip.setAttribute("fill", "none"); tip.setAttribute("stroke", stroke);
+    tip.setAttribute("stroke-width", "1.6"); tip.setAttribute("stroke-linecap", "round"); tip.setAttribute("stroke-linejoin", "round");
+    g.appendChild(tip);
+
+    if (e.docs != null) {
+      const m = cubicAt(a, c1, c2, b, 0.5);
+      const s = SAMPLE[e.id];
+      const text = s && s.bin ? s.bytes : fmt(e.docs) + " docs";
+      const chip = el("button", "edge-chip" + (e.err ? " err" : "") + (previewEdge === e.id ? " active" : ""), text);
+      chip.style.left = m.x + "px"; chip.style.top = m.y + "px";
+      chip.title = "Ver los datos que pasan por acá";
+      chip.addEventListener("click", (ev) => { ev.stopPropagation(); openPreview(e.id); });
+      chips.appendChild(chip);
+    }
+  });
+}
+
+function renderGhost() {
+  const old = $(".ghost"); if (old) old.remove();
+  if (!ghost) return;
+  const n = nodeById(ghost.nodeId); if (!n) return;
+  const pos = portPos(n.id, "out", ghost.outIndex);
+  const box = el("div", "ghost", `
+    <div class="ghost-tag">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/></svg>
+      Sugerido
+    </div>
+    <div class="ghost-name">${ghost.name}</div>
+    <div class="ghost-why">${ghost.why}</div>
+    <div class="ghost-keys">Clic para agregar · Esc para descartar</div>`);
+  // se empuja hacia abajo hasta no pisar ningún Snap
+  const GW = 200, GH = 112;
+  let gx = pos.x + 78, gy = pos.y - 38, guard = 0;
+  while (guard++ < 24 && G.nodes.some((o) =>
+    overlaps(gx, gy, GW, GH, o.x - 14, o.y - 14, NODE_W + 28, nodeHeight(o) + 28))) gy += 44;
+  box.style.left = gx + "px";
+  box.style.top = gy + "px";
+  box.addEventListener("pointerdown", (e) => e.stopPropagation());
+  box.addEventListener("click", acceptGhost);
+  $("#node-layer").appendChild(box);
+}
+
+function draw() { renderNodes(); renderEdges(); applyView(); }
+
+/* ── Selección + sugerencia ─────────────────────────────────── */
+function select(type, id) {
+  selected = { type, id };
+  ghost = null;
+  if (type === "node") {
+    const s = SUGGESTIONS[id];
+    if (s) {
+      const taken = G.edges.some((e) => e.from[0] === id && e.from[1] === "out" && e.from[2] === s.outIndex);
+      if (!taken) ghost = { nodeId: id, ...s };
+    }
+  }
+  draw(); renderInspector();
+}
+
+function acceptGhost() {
+  if (!ghost) return;
+  const src = nodeById(ghost.nodeId);
+  const pos = portPos(src.id, "out", ghost.outIndex);
+  const id = addNode(ghost.type, pos.x + 78, pos.y - 30, ghost.name);
+  G.edges.push({ id: "e_" + (++seq), from: [src.id, "out", ghost.outIndex], to: [id, "in", 0], kind: "doc" });
+  ghost = null;
+  select("node", id);
+  toast("Snap agregado desde la sugerencia");
+}
+
+function addNode(type, x, y, name) {
+  const id = "n_" + (++seq);
+  G.nodes.push({ id, type, name: name || SNAPS[type].name, x: Math.round(x), y: Math.round(y), status: "waiting" });
+  return id;
+}
+
+function deleteSelected() {
+  if (!selected) { toast("No hay nada seleccionado"); return; }
+  if (selected.type === "node") {
+    G.nodes = G.nodes.filter((n) => n.id !== selected.id);
+    G.edges = G.edges.filter((e) => e.from[0] !== selected.id && e.to[0] !== selected.id);
+    toast("Snap eliminado con sus conexiones");
+  } else {
+    G.edges = G.edges.filter((e) => e.id !== selected.id);
+    toast("Conexión eliminada");
+  }
+  selected = null; ghost = null; closePreview();
+  draw(); renderInspector();
+}
+
+/* ── Inspector ──────────────────────────────────────────────── */
+function renderInspector() {
+  const head = $("#insp-head"), tabs = $("#tabs"), body = $("#insp-body");
+  if (!selected) {
+    head.innerHTML = `<div class="insp-name">Inspector</div><div class="insp-meta">nada seleccionado</div>`;
+    tabs.innerHTML = ""; body.innerHTML = `<div class="empty">Selecciona un Snap para ver qué hace,<br>cómo está configurado y qué datos produce.</div>`;
+    return;
+  }
+  if (selected.type === "edge") {
+    const e = G.edges.find((x) => x.id === selected.id);
+    if (!e) { selected = null; return renderInspector(); }
+    head.innerHTML = `<div class="insp-title"><div><div class="insp-name">Conexión</div>
+      <div class="insp-meta">${e.kind === "bin" ? "vista binaria" : "vista documento"}${e.err ? " · error view" : ""}</div></div></div>`;
+    tabs.innerHTML = "";
+    body.innerHTML = `
+      <div class="section-label">Origen → destino</div>
+      <div class="view-row"><span class="view-shape ${e.kind === "bin" ? "bin" : "doc"}${e.err ? " err" : ""}"></span>
+        <span>${nodeById(e.from[0]) ? nodeById(e.from[0]).name : "?"}</span>
+        <span class="n">${e.from[1] === "err" ? "error view" : "salida " + (e.from[2] + 1)}</span></div>
+      <div class="view-row"><span class="view-shape ${e.kind === "bin" ? "bin" : "doc"}"></span>
+        <span>${nodeById(e.to[0]) ? nodeById(e.to[0]).name : "?"}</span>
+        <span class="n">entrada ${e.to[2] + 1}</span></div>
+      ${e.docs != null ? `<div class="stat-grid" style="margin-top:14px">
+        <div class="stat"><div class="stat-k">Documents</div><div class="stat-v">${fmt(e.docs)}</div></div>
+        <div class="stat"><div class="stat-k">Duration</div><div class="stat-v">${SAMPLE[e.id] ? SAMPLE[e.id].dur : "—"}</div></div>
+      </div>
+      <button class="btn" style="width:100%" onclick="window.__openPreview('${e.id}')">Ver los datos</button>` :
+      `<div class="empty" style="padding:24px 0">Sin datos todavía.<br>Corre <b>Validar</b> para poblar esta vista.</div>`}
+      <div style="margin-top:14px"><button class="btn" style="width:100%" onclick="window.__del()">Eliminar conexión</button></div>`;
+    return;
+  }
+
+  const n = nodeById(selected.id);
+  if (!n) { selected = null; return renderInspector(); }
+  const def = SNAPS[n.type], pack = packOf(n.type);
+  head.innerHTML = `<div class="insp-title">
+      <span class="node-pack" style="background:color-mix(in oklch, ${pack.color} 22%, transparent); color:${pack.color}">${pack.abbr}</span>
+      <div style="min-width:0"><div class="insp-name">${n.name}</div>
+      <div class="insp-meta">${def.name} · ${pack.name}</div></div>
+      <span class="spacer"></span>
+      <span class="status" data-s="${n.status || "waiting"}"></span>
+    </div>`;
+
+  const tabDefs = [["ia", "IA"], ["config", "Config"], ["datos", "Datos"]];
+  tabs.innerHTML = "";
+  tabDefs.forEach(([id, label]) => {
+    const b = el("button", null, label);
+    b.setAttribute("role", "tab");
+    b.setAttribute("aria-selected", activeTab === id ? "true" : "false");
+    b.addEventListener("click", () => { activeTab = id; renderInspector(); });
+    tabs.appendChild(b);
+  });
+
+  body.innerHTML = activeTab === "ia" ? tabIA(n) : activeTab === "config" ? tabConfig(n) : tabDatos(n);
+}
+
+function tabIA(n) {
+  const ai = n.ai;
+  let html = "";
+  if (n.status === "error" && n.diag) {
+    html += `<div class="ai-card diag">
+      <div class="ai-card-head">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+        Diagnóstico
+      </div>
+      <p><strong>${n.diag.title}</strong></p>
+      <p>${n.diag.body}</p>
+      <div class="fix">${n.diag.fix.replace(/\n/g, "<br>")}</div>
+      <div class="fix-actions">
+        <button class="btn btn-primary" onclick="window.__applyFix('${n.id}')">Aplicar el fix</button>
+        <button class="btn" onclick="window.__openPreview('e4')">Ver los 2 documentos</button>
+      </div>
+      <div class="ai-prov">
+        <span class="prov-chip">reason: ${n.diag.reason}</span>
+      </div>
+    </div>`;
+  }
+  if (ai) {
+    html += `<div class="ai-card">
+      <div class="ai-card-head">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/></svg>
+        Qué hace este Snap
+      </div>
+      <p>${ai.why}</p>
+      <p style="color:var(--faint)"><strong style="color:var(--warn)">Ojo:</strong> ${ai.watch}</p>
+      <div class="ai-prov">${ai.prov.map((p) => `<span class="prov-chip">${p}</span>`).join("")}</div>
+    </div>`;
+  } else {
+    html += `<div class="ai-card"><div class="ai-card-head">Qué hace este Snap</div>
+      <p>${SNAPS[n.type].doc}</p>
+      <p style="color:var(--faint)">Este Snap se agregó en esta sesión: todavía no está configurado, así que la explicación es la genérica del catálogo.</p></div>`;
+  }
+  const s = SUGGESTIONS[n.id];
+  if (s) {
+    const taken = G.edges.some((e) => e.from[0] === n.id && e.from[1] === "out" && e.from[2] === s.outIndex);
+    html += `<div class="section-label">Siguiente paso</div>
+      <div class="view-row" style="align-items:flex-start; flex-direction:column; gap:6px">
+        <div style="color:${taken ? "var(--faint)" : "var(--ink)"}">${taken ? "Sugerencia ya aplicada" : s.name}</div>
+        <div style="font-size:11px; color:var(--faint); line-height:1.5">${taken ? "La salida ya está conectada." : s.why}</div>
+      </div>`;
+  }
+  return html;
+}
+
+function tabConfig(n) {
+  if (!n.config) return `<div class="empty">Snap sin configurar.<br>Se usarían los valores por defecto del catálogo.</div>`;
+  return n.config.map((f) => {
+    if (f.type === "map") {
+      return `<div class="field"><div class="field-label">${f.k}</div>
+        <table class="map-table"><thead><tr><th>Expresión</th><th>Destino</th></tr></thead><tbody>
+        ${f.rows.map((r) => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join("")}
+        </tbody></table></div>`;
+    }
+    const exprBtn = `<button class="expr-toggle" aria-pressed="${f.expr ? "true" : "false"}" title="${f.expr ? "Campo en modo expresión" : "Valor literal"}">=</button>`;
+    if (f.type === "select") {
+      return `<div class="field"><div class="field-label">${f.k}</div>
+        <div class="field-value select">${esc(f.v)}
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div></div>`;
+    }
+    return `<div class="field"><div class="field-label">${exprBtn}${f.k}</div>
+      <div class="field-value ${f.expr ? "expr" : ""}">${esc(f.v)}</div></div>`;
+  }).join("");
+}
+
+function tabDatos(n) {
+  const def = SNAPS[n.type];
+  const outs = G.edges.filter((e) => e.from[0] === n.id);
+  let html = "";
+  if (n.status && n.status !== "waiting") {
+    html += `<div class="stat-grid">
+      <div class="stat"><div class="stat-k">Documents out</div><div class="stat-v">${n.outCount != null ? fmt(n.outCount) : "—"}</div></div>
+      <div class="stat"><div class="stat-k">Duration</div><div class="stat-v">${n.dur || "—"}</div></div>
+      <div class="stat"><div class="stat-k">Rate</div><div class="stat-v" style="font-size:13px">${n.rate || "—"}</div></div>
+      <div class="stat"><div class="stat-k">Rechazados</div><div class="stat-v ${n.rejected ? "bad" : ""}">${n.rejected || 0}</div></div>
+    </div>`;
+  } else {
+    html += `<div class="empty" style="padding:20px 0">Sin telemetría.<br>Corre <b>Validar</b> para muestrear 50 documentos.</div>`;
+  }
+  html += `<div class="section-label">Views</div>`;
+  def.in.forEach((p, i) => { html += viewRow("Entrada " + (i + 1), p.kind, false, n, "in", i); });
+  def.out.forEach((p, i) => {
+    const label = (n.outLabels && n.outLabels[i]) || ("Salida " + (i + 1));
+    html += viewRow(label, p.kind, false, n, "out", i);
+  });
+  if (def.err) html += viewRow("Error view", "doc", true, n, "err", 0);
+
+  if (outs.some((e) => e.docs != null)) {
+    html += `<div style="margin-top:12px">${outs.filter((e) => e.docs != null).map((e) =>
+      `<button class="btn" style="width:100%; margin-bottom:6px" onclick="window.__openPreview('${e.id}')">Preview · ${e.err ? "error view" : "salida"} (${fmt(e.docs)})</button>`).join("")}</div>`;
+  }
+  return html;
+}
+
+function viewRow(label, kind, isErr, n, side, i) {
+  const edge = G.edges.find((e) => side === "in"
+    ? e.to[0] === n.id && e.to[2] === i
+    : e.from[0] === n.id && e.from[1] === side && e.from[2] === i);
+  const state = edge ? (edge.docs != null ? fmt(edge.docs) + " docs" : "conectada") : "sin conectar";
+  return `<div class="view-row">
+    <span class="view-shape ${kind === "bin" ? "bin" : "doc"}${isErr ? " err" : ""}"></span>
+    <span>${label}</span><span class="n">${state}</span></div>`;
+}
+
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+/* ── Preview de datos ───────────────────────────────────────── */
+function openPreview(edgeId) {
+  const s = SAMPLE[edgeId];
+  const e = G.edges.find((x) => x.id === edgeId);
+  if (!s || !e || e.docs == null) { toast("Esa conexión todavía no tiene datos"); return; }
+  previewEdge = edgeId;
+  const from = nodeById(e.from[0]), to = nodeById(e.to[0]);
+  $("#drawer-title").textContent = `${from ? from.name : "?"} → ${to ? to.name : "?"}`;
+  $("#drawer-sub").textContent = `${s.bin ? s.bytes : fmt(s.docs) + " documentos"} · ${s.dur} · ${s.rate}` +
+    (s.bin ? "" : " · muestra de 50");
+  $("#ai-strip-text").innerHTML = s.ai;
+  $("#drawer").classList.add("on");
+  renderPreviewBody();
+  renderEdges();
+}
+
+function renderPreviewBody() {
+  const s = SAMPLE[previewEdge];
+  const host = $("#drawer-body");
+  if (!s) return;
+  if (previewMode === "json") {
+    const data = s.json || s.rows.map((r) => { const c = { ...r }; delete c._bad; return c; });
+    host.innerHTML = `<pre class="json">${colorJSON(JSON.stringify(data, null, 2))}</pre>`;
+    return;
+  }
+  const cols = Object.keys(s.rows[0]).filter((k) => k !== "_bad");
+  host.innerHTML = `<table class="preview"><thead><tr>${cols.map((c) => `<th>${esc(c)}</th>`).join("")}</tr></thead>
+    <tbody>${s.rows.map((r) => `<tr>${cols.map((c) =>
+      `<td class="${r._bad && r._bad.includes(c) ? "bad" : ""}">${esc(r[c] === "" ? "∅" : r[c])}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+}
+
+function colorJSON(t) {
+  return esc(t)
+    .replace(/&quot;([^&]+?)&quot;:/g, '<span class="j-key">"$1"</span>:')
+    .replace(/: &quot;(NaN|.*?not recognized.*?)&quot;/g, ': <span class="j-bad">"$1"</span>')
+    .replace(/: &quot;(.*?)&quot;/g, ': <span class="j-str">"$1"</span>')
+    .replace(/: (\d+\.?\d*)/g, ': <span class="j-num">$1</span>');
+}
+
+function closePreview() { previewEdge = null; $("#drawer").classList.remove("on"); renderEdges(); }
+
+/* ── Drag: paleta → canvas ──────────────────────────────────── */
+function startPaletteDrag(ev, type) {
+  ev.preventDefault();
+  const pack = packOf(type);
+  const g = el("div", "drag-ghost", `
+    <span class="snap-icon" style="background:color-mix(in oklch, ${pack.color} 22%, transparent); color:${pack.color}">${pack.abbr}</span>
+    ${SNAPS[type].name}`);
+  document.body.appendChild(g);
+  const move = (e) => { g.style.left = e.clientX + 12 + "px"; g.style.top = e.clientY + 10 + "px"; };
+  move(ev);
+  const up = (e) => {
+    document.removeEventListener("pointermove", move);
+    document.removeEventListener("pointerup", up);
+    g.remove();
+    const r = $("#canvas").getBoundingClientRect();
+    if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
+      const w = screenToWorld(e.clientX, e.clientY);
+      const id = addNode(type, w.x - NODE_W / 2, w.y - 30);
+      select("node", id);
+      toast(`${SNAPS[type].name} agregado`);
+    }
+  };
+  document.addEventListener("pointermove", move);
+  document.addEventListener("pointerup", up);
+}
+
+/* ── Drag: mover nodo ───────────────────────────────────────── */
+function startNodeDrag(ev, n) {
+  if (ev.target.classList.contains("port")) return;
+  ev.stopPropagation();
+  select("node", n.id);
+  const start = screenToWorld(ev.clientX, ev.clientY);
+  const orig = { x: n.x, y: n.y };
+  const box = $(`.node[data-id="${n.id}"]`);
+  let moved = false;
+  const move = (e) => {
+    const w = screenToWorld(e.clientX, e.clientY);
+    n.x = Math.round(orig.x + (w.x - start.x));
+    n.y = Math.round(orig.y + (w.y - start.y));
+    if (!moved) { moved = true; box.classList.add("dragging"); ghost = null; renderGhost(); }
+    box.style.left = n.x + "px"; box.style.top = n.y + "px";
+    renderEdges();
+  };
+  const up = () => {
+    document.removeEventListener("pointermove", move);
+    document.removeEventListener("pointerup", up);
+    if (moved) { box.classList.remove("dragging"); draw(); }
+  };
+  document.addEventListener("pointermove", move);
+  document.addEventListener("pointerup", up);
+}
+
+/* ── Drag: crear conexión puerto → puerto ───────────────────── */
+function startPortDrag(ev, nodeId, side, index, kind) {
+  ev.preventDefault(); ev.stopPropagation();
+  if (side === "in") { toast("Arrastra desde una salida hacia una entrada"); return; }
+  const a = portPos(nodeId, side, index);
+  const temp = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  temp.setAttribute("fill", "none"); temp.setAttribute("stroke", "var(--accent)");
+  temp.setAttribute("stroke-width", "1.8"); temp.setAttribute("stroke-dasharray", "5 5");
+  $("#edge-layer").appendChild(temp);
+
+  document.querySelectorAll('.port[data-side="in"]').forEach((p) => {
+    if (p.dataset.kind === kind && p.dataset.node !== nodeId) p.classList.add("compatible");
+  });
+
+  const move = (e) => {
+    const w = screenToWorld(e.clientX, e.clientY);
+    temp.setAttribute("d", edgePath(a, w, side === "err").d);
+  };
+  const up = (e) => {
+    document.removeEventListener("pointermove", move);
+    document.removeEventListener("pointerup", up);
+    temp.remove();
+    document.querySelectorAll(".port.compatible").forEach((p) => p.classList.remove("compatible"));
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    if (target && target.classList.contains("port") && target.dataset.side === "in") {
+      const tNode = target.dataset.node, tIdx = +target.dataset.index, tKind = target.dataset.kind;
+      if (tNode === nodeId) { toast("Un Snap no puede conectarse a sí mismo"); return; }
+      if (tKind !== kind) {
+        toast(`No compatible: ${kind === "doc" ? "documento" : "binario"} → ${tKind === "doc" ? "documento" : "binario"}`);
+        return;
+      }
+      if (G.edges.some((x) => x.to[0] === tNode && x.to[2] === tIdx)) { toast("Esa entrada ya está conectada"); return; }
+      G.edges.push({ id: "e_" + (++seq), from: [nodeId, side, index], to: [tNode, "in", tIdx], kind, err: side === "err" });
+      toast("Conexión creada");
+      ghost = null; draw(); renderInspector();
+    }
+  };
+  document.addEventListener("pointermove", move);
+  document.addEventListener("pointerup", up);
+}
+
+/* ── Pan y zoom ─────────────────────────────────────────────── */
+function initCanvasNav() {
+  const c = $("#canvas");
+  c.addEventListener("pointerdown", (e) => {
+    if (e.target !== c && e.target.id !== "world") return;
+    if (selected || ghost) { selected = null; ghost = null; draw(); renderInspector(); }
+    c.classList.add("panning");
+    const sx = e.clientX, sy = e.clientY, ox = view.x, oy = view.y;
+    const move = (m) => { view.x = ox + (m.clientX - sx); view.y = oy + (m.clientY - sy); applyView(); };
+    const up = () => {
+      c.classList.remove("panning");
+      document.removeEventListener("pointermove", move);
+      document.removeEventListener("pointerup", up);
+    };
+    document.addEventListener("pointermove", move);
+    document.addEventListener("pointerup", up);
+  });
+  c.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    zoomAt(e.clientX, e.clientY, e.deltaY < 0 ? 1.12 : 1 / 1.12);
+  }, { passive: false });
+}
+
+function zoomAt(cx, cy, factor) {
+  const r = $("#canvas").getBoundingClientRect();
+  const px = cx - r.left, py = cy - r.top;
+  const nz = Math.min(2.2, Math.max(0.3, view.z * factor));
+  view.x = px - (px - view.x) * (nz / view.z);
+  view.y = py - (py - view.y) * (nz / view.z);
+  view.z = nz;
+  applyView();
+}
+
+function zoomCenter(factor) {
+  const r = $("#canvas").getBoundingClientRect();
+  zoomAt(r.left + r.width / 2, r.top + r.height / 2, factor);
+}
+
+function fitView() {
+  if (!G.nodes.length) return;
+  const xs = G.nodes.map((n) => n.x), ys = G.nodes.map((n) => n.y);
+  const minX = Math.min(...xs) - 60, minY = Math.min(...ys) - 60;
+  const maxX = Math.max(...xs) + NODE_W + 90, maxY = Math.max(...ys) + 140;
+  const r = $("#canvas").getBoundingClientRect();
+  const z = Math.min(1, Math.max(0.55, Math.min(r.width / (maxX - minX), r.height / (maxY - minY))));
+  view.z = z;
+  view.x = (r.width - (maxX - minX) * z) / 2 - minX * z;
+  view.y = (r.height - (maxY - minY) * z) / 2 - minY * z;
+  applyView();
+}
+
+/* ── Ejecución guionada ─────────────────────────────────────── */
+const RUN_PLAN = [
+  { node: "n_sfdc",   ms: 850, status: "success", out: 2412, dur: "1.9 s", rate: "1.240 doc/s", edges: [["e1", 2412]] },
+  { node: "n_map",    ms: 600, status: "success", out: 2412, dur: "0.6 s", rate: "4.020 doc/s", edges: [["e2", 2412]] },
+  { node: "n_router", ms: 450, status: "success", out: 1876, dur: "0.3 s", rate: "6.250 doc/s", edges: [["e3", 1876]] },
+  { node: "n_snow",   ms: 1100, status: "error",  out: 1874, dur: "3.4 s", rate: "551 doc/s", rejected: 2, edges: [["e4", 2]] },
+  { node: "n_fmt",    ms: 400, status: "success", out: 2, dur: "0.1 s", rate: "20 doc/s", edges: [["e5", 2]] },
+  { node: "n_file",   ms: 500, status: "success", out: 0, dur: "0.2 s", rate: "7 KB/s", edges: [] },
+];
+
+async function runPipeline() {
+  if (running) return;
+  running = true;
+  $("#btn-validate").disabled = true;
+  closePreview();
+  ghost = null;
+  G.nodes.forEach((n) => { n.status = "waiting"; n.outCount = null; n.dur = null; n.rate = null; n.rejected = 0; });
+  G.edges.forEach((e) => { e.docs = null; e.flowing = false; });
+  draw();
+
+  const banner = $("#run-banner");
+  banner.className = "run-banner on";
+
+  for (const step of RUN_PLAN) {
+    const n = nodeById(step.node);
+    if (!n) continue;
+    n.status = "running";
+    banner.innerHTML = `<span class="status" data-s="running"></span> Ejecutando <b style="color:var(--ink)">${n.name}</b>`;
+    step.edges.forEach(([id]) => { const e = G.edges.find((x) => x.id === id); if (e) e.flowing = true; });
+    draw();
+    if (selected && selected.type === "node" && selected.id === n.id) renderInspector();
+    await sleep(step.ms);
+    n.status = step.status;
+    n.outCount = step.out; n.dur = step.dur; n.rate = step.rate; n.rejected = step.rejected || 0;
+    step.edges.forEach(([id, docs]) => { const e = G.edges.find((x) => x.id === id); if (e) { e.flowing = false; e.docs = docs; } });
+    draw();
+    if (selected && selected.type === "node" && selected.id === n.id) renderInspector();
+  }
+
+  // Snaps agregados a mano en esta sesión: no participan del guion
+  G.nodes.forEach((n) => { if (n.status === "waiting") n.status = "skipped"; });
+  hasRun = true; running = false;
+  $("#btn-validate").disabled = false;
+  banner.className = "run-banner on done";
+  banner.innerHTML = `<span class="status" data-s="error"></span>
+    Validación completa · <b style="color:var(--ink)">1.874 cargados</b>, 2 rechazados ·
+    <button class="btn" style="padding:3px 9px" onclick="window.__focusFail()">Ver el fallo</button>`;
+  draw(); renderInspector();
+}
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function applyFix(nodeId) {
+  const n = nodeById(nodeId);
+  const map = nodeById("n_map");
+  if (map && map.config) {
+    const row = map.config[0].rows.find((r) => r[1] === "$AMOUNT");
+    if (row) row[0] = "$Amount == null ? 0 : parseFloat($Amount)";
+    map.doc = "Castea Amount a decimal con default 0 cuando viene vacío, castea CloseDate y sella el lote.";
+    if (map.ai) map.ai.watch = "El default <strong>0</strong> es una decisión de negocio: una oportunidad sin monto ahora suma 0 al forecast, no se pierde.";
+  }
+  if (n) { n.status = "success"; n.rejected = 0; n.outCount = 1876; delete n.diag; }
+  toast("Fix aplicado al Mapper — vuelve a validar para confirmar");
+  draw(); renderInspector();
+}
+
+function focusFail() {
+  const n = nodeById("n_snow"); if (!n) return;
+  activeTab = "ia";
+  select("node", n.id);
+  const r = $("#canvas").getBoundingClientRect();
+  view.x = r.width / 2 - (n.x + NODE_W / 2) * view.z;
+  view.y = r.height / 2 - (n.y + 40) * view.z - 60;
+  applyView();
+}
+
+/* ── Utilidades UI ──────────────────────────────────────────── */
+let toastTimer;
+function toast(msg) {
+  const t = $("#toast");
+  t.textContent = msg; t.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("on"), 2200);
+}
+
+/* ── Cableado ───────────────────────────────────────────────── */
+function init() {
+  renderPalette();
+  initCanvasNav();
+  draw();
+  renderInspector();
+  fitView();
+
+  $("#snap-search").addEventListener("input", (e) => renderPalette(e.target.value));
+  $("#zoom-in").addEventListener("click", () => zoomCenter(1.2));
+  $("#zoom-out").addEventListener("click", () => zoomCenter(1 / 1.2));
+  $("#zoom-fit").addEventListener("click", fitView);
+  $("#btn-delete").addEventListener("click", deleteSelected);
+  $("#btn-validate").addEventListener("click", runPipeline);
+  $("#drawer-close").addEventListener("click", closePreview);
+  $("#btn-reset").addEventListener("click", () => {
+    G = seedGraph(); selected = null; ghost = null; hasRun = false;
+    closePreview(); draw(); renderInspector(); fitView();
+    $("#run-banner").className = "run-banner";
+    toast("Pipeline reiniciado");
+  });
+  $("#toggle-ai").addEventListener("click", (e) => {
+    showAI = !showAI;
+    e.currentTarget.setAttribute("aria-pressed", showAI ? "true" : "false");
+    draw();
+    toast(showAI ? "Explicaciones de IA visibles" : "Explicaciones de IA ocultas");
+  });
+  $("#view-seg").addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    previewMode = b.dataset.v;
+    [...$("#view-seg").children].forEach((c) => c.setAttribute("aria-pressed", c === b ? "true" : "false"));
+    renderPreviewBody();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT") return;
+    if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); deleteSelected(); }
+    else if (e.key === "Escape") { ghost = null; selected = null; closePreview(); draw(); renderInspector(); }
+    else if (e.key === "f" || e.key === "F") fitView();
+    else if (e.key === "+" || e.key === "=") zoomCenter(1.2);
+    else if (e.key === "-") zoomCenter(1 / 1.2);
+  });
+
+  // handlers usados desde HTML inline del inspector
+  window.__openPreview = openPreview;
+  window.__applyFix = applyFix;
+  window.__focusFail = focusFail;
+  window.__del = deleteSelected;
+
+  selfCheck();
+}
+
+/* ── Chequeo mínimo: corre al cargar, falla ruidoso en consola ── */
+function selfCheck() {
+  let pass = true;
+  const ok = (c, m) => { const v = Boolean(c); if (!v) { console.error("[selfCheck] " + m); pass = false; } return v; };
+  G.edges.forEach((e) => {
+    ok(nodeById(e.from[0]), `arista ${e.id}: nodo origen ${e.from[0]} no existe`);
+    ok(nodeById(e.to[0]), `arista ${e.id}: nodo destino ${e.to[0]} no existe`);
+    const a = portPos(e.from[0], e.from[1], e.from[2]);
+    const b = portPos(e.to[0], e.to[1], e.to[2]);
+    ok(a && Number.isFinite(a.x) && Number.isFinite(a.y), `arista ${e.id}: puerto origen sin coordenadas`);
+    ok(b && Number.isFinite(b.x) && Number.isFinite(b.y), `arista ${e.id}: puerto destino sin coordenadas`);
+    const src = nodeById(e.from[0]);
+    if (src) {
+      const def = SNAPS[src.type];
+      if (e.from[1] === "out") ok(def.out[e.from[2]], `arista ${e.id}: salida ${e.from[2]} no existe en el Snap`);
+      if (e.from[1] === "err") ok(def.err, `arista ${e.id}: el Snap origen no tiene error view`);
+    }
+    if (e.docs != null || SAMPLE[e.id]) ok(SAMPLE[e.id], `arista ${e.id}: sin datos de muestra`);
+  });
+  const p0 = { x: 0, y: 0 }, p3 = { x: 10, y: 10 };
+  const t0 = cubicAt(p0, p0, p3, p3, 0);
+  const t1 = cubicAt(p0, p0, p3, p3, 1);
+  ok(t0.x === 0 && t0.y === 0, "cubicAt(t=0) debería devolver p0");
+  ok(t1.x === 10 && t1.y === 10, "cubicAt(t=1) debería devolver p3");
+  RUN_PLAN.forEach((s) => { ok(nodeById(s.node), `plan de ejecución: nodo ${s.node} no existe`); });
+  Object.entries(SUGGESTIONS).forEach(([id, s]) => {
+    const n = nodeById(id);
+    if (n) ok(SNAPS[n.type].out[s.outIndex], `sugerencia de ${id}: salida ${s.outIndex} no existe`);
+    ok(SNAPS[s.type], `sugerencia de ${id}: tipo ${s.type} no está en el catálogo`);
+  });
+  console.log(pass ? "[selfCheck] ok" : "[selfCheck] hay fallos arriba");
+}
+
+init();
+</script>
+</body>
+</html>
