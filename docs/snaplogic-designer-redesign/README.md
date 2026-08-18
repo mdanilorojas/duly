@@ -60,6 +60,15 @@ Los textos de IA son **strings pre-escritos indexados por (nodo, estado)**. La U
 real y funciona; la inteligencia está guionada. Es lo correcto para una v1: define el
 contrato de qué debe producir el modelo en cada superficie, sin gastar en cablearlo.
 
+La corrida de **Validar** también es un guion, con una sola bifurcación real: si el
+Mapper ya lleva el fix del `AMOUNT`, la corrida cierra en verde (1.876 cargados, sin
+rama de rechazos). Eso cierra el loop **diagnosticar → aplicar el fix → re-validar**,
+que es la demo completa.
+
+Dos límites que vienen con eso: el guion asume el pipeline semilla, así que si borras
+o reconectas nodos los conteos dejan de ser coherentes; y los Snaps que agregues a mano
+quedan en `skipped` porque no están en el guion.
+
 ## Qué funciona (verificado en navegador)
 
 1. Arrastrar un Snap de la paleta al canvas — cae donde sueltas
@@ -80,9 +89,21 @@ en consola (`[selfCheck] ok`).
 
 ## Fuentes
 
-Investigación previa sobre la anatomía de la UI actual, las features de IA de SnapLogic
-(SnapGPT, AgentCreator, AutoSuggest) y los patrones de "AI explain" de n8n, Make,
-Workato, Retool, LangGraph Studio, Dify y Dagster.
+Investigación completa en [`research/`](./research):
+
+- [`01-designer-ui.md`](./research/01-designer-ui.md) — anatomía de la UI actual: glosario,
+  Asset Palette, toolbar con los 14 comandos y sus strings, tabla de atajos de teclado,
+  límites del preview (50 docs / 15 MB), y las quejas textuales de usuarios sobre el canvas
+- [`02-ai-features.md`](./research/02-ai-features.md) — SnapGPT, AgentCreator/Agent Snap,
+  AutoSuggest, línea de tiempo 2017–2026, y **10 patrones de "AI explain" sobre nodos**
+  robados de n8n, Make, Workato, Retool, LangGraph Studio, Dify y Dagster
+- [`03-pipeline-use-case.md`](./research/03-pipeline-use-case.md) — tres pipelines reales,
+  catálogo de Snaps por pack, modelo de documento, JSONPath, forma del documento de error
+  y métricas de ejecución
+
+Dato relevante que salió de ahí: **AutoSuggest no usa LLM** — SnapLogic lo dice
+explícitamente. Es un recomendador ML clásico. SnapGPT (generativo) es un subsistema
+aparte, y vive en un panel de chat lateral, nunca sobre el canvas.
 
 Dato relevante que salió de ahí: **AutoSuggest no usa LLM** — SnapLogic lo dice
 explícitamente. Es un recomendador ML clásico. SnapGPT (generativo) es un subsistema

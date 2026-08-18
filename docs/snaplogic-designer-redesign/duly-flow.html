@@ -1497,6 +1497,24 @@ const RUN_PLAN = [
   { node: "n_file",   ms: 500, status: "success", out: 0, dur: "0.2 s", rate: "7 KB/s", edges: [] },
 ];
 
+/* ¿El Mapper ya lleva el fix del AMOUNT? Si sí, la corrida cierra en verde:
+   sin rechazos y sin rama de error. Es lo que hace que "aplicar el fix →
+   volver a validar" no mienta. */
+function mapperFixed() {
+  const m = nodeById("n_map");
+  const rows = m && m.config && m.config[0] && m.config[0].rows;
+  return !!(rows && rows.some((r) => r[1] === "$AMOUNT" && /==\s*null/.test(r[0])));
+}
+
+function currentPlan() {
+  if (!mapperFixed()) return RUN_PLAN;
+  return RUN_PLAN.map((s) => {
+    if (s.node === "n_snow") return { ...s, status: "success", out: 1876, dur: "3.2 s", rate: "586 doc/s", rejected: 0, edges: [] };
+    if (s.node === "n_fmt" || s.node === "n_file") return { ...s, skip: true, edges: [] };
+    return s;
+  });
+}
+
 async function runPipeline() {
   if (running) return;
   running = true;
@@ -1510,9 +1528,14 @@ async function runPipeline() {
   const banner = $("#run-banner");
   banner.className = "run-banner on";
 
-  for (const step of RUN_PLAN) {
+  for (const step of currentPlan()) {
     const n = nodeById(step.node);
     if (!n) continue;
+    if (step.skip) {
+      n.status = "skipped"; n.outCount = 0; n.rejected = 0;
+      draw();
+      continue;
+    }
     n.status = "running";
     banner.innerHTML = `<span class="status" data-s="running"></span> Ejecutando <b style="color:var(--ink)">${n.name}</b>`;
     step.edges.forEach(([id]) => { const e = G.edges.find((x) => x.id === id); if (e) e.flowing = true; });
@@ -1531,9 +1554,13 @@ async function runPipeline() {
   hasRun = true; running = false;
   $("#btn-validate").disabled = false;
   banner.className = "run-banner on done";
-  banner.innerHTML = `<span class="status" data-s="error"></span>
-    Validación completa · <b style="color:var(--ink)">1.874 cargados</b>, 2 rechazados ·
-    <button class="btn" style="padding:3px 9px" onclick="window.__focusFail()">Ver el fallo</button>`;
+  banner.innerHTML = mapperFixed()
+    ? `<span class="status" data-s="success"></span>
+       Validación completa · <b style="color:var(--ink)">1.876 cargados</b>, 0 rechazados ·
+       la rama de rechazos no recibió nada`
+    : `<span class="status" data-s="error"></span>
+       Validación completa · <b style="color:var(--ink)">1.874 cargados</b>, 2 rechazados ·
+       <button class="btn" style="padding:3px 9px" onclick="window.__focusFail()">Ver el fallo</button>`;
   draw(); renderInspector();
 }
 
