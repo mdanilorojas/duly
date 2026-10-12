@@ -108,7 +108,7 @@ After a catalog change, regenerate `packages/catalog/catalog.json` with `pnpm --
 - The emit catalog is five components plus a `Column` layout node. The wider inventory is hand-maintained and is not a schema. Prop types for everything else live in `packages/ui/src`.
 - Hex values are the CSS fallback. Supporting browsers use the OKLCH custom property from the theme stylesheet. The export's `oklch` field is parsed from that CSS. A generative document is rejected if it contains a raw color.
 - `AgentOpsCockpit` and the generative cockpit document are sample data. Queue decisions stay in the browser. Metric numbers in the generated document are a snapshot. They do not recompute when a person approves a row.
-- There is no hosted demo URL. You run Storybook or the showcase locally.
+- There is no hosted demo URL. You run Storybook or the showcase locally. A review deployment of this branch is not a production site.
 - Storybook's first compile depends on the machine. The MCP transcript itself is the part that finishes in a few seconds after install.
 - Workspace package names are `@enregla-ui/duly-tokens` and `@enregla-ui/duly-ui`. The MCP package `@duly/mcp` is private to this repo.
 

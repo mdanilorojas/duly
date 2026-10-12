@@ -10,10 +10,10 @@ export default meta;
 
 type Story = StoryObj<typeof AgentOpsCockpit>;
 
-/** Reference render of the composition described by the Duly MCP server. */
+/** Reference render of the composition described by the Duly MCP server. Theme is pinned so the public story URL stays on cockpit. */
 export const Cockpit: Story = {
   render: () => (
-    <div className="min-h-screen bg-bg-base p-6 md:p-10">
+    <div data-theme="cockpit" className="min-h-screen bg-bg-base p-6 md:p-10">
       <AgentOpsCockpit />
     </div>
   ),
