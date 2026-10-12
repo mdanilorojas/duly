@@ -71,8 +71,11 @@ describe("MCP server", () => {
     await withClient(async (client) => {
       const tools = await client.listTools();
       expect(tools.tools.map((tool) => tool.name).sort()).toEqual([
+        "compose_surface",
+        "get_component_schema",
         "get_generate_ui_instructions",
         "get_generative_ui_schema",
+        "get_theme_tokens",
         "list_components",
         "list_tokens",
         "validate_generative_ui",

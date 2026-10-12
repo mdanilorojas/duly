@@ -1,6 +1,8 @@
 import { readFileSync } from "node:fs";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { CATALOG_COMPONENTS, CATALOG_ID, COMPONENT_SUMMARIES, REACT_COMPONENTS, buildCatalog, checkSurface } from "@duly/catalog";
+import { exampleSurface } from "@duly/catalog/example";
 import { buildDesignSystem, listComponents, themeNames, tokensPayload } from "./design-system.js";
 import { getGenerativeUiSchema, validateGenerativeUi } from "./generative-ui.js";
 import { GENERATE_UI } from "./instructions.js";
@@ -52,14 +54,79 @@ export function createDulyServer(): McpServer {
     {
       title: "List components",
       description:
-        "Return the curated Duly component inventory. Filter with a substring query or an area (agentic or primitive). This is not every export and does not include prop types.",
+        "Return the versioned emit catalog (the components an agent may put on a surface). Pass area or query to search the wider hand-maintained inventory instead. The inventory is not a schema.",
       inputSchema: {
-        query: z.string().optional().describe("Case-insensitive match against the component name or summary."),
-        area: z.enum(["agentic", "primitive"]).optional().describe("Limit the list to agent-ops components or primitives."),
+        query: z.string().optional().describe("Case-insensitive match against the wider inventory name or summary."),
+        area: z.enum(["agentic", "primitive"]).optional().describe("Limit the wider inventory to agent-ops components or primitives."),
       },
       annotations: { readOnlyHint: true },
     },
-    async ({ query, area }) => toolJson({ components: listComponents({ query, area }) }),
+    async ({ query, area }) => {
+      if (query || area) return toolJson({ components: listComponents({ query, area }) });
+      return toolJson({
+        catalogId: CATALOG_ID,
+        components: CATALOG_COMPONENTS.map((name) => ({
+          name,
+          react: REACT_COMPONENTS[name],
+          summary: COMPONENT_SUMMARIES[name],
+        })),
+      });
+    },
+  );
+
+  server.registerTool(
+    "get_component_schema",
+    {
+      title: "Get component schema",
+      description:
+        "Return the A2UI-shaped JSON Schema catalog, or one component schema when name is set. An agent may emit only these components.",
+      inputSchema: {
+        name: z.string().optional().describe(`Component name. Known names: ${CATALOG_COMPONENTS.join(", ")}.`),
+      },
+      annotations: { readOnlyHint: true },
+    },
+    async ({ name }) => {
+      const catalog = buildCatalog();
+      if (!name) return toolJson(catalog);
+      const entry = catalog.components[name as keyof typeof catalog.components];
+      if (!entry) return toolError(`Unknown component "${name}". Known components: ${CATALOG_COMPONENTS.join(", ")}.`);
+      return toolJson({ catalogId: catalog.catalogId, version: catalog.version, name, ...entry });
+    },
+  );
+
+  server.registerTool(
+    "get_theme_tokens",
+    {
+      title: "Get theme tokens",
+      description:
+        "Return Duly semantic tokens for one theme or every theme. Each token includes the CSS variable, hex fallback, and OKLCH value. Omit theme to return all themes.",
+      inputSchema: {
+        theme: z.string().optional().describe(`Theme id. Known themes: ${themeNames().join(", ")}.`),
+      },
+      annotations: { readOnlyHint: true },
+    },
+    async ({ theme }) => {
+      try {
+        return toolJson(tokensPayload(theme));
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Could not read tokens.";
+        return toolError(message);
+      }
+    },
+  );
+
+  server.registerTool(
+    "compose_surface",
+    {
+      title: "Compose surface",
+      description:
+        "Validate one surface against the Duly catalog and return the checked layout plus a SHA-256 reviewer hash. Unknown components are stripped. Nothing is executed, stored, or signed.",
+      inputSchema: {
+        surface: z.unknown().describe("A2UI-shaped surface document. Omit to check the example surface."),
+      },
+      annotations: { readOnlyHint: true },
+    },
+    async ({ surface }) => toolJson(checkSurface(surface === undefined ? exampleSurface() : surface)),
   );
 
   server.registerTool(

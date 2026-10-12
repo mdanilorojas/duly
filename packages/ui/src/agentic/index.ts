@@ -45,3 +45,4 @@ export * from "./error-workflow-banner.js";
 export * from "./connector-status.js";
 export * from "./agent-ops-cockpit.js";
 export * from "./generative-ui-view.js";
+export * from "./duly-surface.js";

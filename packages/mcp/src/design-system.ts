@@ -6,6 +6,7 @@ import {
   tokens,
 } from "@enregla-ui/duly-tokens";
 import { COMPONENT_INVENTORY, type ComponentArea, type ComponentEntry } from "./catalog.js";
+import { CATALOG_COMPONENTS, CATALOG_ID, CATALOG_VERSION } from "@duly/catalog";
 import { generativeUiContract } from "./generative-ui.js";
 import { GENERATE_UI, type GenerateUiInstructions } from "./instructions.js";
 
@@ -36,6 +37,12 @@ export interface DesignSystemExport {
   components: ComponentEntry[];
   generateUi: GenerateUiInstructions;
   generativeUi: ReturnType<typeof generativeUiContract>;
+  catalog: {
+    catalogId: typeof CATALOG_ID;
+    version: typeof CATALOG_VERSION;
+    components: readonly string[];
+    package: "@duly/catalog";
+  };
   notes: string[];
 }
 
@@ -140,6 +147,12 @@ export function buildDesignSystem(): DesignSystemExport {
     components: [...COMPONENT_INVENTORY],
     generateUi: GENERATE_UI,
     generativeUi: generativeUiContract(),
+    catalog: {
+      catalogId: CATALOG_ID,
+      version: CATALOG_VERSION,
+      components: [...CATALOG_COMPONENTS],
+      package: "@duly/catalog",
+    },
     notes: [
       "Regenerate packages/mcp/design-system.json with pnpm --filter @duly/mcp export after token or generative-UI contract changes.",
       "The component list is curated. Prop types live in packages/ui/src.",

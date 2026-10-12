@@ -995,6 +995,13 @@
       "inDemoCockpit": true
     },
     {
+      "name": "DulySurface",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Host for an A2UI-shaped surface. Renders the checked duly-catalog layout and shows a fallback for unknown components and bad props.",
+      "inDemoCockpit": false
+    },
+    {
       "name": "GenerativeUiView",
       "package": "@enregla-ui/duly-ui",
       "area": "agentic",
@@ -1416,6 +1423,19 @@
     "example": "packages/ui/src/agentic/cockpit.generative.json",
     "host": "GenerativeUiView from @enregla-ui/duly-ui",
     "audit": "validate_generative_ui checks structure only and returns the same audit for the same document. Duly does not store, sign, or certify it. It is not a SOC 2 report, an ISO certificate, or a bank attestation."
+  },
+  "catalog": {
+    "catalogId": "duly://catalog/v1",
+    "version": "1",
+    "components": [
+      "Column",
+      "ApprovalGate",
+      "AuditLog",
+      "RichToolCall",
+      "TokenCost",
+      "Guardrail"
+    ],
+    "package": "@duly/catalog"
   },
   "notes": [
     "Regenerate packages/mcp/design-system.json with pnpm --filter @duly/mcp export after token or generative-UI contract changes.",

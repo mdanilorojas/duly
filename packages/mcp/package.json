@@ -13,6 +13,7 @@
     "lint": "eslint src --max-warnings 0"
   },
   "dependencies": {
+    "@duly/catalog": "workspace:*",
     "@enregla-ui/duly-tokens": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "zod": "^3.25.76"

@@ -22,6 +22,14 @@ export const COMPONENT_INVENTORY: readonly ComponentEntry[] = [
     inDemoCockpit: true,
   },
   {
+    name: "DulySurface",
+    package: "@enregla-ui/duly-ui",
+    area: "agentic",
+    summary:
+      "Host for an A2UI-shaped surface. Renders the checked duly-catalog layout and shows a fallback for unknown components and bad props.",
+    inDemoCockpit: false,
+  },
+  {
     name: "GenerativeUiView",
     package: "@enregla-ui/duly-ui",
     area: "agentic",

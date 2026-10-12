@@ -1,0 +1,515 @@
+{
+  "catalogId": "duly://catalog/v1",
+  "version": "1",
+  "pattern": "Fixed component catalog. An agent emits a surface whose component keys are in this document. The host renders them. Unknown components are stripped. This follows the public A2UI, AG-UI, and MCP Apps pattern. It is not an OpenAI DIL document. DIL is not a public spec implemented here.",
+  "themes": [
+    "cockpit",
+    "violet",
+    "light",
+    "ganapliego"
+  ],
+  "components": {
+    "Column": {
+      "react": null,
+      "summary": "Host layout. Children are ids of other components on the same surface. Not a published React export.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]{0,40}$"
+            },
+            "minItems": 1,
+            "maxItems": 12
+          }
+        },
+        "required": [
+          "children"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ApprovalGate": {
+      "react": "ApprovalGateCard",
+      "summary": "One human approval. The host renders ApprovalGateCard and keeps the second confirmation for block risk.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "agent": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "riskTone": {
+            "type": "string",
+            "enum": [
+              "info",
+              "ok",
+              "review",
+              "warn",
+              "block"
+            ]
+          },
+          "riskLabel": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "what": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "blastRadius": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "rollback": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "requestedAt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "expiresIn": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected",
+              "escalated",
+              "expired"
+            ]
+          }
+        },
+        "required": [
+          "action",
+          "agent",
+          "riskTone",
+          "riskLabel",
+          "what",
+          "why",
+          "blastRadius",
+          "rollback",
+          "requestedAt"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "AuditLog": {
+      "react": "AuditLogTable",
+      "summary": "Audit rows with actor, outcome, and a record hash. The host renders AuditLogTable.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9-]{0,40}$"
+                },
+                "actorKind": {
+                  "type": "string",
+                  "enum": [
+                    "human",
+                    "agent",
+                    "system"
+                  ]
+                },
+                "actor": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 400
+                },
+                "action": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 400
+                },
+                "resource": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 400
+                },
+                "outcome": {
+                  "type": "string",
+                  "enum": [
+                    "info",
+                    "ok",
+                    "review",
+                    "warn",
+                    "block"
+                  ]
+                },
+                "timestamp": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 400
+                },
+                "hash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{8,64}$"
+                }
+              },
+              "required": [
+                "id",
+                "actorKind",
+                "actor",
+                "action",
+                "resource",
+                "outcome",
+                "timestamp",
+                "hash"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 12
+          }
+        },
+        "required": [
+          "events"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "RichToolCall": {
+      "react": "RichToolCallCard",
+      "summary": "A tool result made of table, metrics, or code blocks. The host renders RichToolCallCard. Callbacks are not in the schema.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "tool": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 400
+            }
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "table"
+                    },
+                    "columns": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 400
+                      },
+                      "minItems": 1,
+                      "maxItems": 6
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 400
+                            },
+                            {
+                              "type": "number"
+                            }
+                          ]
+                        }
+                      },
+                      "maxItems": 8
+                    },
+                    "caption": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 400
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "columns",
+                    "rows"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "metrics"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 400
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 400
+                          },
+                          "tone": {
+                            "type": "string",
+                            "enum": [
+                              "info",
+                              "ok",
+                              "review",
+                              "warn",
+                              "block"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "label",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "minItems": 1,
+                      "maxItems": 8
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "items"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "code"
+                    },
+                    "content": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 400
+                    },
+                    "language": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 400
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "content"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "latency": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "tone": {
+            "type": "string",
+            "enum": [
+              "info",
+              "ok",
+              "review",
+              "warn",
+              "block"
+            ]
+          }
+        },
+        "required": [
+          "tool",
+          "blocks"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "TokenCost": {
+      "react": "TokenCostMeter",
+      "summary": "Run cost by category. The host renders TokenCostMeter.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "budgetUsd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "tokensIn": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tokensOut": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "breakdown": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 400
+                },
+                "costUsd": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "tone": {
+                  "type": "string",
+                  "enum": [
+                    "info",
+                    "ok",
+                    "review",
+                    "warn",
+                    "block"
+                  ]
+                }
+              },
+              "required": [
+                "label",
+                "costUsd",
+                "tone"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 8
+          }
+        },
+        "required": [
+          "title",
+          "breakdown"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "Guardrail": {
+      "react": "GuardrailIndicator",
+      "summary": "Passed, warned, and blocked policy checks. The host renders GuardrailIndicator.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "defaultOpen": {
+            "type": "boolean"
+          },
+          "policies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9-]{0,40}$"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 400
+                },
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "input",
+                    "output",
+                    "tool"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "passed",
+                    "warned",
+                    "blocked"
+                  ]
+                },
+                "rationale": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 400
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "category",
+                "status",
+                "rationale"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 8
+          }
+        },
+        "required": [
+          "label",
+          "policies"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

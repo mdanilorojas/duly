@@ -1,4 +1,6 @@
-# @duly/tokens
+# @enregla-ui/duly-tokens
+
+Published as `@enregla-ui/duly-tokens`. Older lines in this file say `@duly/tokens`.
 
 ## 0.1.0
 

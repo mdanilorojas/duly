@@ -1,6 +1,7 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { fileURLToPath } from "node:url";
+import { exampleSurface } from "@duly/catalog/example";
 import { exampleGenerativeUi, validateGenerativeUi } from "./generative-ui.js";
 import { DEMO_COMPOSITION } from "./instructions.js";
 
@@ -87,9 +88,46 @@ try {
   ) as { ok: boolean; errors: Array<{ rule: string }> };
 
   const accent = tokens.tokens.tokens.find((token) => token.name === "accent");
+  const catalogList = readJson(await client.callTool({ name: "list_components", arguments: {} })) as {
+    catalogId: string;
+    components: Array<{ name: string }>;
+  };
+  const approvalSchema = readJson(await client.callTool({ name: "get_component_schema", arguments: { name: "ApprovalGate" } })) as {
+    name: string;
+    schema: { type?: string };
+  };
+  const themeTokens = readJson(await client.callTool({ name: "get_theme_tokens", arguments: { theme: "cockpit" } })) as {
+    theme: string;
+    tokens: { tokens: Array<{ name: string; hex: string; oklch: string }> };
+  };
+  const composed = readJson(await client.callTool({ name: "compose_surface", arguments: { surface: exampleSurface() } })) as {
+    ok: boolean;
+    executes: boolean;
+    surfaceHash: string | null;
+    stripped: unknown[];
+  };
+  const stripped = readJson(
+    await client.callTool({
+      name: "compose_surface",
+      arguments: {
+        surface: {
+          version: "1",
+          catalogId: "duly://catalog/v1",
+          surfaceId: "bad-doc",
+          theme: "cockpit",
+          root: "raw",
+          components: [{ id: "raw", component: { RawHtml: { html: "<b style='color:#ff0000'>nope</b>" } } }],
+        },
+      },
+    }),
+  ) as { ok: boolean; stripped: Array<{ component: string }> };
+
   const expectedTools = [
+    "compose_surface",
+    "get_component_schema",
     "get_generate_ui_instructions",
     "get_generative_ui_schema",
+    "get_theme_tokens",
     "list_components",
     "list_tokens",
     "validate_generative_ui",
@@ -114,6 +152,18 @@ try {
   }
   const localAudit = validateGenerativeUi(example);
   if (!localAudit.ok || localAudit.auditId !== audit.auditId) throw new Error("Local audit does not match the MCP audit.");
+  const themeAccent = themeTokens.tokens.tokens.find((token) => token.name === "accent");
+  if (catalogList.catalogId !== "duly://catalog/v1") throw new Error("list_components did not return the emit catalog.");
+  if (!catalogList.components.some((entry) => entry.name === "ApprovalGate")) throw new Error("Emit catalog is missing ApprovalGate.");
+  if (approvalSchema.name !== "ApprovalGate" || approvalSchema.schema.type !== "object") throw new Error("ApprovalGate schema was not an object.");
+  if (!themeAccent?.oklch) throw new Error("get_theme_tokens did not return the cockpit accent.");
+  if (!composed.ok || composed.executes !== false || !composed.surfaceHash?.startsWith("sha256:")) {
+    throw new Error("compose_surface did not return a checked layout hash.");
+  }
+  if (composed.stripped.length !== 0) throw new Error("Example surface stripped a component.");
+  if (stripped.ok || !stripped.stripped.some((entry) => entry.component === "RawHtml")) {
+    throw new Error("Unknown component was not stripped.");
+  }
 
   console.log("Duly design-system MCP demo");
   console.log("transport: stdio");
@@ -123,8 +173,10 @@ try {
   console.log(`accent: ${accent.hex} (${accent.oklch})`);
   console.log(`agentic components: ${components.components.length}`);
   console.log(`cockpit composition: ${instructions.composition.join(" → ")}`);
+  console.log(`catalog: ${catalogList.catalogId} (${catalogList.components.map((entry) => entry.name).join(", ")})`);
+  console.log(`compose_surface: ${composed.surfaceHash} executes=${composed.executes}`);
+  console.log("stripped: unknown component RawHtml");
   console.log(`generative ui: version ${schema.version}, audit ${audit.auditId} (${audit.theme}) ok, ${audit.rules.length} rules`);
-  console.log("rejected: unknown component RawHtml, raw color");
   console.log("demo ok");
 } catch (error) {
   const message = error instanceof Error ? error.message : String(error);

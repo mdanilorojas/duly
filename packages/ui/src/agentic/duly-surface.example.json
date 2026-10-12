@@ -1,0 +1,114 @@
+{
+  "version": "1",
+  "catalogId": "duly://catalog/v1",
+  "surfaceId": "ops-sample",
+  "theme": "cockpit",
+  "root": "layout",
+  "components": [
+    {
+      "id": "layout",
+      "component": {
+        "Column": { "children": ["gate", "guard", "cost", "tool", "audit"] }
+      }
+    },
+    {
+      "id": "gate",
+      "component": {
+        "ApprovalGate": {
+          "action": "Send vendor payment of $4,800",
+          "agent": "TREASURY",
+          "riskTone": "block",
+          "riskLabel": "Critical risk",
+          "what": "Pay the invoice the intake agent matched to vendor Northwind.",
+          "why": "The payout account changed 6 hours ago and does not match the vendor record.",
+          "blastRadius": "$4,800, one vendor, no automatic reversal",
+          "rollback": "Ask the paying bank to recall the payment. That request can fail.",
+          "requestedAt": "2m ago",
+          "expiresIn": "13m"
+        }
+      }
+    },
+    {
+      "id": "guard",
+      "component": {
+        "Guardrail": {
+          "label": "Guardrails",
+          "defaultOpen": true,
+          "policies": [
+            {
+              "id": "injection",
+              "name": "Prompt injection",
+              "category": "input",
+              "status": "passed",
+              "rationale": "No instruction-override pattern in the operator message."
+            },
+            {
+              "id": "confidence",
+              "name": "Confidence threshold",
+              "category": "output",
+              "status": "warned",
+              "rationale": "Confidence 0.71 is below 0.85, so the payment stayed with a person."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "cost",
+      "component": {
+        "TokenCost": {
+          "title": "This run",
+          "budgetUsd": 2,
+          "tokensIn": 18420,
+          "tokensOut": 2104,
+          "breakdown": [
+            { "label": "Model", "costUsd": 0.31, "tone": "info" },
+            { "label": "Tools", "costUsd": 0.08, "tone": "review" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "tool",
+      "component": {
+        "RichToolCall": {
+          "tool": "transfer_funds",
+          "latency": "0.4s",
+          "tone": "review",
+          "input": { "vendor": "Northwind", "amount": "4800" },
+          "blocks": [
+            {
+              "kind": "table",
+              "caption": "Matched invoice",
+              "columns": ["Field", "Value"],
+              "rows": [
+                ["Invoice", "NW-2041"],
+                ["Amount", "4800 USD"]
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "audit",
+      "component": {
+        "AuditLog": {
+          "title": "What the reviewer saw",
+          "events": [
+            {
+              "id": "held",
+              "actorKind": "agent",
+              "actor": "GUARD",
+              "action": "Held the payment for a person",
+              "resource": "Invoice NW-2041",
+              "outcome": "warn",
+              "timestamp": "2m ago",
+              "hash": "a3f9c1e2b7d4"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

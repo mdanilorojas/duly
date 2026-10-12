@@ -4,7 +4,7 @@ Duly is a multi-brand agent-ops design system: themeable OKLCH tokens, accessibl
 
 ## 90-second demo
 
-The demo has two parts: a scripted agent session against a stdio MCP server, and an agent-ops cockpit built from `@enregla-ui/duly-ui`. The cockpit is the hand-built reference. The same screen also exists as a generative UI document that `GenerativeUiView` renders. Sample numbers are fictional. Approve, reject, and escalate update local page state only.
+The demo has two parts: a scripted agent session against a stdio MCP server, and a surface the host renders from a fixed catalog. `compose_surface` checks that document and returns a layout plus a SHA-256 hash of what the reviewer would see. It does not execute the action. Sample numbers are fictional. Approve, reject, and escalate update local page state only.
 
 `pnpm install` on a cold cache is usually longer than 90 seconds. The commands below assume dependencies are already installed.
 
@@ -14,7 +14,7 @@ The demo has two parts: a scripted agent session against a stdio MCP server, and
 pnpm demo
 ```
 
-That builds token CSS, starts `@duly/mcp` over stdio, and calls `list_tokens`, `list_components`, `get_generate_ui_instructions`, `get_generative_ui_schema`, and `validate_generative_ui`, plus the `duly://design-system.json` resource. The script accepts the cockpit document and rejects a document that uses an unknown component and a raw color. A successful run ends with `demo ok`.
+That builds token CSS, starts `@duly/mcp` (duly-mcp) over stdio, and calls `list_components`, `get_component_schema`, `get_theme_tokens`, and `compose_surface`. The script accepts [`packages/ui/src/agentic/duly-surface.example.json`](packages/ui/src/agentic/duly-surface.example.json), prints a `sha256:` reviewer hash, and strips a component that is not in the catalog. A successful run ends with `demo ok`.
 
 **Cockpit UI** (Storybook). One command builds tokens, builds `@enregla-ui/duly-ui` (the preview imports that package), and starts Storybook:
 
@@ -24,7 +24,15 @@ pnpm demo:ui
 
 Open <http://localhost:6006/?path=/story/agentic-demo-agent-ops-cockpit--cockpit> (sidebar: **Agentic → Demo → Agent Ops Cockpit**).
 
-The generative host is **Agentic → Demo → Generative UI**: <http://localhost:6006/?path=/story/agentic-demo-generative-ui--from-document>. That story renders [`packages/ui/src/agentic/cockpit.generative.json`](packages/ui/src/agentic/cockpit.generative.json). **Light theme** is the same document with `theme` set to `light`.
+The catalog host is **Agentic → Demo → Duly Surface**:
+
+- Valid: <http://localhost:6006/?path=/story/agentic-demo-duly-surface--valid>
+- Bad props: <http://localhost:6006/?path=/story/agentic-demo-duly-surface--bad-props>
+- Unknown component: <http://localhost:6006/?path=/story/agentic-demo-duly-surface--unknown-component>
+
+`DulySurface` renders the example surface with `ApprovalGateCard`, `GuardrailIndicator`, `TokenCostMeter`, `RichToolCallCard`, and `AuditLogTable`. A bad prop or an unknown component stays on screen as an alert. The HTML in an unknown component is not injected.
+
+The earlier generative host is still there: **Agentic → Demo → Generative UI** at <http://localhost:6006/?path=/story/agentic-demo-generative-ui--from-document>. **Light theme** is the same document with `theme` set to `light`.
 
 Keyboard check: Tab to a row in the approval queue, press Enter to expand it, Tab to **Approve**, press Enter. A critical-risk row asks you to confirm Approve a second time. Status is text plus an icon, not color alone.
 
@@ -59,15 +67,18 @@ Point an MCP client at that stdio process. Example config (set `cwd` to your clo
 }
 ```
 
-Tools, all read-only:
+Tools, all read-only. The four below are the path an agent uses to emit UI:
 
 | Tool | What it returns |
 |---|---|
-| `list_tokens` | Semantic tokens for one theme (`cockpit`, `violet`, `light`, `ganapliego`) or every theme. Each entry has `cssVar`, `hex`, and `oklch`. |
-| `list_components` | Curated component inventory. Optional `query` and `area` (`agentic` or `primitive`). |
-| `get_generate_ui_instructions` | How to mount `AgentOpsCockpit`, the composition order, accessibility rules, the generative emission path, and limitations. |
-| `get_generative_ui_schema` | Version 1 contract for UI an agent may emit: components, fields, rules, limits, and the cockpit example. |
-| `validate_generative_ui` | Structural audit of one document: theme, locale, node ids, components, and each rule passed or failed. |
+| `list_components` | The emit catalog: `Column`, `ApprovalGate`, `AuditLog`, `RichToolCall`, `TokenCost`, `Guardrail`. Pass `area` or `query` to search the wider hand-maintained inventory instead. |
+| `get_component_schema` | A2UI-shaped JSON Schema for one component, or the whole catalog when `name` is omitted. Generated from the Zod schemas in `@duly/catalog`. |
+| `get_theme_tokens` | Semantic tokens for one theme (`cockpit`, `violet`, `light`, `ganapliego`) or every theme. Each entry has `cssVar`, `hex`, and `oklch`. |
+| `compose_surface` | The checked layout and a `sha256:` hash of that layout. Unknown components are stripped. `executes` is false. |
+
+The catalog shape follows the public pattern shared by A2UI, AG-UI, and MCP Apps: the agent may emit only components from a fixed catalog, and the host renders them. This repository does not claim compatibility with OpenAI DIL. DIL is not a public spec implemented here.
+
+`list_tokens`, `get_generate_ui_instructions`, `get_generative_ui_schema`, and `validate_generative_ui` remain for the earlier cockpit document.
 
 The same document is available as the MCP resource `duly://design-system.json` and as the committed file [`packages/mcp/design-system.json`](packages/mcp/design-system.json). CSS entry points are `@enregla-ui/duly-tokens/css` and the per-theme stylesheets such as `@enregla-ui/duly-tokens/theme-cockpit.css`. Component props are the TypeScript sources under `packages/ui/src`, not the inventory.
 
@@ -79,10 +90,14 @@ An agent that emits UI gets four artifacts:
 
 - **Themes.** `@enregla-ui/duly-tokens` ships `cockpit`, `violet`, `light`, and `ganapliego`. A generative document names one of them. The host sets `data-theme` to that name, so that theme's contrast pairs apply. Status hues (`ok`, `review`, `warn`, `block`, `info`, `ring`) stay locked across themes.
 - **A schema the host renders.** `get_generative_ui_schema` describes version 1. The agent returns that JSON. The host (`GenerativeUiView`) renders allow-listed Duly components. `Section` and `Stack` are layout nodes in the host. An unknown component stays on screen as an alert, so a rejected component is visible in the page.
-- **An audit record you can store.** `validate_generative_ui` is pure: the same document always returns the same JSON. That object carries `auditId`, theme, locale, node ids, components, and each rule as passed or failed. Rules cover the allow-list, text labels, status enums, one title, stable ids, raw colors, style escapes, and a ban on `skipConfirmation`. Attach that object to the model log if you need a record of what the agent was allowed to render. Duly does not store it, sign it, or retain it.
+- **A hash of the screen.** `compose_surface` is pure. The same surface always returns the same `surfaceHash` (`sha256:` plus 64 hex characters) of the canonical checked layout. That is the record of what the reviewer saw. Duly does not store it, sign it, or retain it. The audit-log rows inside the example also carry their own record hashes. Those are sample data.
 - **A person still confirms the risky action.** Approval rows are buttons. A block-risk approval asks for a second confirmation in the component. The schema rejects a field that would skip that step. Sample decisions stay in the page.
 
 The check is structural. It does not prove a control operated in production, and it is not a penetration test.
+
+### A later packaging step
+
+This repository does not ship an SBOM, a signed catalog, or a telemetry endpoint. A later step for a team that wants a locked renderer would pin `duly://catalog/v1`, ship `DulySurface` with the app, and keep the `surfaceHash` next to the model log. The renderer would stay in the app. There is no CDN script and no phone-home in this package. That packaging is not built here.
 
 After a token or contract change, regenerate the JSON with `pnpm --filter @duly/mcp export`. The `@duly/mcp` test fails if that file drifts.
 
@@ -90,7 +105,7 @@ After a token or contract change, regenerate the JSON with `pnpm --filter @duly/
 
 - The MCP server does not render React, call a model, or connect to a live agent runtime. It returns tokens, a component list, composition instructions, and a structural document check.
 - `validate_generative_ui` does not store, sign, or certify its result. It is not a SOC 2 report, an ISO certificate, or a bank attestation.
-- The inventory is hand-maintained. It is not every export in `@enregla-ui/duly-ui`, and it does not include prop types. The generative allow-list is smaller than the inventory: it is the cockpit composition plus two host layout nodes.
+- The emit catalog is five components plus a `Column` layout node. The wider inventory is hand-maintained and is not a schema. Prop types for everything else live in `packages/ui/src`.
 - Hex values are the CSS fallback. Supporting browsers use the OKLCH custom property from the theme stylesheet. The export's `oklch` field is parsed from that CSS. A generative document is rejected if it contains a raw color.
 - `AgentOpsCockpit` and the generative cockpit document are sample data. Queue decisions stay in the browser. Metric numbers in the generated document are a snapshot. They do not recompute when a person approves a row.
 - There is no hosted demo URL. You run Storybook or the showcase locally.
@@ -128,8 +143,9 @@ The root holds the public entry (this file), the workspace config, and `vercel.j
 | `apps/docs` | `@duly/docs`. Storybook: one component or story at a time, including the cockpit. This is the short UI demo (`pnpm demo:ui`). |
 | `apps/showcase` | `@duly/showcase`. Vite app of composed screens (agentic, compliance, commercial, industrial) and the same cockpit at `#demo`. |
 | `packages/tokens` | `@enregla-ui/duly-tokens`. OKLCH themes as CSS variables and a typed JS map. |
-| `packages/ui` | `@enregla-ui/duly-ui`. React components, including `AgentOpsCockpit` and `GenerativeUiView`. |
-| `packages/mcp` | `@duly/mcp`. Private stdio server: tokens, component inventory, generative UI schema, and `validate_generative_ui`. |
+| `packages/ui` | `@enregla-ui/duly-ui`. React components, including `AgentOpsCockpit`, `DulySurface`, and `GenerativeUiView`. |
+| `packages/catalog` | `@duly/catalog` (duly-catalog). Private. Zod schemas, generated JSON Schema in `catalog.json`, and `checkSurface`. |
+| `packages/mcp` | `@duly/mcp` (duly-mcp). Private stdio server. The emit path is `list_components`, `get_component_schema`, `get_theme_tokens`, and `compose_surface`. |
 | `packages/eslint-config`, `packages/tsconfig` | Shared lint and TypeScript config. |
 | `examples/minimal-vite` | `@duly/example-minimal`. Smallest app that imports the packages. |
 | `docs/guides` | Consumer guides for tokens and components. |
@@ -137,7 +153,15 @@ The root holds the public entry (this file), the workspace config, and `vercel.j
 | `docs/superpowers` | Dated design specs and plans. Historical. |
 | `scripts/a11y-audit.mjs` | Optional axe pass over a built Storybook. Not part of `pnpm test`. |
 
-`apps/docs` and `apps/showcase` both render Duly. Storybook is the catalog and the 90-second cockpit. The showcase is a multi-page gallery of the same components. Root `vercel.json` builds Storybook to `apps/docs/storybook-static`. `apps/showcase/vercel.json` builds the Vite app. This repo does not add a new host or a demo domain.
+`apps/docs` and `apps/showcase` both render Duly. Storybook is the component catalog and the 90-second cockpit. The showcase is a multi-page gallery of the same components. Root `vercel.json` builds Storybook with `--filter=@duly/docs...` because the Storybook app is named `@duly/docs`. The published libraries are `@enregla-ui/duly-tokens` and `@enregla-ui/duly-ui`. `apps/showcase/vercel.json` builds the Vite app. This repo does not add a new host or a demo domain.
+
+| Name you may see in old notes | What to install or run |
+|---|---|
+| `@duly/tokens` | `@enregla-ui/duly-tokens` |
+| `@duly/ui` | `@enregla-ui/duly-ui` |
+| `@duly/docs` | Storybook app. Not published. |
+| `@duly/catalog` | Private duly-catalog package. |
+| `@duly/mcp` | Private duly-mcp server. |
 
 ### What moved
 
