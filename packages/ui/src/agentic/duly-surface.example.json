@@ -21,8 +21,8 @@
           "riskLabel": "Critical risk",
           "what": "Pay the invoice the intake agent matched to vendor Northwind.",
           "why": "The payout account changed 6 hours ago and does not match the vendor record.",
-          "blastRadius": "$4,800, one vendor, no automatic reversal",
-          "rollback": "Ask the paying bank to recall the payment. That request can fail.",
+          "blastRadius": "$4,800 · one vendor · no automatic reversal",
+          "rollback": "Ask the bank to recall the payment. That request can fail.",
           "requestedAt": "2m ago",
           "expiresIn": "13m"
         }
@@ -47,7 +47,14 @@
               "name": "Confidence threshold",
               "category": "output",
               "status": "warned",
-              "rationale": "Confidence 0.71 is below 0.85, so the payment stayed with a person."
+              "rationale": "Confidence 0.71 is below 0.85, so the payment stayed in the human queue."
+            },
+            {
+              "id": "scope",
+              "name": "Tool scope",
+              "category": "tool",
+              "status": "passed",
+              "rationale": "transfer_funds stays inside the agent's authorized limit."
             }
           ]
         }

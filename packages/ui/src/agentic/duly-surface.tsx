@@ -11,6 +11,16 @@ import { TokenCostMeter } from "./token-cost-meter.js";
 /** Keep this list aligned with CATALOG_COMPONENTS in @duly/catalog. */
 export const DULY_SURFACE_COMPONENTS = ["Column", "ApprovalGate", "AuditLog", "RichToolCall", "TokenCost", "Guardrail"] as const;
 
+/** Visible section titles. The catalog still uses the component names. */
+const SECTION_TITLES: Record<string, string> = {
+  Column: "Layout",
+  ApprovalGate: "Approval",
+  AuditLog: "Audit log",
+  RichToolCall: "Tool call",
+  TokenCost: "Cost",
+  Guardrail: "Guardrails",
+};
+
 export interface DulySurfaceProps {
   message: unknown;
   className?: string;
@@ -59,7 +69,7 @@ function SurfaceNodeView({ node, components }: { node: SurfaceNode; components: 
           return (
             <section key={child.id} className="space-y-2" aria-labelledby={`${child.id}-heading`}>
               <h2 id={`${child.id}-heading`} className="font-mono text-[11px] font-bold uppercase tracking-wide text-dim">
-                {childName ?? child.id}
+                {(childName && SECTION_TITLES[childName]) || childName || child.id}
               </h2>
               <SurfaceNodeView node={child} components={components} />
             </section>
@@ -214,6 +224,12 @@ function ApprovalGateView(props: React.ComponentProps<typeof ApprovalGateCard>) 
   );
 }
 
+function shownErrors(result: { stripped: unknown[]; errors: Array<{ path: string; message: string }> }) {
+  const rest = result.errors.filter((error) => error.path !== "$.root");
+  if (rest.length > 0 || result.stripped.length > 0) return rest;
+  return result.errors;
+}
+
 function CheckedLayout({ checked }: { checked: CheckedSurface }) {
   const root = findNode(checked.components, checked.root);
   if (!root) return <Fallback title="Empty surface" detail="The checked layout has no root." />;
@@ -243,7 +259,7 @@ function DulySurfaceFrame({ message, className }: DulySurfaceProps) {
       {result.stripped.map((item) => (
         <Fallback key={item.id} title={`Unknown component "${item.component}"`} detail={`Node ${item.id} was stripped. The host did not render it.`} />
       ))}
-      {result.errors.map((error) => (
+      {shownErrors(result).map((error) => (
         <Fallback key={`${error.path}:${error.message}`} title="Component was not rendered" detail={`${error.path}: ${error.message}`} />
       ))}
       {result.checked ? <CheckedLayout checked={result.checked} /> : null}

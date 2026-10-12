@@ -22,7 +22,7 @@ That builds token CSS, starts `@duly/mcp` (duly-mcp) over stdio, and calls `list
 pnpm demo:ui
 ```
 
-Open <http://localhost:6006/?path=/story/agentic-demo-agent-ops-cockpit--cockpit> (sidebar: **Agentic → Demo → Agent Ops Cockpit**).
+Open <http://localhost:6006/?path=/story/agentic-demo-agent-ops-cockpit--cockpit> (sidebar: **Agentic → Demo → Agent Ops Cockpit**). The Storybook locale toolbar defaults to Spanish for the rest of the catalog. These demo stories force English copy.
 
 The catalog host is **Agentic → Demo → Duly Surface**:
 
@@ -88,10 +88,10 @@ Duly does not claim SOC 2, ISO 27001, or a bank attestation. Nothing in this rep
 
 An agent that emits UI gets four artifacts:
 
-- **Themes.** `@enregla-ui/duly-tokens` ships `cockpit`, `violet`, `light`, and `ganapliego`. A generative document names one of them. The host sets `data-theme` to that name, so that theme's contrast pairs apply. Status hues (`ok`, `review`, `warn`, `block`, `info`, `ring`) stay locked across themes.
-- **A schema the host renders.** `get_generative_ui_schema` describes version 1. The agent returns that JSON. The host (`GenerativeUiView`) renders allow-listed Duly components. `Section` and `Stack` are layout nodes in the host. An unknown component stays on screen as an alert, so a rejected component is visible in the page.
+- **Themes.** `@enregla-ui/duly-tokens` ships `cockpit`, `violet`, `light`, and `ganapliego`. A surface names one of them. The host sets `data-theme` to that name, so that theme's contrast pairs apply. Status hues (`ok`, `review`, `warn`, `block`, `info`, `ring`) stay locked across themes.
+- **A catalog the host renders.** `get_component_schema` returns `duly://catalog/v1`. The agent returns a surface that uses only those components. `DulySurface` renders the checked layout. `Column` is a layout node in the host. An unknown component or a bad prop stays on screen as one alert.
 - **A hash of the screen.** `compose_surface` is pure. The same surface always returns the same `surfaceHash` (`sha256:` plus 64 hex characters) of the canonical checked layout. That is the record of what the reviewer saw. Duly does not store it, sign it, or retain it. The audit-log rows inside the example also carry their own record hashes. Those are sample data.
-- **A person still confirms the risky action.** Approval rows are buttons. A block-risk approval asks for a second confirmation in the component. The schema rejects a field that would skip that step. Sample decisions stay in the page.
+- **A person still confirms the risky action.** Approval rows are buttons. A block-risk approval asks for a second confirmation in the component. The schema rejects a field that would skip that step. Sample decisions stay in the page and do not change the reviewer hash.
 
 The check is structural. It does not prove a control operated in production, and it is not a penetration test.
 
@@ -99,7 +99,7 @@ The check is structural. It does not prove a control operated in production, and
 
 This repository does not ship an SBOM, a signed catalog, or a telemetry endpoint. A later step for a team that wants a locked renderer would pin `duly://catalog/v1`, ship `DulySurface` with the app, and keep the `surfaceHash` next to the model log. The renderer would stay in the app. There is no CDN script and no phone-home in this package. That packaging is not built here.
 
-After a token or contract change, regenerate the JSON with `pnpm --filter @duly/mcp export`. The `@duly/mcp` test fails if that file drifts.
+After a catalog change, regenerate `packages/catalog/catalog.json` with `pnpm --filter @duly/catalog export`. After a token or inventory change, regenerate `packages/mcp/design-system.json` with `pnpm --filter @duly/mcp export`. Each package test fails if its committed JSON drifts. The example surface uses the same payment, guardrails, and cost figures as `AgentOpsCockpit`.
 
 ### Limitations
 

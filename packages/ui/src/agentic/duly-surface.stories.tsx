@@ -14,7 +14,7 @@ type Story = StoryObj<typeof DulySurface>;
 /** Valid catalog surface. compose_surface returns this layout and its reviewer hash. */
 export const Valid: Story = {
   render: () => (
-    <div className="min-h-screen bg-bg-base p-6 md:p-10">
+    <div data-theme="cockpit" className="min-h-screen bg-bg-base p-6 md:p-10">
       <DulySurface message={example} />
     </div>
   ),
@@ -23,7 +23,7 @@ export const Valid: Story = {
 /** A required approval field is missing. The host shows the failure and does not invent the card. */
 export const BadProps: Story = {
   render: () => (
-    <div className="min-h-screen bg-bg-base p-6 md:p-10">
+    <div data-theme="cockpit" className="min-h-screen bg-bg-base p-6 md:p-10">
       <DulySurface
         message={{
           version: "1",
