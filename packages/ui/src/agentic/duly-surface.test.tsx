@@ -28,6 +28,7 @@ describe("DulySurface", () => {
     expect(screen.queryByText("Send vendor payment of $4,800. Approved.")).toBeNull();
     await user.click(screen.getByRole("button", { name: "Approve" }));
     expect(await screen.findByText("Send vendor payment of $4,800. Approved.")).toBeTruthy();
+    expect(screen.getByText("Approved by Demo operator · just now")).toBeTruthy();
   });
 
   it("shows bad props instead of an unlabeled approval", () => {

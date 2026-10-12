@@ -191,6 +191,11 @@ function SurfaceNodeView({ node, components }: { node: SurfaceNode; components: 
 
 function ApprovalGateView(props: React.ComponentProps<typeof ApprovalGateCard>) {
   const [notice, setNotice] = React.useState("");
+  const [decision, setDecision] = React.useState<ApprovalStatus | null>(null);
+  function decide(status: ApprovalStatus, label: string) {
+    setDecision(status);
+    setNotice(`${props.action}. ${label}`);
+  }
   return (
     <div className="space-y-2">
       <p className="sr-only" role="status">
@@ -198,9 +203,12 @@ function ApprovalGateView(props: React.ComponentProps<typeof ApprovalGateCard>) 
       </p>
       <ApprovalGateCard
         {...props}
-        onApprove={() => setNotice(`${props.action}. Approved.`)}
-        onReject={() => setNotice(`${props.action}. Rejected.`)}
-        onEscalate={() => setNotice(`${props.action}. Escalated.`)}
+        status={decision ?? props.status}
+        decidedBy={decision ? "Demo operator" : props.decidedBy}
+        decidedAt={decision ? "just now" : props.decidedAt}
+        onApprove={() => decide("approved", "Approved.")}
+        onReject={() => decide("rejected", "Rejected.")}
+        onEscalate={() => decide("escalated", "Escalated.")}
       />
     </div>
   );
