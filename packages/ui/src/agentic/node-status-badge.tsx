@@ -75,6 +75,8 @@ export interface NodeStatusBadgeProps extends Omit<React.ComponentProps<"div">, 
   size?: "sm" | "md";
   /** Texto visible junto al anillo, ej. "Retrying". Si se omite, no se muestra texto. */
   label?: string;
+  /** Clases extra para el texto visible. El anillo no cambia. */
+  labelClassName?: string;
   /** Intento actual / máximo — solo se pinta cuando `status="retrying"`. */
   attempt?: [current: number, max: number];
 }
@@ -90,6 +92,7 @@ export function NodeStatusBadge({
   status,
   size = "md",
   label,
+  labelClassName,
   attempt,
   className,
   ...props
@@ -126,7 +129,7 @@ export function NodeStatusBadge({
         ) : null}
       </span>
       {label ? (
-        <span className={cn("rounded px-1.5 py-0.5 text-[10.5px] font-semibold", cfg.chip)}>
+        <span className={cn("rounded px-1.5 py-0.5 text-[10.5px] font-semibold", cfg.chip, labelClassName)}>
           {label}
         </span>
       ) : null}

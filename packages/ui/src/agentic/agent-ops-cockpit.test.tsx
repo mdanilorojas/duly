@@ -46,7 +46,7 @@ describe("AgentOpsCockpit", () => {
     const stream = screen.getByRole("log", { name: "Agent stream" });
     expect(stream).not.toHaveTextContent("Holding the payment until a person decides.");
     act(() => {
-      vi.advanceTimersByTime(2200);
+      vi.advanceTimersByTime(4000);
     });
     expect(stream).toHaveTextContent("Holding the payment until a person decides.");
     expect(stream).toHaveTextContent("transfer_funds");

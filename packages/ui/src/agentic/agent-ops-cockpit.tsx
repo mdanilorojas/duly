@@ -208,13 +208,13 @@ function AgentStateBoard() {
       <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {AGENTS.map((agent) => (
           <li key={agent.id} className="rounded-xl border border-border-subtle bg-surface-2 p-4">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="font-mono text-[11px] font-bold uppercase tracking-wide text-dim">{agent.name}</p>
-                <p className="mt-1 text-xl font-extrabold tracking-tight text-ink">{agent.label}</p>
-              </div>
-              <NodeStatusBadge status={agent.status} label={agent.label} />
-            </div>
+            <p className="font-mono text-[11px] font-bold uppercase tracking-wide text-dim">{agent.name}</p>
+            <NodeStatusBadge
+              className="mt-2"
+              status={agent.status}
+              label={agent.label}
+              labelClassName="px-2 py-1 text-xl font-extrabold tracking-tight"
+            />
             <p className="mt-3 text-sm leading-relaxed text-dim">{agent.activity}</p>
           </li>
         ))}
@@ -276,7 +276,7 @@ function ToolCallBoard({ playOnMount }: { playOnMount: boolean }) {
 
 function StreamBoard({ playOnMount }: { playOnMount: boolean }) {
   const [run, setRun] = React.useState(playOnMount ? 1 : 0);
-  const index = useSteppedPlayback(run, STREAM_SCRIPT.length, 320);
+  const index = useSteppedPlayback(run, STREAM_SCRIPT.length, 520);
   const events = run > 0 ? STREAM_SCRIPT.slice(0, index + 1) : SETTLED_STREAM;
   const streaming = run > 0 && index < STREAM_SCRIPT.length - 1;
 
