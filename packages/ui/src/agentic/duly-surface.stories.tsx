@@ -49,6 +49,48 @@ export const BadProps: Story = {
   ),
 };
 
+function catalogNode(id: string) {
+  const node = example.components.find((entry) => entry.id === id);
+  if (!node) throw new Error(`Missing sample node ${id}`);
+  return node;
+}
+
+/** Catalog ApprovalGate on its own, so the human gate is the whole story. */
+export const ApprovalGate: Story = {
+  render: () => (
+    <div data-theme="cockpit" className="min-h-screen bg-bg-base p-6 md:p-10">
+      <DulySurface
+        message={{
+          version: "1",
+          catalogId: "duly://catalog/v1",
+          surfaceId: "approval-gate",
+          theme: "cockpit",
+          root: "layout",
+          components: [{ id: "layout", component: { Column: { children: ["gate"] } } }, catalogNode("gate")],
+        }}
+      />
+    </div>
+  ),
+};
+
+/** Catalog RichToolCall on its own: tool name, args, and result blocks. */
+export const ToolCall: Story = {
+  render: () => (
+    <div data-theme="cockpit" className="min-h-screen bg-bg-base p-6 md:p-10">
+      <DulySurface
+        message={{
+          version: "1",
+          catalogId: "duly://catalog/v1",
+          surfaceId: "tool-call",
+          theme: "cockpit",
+          root: "layout",
+          components: [{ id: "layout", component: { Column: { children: ["tool"] } } }, catalogNode("tool")],
+        }}
+      />
+    </div>
+  ),
+};
+
 /** A component outside the catalog stays visible as a fallback and is not injected as HTML. */
 export const UnknownComponent: Story = {
   render: () => (

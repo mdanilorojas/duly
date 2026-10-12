@@ -97,8 +97,8 @@ export const COMPONENT_INVENTORY: readonly ComponentEntry[] = [
     name: "NodeStatusBadge",
     package: "@enregla-ui/duly-ui",
     area: "agentic",
-    summary: "Status glyph for success, error, running, waiting, retrying, and skipped. Exposes a text label.",
-    inDemoCockpit: false,
+    summary: "Status glyph for success, error, running, waiting, retrying, and skipped. The demo cockpit uses it for agent state and tool-call status, with a visible text label.",
+    inDemoCockpit: true,
   },
   {
     name: "NodeStatusLegend",
@@ -132,8 +132,8 @@ export const COMPONENT_INVENTORY: readonly ComponentEntry[] = [
     name: "RichToolCallCard",
     package: "@enregla-ui/duly-ui",
     area: "agentic",
-    summary: "Tool call card that can render richer result blocks.",
-    inDemoCockpit: false,
+    summary: "Tool call card that can render richer result blocks. Shown in the demo cockpit once lookup_vendor finishes.",
+    inDemoCockpit: true,
   },
   {
     name: "TraceTree",
@@ -244,8 +244,8 @@ export const COMPONENT_INVENTORY: readonly ComponentEntry[] = [
     name: "StreamingMessage",
     package: "@enregla-ui/duly-ui",
     area: "agentic",
-    summary: "Message assembled from AG-UI stream events.",
-    inDemoCockpit: false,
+    summary: "Message assembled from AG-UI stream events. The demo cockpit plays a sample token stream.",
+    inDemoCockpit: true,
   },
   {
     name: "MCPAppsWidgetFrame",

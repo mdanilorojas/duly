@@ -1068,8 +1068,8 @@
       "name": "NodeStatusBadge",
       "package": "@enregla-ui/duly-ui",
       "area": "agentic",
-      "summary": "Status glyph for success, error, running, waiting, retrying, and skipped. Exposes a text label.",
-      "inDemoCockpit": false
+      "summary": "Status glyph for success, error, running, waiting, retrying, and skipped. The demo cockpit uses it for agent state and tool-call status, with a visible text label.",
+      "inDemoCockpit": true
     },
     {
       "name": "NodeStatusLegend",
@@ -1103,8 +1103,8 @@
       "name": "RichToolCallCard",
       "package": "@enregla-ui/duly-ui",
       "area": "agentic",
-      "summary": "Tool call card that can render richer result blocks.",
-      "inDemoCockpit": false
+      "summary": "Tool call card that can render richer result blocks. Shown in the demo cockpit once lookup_vendor finishes.",
+      "inDemoCockpit": true
     },
     {
       "name": "TraceTree",
@@ -1215,8 +1215,8 @@
       "name": "StreamingMessage",
       "package": "@enregla-ui/duly-ui",
       "area": "agentic",
-      "summary": "Message assembled from AG-UI stream events.",
-      "inDemoCockpit": false
+      "summary": "Message assembled from AG-UI stream events. The demo cockpit plays a sample token stream.",
+      "inDemoCockpit": true
     },
     {
       "name": "MCPAppsWidgetFrame",
@@ -1355,6 +1355,9 @@
     "themeAttribute": "data-theme=\"cockpit\"",
     "composition": [
       "AgentOpsCockpit",
+      "NodeStatusBadge",
+      "StreamingMessage",
+      "RichToolCallCard",
       "AgentMetricRow",
       "AgentMetric",
       "RunTimeline",
@@ -1380,14 +1383,15 @@
       "A block-risk approval asks for a second confirmation before it commits. Do not remove that step.",
       "Leave focus outlines on the ring token. Do not set outline: none without a replacement.",
       "Motion tokens collapse under prefers-reduced-motion. Do not add a custom animation that ignores that.",
-      "The cockpit sets lang=\"en\" because its sample copy is English."
+      "The cockpit sets lang=\"en\" because its sample copy is English.",
+      "Agent state uses NodeStatusBadge with a visible text label: Running, Waiting, Done, or Error."
     ],
     "limitations": [
       "This server returns tokens, a curated component inventory, composition instructions, and a structural check of generative UI documents. It does not render React, call a model, or attach to a live agent runtime.",
       "validate_generative_ui is a structural check. Duly does not store, sign, or certify the audit. It is not a SOC 2 report, an ISO certificate, or a bank attestation.",
       "The inventory is a hand-maintained list of agent-ops components and a few primitives. It is not every export in @enregla-ui/duly-ui, and it does not include prop types. Read the TypeScript source for props.",
       "Hex values are the CSS fallback. The oklch field is parsed from the theme stylesheet, which is what supporting browsers use.",
-      "AgentOpsCockpit shows fictional sample operations. Approve, reject, and escalate update local component state only.",
+      "AgentOpsCockpit shows fictional sample operations. Approve, reject, and escalate update local component state only. The token stream and tool-call playback are a sample timer in the browser. They are not a connection to a model.",
       "There is no hosted demo URL in this repo. Run Storybook or the showcase locally."
     ]
   },

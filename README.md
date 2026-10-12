@@ -24,11 +24,20 @@ pnpm demo:ui
 
 Open <http://localhost:6006/?path=/story/agentic-demo-agent-ops-cockpit--cockpit> (sidebar: **Agentic → Demo → Agent Ops Cockpit**). The Storybook locale toolbar defaults to Spanish for the rest of the catalog. These demo stories force English copy.
 
+The same cockpit has one story per AG-UI surface:
+
+- Agent state: <http://localhost:6006/?path=/story/agentic-demo-agent-ops-cockpit--agent-state>
+- Tool calls: <http://localhost:6006/?path=/story/agentic-demo-agent-ops-cockpit--tool-calls>
+- Human approval: <http://localhost:6006/?path=/story/agentic-demo-agent-ops-cockpit--human-approval>
+- Streaming: <http://localhost:6006/?path=/story/agentic-demo-agent-ops-cockpit--streaming>
+
 The catalog host is **Agentic → Demo → Duly Surface**:
 
 - Valid: <http://localhost:6006/?path=/story/agentic-demo-duly-surface--valid>
 - Bad props: <http://localhost:6006/?path=/story/agentic-demo-duly-surface--bad-props>
 - Unknown component: <http://localhost:6006/?path=/story/agentic-demo-duly-surface--unknown-component>
+- Approval gate: <http://localhost:6006/?path=/story/agentic-demo-duly-surface--approval-gate>
+- Tool call: <http://localhost:6006/?path=/story/agentic-demo-duly-surface--tool-call>
 
 `DulySurface` renders the example surface with `ApprovalGateCard`, `GuardrailIndicator`, `TokenCostMeter`, `RichToolCallCard`, and `AuditLogTable`. A bad prop or an unknown component stays on screen as an alert. The HTML in an unknown component is not injected.
 
