@@ -69,10 +69,10 @@ bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: "smooth
 
 ### Simple path (recommended) — zero Tailwind config required
 
-`@duly/ui` ships a **precompiled, self-contained `dist/styles.css`** that includes all utility classes and theme variable mappings. Import it once in your app entry and you are done:
+`@enregla-ui/duly-ui` ships a **precompiled, self-contained `dist/styles.css`** that includes all utility classes and theme variable mappings. Import it once in your app entry and you are done:
 
 ```ts
-import "@duly/ui/styles.css";
+import "@enregla-ui/duly-ui/styles.css";
 ```
 
 No PostCSS, no Tailwind config, no `@source` directive needed.
@@ -84,10 +84,10 @@ If your app already runs Tailwind v4, skip `dist/styles.css` and instead add the
 ```css
 /* your app's main CSS entry */
 @import "tailwindcss";
-@import "@duly/tokens/theme.css";          /* mapping layer: --color-<token> utilities */
-@import "@duly/tokens/theme-cockpit.css";  /* value layer: cockpit theme at :root (default) */
-@import "@duly/tokens/theme-violet.css";   /* optional: violet theme under [data-theme="violet"] */
-@source "../node_modules/@duly/ui/dist/**/*.js";
+@import "@enregla-ui/duly-tokens/theme.css";          /* mapping layer: --color-<token> utilities */
+@import "@enregla-ui/duly-tokens/theme-cockpit.css";  /* value layer: cockpit theme at :root (default) */
+@import "@enregla-ui/duly-tokens/theme-violet.css";   /* optional: violet theme under [data-theme="violet"] */
+@source "../node_modules/@enregla-ui/duly-ui/dist/**/*.js";
 ```
 
 > Always import both the mapping layer (`theme.css`) **and** a value layer (`theme-cockpit.css` / `theme-violet.css`). The mapping layer alone does not define the actual `--surface-2`, `--ink`, etc. values — without a value layer, components render colorless.

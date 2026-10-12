@@ -1,5 +1,7 @@
 # Agentic Experiments Log
 
+Moved from the repository root. This file is an archive of the agentic lab, not the public demo. The demo is the root README. Loop state is `AGENTIC_LOOP_STATE.json` in this folder. Reference HTML is in `references/`. Product notes that this log cites are `NORTH_STAR.md` and `VANGUARD_REPORT.md` in this folder.
+
 Registro versionado del laboratorio agentic de `studio-ds`. Cada iteración agrega
 UNA versión visible en Storybook bajo la categoría `Agentic/`. No se reemplazan ni
 borran versiones anteriores — se acumulan para revisión.
@@ -14,7 +16,7 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
 - **Versión:** `AgentGalleryV001` (Neural Cores)
 - **Tipo:** composition + primitives (WebGL)
 - **Storybook:** `Agentic/Agent Gallery/V001 Neural Cores` (stories: `NeuralCores`, `SingleCard`)
-- **Inspiración:** referencia interna `galer_a_de_agentes_ia.html` (10 shader cores WebGL, FBM + SDF).
+- **Inspiración:** referencia interna `references/galer_a_de_agentes_ia.html` (10 shader cores WebGL, FBM + SDF).
 - **Razón de producto:** primer bloque de UI de agentes IA — galería de "cores" con
   identidad visual por agente (ID, nombre, rol, glow). Base para dashboards de
   orquestación y consolas de agentes.
@@ -45,7 +47,7 @@ Ver estado del loop en `AGENTIC_LOOP_STATE.json` (max 48 iteraciones ≈ 2 días
 - **Industria:** Inmobiliaria (predios / catastro)
 - **Storybook:** `Agentic/Property Intelligence/V001 Real Estate Console` (stories: `FullConsole`,
   `Agent roster only`, `AgentMetric row`, `AgentStatusMatrix`)
-- **Inspiración:** referencia interna de solo lectura `predios-quito-arquitectura.html`
+- **Inspiración:** referencia interna de solo lectura `references/predios-quito-arquitectura.html`
   (arquitectura de "Predios Quito" — visor de un solo HTML que consulta en vivo el servidor
   catastral ArcGIS de Quito). Se tradujeron sus patrones visuales (grid de métricas, pipeline
   de request→respuesta, matriz de estatus con color por código) a componentes React

@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax -- los `glow` son colores de identidad
    por agente para el resplandor WebGL; no son tokens semánticos del tema. */
 // Software & Redes Agents V001 — sector "Software" de la galería por
-// industria. Portado desde `galer_a_de_agentes_ia (1).html`. 4 de los 6 son
+// industria. Portado desde `docs/lab/references/galer_a_de_agentes_ia.html`. 4 de los 6 son
 // shaders reusados de neural-agents.ts (mismo nombre, rol actualizado para
 // este sector); 2 son completamente nuevos.
 

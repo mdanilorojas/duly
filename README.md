@@ -16,25 +16,24 @@ pnpm demo
 
 That builds token CSS, starts `@duly/mcp` over stdio, and calls `list_tokens`, `list_components`, `get_generate_ui_instructions`, plus the `duly://design-system.json` resource. A successful run ends with `demo ok`.
 
-**Cockpit UI.** Stories compile from `packages/ui/src`, but Storybook's preview imports the built `@enregla-ui/duly-ui` package, so build it once after tokens exist (`pnpm demo` already builds tokens):
+**Cockpit UI** (Storybook). One command builds tokens, builds `@enregla-ui/duly-ui` (the preview imports that package), and starts Storybook:
 
 ```bash
-pnpm --filter @enregla-ui/duly-ui build
-pnpm --filter @duly/docs storybook
+pnpm demo:ui
 ```
 
 Open <http://localhost:6006/?path=/story/agentic-demo-agent-ops-cockpit--cockpit> (sidebar: **Agentic → Demo → Agent Ops Cockpit**).
 
 Keyboard check: Tab to a row in the approval queue, press Enter to expand it, Tab to **Approve**, press Enter. A critical-risk row asks you to confirm Approve a second time. Status is text plus an icon, not color alone.
 
-**Showcase route** (needs a UI package build, so it is the slower path):
+**Showcase** is a second app: composed vertical pages, plus the same cockpit at `#demo`. It is slower because Vite loads the built UI package. Build that package once, then start the app:
 
 ```bash
-pnpm exec turbo run build --filter=@duly/showcase...
-pnpm --filter @duly/showcase dev
+pnpm --filter @enregla-ui/duly-ui build
+pnpm showcase
 ```
 
-Open <http://localhost:5173/#demo>.
+Open <http://localhost:5173/#demo>. Use Storybook for the short path. Use the showcase when you want the other vertical screens in one app.
 
 ### How an agent consumes the design system
 
@@ -96,34 +95,54 @@ pnpm install
 | Command | What it does |
 |---|---|
 | `pnpm demo` | Build tokens and run the scripted MCP demo |
+| `pnpm demo:ui` | Build tokens and `@enregla-ui/duly-ui`, then start Storybook |
+| `pnpm storybook` | Start Storybook only. Needs the token CSS and UI build already |
+| `pnpm showcase` | Start the showcase Vite app. Needs the UI build already |
 | `pnpm turbo run tokens build lint test` | Full pipeline: generate tokens → build packages → lint → test |
-| `pnpm --filter @duly/docs storybook` | Launch Storybook at <http://localhost:6006> |
 | `pnpm changeset` | Open the changeset wizard to version packages |
 
-## Monorepo layout
+## Repository map
 
-```
-.
-├── packages/
-│   ├── mcp/            # @duly/mcp — stdio MCP server (tokens, inventory, UI instructions)
-│   ├── tokens/         # @enregla-ui/duly-tokens — OKLCH multi-theme CSS vars + typed JS map
-│   ├── ui/             # @enregla-ui/duly-ui — React components (TraceLog, AgentOpsCockpit, …)
-│   ├── eslint-config/  # Shared ESLint flat config
-│   └── tsconfig/       # Shared TypeScript base configs
-├── apps/
-│   ├── docs/           # @duly/docs — Storybook documentation app
-│   └── showcase/       # @duly/showcase — Vite gallery, including #demo
-├── docs/
-│   └── guides/         # Prose guides for consumers and contributors
-└── turbo.json          # Turborepo pipeline
-```
+The root holds the public entry (this file), the workspace config, and `vercel.json` (Storybook static build for `apps/docs`). Lab notes are under `docs/lab/` so they are not the first thing a visitor opens.
+
+| Path | Role |
+|---|---|
+| `apps/docs` | `@duly/docs`. Storybook: one component or story at a time, including the cockpit. This is the short UI demo (`pnpm demo:ui`). |
+| `apps/showcase` | `@duly/showcase`. Vite app of composed screens (agentic, compliance, commercial, industrial) and the same cockpit at `#demo`. |
+| `packages/tokens` | `@enregla-ui/duly-tokens`. OKLCH themes as CSS variables and a typed JS map. |
+| `packages/ui` | `@enregla-ui/duly-ui`. React components, including `AgentOpsCockpit`. |
+| `packages/mcp` | `@duly/mcp`. Private stdio server: tokens, component inventory, generate-UI instructions. |
+| `packages/eslint-config`, `packages/tsconfig` | Shared lint and TypeScript config. |
+| `examples/minimal-vite` | `@duly/example-minimal`. Smallest app that imports the packages. |
+| `docs/guides` | Consumer guides for tokens and components. |
+| `docs/lab` | Experiment log, loop state, north-star notes, vanguard notes, reference HTML. Not used by `pnpm demo`. |
+| `docs/superpowers` | Dated design specs and plans. Historical. |
+| `scripts/a11y-audit.mjs` | Optional axe pass over a built Storybook. Not part of `pnpm test`. |
+
+`apps/docs` and `apps/showcase` both render Duly. Storybook is the catalog and the 90-second cockpit. The showcase is a multi-page gallery of the same components. Root `vercel.json` builds Storybook to `apps/docs/storybook-static`. `apps/showcase/vercel.json` builds the Vite app. This repo does not add a new host or a demo domain.
+
+### What moved
+
+These files left the repository root so the public README is the entry point:
+
+| From | To |
+|---|---|
+| `AGENTIC_EXPERIMENTS_LOG.md` | `docs/lab/AGENTIC_EXPERIMENTS_LOG.md` |
+| `AGENTIC_LOOP_STATE.json` | `docs/lab/AGENTIC_LOOP_STATE.json` |
+| `NORTH_STAR.md` | `docs/lab/NORTH_STAR.md` |
+| `VANGUARD_REPORT.md` | `docs/lab/VANGUARD_REPORT.md` |
+| `galer_a_de_agentes_ia.html` | `docs/lab/references/galer_a_de_agentes_ia.html` |
+| `predios-quito-arquitectura.html` | `docs/lab/references/predios-quito-arquitectura.html` |
+
+The HTML files are read-only inspiration. They are not apps. `AGENTIC_LOOP_STATE.json` still says `"status": "running"` from 2026-07-04. No script reads it.
 
 ## Guides
 
 - [Consuming in your app](docs/guides/consuming-in-your-app.md) — plain-React and Tailwind v4 walkthroughs
 - [Theming](docs/guides/theming.md) — semantic token reference and how to add a new theme
-- [packages/ui](packages/ui/README.md) — `@duly/ui` component API
-- [packages/tokens](packages/tokens/README.md) — `@duly/tokens` CSS and JS API
+- [Docs index](docs/README.md) — guides, lab archive, and historical specs
+- [packages/ui](packages/ui/README.md) — `@enregla-ui/duly-ui` component API
+- [packages/tokens](packages/tokens/README.md) — `@enregla-ui/duly-tokens` CSS and JS API
 - [apps/docs](apps/docs/README.md) — running the Storybook locally
 - [CONTRIBUTING.md](CONTRIBUTING.md) — dev setup, release flow, token versioning policy
 
@@ -131,4 +150,4 @@ pnpm install
 
 **`tailwindcss` not found when building tokens in CI or a fresh clone**
 
-The root `.npmrc` includes `public-hoist-pattern[]=tailwindcss` to hoist `tailwindcss` from `apps/docs/node_modules` to the workspace root so that `@tailwindcss/postcss` can resolve it when it processes `@duly/tokens/dist/index.css` at Storybook build time. If you see a resolution error for `tailwindcss`, make sure you ran `pnpm install` from the workspace root (not from an individual package directory) so the hoist takes effect.
+The root `.npmrc` includes `public-hoist-pattern[]=tailwindcss` to hoist `tailwindcss` from `apps/docs/node_modules` to the workspace root so that `@tailwindcss/postcss` can resolve it when it processes `packages/tokens/dist/index.css` at Storybook build time. If you see a resolution error for `tailwindcss`, make sure you ran `pnpm install` from the workspace root (not from an individual package directory) so the hoist takes effect.

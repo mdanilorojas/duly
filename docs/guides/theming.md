@@ -123,7 +123,7 @@ To activate a theme, set `data-theme` on any container:
 2. **Run the token generator:**
 
    ```bash
-   pnpm --filter @duly/tokens tokens
+   pnpm --filter @enregla-ui/duly-tokens tokens
    ```
 
    This emits `dist/theme-midnight.css`, updates `dist/theme.css`, `dist/index.css`, `dist/tokens.js`, `dist/tokens.d.ts`, and `dist/tokens.lock.json`.
@@ -131,7 +131,7 @@ To activate a theme, set `data-theme` on any container:
 3. **Check the contrast gate.** The build test suite runs WCAG contrast checks for every theme. Run:
 
    ```bash
-   pnpm --filter @duly/tokens test
+   pnpm --filter @enregla-ui/duly-tokens test
    ```
 
    All pairs listed in `CONTRAST_PAIRS` (in `src/contracts.ts`) must pass their minimum ratios. Fix any failures before committing.
@@ -145,16 +145,16 @@ To activate a theme, set `data-theme` on any container:
 You do **not** have to fork Duly or edit `packages/tokens/src/themes.ts` to ship a new brand. The 31-key contract is exported from the published package so you can author and validate a theme entirely from your own app or CSS:
 
 ```ts
-import { semanticKeys, lockedTokens, contrastPairs } from "@duly/tokens";
+import { semanticKeys, lockedTokens, contrastPairs } from "@enregla-ui/duly-tokens";
 ```
 
-- `semanticKeys` — the 31 keys every theme must set. Write your own `[data-theme="yourbrand"] { --token: value; ... }` block (after importing `@duly/tokens/css` or `theme.css`) with all of them present.
+- `semanticKeys` — the 31 keys every theme must set. Write your own `[data-theme="yourbrand"] { --token: value; ... }` block (after importing `@enregla-ui/duly-tokens/css` or `theme.css`) with all of them present.
 - `lockedTokens` — the subset (`ok`, `review`, `warn`, `block`, `info`, `ring`) whose **hue** you must not rotate; adjust only lightness/chroma.
 - `contrastPairs` — the `[foreground, background, minRatio]` triples this design system's own CI checks. Run the same check against your hex values with any WCAG contrast function (e.g. `wcagContrast` from [`culori`](https://www.npmjs.com/package/culori)) before shipping:
 
 ```ts
 import { wcagContrast } from "culori";
-import { contrastPairs } from "@duly/tokens";
+import { contrastPairs } from "@enregla-ui/duly-tokens";
 
 const myTheme = { ink: "#1e1f25", "bg-base": "#fbfcfd", /* …all 31 keys */ };
 for (const [fg, bg, min] of contrastPairs) {
@@ -179,7 +179,7 @@ The CVD (color vision deficiency) luminance-separation gate that was initially p
 
 ## Token versioning
 
-The set of 31 keys in `SEMANTIC_KEYS` is the **public contract** of `@duly/tokens`. Changes follow semantic versioning:
+The set of 31 keys in `SEMANTIC_KEYS` is the **public contract** of `@enregla-ui/duly-tokens`. Changes follow semantic versioning:
 
 - **Add a key** → minor release
 - **Rename or remove a key** → major release

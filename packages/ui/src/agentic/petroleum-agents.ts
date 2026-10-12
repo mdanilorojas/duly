@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax -- los `glow` son colores de identidad
    por agente para el resplandor WebGL; no son tokens semánticos del tema. */
 // Petróleo & Energía Agents V001 — sector "Petroleo" de la galería por
-// industria. Portado desde `galer_a_de_agentes_ia (1).html`. 3 de los 6 son
+// industria. Portado desde `docs/lab/references/galer_a_de_agentes_ia.html`. 3 de los 6 son
 // shaders reusados de neural-agents.ts, renombrados/re-roleados para este
 // sector (glsl/glow sin cambios); 3 son completamente nuevos.
 

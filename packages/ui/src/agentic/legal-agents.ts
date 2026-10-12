@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax -- los `glow` son colores de identidad
    por agente para el resplandor WebGL; no son tokens semánticos del tema. */
 // Legal & Compliance Agents V001 — sector "Legal" de la galería por industria.
-// Portado desde la referencia visual `galer_a_de_agentes_ia (1).html`
+// Portado desde la referencia visual `docs/lab/references/galer_a_de_agentes_ia.html`
 // (24 agentes / 4 sectores). Reutiliza el mismo AgentCore WebGL de Neural
 // Cores — solo cambia la data. Los 6 de este sector son completamente
 // nuevos (ninguno reusado de neural-agents.ts).

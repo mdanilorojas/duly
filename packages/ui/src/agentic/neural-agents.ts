@@ -2,7 +2,7 @@
    por agente para el resplandor WebGL; no son tokens semánticos del tema. */
 // Neural Agents V001 — "Neural Cores"
 // 10 WebGL shader cores (FBM + SDF) que representan agentes de IA.
-// Portado desde la referencia visual `galer_a_de_agentes_ia.html`.
+// Portado desde la referencia visual `docs/lab/references/galer_a_de_agentes_ia.html`.
 // La data es reutilizable: cada agente aporta su fragmento GLSL `getColor`.
 
 export interface NeuralAgent {
