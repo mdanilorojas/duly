@@ -16,10 +16,10 @@ pnpm demo
 
 That builds token CSS, starts `@duly/mcp` over stdio, and calls `list_tokens`, `list_components`, `get_generate_ui_instructions`, plus the `duly://design-system.json` resource. A successful run ends with `demo ok`.
 
-**Cockpit UI** (Storybook reads component source, so it does not need a separate `@enregla-ui/duly-ui` build):
+**Cockpit UI.** Stories compile from `packages/ui/src`, but Storybook's preview imports the built `@enregla-ui/duly-ui` package, so build it once after tokens exist (`pnpm demo` already builds tokens):
 
 ```bash
-pnpm --filter @enregla-ui/duly-tokens tokens
+pnpm --filter @enregla-ui/duly-ui build
 pnpm --filter @duly/docs storybook
 ```
 

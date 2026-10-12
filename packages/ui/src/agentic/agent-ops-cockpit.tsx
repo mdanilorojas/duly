@@ -81,6 +81,7 @@ const GUARDRAILS: GuardrailPolicy[] = [
 function CockpitView({ className, ...props }: React.ComponentProps<"div">) {
   const [items, setItems] = React.useState(INITIAL_QUEUE);
   const [notice, setNotice] = React.useState("");
+  const pendingReviews = items.filter((item) => (item.status ?? "pending") === "pending").length;
 
   function decide(id: string, status: Decision) {
     const item = items.find((entry) => entry.id === id);
@@ -113,7 +114,7 @@ function CockpitView({ className, ...props }: React.ComponentProps<"div">) {
           Run metrics
         </h2>
         <AgentMetricRow>
-          <AgentMetric label="Pending reviews" value="2" tone="warn" />
+          <AgentMetric label="Pending reviews" value={String(pendingReviews)} tone={pendingReviews > 0 ? "warn" : "ok"} />
           <AgentMetric label="Waiting steps" value="1" tone="review" />
           <AgentMetric label="Guardrail warnings" value="1" tone="warn" />
           <AgentMetric label="p95 latency" value="1.8" unit="s" />
