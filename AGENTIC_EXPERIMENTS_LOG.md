@@ -1552,3 +1552,18 @@ Rungs 1–6 todos cerrados. Suite 155/155 verde, build tsup ESM+DTS OK, axe 0 vi
   - Con esta iteración, área A (n8n/proceso empresarial) del NORTH_STAR llega a 5 de 8 filas en ✅
     más `ExecutionHistoryTable` en 🟡 (falta virtualización) — solo `WorkflowCanvasFrame` queda
     completamente sin empezar.
+
+---
+
+## Public demo — Agent Ops Cockpit + design-system MCP
+
+- **Fecha:** 2026-10-12
+- **Versión:** `AgentOpsCockpit` (composición, no un primitivo nuevo)
+- **Tipo:** demo pública + servidor MCP stdio
+- **Storybook:** `Agentic/Demo/Agent Ops Cockpit` (story: `Cockpit`)
+- **Showcase:** `apps/showcase` ruta `#demo`
+- **Razón:** un visitante puede correr el transcript MCP (`pnpm demo`) y abrir el mismo cockpit que esas instrucciones describen, armado con componentes que ya existían (`AgentMetric`, `RunTimeline`, `HumanInterruptQueue`, `GuardrailIndicator`, `TokenCostMeter`, `TraceLog`).
+- **Añadido:**
+  - `packages/ui/src/agentic/agent-ops-cockpit.tsx` — composición con datos de muestra y decisiones locales.
+  - `packages/mcp` (`@duly/mcp`) — tools `list_tokens`, `list_components`, `get_generate_ui_instructions` y recurso `duly://design-system.json`.
+- **Limitaciones:** el MCP no renderiza React ni habla con un runtime de agentes. El inventario es curado, no una reflexión de cada export. Los números del cockpit son ficticios.

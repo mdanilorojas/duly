@@ -1,6 +1,6 @@
 import { Button, Badge, Progress } from "@enregla-ui/duly-ui";
 
-type Page = "agentic" | "compliance" | "comercial" | "industrial";
+type Page = "demo" | "agentic" | "compliance" | "comercial" | "industrial";
 
 const VERTICALS: { id: Page; title: string; desc: string }[] = [
   { id: "agentic", title: "Agentic", desc: "Panel de operación de agentes: runs, gates, guardrails, costo." },
@@ -23,6 +23,24 @@ export function Home({ onNavigate }: { onNavigate: (page: Page) => void }) {
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1rem" }}>
+        <button
+          type="button"
+          onClick={() => onNavigate("demo")}
+          style={{
+            textAlign: "left",
+            border: "1px solid var(--accent-border)",
+            borderRadius: "0.75rem",
+            background: "var(--accent-surface)",
+            padding: "1.1rem",
+            cursor: "pointer",
+            color: "inherit",
+          }}
+        >
+          <h3 style={{ fontSize: "1rem", fontWeight: 650, marginBottom: "0.4rem" }}>Demo</h3>
+          <p style={{ fontSize: "0.85rem", color: "var(--dim)" }}>
+            Agent-ops cockpit built from Duly components. Sample data, keyboard accessible.
+          </p>
+        </button>
         {VERTICALS.map((v) => (
           <button
             key={v.id}

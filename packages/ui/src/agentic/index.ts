@@ -43,3 +43,4 @@ export * from "./retention-badge.js";
 export * from "./subworkflow-chip.js";
 export * from "./error-workflow-banner.js";
 export * from "./connector-status.js";
+export * from "./agent-ops-cockpit.js";
