@@ -17,6 +17,13 @@ export interface GenerateUiInstructions {
   themeAttribute: string;
   composition: readonly string[];
   example: string;
+  emission: {
+    summary: string;
+    schemaTool: "get_generative_ui_schema";
+    validateTool: "validate_generative_ui";
+    host: "GenerativeUiView";
+    example: string;
+  };
   accessibility: string[];
   limitations: string[];
 }
@@ -41,6 +48,14 @@ export function Demo() {
     </CopyProvider>
   );
 }`,
+  emission: {
+    summary:
+      "When an agent must emit a screen, return a version 1 generative UI document. Do not emit HTML, CSS, or raw colors. Call get_generative_ui_schema, then validate_generative_ui, and keep the audit next to the model log. The host renders that document with GenerativeUiView. AgentOpsCockpit is the hand-built reference of the same cockpit.",
+    schemaTool: "get_generative_ui_schema",
+    validateTool: "validate_generative_ui",
+    host: "GenerativeUiView",
+    example: "packages/ui/src/agentic/cockpit.generative.json",
+  },
   accessibility: [
     "Set data-theme on an ancestor so semantic tokens resolve. The cockpit story uses cockpit.",
     "Use token utilities (text-ink, bg-surface-2, border-border-subtle, text-ok, text-warn, text-block). Do not write hex or rgb colors in component code.",
@@ -53,7 +68,8 @@ export function Demo() {
     "The cockpit sets lang=\"en\" because its sample copy is English.",
   ],
   limitations: [
-    "This server returns tokens, a curated component inventory, and composition instructions. It does not render React, call a model, or attach to a live agent runtime.",
+    "This server returns tokens, a curated component inventory, composition instructions, and a structural check of generative UI documents. It does not render React, call a model, or attach to a live agent runtime.",
+    "validate_generative_ui is a structural check. Duly does not store, sign, or certify the audit. It is not a SOC 2 report, an ISO certificate, or a bank attestation.",
     "The inventory is a hand-maintained list of agent-ops components and a few primitives. It is not every export in @enregla-ui/duly-ui, and it does not include prop types. Read the TypeScript source for props.",
     "Hex values are the CSS fallback. The oklch field is parsed from the theme stylesheet, which is what supporting browsers use.",
     "AgentOpsCockpit shows fictional sample operations. Approve, reject, and escalate update local component state only.",

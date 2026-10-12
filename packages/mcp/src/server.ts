@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { buildDesignSystem, listComponents, themeNames, tokensPayload } from "./design-system.js";
+import { getGenerativeUiSchema, validateGenerativeUi } from "./generative-ui.js";
 import { GENERATE_UI } from "./instructions.js";
 
 const mcpPackage = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as {
@@ -66,10 +67,42 @@ export function createDulyServer(): McpServer {
     {
       title: "Get generate-UI instructions",
       description:
-        "Return instructions for rendering the public agent-ops cockpit from @enregla-ui/duly-ui, including accessibility rules and known limitations.",
+        "Return instructions for rendering the public agent-ops cockpit from @enregla-ui/duly-ui, including accessibility rules, the generative UI emission path, and known limitations.",
       annotations: { readOnlyHint: true },
     },
     async () => toolJson(GENERATE_UI),
+  );
+
+  server.registerTool(
+    "get_generative_ui_schema",
+    {
+      title: "Get generative UI schema",
+      description:
+        "Return the version 1 contract for UI an agent may emit: allow-listed components, prop fields, accessibility rules, limits, and a valid cockpit example. The agent emits this JSON. It does not emit HTML.",
+      annotations: { readOnlyHint: true },
+    },
+    async () => {
+      try {
+        return toolJson(getGenerativeUiSchema());
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Could not read the generative UI schema.";
+        return toolError(message);
+      }
+    },
+  );
+
+  server.registerTool(
+    "validate_generative_ui",
+    {
+      title: "Validate generative UI",
+      description:
+        "Check one generative UI document against the version 1 contract. Returns an audit (theme, locale, node ids, components, and each rule passed or failed). The check is structural and pure. Duly does not store, sign, or certify the result.",
+      inputSchema: {
+        document: z.unknown().describe("Generative UI document to check."),
+      },
+      annotations: { readOnlyHint: true },
+    },
+    async ({ document }) => toolJson(validateGenerativeUi(document)),
   );
 
   const document = () => JSON.stringify(buildDesignSystem(), null, 2);
@@ -78,7 +111,7 @@ export function createDulyServer(): McpServer {
     "duly://design-system.json",
     {
       title: "Duly design system",
-      description: "Tokens, component inventory, and cockpit composition instructions as one JSON document.",
+      description: "Tokens, component inventory, cockpit composition instructions, and the generative UI contract as one JSON document.",
       mimeType: "application/json",
     },
     async (uri) => ({

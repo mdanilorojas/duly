@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Stdio MCP server that exposes Duly tokens, a component inventory, and instructions for the agent-ops cockpit.",
+  "description": "Stdio MCP server that exposes Duly tokens, a component inventory, generate-UI instructions, and a structural check for generative UI documents.",
   "license": "MIT",
   "scripts": {
     "start": "tsx src/cli.ts",

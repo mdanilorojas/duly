@@ -72,8 +72,10 @@ describe("MCP server", () => {
       const tools = await client.listTools();
       expect(tools.tools.map((tool) => tool.name).sort()).toEqual([
         "get_generate_ui_instructions",
+        "get_generative_ui_schema",
         "list_components",
         "list_tokens",
+        "validate_generative_ui",
       ]);
 
       const tokens = readJson(await client.callTool({ name: "list_tokens", arguments: { theme: "light" } })) as {

@@ -2,4 +2,4 @@
 "@enregla-ui/duly-ui": minor
 ---
 
-Add AgentOpsCockpit, a sample agent-operations view composed from existing agentic components.
+Add AgentOpsCockpit and GenerativeUiView. GenerativeUiView renders a version 1 generative UI document with existing Duly components.

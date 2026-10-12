@@ -6,6 +6,7 @@ import {
   tokens,
 } from "@enregla-ui/duly-tokens";
 import { COMPONENT_INVENTORY, type ComponentArea, type ComponentEntry } from "./catalog.js";
+import { generativeUiContract } from "./generative-ui.js";
 import { GENERATE_UI, type GenerateUiInstructions } from "./instructions.js";
 
 export interface TokenValue {
@@ -34,6 +35,7 @@ export interface DesignSystemExport {
   contrastPairs: [string, string, number][];
   components: ComponentEntry[];
   generateUi: GenerateUiInstructions;
+  generativeUi: ReturnType<typeof generativeUiContract>;
   notes: string[];
 }
 
@@ -137,9 +139,11 @@ export function buildDesignSystem(): DesignSystemExport {
     contrastPairs: contrastPairs.map((pair) => [pair[0], pair[1], pair[2]]),
     components: [...COMPONENT_INVENTORY],
     generateUi: GENERATE_UI,
+    generativeUi: generativeUiContract(),
     notes: [
-      "Regenerate packages/mcp/design-system.json with pnpm --filter @duly/mcp export after token changes.",
+      "Regenerate packages/mcp/design-system.json with pnpm --filter @duly/mcp export after token or generative-UI contract changes.",
       "The component list is curated. Prop types live in packages/ui/src.",
+      "Generative UI audits are structural. Duly does not store, sign, or certify them.",
     ],
   };
 }

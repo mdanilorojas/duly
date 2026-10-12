@@ -22,6 +22,14 @@ export const COMPONENT_INVENTORY: readonly ComponentEntry[] = [
     inDemoCockpit: true,
   },
   {
+    name: "GenerativeUiView",
+    package: "@enregla-ui/duly-ui",
+    area: "agentic",
+    summary:
+      "Host for a version 1 generative UI document. Renders the allow-listed tree with Duly components. Validate the document before treating the result as an audit record.",
+    inDemoCockpit: false,
+  },
+  {
     name: "AgentMetricRow",
     package: "@enregla-ui/duly-ui",
     area: "agentic",
