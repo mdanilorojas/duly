@@ -1,0 +1,31 @@
+{
+  "name": "@duly/catalog",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "duly-catalog: versioned Zod schemas and A2UI-shaped JSON Schema for components an agent may emit.",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts",
+    "./example": "./src/example.ts"
+  },
+  "scripts": {
+    "export": "tsx src/export-cli.ts",
+    "test": "vitest run",
+    "lint": "eslint src --max-warnings 0"
+  },
+  "dependencies": {
+    "@enregla-ui/duly-tokens": "workspace:*",
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.24.6"
+  },
+  "devDependencies": {
+    "@duly/eslint-config": "workspace:*",
+    "@duly/tsconfig": "workspace:*",
+    "@types/node": "^22.15.0",
+    "eslint": "^9.13.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

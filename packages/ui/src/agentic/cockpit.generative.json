@@ -1,0 +1,209 @@
+{
+  "version": "1",
+  "auditId": "cockpit-sample",
+  "theme": "cockpit",
+  "locale": "en",
+  "title": "Agent operations",
+  "description": "This screen was emitted as a generative UI document and rendered with Duly components: run status, a human approval queue, guardrails, cost, and the event log. Decisions stay in this page. Nothing here is a live agent or a real payment.",
+  "nodes": [
+    {
+      "id": "metrics",
+      "component": "Section",
+      "props": { "heading": "Run metrics" },
+      "children": [
+        {
+          "id": "metric-row",
+          "component": "AgentMetricRow",
+          "children": [
+            {
+              "id": "metric-pending",
+              "component": "AgentMetric",
+              "props": { "label": "Pending reviews", "value": "2", "tone": "warn" }
+            },
+            {
+              "id": "metric-waiting",
+              "component": "AgentMetric",
+              "props": { "label": "Waiting steps", "value": "1", "tone": "review" }
+            },
+            {
+              "id": "metric-warnings",
+              "component": "AgentMetric",
+              "props": { "label": "Guardrail warnings", "value": "1", "tone": "warn" }
+            },
+            {
+              "id": "metric-latency",
+              "component": "AgentMetric",
+              "props": { "label": "p95 latency", "value": "1.8", "unit": "s" }
+            },
+            {
+              "id": "metric-cost",
+              "component": "AgentMetric",
+              "props": { "label": "Run cost", "value": "0.42", "unit": "USD", "tone": "ok" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "workflow",
+      "component": "Section",
+      "props": { "heading": "Workflow" },
+      "children": [
+        {
+          "id": "run",
+          "component": "RunTimeline",
+          "props": {
+            "title": "Workflow run",
+            "hint": "run_demo_01 · sample",
+            "nodes": [
+              { "id": "ingest", "title": "Ingest", "status": "success", "owner": "INTAKE", "meta": "0.4s" },
+              { "id": "policy", "title": "Policy", "status": "success", "owner": "GUARD", "meta": "0.2s" },
+              { "id": "payment", "title": "Payment", "status": "waiting", "owner": "TREASURY", "meta": "hold" },
+              { "id": "release", "title": "Release", "status": "skipped", "owner": "RELEASE", "meta": "—" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "review-cost",
+      "component": "Stack",
+      "props": { "direction": "split" },
+      "children": [
+        {
+          "id": "review",
+          "component": "Section",
+          "props": { "heading": "Human review" },
+          "children": [
+            {
+              "id": "queue",
+              "component": "HumanInterruptQueue",
+              "props": {
+                "title": "Approval queue",
+                "items": [
+                  {
+                    "id": "pay-4800",
+                    "action": "Send vendor payment of $4,800",
+                    "agent": "TREASURY",
+                    "riskTone": "block",
+                    "riskLabel": "Critical risk",
+                    "what": "Pay the invoice the intake agent matched to vendor Northwind.",
+                    "why": "The payout account changed 6 hours ago and does not match the vendor record.",
+                    "blastRadius": "$4,800 · one vendor · no automatic reversal",
+                    "rollback": "Ask the bank to recall the payment. That request can fail.",
+                    "requestedAt": "2m ago",
+                    "ageMinutes": 2,
+                    "expiresIn": "13m"
+                  },
+                  {
+                    "id": "revert-checkout",
+                    "action": "Revert checkout-service to v2.41.0",
+                    "agent": "RELEASE",
+                    "riskTone": "warn",
+                    "riskLabel": "High risk",
+                    "what": "Roll the service back after error rate rose following v2.42.0.",
+                    "why": "The one-hour error budget is being consumed faster than the policy allows.",
+                    "blastRadius": "checkout-service · all regions",
+                    "rollback": "v2.42.0 is still tagged and can be deployed again.",
+                    "requestedAt": "4m ago",
+                    "ageMinutes": 4,
+                    "expiresIn": "26m"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "component": "Stack",
+          "props": { "direction": "column" },
+          "children": [
+            {
+              "id": "guardrails",
+              "component": "Section",
+              "props": { "heading": "Guardrails" },
+              "children": [
+                {
+                  "id": "guardrail-list",
+                  "component": "GuardrailIndicator",
+                  "props": {
+                    "label": "Guardrails",
+                    "defaultOpen": true,
+                    "policies": [
+                      {
+                        "id": "injection",
+                        "name": "Prompt injection",
+                        "category": "input",
+                        "status": "passed",
+                        "rationale": "No instruction-override pattern in the operator message."
+                      },
+                      {
+                        "id": "confidence",
+                        "name": "Confidence threshold",
+                        "category": "output",
+                        "status": "warned",
+                        "rationale": "Confidence 0.71 is below 0.85, so the payment stayed in the human queue."
+                      },
+                      {
+                        "id": "scope",
+                        "name": "Tool scope",
+                        "category": "tool",
+                        "status": "passed",
+                        "rationale": "transfer_funds stays inside the agent's authorized limit."
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "cost",
+              "component": "Section",
+              "props": { "heading": "Cost" },
+              "children": [
+                {
+                  "id": "cost-meter",
+                  "component": "TokenCostMeter",
+                  "props": {
+                    "title": "This run",
+                    "budgetUsd": 2,
+                    "tokensIn": 18420,
+                    "tokensOut": 2104,
+                    "breakdown": [
+                      { "label": "Model", "costUsd": 0.31, "tone": "info" },
+                      { "label": "Tools", "costUsd": 0.08, "tone": "review" },
+                      { "label": "Retrieval", "costUsd": 0.03, "tone": "ok" }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "events",
+      "component": "Section",
+      "props": { "heading": "Event log" },
+      "children": [
+        {
+          "id": "event-log",
+          "component": "TraceLog",
+          "props": {
+            "title": "Run events",
+            "hint": "run_demo_01",
+            "label": "Run events",
+            "rows": [
+              { "tone": "info", "agent": "INTAKE", "step": "1", "text": "Matched invoice NW-2041 to vendor Northwind." },
+              { "tone": "ok", "agent": "GUARD", "step": "2", "text": "Input and tool-scope checks passed." },
+              { "tone": "warn", "agent": "GUARD", "step": "3", "text": "Confidence 0.71 is below 0.85. Payment held for a person." },
+              { "tone": "review", "agent": "TREASURY", "step": "4", "text": "Waiting on the approval queue before transfer_funds." }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

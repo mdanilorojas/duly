@@ -5,10 +5,12 @@
 **Requirements:** Node ≥ 20, pnpm 10.33.2.
 
 ```bash
-git clone <repo-url>
-cd "Enterprise Design System"
+git clone https://github.com/mdanilorojas/duly.git
+cd duly
 pnpm install
 ```
+
+The public demo commands are in the root README (`pnpm demo`, `pnpm demo:ui`).
 
 ## Development pipeline
 
@@ -23,24 +25,24 @@ What each step does:
 | Step | Command | Description |
 |---|---|---|
 | `tokens` | `pnpm turbo run tokens` | Regenerate CSS and JS from `packages/tokens/src/themes.ts` |
-| `build` | `pnpm turbo run build` | Build `@duly/ui` with tsup + compile Storybook |
+| `build` | `pnpm turbo run build` | Build `@enregla-ui/duly-ui` with tsup + compile Storybook |
 | `lint` | `pnpm turbo run lint` | ESLint with zero warnings allowed |
-| `test` | `pnpm turbo run test` | Vitest — 33 token tests + 18 UI tests |
+| `test` | `pnpm turbo run test` | Vitest in each package that defines a `test` script |
 
 Individual package tasks:
 
 ```bash
 # Token generator only
-pnpm --filter @duly/tokens tokens
+pnpm --filter @enregla-ui/duly-tokens tokens
 
 # UI build only
-pnpm --filter @duly/ui build
+pnpm --filter @enregla-ui/duly-ui build
 
 # Token tests (contrast gate, LOCKED parity, semantic coverage)
-pnpm --filter @duly/tokens test
+pnpm --filter @enregla-ui/duly-tokens test
 
 # UI tests (component rendering + axe accessibility)
-pnpm --filter @duly/ui test
+pnpm --filter @enregla-ui/duly-ui test
 
 # Storybook
 pnpm --filter @duly/docs storybook
@@ -69,14 +71,14 @@ This consumes all pending changeset files, bumps `package.json` versions, and up
 **3. Publish:**
 
 ```bash
-pnpm publish -r --filter "@duly/*" --access public
+pnpm publish -r --filter "@enregla-ui/*" --access public
 ```
 
-Both packages are scoped public (`"publishConfig": { "access": "public" }`).
+`@enregla-ui/duly-tokens` and `@enregla-ui/duly-ui` are the published packages (`"publishConfig": { "access": "public" }`). `@duly/mcp` is private to this repo.
 
 ## Token versioning policy
 
-The array `SEMANTIC_KEYS` in `packages/tokens/src/contracts.ts` is the **public contract** of `@duly/tokens`. The `dist/tokens.lock.json` file records the current sorted key list and is committed alongside every token change.
+The array `SEMANTIC_KEYS` in `packages/tokens/src/contracts.ts` is the **public contract** of `@enregla-ui/duly-tokens`. The `dist/tokens.lock.json` file records the current sorted key list and is committed alongside every token change.
 
 | Change type | Required bump | Changeset required |
 |---|---|---|

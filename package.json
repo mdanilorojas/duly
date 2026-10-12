@@ -7,6 +7,10 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "tokens": "turbo run tokens",
+    "demo": "pnpm --filter @enregla-ui/duly-tokens tokens && pnpm --filter @duly/mcp demo",
+    "demo:ui": "pnpm --filter @enregla-ui/duly-tokens tokens && pnpm --filter @enregla-ui/duly-ui build && pnpm --filter @duly/docs storybook",
+    "storybook": "pnpm --filter @duly/docs storybook",
+    "showcase": "pnpm --filter @duly/showcase dev",
     "changeset": "changeset",
     "version": "changeset version"
   },

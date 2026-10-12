@@ -1,4 +1,6 @@
-# @duly/ui
+# @enregla-ui/duly-ui
+
+Published as `@enregla-ui/duly-ui`. Older lines in this file say `@duly/ui`.
 
 ## 0.2.0
 

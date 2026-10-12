@@ -2,7 +2,7 @@
    por agente para el resplandor WebGL; no son tokens semánticos del tema. */
 // Real Estate Agents V001 — "Property Intelligence"
 // Roster de 6 agentes de IA para operaciones inmobiliarias / catastrales.
-// Portado desde la referencia visual `predios-quito-arquitectura.html`
+// Portado desde la referencia visual `docs/lab/references/predios-quito-arquitectura.html`
 // (pipeline de consulta catastral: parse → fetch → geo bridge → color → render → revisión humana).
 // Reutiliza el mismo AgentCore WebGL de V001 Neural Cores — solo cambia la data.
 

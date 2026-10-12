@@ -44,17 +44,19 @@ const dotTone: Record<Tone, string> = {
 
 function QueueRow({
   item,
+  defaultOpen = false,
   onApprove,
   onReject,
   onEscalate,
 }: {
   item: InterruptQueueItem;
+  defaultOpen?: boolean;
   onApprove?: (id: string) => void;
   onReject?: (id: string) => void;
   onEscalate?: (id: string) => void;
 }) {
   const t = useCopy();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(defaultOpen);
   const status = item.status ?? "pending";
   const isPending = status === "pending";
 
@@ -130,6 +132,8 @@ function QueueRow({
 export interface HumanInterruptQueueProps extends React.ComponentProps<"div"> {
   title?: string;
   items: InterruptQueueItem[];
+  /** Row id that starts expanded so the approval gate is on screen. */
+  defaultOpenId?: string;
   onApprove?: (id: string) => void;
   onReject?: (id: string) => void;
   onEscalate?: (id: string) => void;
@@ -150,6 +154,7 @@ export interface HumanInterruptQueueProps extends React.ComponentProps<"div"> {
 export function HumanInterruptQueue({
   title,
   items,
+  defaultOpenId,
   onApprove,
   onReject,
   onEscalate,
@@ -194,7 +199,14 @@ export function HumanInterruptQueue({
       ) : (
         <ol className="divide-y divide-border-subtle">
           {sorted.map((item) => (
-            <QueueRow key={item.id} item={item} onApprove={onApprove} onReject={onReject} onEscalate={onEscalate} />
+            <QueueRow
+              key={item.id}
+              item={item}
+              defaultOpen={item.id === defaultOpenId}
+              onApprove={onApprove}
+              onReject={onReject}
+              onEscalate={onEscalate}
+            />
           ))}
         </ol>
       )}

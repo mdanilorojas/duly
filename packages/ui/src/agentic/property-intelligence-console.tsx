@@ -29,7 +29,7 @@ export interface PropertyIntelligenceConsoleProps extends React.ComponentProps<"
  * un pipeline de ejecución (`TraceLog`) y una matriz de estatus legal de
  * predios (`AgentStatusMatrix`), sobre métricas operacionales (`AgentMetric`).
  *
- * Portada desde la referencia visual `predios-quito-arquitectura.html`
+ * Portada desde la referencia visual `docs/lab/references/predios-quito-arquitectura.html`
  * (consulta catastral en vivo contra el servidor ArcGIS del Municipio de Quito).
  */
 export function PropertyIntelligenceConsole({

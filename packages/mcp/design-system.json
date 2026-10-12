@@ -1,0 +1,1449 @@
+{
+  "name": "Duly",
+  "description": "Multi-brand agent-ops design system. Semantic colors are OKLCH custom properties with a hex fallback.",
+  "packages": {
+    "tokens": {
+      "name": "@enregla-ui/duly-tokens",
+      "version": "0.1.0",
+      "css": "@enregla-ui/duly-tokens/css"
+    },
+    "ui": {
+      "name": "@enregla-ui/duly-ui",
+      "version": "0.2.0",
+      "styles": [
+        "@enregla-ui/duly-ui/styles.css",
+        "@enregla-ui/duly-ui/reset.css"
+      ]
+    },
+    "mcp": {
+      "name": "@duly/mcp",
+      "version": "0.1.0"
+    }
+  },
+  "themes": {
+    "cockpit": {
+      "colorScheme": "dark",
+      "css": "@enregla-ui/duly-tokens/theme-cockpit.css",
+      "tokens": [
+        {
+          "name": "bg-base",
+          "cssVar": "--bg-base",
+          "hex": "#0a0a0e",
+          "oklch": "oklch(0.145 0.008 285)",
+          "locked": false
+        },
+        {
+          "name": "bg-elevated",
+          "cssVar": "--bg-elevated",
+          "hex": "#101116",
+          "oklch": "oklch(0.190 0.009 285)",
+          "locked": false
+        },
+        {
+          "name": "surface-2",
+          "cssVar": "--surface-2",
+          "hex": "#17181e",
+          "oklch": "oklch(0.235 0.010 285)",
+          "locked": false
+        },
+        {
+          "name": "surface-3",
+          "cssVar": "--surface-3",
+          "hex": "#1f2027",
+          "oklch": "oklch(0.280 0.012 285)",
+          "locked": false
+        },
+        {
+          "name": "surface-header",
+          "cssVar": "--surface-header",
+          "hex": "#131318",
+          "oklch": "oklch(0.21 0.009 285)",
+          "locked": false
+        },
+        {
+          "name": "surface-sunken",
+          "cssVar": "--surface-sunken",
+          "hex": "#0f1014",
+          "oklch": "oklch(0.185 0.008 285)",
+          "locked": false
+        },
+        {
+          "name": "ink",
+          "cssVar": "--ink",
+          "hex": "#f0f0f2",
+          "oklch": "oklch(0.95 0.004 285)",
+          "locked": false
+        },
+        {
+          "name": "dim",
+          "cssVar": "--dim",
+          "hex": "#b4b4be",
+          "oklch": "oklch(0.78 0.008 285)",
+          "locked": false
+        },
+        {
+          "name": "faint",
+          "cssVar": "--faint",
+          "hex": "#7b8799",
+          "oklch": "oklch(0.58 0.016 285)",
+          "locked": false
+        },
+        {
+          "name": "faint-deco",
+          "cssVar": "--faint-deco",
+          "hex": "#5a6478",
+          "oklch": "oklch(0.50 0.034 264)",
+          "locked": false
+        },
+        {
+          "name": "border-subtle",
+          "cssVar": "--border-subtle",
+          "hex": "#26272e",
+          "oklch": "oklch(0.32 0.012 285)",
+          "locked": false
+        },
+        {
+          "name": "border-default",
+          "cssVar": "--border-default",
+          "hex": "#37383f",
+          "oklch": "oklch(0.41 0.011 285)",
+          "locked": false
+        },
+        {
+          "name": "border-strong",
+          "cssVar": "--border-strong",
+          "hex": "#6a6b76",
+          "oklch": "oklch(0.65 0.010 285)",
+          "locked": false
+        },
+        {
+          "name": "border-divider",
+          "cssVar": "--border-divider",
+          "hex": "#2c3744",
+          "oklch": "oklch(0.37 0.02 241)",
+          "locked": false
+        },
+        {
+          "name": "ring",
+          "cssVar": "--ring",
+          "hex": "#23d2d7",
+          "oklch": "oklch(0.78 0.13 198)",
+          "locked": true
+        },
+        {
+          "name": "accent",
+          "cssVar": "--accent",
+          "hex": "#23d2d7",
+          "oklch": "oklch(0.78 0.13 198)",
+          "locked": false
+        },
+        {
+          "name": "on-accent",
+          "cssVar": "--on-accent",
+          "hex": "#042427",
+          "oklch": "oklch(0.22 0.03 198)",
+          "locked": false
+        },
+        {
+          "name": "accent-surface",
+          "cssVar": "--accent-surface",
+          "hex": "#0e2b2c",
+          "oklch": "oklch(0.27 0.05 198)",
+          "locked": false
+        },
+        {
+          "name": "accent-border",
+          "cssVar": "--accent-border",
+          "hex": "#1c5557",
+          "oklch": "oklch(0.40 0.07 198)",
+          "locked": false
+        },
+        {
+          "name": "accent-secondary",
+          "cssVar": "--accent-secondary",
+          "hex": "#8f9bff",
+          "oklch": "oklch(0.74 0.13 275)",
+          "locked": false
+        },
+        {
+          "name": "on-accent-secondary",
+          "cssVar": "--on-accent-secondary",
+          "hex": "#06091e",
+          "oklch": "oklch(0.18 0.04 275)",
+          "locked": false
+        },
+        {
+          "name": "ok",
+          "cssVar": "--ok",
+          "hex": "#39E0A0",
+          "oklch": "oklch(0.81 0.16 162)",
+          "locked": true
+        },
+        {
+          "name": "on-ok",
+          "cssVar": "--on-ok",
+          "hex": "#04231a",
+          "oklch": "oklch(0.24 0.04 162)",
+          "locked": false
+        },
+        {
+          "name": "review",
+          "cssVar": "--review",
+          "hex": "#6cb8ff",
+          "oklch": "oklch(0.76 0.13 256)",
+          "locked": true
+        },
+        {
+          "name": "on-review",
+          "cssVar": "--on-review",
+          "hex": "#04122b",
+          "oklch": "oklch(0.20 0.05 256)",
+          "locked": false
+        },
+        {
+          "name": "warn",
+          "cssVar": "--warn",
+          "hex": "#E8961A",
+          "oklch": "oklch(0.74 0.15 70)",
+          "locked": true
+        },
+        {
+          "name": "on-warn",
+          "cssVar": "--on-warn",
+          "hex": "#2a1600",
+          "oklch": "oklch(0.22 0.05 70)",
+          "locked": false
+        },
+        {
+          "name": "block",
+          "cssVar": "--block",
+          "hex": "#ff6b78",
+          "oklch": "oklch(0.72 0.18 19)",
+          "locked": true
+        },
+        {
+          "name": "on-block",
+          "cssVar": "--on-block",
+          "hex": "#2b0407",
+          "oklch": "oklch(0.22 0.06 19)",
+          "locked": false
+        },
+        {
+          "name": "info",
+          "cssVar": "--info",
+          "hex": "#7e8390",
+          "oklch": "oklch(0.61 0.02 270)",
+          "locked": true
+        },
+        {
+          "name": "glow-seed",
+          "cssVar": "--glow-seed",
+          "hex": "#5fe3e6",
+          "oklch": "oklch(0.88 0.12 192)",
+          "locked": false
+        }
+      ]
+    },
+    "violet": {
+      "colorScheme": "dark",
+      "css": "@enregla-ui/duly-tokens/theme-violet.css",
+      "tokens": [
+        {
+          "name": "bg-base",
+          "cssVar": "--bg-base",
+          "hex": "#0a0810",
+          "oklch": "oklch(0.14 0.012 300)",
+          "locked": false
+        },
+        {
+          "name": "bg-elevated",
+          "cssVar": "--bg-elevated",
+          "hex": "#100d18",
+          "oklch": "oklch(0.18 0.012 300)",
+          "locked": false
+        },
+        {
+          "name": "surface-2",
+          "cssVar": "--surface-2",
+          "hex": "#171320",
+          "oklch": "oklch(0.22 0.014 300)",
+          "locked": false
+        },
+        {
+          "name": "surface-3",
+          "cssVar": "--surface-3",
+          "hex": "#1e1929",
+          "oklch": "oklch(0.26 0.016 300)",
+          "locked": false
+        },
+        {
+          "name": "surface-header",
+          "cssVar": "--surface-header",
+          "hex": "#130f1b",
+          "oklch": "oklch(0.20 0.012 300)",
+          "locked": false
+        },
+        {
+          "name": "surface-sunken",
+          "cssVar": "--surface-sunken",
+          "hex": "#0d0a14",
+          "oklch": "oklch(0.16 0.012 300)",
+          "locked": false
+        },
+        {
+          "name": "ink",
+          "cssVar": "--ink",
+          "hex": "#f1eff5",
+          "oklch": "oklch(0.95 0.006 300)",
+          "locked": false
+        },
+        {
+          "name": "dim",
+          "cssVar": "--dim",
+          "hex": "#b8b4c2",
+          "oklch": "oklch(0.78 0.012 300)",
+          "locked": false
+        },
+        {
+          "name": "faint",
+          "cssVar": "--faint",
+          "hex": "#827d97",
+          "oklch": "oklch(0.58 0.022 300)",
+          "locked": false
+        },
+        {
+          "name": "faint-deco",
+          "cssVar": "--faint-deco",
+          "hex": "#5d566f",
+          "oklch": "oklch(0.50 0.03 300)",
+          "locked": false
+        },
+        {
+          "name": "border-subtle",
+          "cssVar": "--border-subtle",
+          "hex": "#221d2b",
+          "oklch": "oklch(0.27 0.014 300)",
+          "locked": false
+        },
+        {
+          "name": "border-default",
+          "cssVar": "--border-default",
+          "hex": "#332d3c",
+          "oklch": "oklch(0.33 0.012 300)",
+          "locked": false
+        },
+        {
+          "name": "border-strong",
+          "cssVar": "--border-strong",
+          "hex": "#6b6577",
+          "oklch": "oklch(0.53 0.012 300)",
+          "locked": false
+        },
+        {
+          "name": "border-divider",
+          "cssVar": "--border-divider",
+          "hex": "#352b40",
+          "oklch": "oklch(0.32 0.02 300)",
+          "locked": false
+        },
+        {
+          "name": "ring",
+          "cssVar": "--ring",
+          "hex": "#23d2d7",
+          "oklch": "oklch(0.78 0.13 198)",
+          "locked": true
+        },
+        {
+          "name": "accent",
+          "cssVar": "--accent",
+          "hex": "#b07cff",
+          "oklch": "oklch(0.70 0.17 300)",
+          "locked": false
+        },
+        {
+          "name": "on-accent",
+          "cssVar": "--on-accent",
+          "hex": "#190a2b",
+          "oklch": "oklch(0.20 0.06 300)",
+          "locked": false
+        },
+        {
+          "name": "accent-surface",
+          "cssVar": "--accent-surface",
+          "hex": "#241433",
+          "oklch": "oklch(0.27 0.06 300)",
+          "locked": false
+        },
+        {
+          "name": "accent-border",
+          "cssVar": "--accent-border",
+          "hex": "#4a2c66",
+          "oklch": "oklch(0.40 0.10 300)",
+          "locked": false
+        },
+        {
+          "name": "accent-secondary",
+          "cssVar": "--accent-secondary",
+          "hex": "#7c8cff",
+          "oklch": "oklch(0.70 0.16 275)",
+          "locked": false
+        },
+        {
+          "name": "on-accent-secondary",
+          "cssVar": "--on-accent-secondary",
+          "hex": "#06091e",
+          "oklch": "oklch(0.18 0.04 275)",
+          "locked": false
+        },
+        {
+          "name": "ok",
+          "cssVar": "--ok",
+          "hex": "#39E0A0",
+          "oklch": "oklch(0.81 0.16 162)",
+          "locked": true
+        },
+        {
+          "name": "on-ok",
+          "cssVar": "--on-ok",
+          "hex": "#04231a",
+          "oklch": "oklch(0.24 0.04 162)",
+          "locked": false
+        },
+        {
+          "name": "review",
+          "cssVar": "--review",
+          "hex": "#6cb8ff",
+          "oklch": "oklch(0.76 0.13 256)",
+          "locked": true
+        },
+        {
+          "name": "on-review",
+          "cssVar": "--on-review",
+          "hex": "#04122b",
+          "oklch": "oklch(0.20 0.05 256)",
+          "locked": false
+        },
+        {
+          "name": "warn",
+          "cssVar": "--warn",
+          "hex": "#E8961A",
+          "oklch": "oklch(0.74 0.15 70)",
+          "locked": true
+        },
+        {
+          "name": "on-warn",
+          "cssVar": "--on-warn",
+          "hex": "#2a1600",
+          "oklch": "oklch(0.22 0.05 70)",
+          "locked": false
+        },
+        {
+          "name": "block",
+          "cssVar": "--block",
+          "hex": "#ff6b78",
+          "oklch": "oklch(0.72 0.18 19)",
+          "locked": true
+        },
+        {
+          "name": "on-block",
+          "cssVar": "--on-block",
+          "hex": "#2b0407",
+          "oklch": "oklch(0.22 0.06 19)",
+          "locked": false
+        },
+        {
+          "name": "info",
+          "cssVar": "--info",
+          "hex": "#7e8390",
+          "oklch": "oklch(0.61 0.02 270)",
+          "locked": true
+        },
+        {
+          "name": "glow-seed",
+          "cssVar": "--glow-seed",
+          "hex": "#c9a8ff",
+          "oklch": "oklch(0.84 0.12 300)",
+          "locked": false
+        }
+      ]
+    },
+    "light": {
+      "colorScheme": "light",
+      "css": "@enregla-ui/duly-tokens/theme-light.css",
+      "tokens": [
+        {
+          "name": "bg-base",
+          "cssVar": "--bg-base",
+          "hex": "#fbfcfd",
+          "oklch": "oklch(0.99 0.002 285)",
+          "locked": false
+        },
+        {
+          "name": "bg-elevated",
+          "cssVar": "--bg-elevated",
+          "hex": "#ffffff",
+          "oklch": "oklch(1 0 0)",
+          "locked": false
+        },
+        {
+          "name": "surface-2",
+          "cssVar": "--surface-2",
+          "hex": "#f3f3f6",
+          "oklch": "oklch(0.965 0.004 285)",
+          "locked": false
+        },
+        {
+          "name": "surface-3",
+          "cssVar": "--surface-3",
+          "hex": "#e9e9ed",
+          "oklch": "oklch(0.935 0.006 285)",
+          "locked": false
+        },
+        {
+          "name": "surface-header",
+          "cssVar": "--surface-header",
+          "hex": "#f6f6f9",
+          "oklch": "oklch(0.975 0.004 285)",
+          "locked": false
+        },
+        {
+          "name": "surface-sunken",
+          "cssVar": "--surface-sunken",
+          "hex": "#f0f0f3",
+          "oklch": "oklch(0.955 0.004 285)",
+          "locked": false
+        },
+        {
+          "name": "ink",
+          "cssVar": "--ink",
+          "hex": "#1e1f25",
+          "oklch": "oklch(0.24 0.012 285)",
+          "locked": false
+        },
+        {
+          "name": "dim",
+          "cssVar": "--dim",
+          "hex": "#51525a",
+          "oklch": "oklch(0.44 0.014 285)",
+          "locked": false
+        },
+        {
+          "name": "faint",
+          "cssVar": "--faint",
+          "hex": "#62626f",
+          "oklch": "oklch(0.50 0.02 285)",
+          "locked": false
+        },
+        {
+          "name": "faint-deco",
+          "cssVar": "--faint-deco",
+          "hex": "#7d8699",
+          "oklch": "oklch(0.62 0.03 264)",
+          "locked": false
+        },
+        {
+          "name": "border-subtle",
+          "cssVar": "--border-subtle",
+          "hex": "#e4e4e7",
+          "oklch": "oklch(0.92 0.004 285)",
+          "locked": false
+        },
+        {
+          "name": "border-default",
+          "cssVar": "--border-default",
+          "hex": "#d4d4d8",
+          "oklch": "oklch(0.87 0.006 285)",
+          "locked": false
+        },
+        {
+          "name": "border-strong",
+          "cssVar": "--border-strong",
+          "hex": "#7f7f86",
+          "oklch": "oklch(0.60 0.01 285)",
+          "locked": false
+        },
+        {
+          "name": "border-divider",
+          "cssVar": "--border-divider",
+          "hex": "#c6d3dd",
+          "oklch": "oklch(0.86 0.02 241)",
+          "locked": false
+        },
+        {
+          "name": "ring",
+          "cssVar": "--ring",
+          "hex": "#008d92",
+          "oklch": "oklch(0.58 0.11 198)",
+          "locked": true
+        },
+        {
+          "name": "accent",
+          "cssVar": "--accent",
+          "hex": "#00797e",
+          "oklch": "oklch(0.51 0.115 198)",
+          "locked": false
+        },
+        {
+          "name": "on-accent",
+          "cssVar": "--on-accent",
+          "hex": "#ffffff",
+          "oklch": "oklch(1 0 0)",
+          "locked": false
+        },
+        {
+          "name": "accent-surface",
+          "cssVar": "--accent-surface",
+          "hex": "#cef0f0",
+          "oklch": "oklch(0.93 0.035 198)",
+          "locked": false
+        },
+        {
+          "name": "accent-border",
+          "cssVar": "--accent-border",
+          "hex": "#80c6c7",
+          "oklch": "oklch(0.78 0.07 198)",
+          "locked": false
+        },
+        {
+          "name": "accent-secondary",
+          "cssVar": "--accent-secondary",
+          "hex": "#515bc3",
+          "oklch": "oklch(0.52 0.16 275)",
+          "locked": false
+        },
+        {
+          "name": "on-accent-secondary",
+          "cssVar": "--on-accent-secondary",
+          "hex": "#ffffff",
+          "oklch": "oklch(1 0 0)",
+          "locked": false
+        },
+        {
+          "name": "ok",
+          "cssVar": "--ok",
+          "hex": "#00794c",
+          "oklch": "oklch(0.50 0.13 162)",
+          "locked": true
+        },
+        {
+          "name": "on-ok",
+          "cssVar": "--on-ok",
+          "hex": "#ffffff",
+          "oklch": "oklch(1 0 0)",
+          "locked": false
+        },
+        {
+          "name": "review",
+          "cssVar": "--review",
+          "hex": "#266bc0",
+          "oklch": "oklch(0.53 0.15 256)",
+          "locked": true
+        },
+        {
+          "name": "on-review",
+          "cssVar": "--on-review",
+          "hex": "#ffffff",
+          "oklch": "oklch(1 0 0)",
+          "locked": false
+        },
+        {
+          "name": "warn",
+          "cssVar": "--warn",
+          "hex": "#945a00",
+          "oklch": "oklch(0.52 0.12 70)",
+          "locked": true
+        },
+        {
+          "name": "on-warn",
+          "cssVar": "--on-warn",
+          "hex": "#ffffff",
+          "oklch": "oklch(1 0 0)",
+          "locked": false
+        },
+        {
+          "name": "block",
+          "cssVar": "--block",
+          "hex": "#c82d43",
+          "oklch": "oklch(0.55 0.19 19)",
+          "locked": true
+        },
+        {
+          "name": "on-block",
+          "cssVar": "--on-block",
+          "hex": "#ffffff",
+          "oklch": "oklch(1 0 0)",
+          "locked": false
+        },
+        {
+          "name": "info",
+          "cssVar": "--info",
+          "hex": "#646975",
+          "oklch": "oklch(0.52 0.02 270)",
+          "locked": true
+        },
+        {
+          "name": "glow-seed",
+          "cssVar": "--glow-seed",
+          "hex": "#37bab6",
+          "oklch": "oklch(0.72 0.11 192)",
+          "locked": false
+        }
+      ]
+    },
+    "ganapliego": {
+      "colorScheme": "light",
+      "css": "@enregla-ui/duly-tokens/theme-ganapliego.css",
+      "tokens": [
+        {
+          "name": "bg-base",
+          "cssVar": "--bg-base",
+          "hex": "#fbfcfd",
+          "oklch": "oklch(0.99 0.002 285)",
+          "locked": false
+        },
+        {
+          "name": "bg-elevated",
+          "cssVar": "--bg-elevated",
+          "hex": "#ffffff",
+          "oklch": "oklch(1 0 0)",
+          "locked": false
+        },
+        {
+          "name": "surface-2",
+          "cssVar": "--surface-2",
+          "hex": "#f3f3f6",
+          "oklch": "oklch(0.965 0.004 285)",
+          "locked": false
+        },
+        {
+          "name": "surface-3",
+          "cssVar": "--surface-3",
+          "hex": "#e9e9ed",
+          "oklch": "oklch(0.935 0.006 285)",
+          "locked": false
+        },
+        {
+          "name": "surface-header",
+          "cssVar": "--surface-header",
+          "hex": "#f6f6f9",
+          "oklch": "oklch(0.975 0.004 285)",
+          "locked": false
+        },
+        {
+          "name": "surface-sunken",
+          "cssVar": "--surface-sunken",
+          "hex": "#f0f0f3",
+          "oklch": "oklch(0.955 0.004 285)",
+          "locked": false
+        },
+        {
+          "name": "ink",
+          "cssVar": "--ink",
+          "hex": "#1e1f25",
+          "oklch": "oklch(0.24 0.012 285)",
+          "locked": false
+        },
+        {
+          "name": "dim",
+          "cssVar": "--dim",
+          "hex": "#51525a",
+          "oklch": "oklch(0.44 0.014 285)",
+          "locked": false
+        },
+        {
+          "name": "faint",
+          "cssVar": "--faint",
+          "hex": "#62626f",
+          "oklch": "oklch(0.50 0.02 285)",
+          "locked": false
+        },
+        {
+          "name": "faint-deco",
+          "cssVar": "--faint-deco",
+          "hex": "#7d8699",
+          "oklch": "oklch(0.62 0.03 264)",
+          "locked": false
+        },
+        {
+          "name": "border-subtle",
+          "cssVar": "--border-subtle",
+          "hex": "#e4e4e7",
+          "oklch": "oklch(0.92 0.004 285)",
+          "locked": false
+        },
+        {
+          "name": "border-default",
+          "cssVar": "--border-default",
+          "hex": "#d4d4d8",
+          "oklch": "oklch(0.87 0.006 285)",
+          "locked": false
+        },
+        {
+          "name": "border-strong",
+          "cssVar": "--border-strong",
+          "hex": "#7f7f86",
+          "oklch": "oklch(0.60 0.01 285)",
+          "locked": false
+        },
+        {
+          "name": "border-divider",
+          "cssVar": "--border-divider",
+          "hex": "#c6d3dd",
+          "oklch": "oklch(0.86 0.02 241)",
+          "locked": false
+        },
+        {
+          "name": "ring",
+          "cssVar": "--ring",
+          "hex": "#008d92",
+          "oklch": "oklch(0.58 0.11 198)",
+          "locked": true
+        },
+        {
+          "name": "accent",
+          "cssVar": "--accent",
+          "hex": "#00797e",
+          "oklch": "oklch(0.51 0.115 198)",
+          "locked": false
+        },
+        {
+          "name": "on-accent",
+          "cssVar": "--on-accent",
+          "hex": "#ffffff",
+          "oklch": "oklch(1 0 0)",
+          "locked": false
+        },
+        {
+          "name": "accent-surface",
+          "cssVar": "--accent-surface",
+          "hex": "#cef0f0",
+          "oklch": "oklch(0.93 0.035 198)",
+          "locked": false
+        },
+        {
+          "name": "accent-border",
+          "cssVar": "--accent-border",
+          "hex": "#80c6c7",
+          "oklch": "oklch(0.78 0.07 198)",
+          "locked": false
+        },
+        {
+          "name": "accent-secondary",
+          "cssVar": "--accent-secondary",
+          "hex": "#515bc3",
+          "oklch": "oklch(0.52 0.16 275)",
+          "locked": false
+        },
+        {
+          "name": "on-accent-secondary",
+          "cssVar": "--on-accent-secondary",
+          "hex": "#ffffff",
+          "oklch": "oklch(1 0 0)",
+          "locked": false
+        },
+        {
+          "name": "ok",
+          "cssVar": "--ok",
+          "hex": "#00794c",
+          "oklch": "oklch(0.50 0.13 162)",
+          "locked": true
+        },
+        {
+          "name": "on-ok",
+          "cssVar": "--on-ok",
+          "hex": "#ffffff",
+          "oklch": "oklch(1 0 0)",
+          "locked": false
+        },
+        {
+          "name": "review",
+          "cssVar": "--review",
+          "hex": "#266bc0",
+          "oklch": "oklch(0.53 0.15 256)",
+          "locked": true
+        },
+        {
+          "name": "on-review",
+          "cssVar": "--on-review",
+          "hex": "#ffffff",
+          "oklch": "oklch(1 0 0)",
+          "locked": false
+        },
+        {
+          "name": "warn",
+          "cssVar": "--warn",
+          "hex": "#945a00",
+          "oklch": "oklch(0.52 0.12 70)",
+          "locked": true
+        },
+        {
+          "name": "on-warn",
+          "cssVar": "--on-warn",
+          "hex": "#ffffff",
+          "oklch": "oklch(1 0 0)",
+          "locked": false
+        },
+        {
+          "name": "block",
+          "cssVar": "--block",
+          "hex": "#c82d43",
+          "oklch": "oklch(0.55 0.19 19)",
+          "locked": true
+        },
+        {
+          "name": "on-block",
+          "cssVar": "--on-block",
+          "hex": "#ffffff",
+          "oklch": "oklch(1 0 0)",
+          "locked": false
+        },
+        {
+          "name": "info",
+          "cssVar": "--info",
+          "hex": "#646975",
+          "oklch": "oklch(0.52 0.02 270)",
+          "locked": true
+        },
+        {
+          "name": "glow-seed",
+          "cssVar": "--glow-seed",
+          "hex": "#37bab6",
+          "oklch": "oklch(0.72 0.11 192)",
+          "locked": false
+        }
+      ]
+    }
+  },
+  "contrastPairs": [
+    [
+      "ink",
+      "bg-base",
+      4.5
+    ],
+    [
+      "ink",
+      "surface-2",
+      4.5
+    ],
+    [
+      "ink",
+      "surface-3",
+      4.5
+    ],
+    [
+      "dim",
+      "surface-2",
+      4.5
+    ],
+    [
+      "faint",
+      "surface-2",
+      4.5
+    ],
+    [
+      "accent",
+      "surface-2",
+      4.5
+    ],
+    [
+      "on-accent",
+      "accent",
+      4.5
+    ],
+    [
+      "ok",
+      "surface-2",
+      4.5
+    ],
+    [
+      "review",
+      "surface-2",
+      4.5
+    ],
+    [
+      "warn",
+      "surface-2",
+      4.5
+    ],
+    [
+      "block",
+      "surface-2",
+      4.5
+    ],
+    [
+      "border-strong",
+      "surface-2",
+      3
+    ],
+    [
+      "ring",
+      "surface-2",
+      3
+    ],
+    [
+      "info",
+      "surface-2",
+      4.5
+    ]
+  ],
+  "components": [
+    {
+      "name": "AgentOpsCockpit",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Sample agent-operations page. Renders the other in-demo components with fictional run data.",
+      "inDemoCockpit": true
+    },
+    {
+      "name": "DulySurface",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Host for an A2UI-shaped surface. Renders the checked duly-catalog layout and shows a fallback for unknown components and bad props.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "GenerativeUiView",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Host for a version 1 generative UI document. Renders the allow-listed tree with Duly components. Validate the document before treating the result as an audit record.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "AgentMetricRow",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Responsive grid that groups AgentMetric tiles.",
+      "inDemoCockpit": true
+    },
+    {
+      "name": "AgentMetric",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Compact metric tile. Tone is a semantic status, and the label is visible text.",
+      "inDemoCockpit": true
+    },
+    {
+      "name": "RunTimeline",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Horizontal workflow stepper. Each node uses NodeStatusBadge, so status is icon plus text.",
+      "inDemoCockpit": true
+    },
+    {
+      "name": "HumanInterruptQueue",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Queue of human approval requests, ordered by risk. Rows are buttons and expand to ApprovalGateCard.",
+      "inDemoCockpit": true
+    },
+    {
+      "name": "GuardrailIndicator",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Passed, warned, and blocked policy checks. The summary tone is the worst status in the list.",
+      "inDemoCockpit": true
+    },
+    {
+      "name": "TokenCostMeter",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Run cost by category against an optional budget, with token counts.",
+      "inDemoCockpit": true
+    },
+    {
+      "name": "TraceLog",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Structured event log. Compose TraceLog.Root, Header, Body, and Row. Row tone includes an icon and is not color alone.",
+      "inDemoCockpit": true
+    },
+    {
+      "name": "ApprovalGateCard",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "One human approval with evidence fields and Approve, Reject, and Escalate actions.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "NodeStatusBadge",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Status glyph for success, error, running, waiting, retrying, and skipped. The demo cockpit uses it for agent state and tool-call status, with a visible text label.",
+      "inDemoCockpit": true
+    },
+    {
+      "name": "NodeStatusLegend",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Legend for the six NodeStatusBadge states.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "ExecutionTimeline",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Vertical run timeline that hosts RunStep children.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "RunStep",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "One expandable step in ExecutionTimeline (tool call, decision, approval, or event).",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "ToolCallCard",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Tool name, input pairs, output, and latency.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "RichToolCallCard",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Tool call card that can render richer result blocks. Shown in the demo cockpit once lookup_vendor finishes.",
+      "inDemoCockpit": true
+    },
+    {
+      "name": "TraceTree",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Hierarchical span tree for one agent run.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "ExecutionHistoryTable",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Table of workflow executions.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "RunInspector",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Detail panel for the nodes in one execution.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "ExecutionHistoryConsole",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "ExecutionHistoryTable plus RunInspector, with local selection state.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "PropertyIntelligenceConsole",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Real-estate composition: agent roster, metrics, TraceLog, and a status matrix.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "AgentGallery",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Grid of AgentCard items.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "AgentCard",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Card for one agent. AgentTile is the same component.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "AgentCore",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "WebGL identity canvas. Without WebGL it falls back to a static glow and honors reduced motion.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "AgentStatusMatrix",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Status legend mapped onto the five semantic tones.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "AuditLogTable",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Audit event table.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "WhoDidWhatTimeline",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Timeline of actors and actions.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "AgentTopologyGraph",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Graph of agents and handoffs.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "SwarmControlBar",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Controls for a group of agents.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "BudgetCapGovernor",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Budget cap list for agent spend.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "A2AAgentCardViewer",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Read-only view of an Agent2Agent card.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "StreamingMessage",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Message assembled from AG-UI stream events. The demo cockpit plays a sample token stream.",
+      "inDemoCockpit": true
+    },
+    {
+      "name": "MCPAppsWidgetFrame",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Sandboxed frame for an MCP App UI resource. This is separate from the design-system MCP server.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "AgentConsentCard",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Consent scopes and limits for an agent action.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "RetryControls",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Retry history and a manual retry action.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "CredentialCard",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Credential health, expiry, and scopes.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "EvalScoreBadge",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Evaluation score against a threshold, with optional history.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "RetentionBadge",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Retention and immutability status for one record.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "SubworkflowChip",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Link chip that points at a nested workflow execution.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "ErrorWorkflowBanner",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Banner for an error-handler workflow linked from a failed run.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "ConnectorStatus",
+      "package": "@enregla-ui/duly-ui",
+      "area": "agentic",
+      "summary": "Connection and sync state for external systems.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "Button",
+      "package": "@enregla-ui/duly-ui",
+      "area": "primitive",
+      "summary": "Button. Variants include default, destructive, outline, secondary, and ghost.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "Badge",
+      "package": "@enregla-ui/duly-ui",
+      "area": "primitive",
+      "summary": "Status badge, including semantic ok, warn, and block variants.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "Card",
+      "package": "@enregla-ui/duly-ui",
+      "area": "primitive",
+      "summary": "Surface container.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "Input",
+      "package": "@enregla-ui/duly-ui",
+      "area": "primitive",
+      "summary": "Text input. Pair it with Label.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "Label",
+      "package": "@enregla-ui/duly-ui",
+      "area": "primitive",
+      "summary": "Form label associated with a control.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "Alert",
+      "package": "@enregla-ui/duly-ui",
+      "area": "primitive",
+      "summary": "Inline alert.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "Tabs",
+      "package": "@enregla-ui/duly-ui",
+      "area": "primitive",
+      "summary": "Tab list. Keyboard interaction comes from the underlying primitive.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "Dialog",
+      "package": "@enregla-ui/duly-ui",
+      "area": "primitive",
+      "summary": "Modal dialog with an accessible title and a close control.",
+      "inDemoCockpit": false
+    },
+    {
+      "name": "Progress",
+      "package": "@enregla-ui/duly-ui",
+      "area": "primitive",
+      "summary": "Progress indicator. Provide a text label when the value carries meaning.",
+      "inDemoCockpit": false
+    }
+  ],
+  "generateUi": {
+    "summary": "Render the public agent-ops cockpit by mounting AgentOpsCockpit from @enregla-ui/duly-ui. Do not invent a parallel layout with raw colors.",
+    "packageName": "@enregla-ui/duly-ui",
+    "styles": [
+      "@enregla-ui/duly-ui/styles.css",
+      "@enregla-ui/duly-ui/reset.css"
+    ],
+    "themeAttribute": "data-theme=\"cockpit\"",
+    "composition": [
+      "AgentOpsCockpit",
+      "NodeStatusBadge",
+      "StreamingMessage",
+      "RichToolCallCard",
+      "AgentMetricRow",
+      "AgentMetric",
+      "RunTimeline",
+      "HumanInterruptQueue",
+      "GuardrailIndicator",
+      "TokenCostMeter",
+      "TraceLog"
+    ],
+    "example": "import \"@enregla-ui/duly-ui/styles.css\";\nimport \"@enregla-ui/duly-ui/reset.css\";\nimport { AgentOpsCockpit, CopyProvider } from \"@enregla-ui/duly-ui\";\n\nexport function Demo() {\n  return (\n    <CopyProvider locale=\"en\">\n      <div data-theme=\"cockpit\" lang=\"en\">\n        <AgentOpsCockpit />\n      </div>\n    </CopyProvider>\n  );\n}",
+    "emission": {
+      "summary": "When an agent must emit a screen, return a version 1 generative UI document. Do not emit HTML, CSS, or raw colors. Call get_generative_ui_schema, then validate_generative_ui, and keep the audit next to the model log. The host renders that document with GenerativeUiView. AgentOpsCockpit is the hand-built reference of the same cockpit.",
+      "schemaTool": "get_generative_ui_schema",
+      "validateTool": "validate_generative_ui",
+      "host": "GenerativeUiView",
+      "example": "packages/ui/src/agentic/cockpit.generative.json"
+    },
+    "accessibility": [
+      "Set data-theme on an ancestor so semantic tokens resolve. The cockpit story uses cockpit.",
+      "Use token utilities (text-ink, bg-surface-2, border-border-subtle, text-ok, text-warn, text-block). Do not write hex or rgb colors in component code.",
+      "Status is never color alone. NodeStatusBadge, GuardrailIndicator, TraceLog.Row, and approval actions already include text or an icon with a text label.",
+      "Give the page one h1. Name sections with headings or aria-label.",
+      "Approval rows are buttons. Reach them with Tab, expand with Enter, then activate Approve, Reject, or Escalate with the keyboard.",
+      "A block-risk approval asks for a second confirmation before it commits. Do not remove that step.",
+      "Leave focus outlines on the ring token. Do not set outline: none without a replacement.",
+      "Motion tokens collapse under prefers-reduced-motion. Do not add a custom animation that ignores that.",
+      "The cockpit sets lang=\"en\" because its sample copy is English.",
+      "Agent state uses NodeStatusBadge with a visible text label: Running, Waiting, Done, or Error."
+    ],
+    "limitations": [
+      "This server returns tokens, a curated component inventory, composition instructions, and a structural check of generative UI documents. It does not render React, call a model, or attach to a live agent runtime.",
+      "validate_generative_ui is a structural check. Duly does not store, sign, or certify the audit. It is not a SOC 2 report, an ISO certificate, or a bank attestation.",
+      "The inventory is a hand-maintained list of agent-ops components and a few primitives. It is not every export in @enregla-ui/duly-ui, and it does not include prop types. Read the TypeScript source for props.",
+      "Hex values are the CSS fallback. The oklch field is parsed from the theme stylesheet, which is what supporting browsers use.",
+      "AgentOpsCockpit shows fictional sample operations. Approve, reject, and escalate update local component state only. The token stream and tool-call playback are a sample timer in the browser. They are not a connection to a model.",
+      "There is no hosted demo URL in this repo. Run Storybook or the showcase locally."
+    ]
+  },
+  "generativeUi": {
+    "version": "1",
+    "tools": [
+      "get_generative_ui_schema",
+      "validate_generative_ui"
+    ],
+    "components": [
+      "Section",
+      "Stack",
+      "AgentMetricRow",
+      "AgentMetric",
+      "RunTimeline",
+      "HumanInterruptQueue",
+      "GuardrailIndicator",
+      "TokenCostMeter",
+      "TraceLog"
+    ],
+    "rules": [
+      "document.version",
+      "theme.known",
+      "components.allow_list",
+      "props.no_raw_color",
+      "props.no_style_escape",
+      "a11y.text_labels",
+      "a11y.status_enum",
+      "a11y.single_title",
+      "audit.stable_ids",
+      "approval.no_skip_confirm"
+    ],
+    "example": "packages/ui/src/agentic/cockpit.generative.json",
+    "host": "GenerativeUiView from @enregla-ui/duly-ui",
+    "audit": "validate_generative_ui checks structure only and returns the same audit for the same document. Duly does not store, sign, or certify it. It is not a SOC 2 report, an ISO certificate, or a bank attestation."
+  },
+  "catalog": {
+    "catalogId": "duly://catalog/v1",
+    "version": "1",
+    "components": [
+      "Column",
+      "ApprovalGate",
+      "AuditLog",
+      "RichToolCall",
+      "TokenCost",
+      "Guardrail"
+    ],
+    "package": "@duly/catalog"
+  },
+  "notes": [
+    "Regenerate packages/mcp/design-system.json with pnpm --filter @duly/mcp export after token or generative-UI contract changes.",
+    "The component list is curated. Prop types live in packages/ui/src.",
+    "Generative UI audits are structural. Duly does not store, sign, or certify them."
+  ]
+}

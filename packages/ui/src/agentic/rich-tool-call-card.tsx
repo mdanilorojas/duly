@@ -238,7 +238,7 @@ export interface RichToolCallCardProps extends React.ComponentProps<"div"> {
 
 /**
  * Extensión de `ToolCallCard` con contenido enriquecido por tipo de resultado
- * — no solo texto/JSON plano. Responde al gap #1 del `NORTH_STAR.md`
+ * — no solo texto/JSON plano. Responde al gap #1 del `docs/lab/NORTH_STAR.md`
  * (2026-07-02): 3 vendors convergieron en "Rich Tool-UI"/"Tool-based
  * Generative UI" (MCP Apps, AG-UI, ChatKit widgets) esta semana. Vive en el
  * mismo lugar que `ToolCallCard` (contenido expandible de un `RunStep` con

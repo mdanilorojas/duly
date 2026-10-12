@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CopyProvider } from "@enregla-ui/duly-ui";
 import { Home } from "./pages/Home";
 import { Agentic } from "./pages/Agentic";
@@ -6,10 +6,12 @@ import { Compliance } from "./pages/Compliance";
 import { Comercial } from "./pages/Comercial";
 import { Industrial } from "./pages/Industrial";
 import { Primitivas } from "./pages/Primitivas";
+import { Demo } from "./pages/Demo";
 
-type Page = "home" | "agentic" | "compliance" | "comercial" | "industrial" | "primitivas";
+type Page = "demo" | "home" | "agentic" | "compliance" | "comercial" | "industrial" | "primitivas";
 
 const PAGES: { id: Page; label: string }[] = [
+  { id: "demo", label: "Demo" },
   { id: "home", label: "Inicio" },
   { id: "agentic", label: "Agentic" },
   { id: "compliance", label: "Compliance" },
@@ -18,8 +20,28 @@ const PAGES: { id: Page; label: string }[] = [
   { id: "primitivas", label: "Primitivas" },
 ];
 
+function isPage(value: string): value is Page {
+  return PAGES.some((item) => item.id === value);
+}
+
+function pageFromHash(): Page {
+  const id = window.location.hash.replace(/^#/, "");
+  return isPage(id) ? id : "home";
+}
+
 export default function App() {
-  const [page, setPage] = useState<Page>("home");
+  const [page, setPage] = useState<Page>(pageFromHash);
+
+  useEffect(() => {
+    const onHash = () => setPage(pageFromHash());
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
+  function navigate(next: Page) {
+    setPage(next);
+    if (window.location.hash !== `#${next}`) window.location.hash = next;
+  }
 
   return (
     <CopyProvider locale="es">
@@ -41,12 +63,13 @@ export default function App() {
             <b style={{ color: "var(--accent)" }}>Duly</b>
             <span style={{ color: "var(--faint)", margin: "0 0.4rem" }}>×</span>Showcase
           </span>
-          <nav style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+          <nav aria-label="Sections" style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
             {PAGES.map((p) => (
               <button
                 key={p.id}
                 type="button"
-                onClick={() => setPage(p.id)}
+                aria-current={page === p.id ? "page" : undefined}
+                onClick={() => navigate(p.id)}
                 style={{
                   fontFamily: "var(--font-mono)",
                   fontSize: "0.78rem",
@@ -64,7 +87,8 @@ export default function App() {
           </nav>
         </header>
         <main style={{ padding: "1.5rem" }}>
-          {page === "home" && <Home onNavigate={setPage} />}
+          {page === "demo" && <Demo />}
+          {page === "home" && <Home onNavigate={navigate} />}
           {page === "agentic" && <Agentic />}
           {page === "compliance" && <Compliance />}
           {page === "comercial" && <Comercial />}

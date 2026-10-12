@@ -1,11 +1,11 @@
-# @duly/ui
+# @enregla-ui/duly-ui
 
 React UI components for the Studio design system — accessible, themeable, RSC-ready. Ships a **precompiled, self-contained `dist/styles.css`** that includes utility classes and theme variable mappings but **no CSS preflight**, so it is safe to drop into any existing app.
 
 ## Install
 
 ```bash
-pnpm add @duly/ui @duly/tokens
+pnpm add @enregla-ui/duly-ui @enregla-ui/duly-tokens
 ```
 
 ## Minimal setup (works in any app — Tailwind optional)
@@ -13,7 +13,7 @@ pnpm add @duly/ui @duly/tokens
 **1. Import the stylesheet once** (e.g. in your app entry or root layout):
 
 ```ts
-import "@duly/ui/styles.css";
+import "@enregla-ui/duly-ui/styles.css";
 ```
 
 **2. Wrap your UI in a theme root:**
@@ -31,7 +31,7 @@ import "@duly/ui/styles.css";
 **3. Use components:**
 
 ```tsx
-import { TraceLog } from "@duly/ui";
+import { TraceLog } from "@enregla-ui/duly-ui";
 
 export function AgentPanel() {
   return (
@@ -61,22 +61,22 @@ Instead of importing `dist/styles.css`, configure your own Tailwind build to inc
 ```css
 /* your app's main CSS entry */
 @import "tailwindcss";
-@import "@duly/tokens/theme.css";          /* mapping layer: --color-<token> utilities */
-@import "@duly/tokens/theme-cockpit.css";  /* value layer: cockpit theme at :root (default) */
-@import "@duly/tokens/theme-violet.css";   /* optional: violet theme under [data-theme="violet"] */
-@source "../node_modules/@duly/ui/dist/**/*.js";  /* scan compiled output for utility classes */
+@import "@enregla-ui/duly-tokens/theme.css";          /* mapping layer: --color-<token> utilities */
+@import "@enregla-ui/duly-tokens/theme-cockpit.css";  /* value layer: cockpit theme at :root (default) */
+@import "@enregla-ui/duly-tokens/theme-violet.css";   /* optional: violet theme under [data-theme="violet"] */
+@source "../node_modules/@enregla-ui/duly-ui/dist/**/*.js";  /* scan compiled output for utility classes */
 ```
 
 > **`theme.css` alone is not enough** — it only maps utility names to CSS variables; it does not define the variable values. Both the mapping layer (`theme.css`) and a value layer (`theme-cockpit.css` and/or `theme-violet.css`) are required, otherwise color utilities resolve to undefined variables and components render colorless.
 
-Then skip the `import "@duly/ui/styles.css"` line — your Tailwind build covers it.
+Then skip the `import "@enregla-ui/duly-ui/styles.css"` line — your Tailwind build covers it.
 
 ### Optional CSS reset
 
 To apply a lightweight, opinionated CSS reset (box-sizing, margin/padding normalization):
 
 ```ts
-import "@duly/ui/reset.css";
+import "@enregla-ui/duly-ui/reset.css";
 ```
 
 Import this **before** `styles.css`.
